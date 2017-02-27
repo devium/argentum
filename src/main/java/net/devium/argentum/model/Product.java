@@ -1,45 +1,57 @@
 package net.devium.argentum.model;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
 
 @Entity
 @Table(name = "products")
 public class Product {
+
+    @Id
+    @GeneratedValue
+    private long id;
+    private String name;
+    private BigDecimal price;
+
     @ManyToMany(mappedBy = "products")
-    Collection<ProductRange> productRanges;
-    @EmbeddedId
-    private Key key;
+    private Collection<ProductRange> productRanges;
 
-    public Key getKey() {
-        return key;
+    public Product(Collection<ProductRange> productRanges, String name, BigDecimal price) {
+        this.productRanges = productRanges;
+        this.name = name;
+        this.price = price;
     }
 
-    public void setKey(Key key) {
-        this.key = key;
+    public long getId() {
+        return id;
     }
 
-    @Embeddable
-    public static class Key implements Serializable {
-        private String name;
-        private BigDecimal price;
+    public void setId(long id) {
+        this.id = id;
+    }
 
-        public String getName() {
-            return name;
-        }
+    public String getName() {
+        return name;
+    }
 
-        public void setName(String name) {
-            this.name = name;
-        }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-        public BigDecimal getPrice() {
-            return price;
-        }
+    public BigDecimal getPrice() {
+        return price;
+    }
 
-        public void setPrice(BigDecimal price) {
-            this.price = price;
-        }
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public Collection<ProductRange> getProductRanges() {
+        return productRanges;
+    }
+
+    public void setProductRanges(Collection<ProductRange> productRanges) {
+        this.productRanges = productRanges;
     }
 }
