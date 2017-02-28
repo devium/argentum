@@ -41,16 +41,15 @@ public class ProductRangeController {
 
     @RequestMapping(path = "/{range_id}", method = RequestMethod.GET)
     public ProductRangeResponse getProductRange(@PathVariable("range_id") String rangeId) {
-        try {
-            ProductRangeEntity range = repository.findOne(rangeId);
-            List<Long> productIds = range.getProducts().stream()
-                    .map(ProductEntity::getId)
-                    .collect(Collectors.toList());
-            return new ProductRangeResponse(range.getId(), range.getName(), productIds);
-        } catch (EmptyResultDataAccessException e) {
-            LOGGER.info("ProductEntity range with ID {} not found.", rangeId, e);
+        ProductRangeEntity range = repository.findOne(rangeId);
+        if (range == null) {
+            LOGGER.info("Product range with ID {} not found.", rangeId);
             throw new ResourceNotFoundException();
         }
+        List<Long> productIds = range.getProducts().stream()
+                .map(ProductEntity::getId)
+                .collect(Collectors.toList());
+        return new ProductRangeResponse(range.getId(), range.getName(), productIds);
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -66,7 +65,7 @@ public class ProductRangeController {
         try {
             repository.delete(rangeId);
         } catch (EmptyResultDataAccessException e) {
-            LOGGER.info("ProductEntity range with ID {} not found.", rangeId, e);
+            LOGGER.info("Product range with ID {} not found.", rangeId, e);
             throw new ResourceNotFoundException();
         }
 
