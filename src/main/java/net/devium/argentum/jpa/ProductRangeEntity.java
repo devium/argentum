@@ -2,7 +2,10 @@ package net.devium.argentum.jpa;
 
 import com.google.common.base.Objects;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import java.util.Collections;
 import java.util.List;
 
@@ -13,8 +16,7 @@ public class ProductRangeEntity {
     private String id;
     private String name;
 
-    @ManyToMany
-    @JoinTable(name = "range_products")
+    @ManyToMany(mappedBy = "productRanges")
     private List<ProductEntity> products = Collections.emptyList();
 
     public ProductRangeEntity() {
