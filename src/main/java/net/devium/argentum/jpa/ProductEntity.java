@@ -16,7 +16,7 @@ public class ProductEntity {
     private String name;
     private BigDecimal price;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "range_products")
     private List<ProductRangeEntity> productRanges;
 

@@ -6,26 +6,23 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Collections;
-
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebAppConfiguration
+@SpringBootTest
 public class ProductRangeControllerTest {
-    @Mock
+    @Autowired
     private ProductRangeRepository productRangeRepository;
 
     private ProductRangeController sut;
@@ -34,24 +31,28 @@ public class ProductRangeControllerTest {
 
     @Before
     public void setUp() {
+        productRangeRepository.deleteAll();
         sut = new ProductRangeController(productRangeRepository);
         mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
     }
 
     @Test
     public void testGetProductRanges() throws Exception {
-        when(productRangeRepository.findAll()).thenReturn(Collections.emptyList());
+        ProductRangeEntity range1 = new ProductRangeEntity("someRange", "someName");
+        ProductRangeEntity range2 = new ProductRangeEntity("someOtherRange", "someOtherName");
+        productRangeRepository.save(range1);
+        productRangeRepository.save(range2);
 
         mockMvc.perform(get("/product_ranges"))
-                .andExpect(status().isOk());
-
-        verify(productRangeRepository).findAll();
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0]", is("someRange")))
+                .andExpect(jsonPath("$.[1]", is("someOtherRange")));
     }
 
     @Test
     public void testGetProductRange() throws Exception {
         ProductRangeEntity range = new ProductRangeEntity("someRange", "someName");
-        when(productRangeRepository.findOne("someRange")).thenReturn(range);
+        productRangeRepository.save(range);
 
         mockMvc.perform(get("/product_ranges/someRange"))
                 .andExpect(status().isOk())
@@ -62,8 +63,6 @@ public class ProductRangeControllerTest {
 
     @Test
     public void testGetProductRangeNotFound() throws Exception {
-        when(productRangeRepository.findOne("someRange")).thenReturn(null);
-
         mockMvc.perform(get("/product_ranges/someRange"))
                 .andExpect(status().isNotFound());
     }
@@ -78,24 +77,25 @@ public class ProductRangeControllerTest {
                 .content(body))
                 .andExpect(status().isNoContent());
 
-        verify(productRangeRepository).save(new ProductRangeEntity("someRange", "someName"));
+        ProductRangeEntity range = productRangeRepository.findOne("someRange");
+        assertEquals("someName", range.getName());
+        assertTrue(range.getProducts().isEmpty());
     }
 
     @Test
     public void testDeleteProductRange() throws Exception {
+        ProductRangeEntity range = new ProductRangeEntity("someRange", "someName");
+        productRangeRepository.save(range);
+
         mockMvc.perform(delete("/product_ranges/someRange"))
                 .andExpect(status().isNoContent());
 
-        verify(productRangeRepository).delete("someRange");
+        assertFalse(productRangeRepository.exists("someRange"));
     }
 
     @Test
     public void testDeleteProductRangeNotFound() throws Exception {
-        doThrow(EmptyResultDataAccessException.class).when(productRangeRepository).delete("someRange");
-
         mockMvc.perform(delete("/product_ranges/someRange"))
                 .andExpect(status().isNotFound());
-
-        verify(productRangeRepository).delete("someRange");
     }
 }
