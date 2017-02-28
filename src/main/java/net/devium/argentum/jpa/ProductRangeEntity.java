@@ -1,26 +1,26 @@
-package net.devium.argentum.model;
+package net.devium.argentum.jpa;
 
 import com.google.common.base.Objects;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Table(name = "product_ranges")
-public class ProductRange {
+public class ProductRangeEntity {
     @Id
     private String id;
     private String name;
 
     @ManyToMany
     @JoinTable(name = "range_products")
-    private Collection<Product> products = Collections.emptyList();
+    private List<ProductEntity> products = Collections.emptyList();
 
-    public ProductRange() {
+    public ProductRangeEntity() {
     }
 
-    public ProductRange(String id, String name) {
+    public ProductRangeEntity(String id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -41,11 +41,11 @@ public class ProductRange {
         this.name = name;
     }
 
-    public Collection<Product> getProducts() {
+    public List<ProductEntity> getProducts() {
         return products;
     }
 
-    public void setProducts(Collection<Product> products) {
+    public void setProducts(List<ProductEntity> products) {
         this.products = products;
     }
 
@@ -53,7 +53,7 @@ public class ProductRange {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ProductRange that = (ProductRange) o;
+        ProductRangeEntity that = (ProductRangeEntity) o;
         return Objects.equal(id, that.id) &&
                 Objects.equal(name, that.name) &&
                 Objects.equal(products, that.products);

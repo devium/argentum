@@ -1,13 +1,16 @@
 package net.devium.argentum.rest.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class ProductRangeRequest {
-    @JsonProperty("id")
     private String id;
-
-    @JsonProperty("name")
     private String name;
+
+    public ProductRangeRequest() {
+    }
+
+    public ProductRangeRequest(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     public String getId() {
         return id;

@@ -1,12 +1,12 @@
-package net.devium.argentum.model;
+package net.devium.argentum.jpa;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "products")
-public class Product {
+public class ProductEntity {
 
     @Id
     @GeneratedValue
@@ -15,15 +15,15 @@ public class Product {
     private BigDecimal price;
 
     @ManyToMany(mappedBy = "products")
-    private Collection<ProductRange> productRanges;
+    private List<ProductRangeEntity> productRanges;
 
-    public Product() {
+    public ProductEntity() {
     }
 
-    public Product(Collection<ProductRange> productRanges, String name, BigDecimal price) {
-        this.productRanges = productRanges;
+    public ProductEntity(String name, BigDecimal price, List<ProductRangeEntity> productRanges) {
         this.name = name;
         this.price = price;
+        this.productRanges = productRanges;
     }
 
     public long getId() {
@@ -50,11 +50,11 @@ public class Product {
         this.price = price;
     }
 
-    public Collection<ProductRange> getProductRanges() {
+    public List<ProductRangeEntity> getProductRanges() {
         return productRanges;
     }
 
-    public void setProductRanges(Collection<ProductRange> productRanges) {
+    public void setProductRanges(List<ProductRangeEntity> productRanges) {
         this.productRanges = productRanges;
     }
 }
