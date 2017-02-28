@@ -1,7 +1,5 @@
 package net.devium.argentum.jpa;
 
-import com.google.common.base.Objects;
-
 import javax.persistence.*;
 import java.util.Collections;
 import java.util.List;
@@ -46,20 +44,5 @@ public class ProductRangeEntity {
 
     public void setProducts(List<ProductEntity> products) {
         this.products = products;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ProductRangeEntity that = (ProductRangeEntity) o;
-        return Objects.equal(id, that.id) &&
-                Objects.equal(name, that.name) &&
-                Objects.equal(products, that.products);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id, name, products);
     }
 }
