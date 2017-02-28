@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -18,8 +17,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.Collections;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -85,8 +83,6 @@ public class ProductRangeControllerTest {
 
     @Test
     public void testDeleteProductRange() throws Exception {
-        when(productRangeRepository.findOne("someRange")).thenReturn(new ProductRangeEntity("someRange", "someName"));
-
         mockMvc.perform(delete("/product_ranges/someRange"))
                 .andExpect(status().isNoContent());
 
@@ -94,13 +90,14 @@ public class ProductRangeControllerTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testDeleteProductRangeNotFound() throws Exception {
-        when(productRangeRepository.findOne("someRange")).thenThrow(EmptyResultDataAccessException.class);
+        doThrow(EmptyResultDataAccessException.class).when(productRangeRepository).delete("someRange");
 
         mockMvc.perform(delete("/product_ranges/someRange"))
                 .andExpect(status().isNotFound());
 
-        verify(productRangeRepository, Mockito.never()).delete("someRange");
+        verify(productRangeRepository).delete("someRange");
     }
+
+
 }
