@@ -1,7 +1,8 @@
 package net.devium.argentum.rest;
 
-import net.devium.argentum.model.ProductRange;
-import net.devium.argentum.model.ProductRangeRepository;
+import net.devium.argentum.jpa.ProductRangeEntity;
+import net.devium.argentum.jpa.ProductRangeRepository;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,9 +17,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Collections;
 
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -48,6 +51,18 @@ public class ProductRangeControllerTest {
     }
 
     @Test
+    public void testGetProductRange() throws Exception {
+        ProductRangeEntity range = new ProductRangeEntity("someRange", "someName");
+        when(productRangeRepository.findOne("someRange")).thenReturn(range);
+
+        mockMvc.perform(get("/product_ranges/someRange"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is("someRange")))
+                .andExpect(jsonPath("$.name", is("someName")))
+                .andExpect(jsonPath("$.products", Matchers.empty()));
+    }
+
+    @Test
     public void testCreateProductRange() throws Exception {
         String body = "{ 'id': 'someRange', 'name': 'someName' }";
         body = body.replace('\'', '"');
@@ -57,12 +72,12 @@ public class ProductRangeControllerTest {
                 .content(body))
                 .andExpect(status().isNoContent());
 
-        verify(productRangeRepository).save(new ProductRange("someRange", "someName"));
+        verify(productRangeRepository).save(new ProductRangeEntity("someRange", "someName"));
     }
 
     @Test
     public void testDeleteProductRange() throws Exception {
-        when(productRangeRepository.findOne("someRange")).thenReturn(new ProductRange("someRange", "someName"));
+        when(productRangeRepository.findOne("someRange")).thenReturn(new ProductRangeEntity("someRange", "someName"));
 
         mockMvc.perform(delete("/product_ranges/someRange"))
                 .andExpect(status().isNoContent());
