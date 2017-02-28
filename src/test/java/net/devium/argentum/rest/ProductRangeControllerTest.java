@@ -63,6 +63,14 @@ public class ProductRangeControllerTest {
     }
 
     @Test
+    public void testGetProductRangeNotFound() throws Exception {
+        when(productRangeRepository.findOne("someRange")).thenReturn(null);
+
+        mockMvc.perform(get("/product_ranges/someRange"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     public void testCreateProductRange() throws Exception {
         String body = "{ 'id': 'someRange', 'name': 'someName' }";
         body = body.replace('\'', '"');
