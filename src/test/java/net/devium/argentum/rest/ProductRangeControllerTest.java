@@ -3,6 +3,7 @@ package net.devium.argentum.rest;
 import net.devium.argentum.jpa.ProductRangeEntity;
 import net.devium.argentum.jpa.ProductRangeRepository;
 import org.hamcrest.Matchers;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,9 +32,13 @@ public class ProductRangeControllerTest {
 
     @Before
     public void setUp() {
-        productRangeRepository.deleteAll();
         sut = new ProductRangeController(productRangeRepository);
         mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        productRangeRepository.deleteAll();
     }
 
     @Test

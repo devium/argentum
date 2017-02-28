@@ -12,6 +12,7 @@ public class ApplicationResourceProcessor implements ResourceProcessor<Repositor
     public RepositoryLinksResource process(RepositoryLinksResource resource) {
         resource.add(ControllerLinkBuilder.linkTo(ProductRangeController.class).withRel("product_ranges"));
         resource.add(ControllerLinkBuilder.linkTo(ProductRangeController.class).withRel("products"));
+        resource.add(ControllerLinkBuilder.linkTo(ProductRangeController.class).withRel("orders"));
         return resource;
     }
 }

@@ -5,6 +5,7 @@ import net.devium.argentum.jpa.ProductEntity;
 import net.devium.argentum.jpa.ProductRangeEntity;
 import net.devium.argentum.jpa.ProductRangeRepository;
 import net.devium.argentum.jpa.ProductRepository;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,8 +20,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -39,10 +40,14 @@ public class ProductControllerTest {
 
     @Before
     public void setUp() {
-        productRepository.deleteAll();
-        productRangeRepository.deleteAll();
         sut = new ProductController(productRepository, productRangeRepository);
         mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        productRepository.deleteAll();
+        productRangeRepository.deleteAll();
     }
 
     @Test
@@ -89,16 +94,15 @@ public class ProductControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(body))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.name", is("someProduct")))
                 .andExpect(jsonPath("$.price", closeTo(3.5, 0.0001)))
                 .andExpect(jsonPath("$.ranges", contains("someRange", "someOtherRange")));
 
-        List<ProductRangeEntity> ranges = productRangeRepository.findAll();
         range1 = productRangeRepository.findOne("someRange");
-        assertEquals(range1.getProducts().get(0).getId(), 1);
-        range2 = productRangeRepository.findOne("someOtherRange");
-        assertEquals(range2.getProducts().get(0).getId(), 1);
+        range2 = productRangeRepository.findOne("someRange");
+        assertThat(range1.getProducts(), hasSize(1));
+        assertThat(range2.getProducts(), hasSize(1));
     }
 
     @Test
@@ -120,12 +124,12 @@ public class ProductControllerTest {
         productRangeRepository.save(range2);
         List<ProductRangeEntity> ranges = ImmutableList.of(range1, range2);
         ProductEntity product = new ProductEntity("someProduct", new BigDecimal(3.50), ranges);
-        long id = productRepository.save(product).getId();
+        product = productRepository.save(product);
 
-        mockMvc.perform(delete("/products/{id}", id))
+        mockMvc.perform(delete("/products/{id}", product.getId()))
                 .andExpect(status().isNoContent());
 
-        assertFalse(productRepository.exists(id));
+        assertFalse(productRepository.exists(product.getId()));
     }
 
     @Test
