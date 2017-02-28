@@ -17,6 +17,9 @@ public class Product {
     @ManyToMany(mappedBy = "products")
     private Collection<ProductRange> productRanges;
 
+    public Product() {
+    }
+
     public Product(Collection<ProductRange> productRanges, String name, BigDecimal price) {
         this.productRanges = productRanges;
         this.name = name;
