@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
@@ -95,8 +96,13 @@ public class OrderControllerTest {
     }
 
     @Test
-    public void testCreateOrder() throws Exception {
+    public void testGetOrderNotFound() throws Exception {
+        mockMvc.perform(get("/orders/123"))
+                .andExpect(status().isNotFound());
+    }
 
+    @Test
+    public void testCreateOrder() throws Exception {
         ProductRangeEntity range = new ProductRangeEntity("someRange", "someName");
         ProductEntity product1 = new ProductEntity("someProduct", new BigDecimal(3.50),
                 Collections.singletonList(range));
@@ -128,5 +134,54 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.items[1].quantity", is(1)));
 
         assertFalse(orderRepository.findAll().isEmpty());
+    }
+
+    @Test
+    public void testCreateOrderProductNotFound() throws Exception {
+        String body = "{" +
+                "   'range': 'someRange'," +
+                "   'items': [" +
+                "       { 'productId': %d, 'quantity': 2 }," +
+                "       { 'productId': %d, 'quantity': 1 }" +
+                "   ]" +
+                "}";
+        body = String.format(body, 1, 2);
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(post("/orders")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andExpect(status().isNotFound());
+
+        assertTrue(orderRepository.findAll().isEmpty());
+    }
+
+    @Test
+    public void testCreateOrderProductNotInRange() throws Exception {
+        ProductRangeEntity range = new ProductRangeEntity("someRange", "someName");
+        ProductEntity product1 = new ProductEntity("someProduct", new BigDecimal(3.50),
+                Collections.singletonList(range));
+        ProductEntity product2 = new ProductEntity("someOtherProduct", new BigDecimal(5.80),
+                Collections.singletonList(range));
+        productRangeRepository.save(range);
+        product1 = productRepository.save(product1);
+        product2 = productRepository.save(product2);
+
+        String body = "{" +
+                "   'range': 'someOtherRange'," +
+                "   'items': [" +
+                "       { 'productId': %d, 'quantity': 2 }," +
+                "       { 'productId': %d, 'quantity': 1 }" +
+                "   ]" +
+                "}";
+        body = String.format(body, product1.getId(), product2.getId());
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(post("/orders")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andExpect(status().isNotFound());
+
+        assertTrue(orderRepository.findAll().isEmpty());
     }
 }

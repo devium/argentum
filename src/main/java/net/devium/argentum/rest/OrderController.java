@@ -88,11 +88,6 @@ public class OrderController {
             throw new ResourceNotFoundException(message);
         }
 
-        if (!productRangeRepository.exists(order.getRange())) {
-            String message = String.format("Product range %s not found.", order.getRange());
-            throw new ResourceNotFoundException(message);
-        }
-
         ProductRangeEntity range = productRangeRepository.findOne(order.getRange());
 
         List<OrderItemEntity> orderItems = order.getItems().stream()
