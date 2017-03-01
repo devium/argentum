@@ -6,12 +6,12 @@ import java.util.List;
 public class ProductRangeResponse {
     private String id;
     private String name;
-    private List<Long> products;
+    private List<ProductResponseNoRange> products;
 
     public ProductRangeResponse() {
     }
 
-    public ProductRangeResponse(String id, String name, List<Long> products) {
+    public ProductRangeResponse(String id, String name, List<ProductResponseNoRange> products) {
         this.id = id;
         this.name = name;
         this.products = products;
@@ -25,7 +25,7 @@ public class ProductRangeResponse {
         return name;
     }
 
-    public List<Long> getProducts() {
+    public List<ProductResponseNoRange> getProducts() {
         return products;
     }
 }
