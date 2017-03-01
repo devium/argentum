@@ -1,10 +1,10 @@
 package net.devium.argentum.rest;
 
-import net.devium.argentum.jpa.ProductEntity;
 import net.devium.argentum.jpa.ProductRangeEntity;
 import net.devium.argentum.jpa.ProductRangeRepository;
 import net.devium.argentum.rest.model.ProductRangeRequest;
 import net.devium.argentum.rest.model.ProductRangeResponse;
+import net.devium.argentum.rest.model.ProductResponseNoRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +44,10 @@ public class ProductRangeController {
             LOGGER.info("Product range with ID {} not found.", rangeId);
             throw new ResourceNotFoundException();
         }
-        List<Long> productIds = range.getProducts().stream()
-                .map(ProductEntity::getId)
+        List<ProductResponseNoRange> products = range.getProducts().stream()
+                .map(product -> new ProductResponseNoRange(product.getId(), product.getName(), product.getPrice()))
                 .collect(Collectors.toList());
-        return new ProductRangeResponse(range.getId(), range.getName(), productIds);
+        return new ProductRangeResponse(range.getId(), range.getName(), products);
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)

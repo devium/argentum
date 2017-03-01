@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -82,6 +83,7 @@ public class OrderControllerTest {
         saveOrders();
 
         mockMvc.perform(get("/orders"))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
     }
@@ -91,6 +93,7 @@ public class OrderControllerTest {
         List<OrderEntity> orders = saveOrders();
 
         mockMvc.perform(get("/orders/{id}", orders.get(0).getId()))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.range", is("someRange")));
     }
@@ -98,6 +101,7 @@ public class OrderControllerTest {
     @Test
     public void testGetOrderNotFound() throws Exception {
         mockMvc.perform(get("/orders/123"))
+                .andDo(print())
                 .andExpect(status().isNotFound());
     }
 
@@ -125,6 +129,7 @@ public class OrderControllerTest {
         mockMvc.perform(post("/orders")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(body))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.range", is("someRange")))
@@ -151,6 +156,7 @@ public class OrderControllerTest {
         mockMvc.perform(post("/orders")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(body))
+                .andDo(print())
                 .andExpect(status().isNotFound());
 
         assertTrue(orderRepository.findAll().isEmpty());
@@ -180,6 +186,7 @@ public class OrderControllerTest {
         mockMvc.perform(post("/orders")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(body))
+                .andDo(print())
                 .andExpect(status().isNotFound());
 
         assertTrue(orderRepository.findAll().isEmpty());

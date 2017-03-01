@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -53,6 +54,7 @@ public class ProductControllerTest {
     @Test
     public void testGetProductsNotFound() throws Exception {
         mockMvc.perform(get("/products"))
+                .andDo(print())
                 .andExpect(status().isMethodNotAllowed());
     }
 
@@ -67,6 +69,7 @@ public class ProductControllerTest {
         long id = productRepository.save(product).getId();
 
         mockMvc.perform(get("/products/{id}", id))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is((int) id)))
                 .andExpect(jsonPath("$.name", is("someProduct")))
@@ -77,6 +80,7 @@ public class ProductControllerTest {
     @Test
     public void testGetProductNotFound() throws Exception {
         mockMvc.perform(get("/products/123"))
+                .andDo(print())
                 .andExpect(status().isNotFound());
     }
 
@@ -93,6 +97,7 @@ public class ProductControllerTest {
         mockMvc.perform(post("/products")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(body))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.name", is("someProduct")))
@@ -113,6 +118,7 @@ public class ProductControllerTest {
         mockMvc.perform(post("/products")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(body))
+                .andDo(print())
                 .andExpect(status().isNotFound());
     }
 
@@ -127,6 +133,7 @@ public class ProductControllerTest {
         product = productRepository.save(product);
 
         mockMvc.perform(delete("/products/{id}", product.getId()))
+                .andDo(print())
                 .andExpect(status().isNoContent());
 
         assertFalse(productRepository.exists(product.getId()));
@@ -135,6 +142,7 @@ public class ProductControllerTest {
     @Test
     public void testDeleteProductNotFound() throws Exception {
         mockMvc.perform(delete("/products/123"))
+                .andDo(print())
                 .andExpect(status().isNotFound());
     }
 }
