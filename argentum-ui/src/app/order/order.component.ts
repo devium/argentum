@@ -1,6 +1,6 @@
-import { Component, OnInit } from "@angular/core";
-import { Product } from "../product";
-import { ProductService } from "../product.service";
+import { Component, OnInit } from '@angular/core';
+import { Product } from '../product';
+import { ProductService } from '../product.service';
 
 @Component({
   selector: 'app-order',
@@ -8,8 +8,8 @@ import { ProductService } from "../product.service";
   styleUrls: ['order.component.scss']
 })
 export class OrderComponent implements OnInit {
-  private readonly RANGE_PRODUCTS_PER_PAGE = 30;
-  private readonly ORDER_PRODUCTS_PER_PAGE = 15;
+  private readonly RANGE_PRODUCTS_PER_PAGE = 36;
+  private readonly ORDER_PRODUCTS_PER_PAGE = 18;
   private rangePage = 0;
   private orderPage = 0;
   private products: Product[] = [];
