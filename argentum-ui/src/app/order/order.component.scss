@@ -1,9 +1,9 @@
 .btn-product {
   height: 80px;
-}
 
-.btn-product:hover {
-  background-color: #88bbbb !important;
+  &:not(.disabled):hover {
+    background-color: #88bbbb !important;
+  }
 }
 
 .btn-dummy {
