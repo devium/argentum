@@ -11,5 +11,6 @@ export const PRODUCTS = [
   { id: 10, name: "Chai Latte" },
   { id: 11, name: "Coffee" },
   { id: 12, name: "Red Bull" },
-  { id: 13, name: "Shot" }
+  { id: 13, name: "Shot" },
+  { id: 14, name: "Cake" }
 ];
