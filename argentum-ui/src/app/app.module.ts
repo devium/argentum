@@ -5,16 +5,20 @@ import { HttpModule } from "@angular/http";
 import { AppComponent } from "./app.component";
 import { OrderComponent } from "./order/order.component";
 import { ProductService } from "./product.service";
+import { IterablePipe } from "./iterable.pipe";
+import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 
 @NgModule({
   declarations: [
     AppComponent,
-    OrderComponent
+    OrderComponent,
+    IterablePipe
   ],
   imports: [
     BrowserModule,
     FormsModule,
-    HttpModule
+    HttpModule,
+    NgbModule.forRoot()
   ],
   providers: [
     ProductService

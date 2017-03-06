@@ -1,7 +1,66 @@
 <div *ngIf="products" class="container-fluid">
-  <div *ngFor="let row of [0,1,2]" class="row">
-    <div *ngFor="let product of products.slice(row * 4, row * 4 + 4)" class="col-sm-3 col-6  col-small-padding">
-      <button type="button" class="btn btn-info btn-block">{{product.id}}: {{product.name}}</button>
+  <div class="row">
+    <div class="col-lg-8 col-big-gutter">
+
+      <div class="row">
+        <div class="col">
+          <h4 class="text-center">Product range</h4>
+        </div>
+      </div>
+
+      <div class="row">
+        <div
+          *ngFor="let product of getPaginated(products, RANGE_PRODUCTS_PER_PAGE, rangePage)"
+          class="col-sm-2 col-4 col-small-padding">
+          <button (click)="rangeProductClicked(product)" type="button" class="btn btn-info btn-block btn-product">
+            <div>{{product.id}}</div>
+            <div>{{product.name}}</div>
+          </button>
+        </div>
+        <div
+          *ngFor="let i of range(getNumPadItems(products.length, RANGE_PRODUCTS_PER_PAGE, rangePage))"
+          class="col-sm-2 col-4 col-small-padding">
+          <button type="button" class="btn btn-info btn-block disabled btn-product btn-dummy"></button>
+        </div>
+      </div>
+
+      <div class="row justify-content-center pad-top">
+        <ngb-pagination [collectionSize]="products.length" [(page)]="rangePage" [pageSize]="RANGE_PRODUCTS_PER_PAGE"
+                        size="lg"></ngb-pagination>
+      </div>
+
+    </div>
+    <div class="col-lg-4 col-big-gutter">
+
+      <div class="row">
+        <div class="col">
+          <h4 class="text-center">Current order</h4>
+        </div>
+      </div>
+
+      <div class="row">
+        <div
+          *ngFor="let productEntry of orderedProducts | iterable | slice:(ORDER_PRODUCTS_PER_PAGE * (orderPage - 1)):(ORDER_PRODUCTS_PER_PAGE * orderPage)"
+          class="col-lg-4 col-sm-2 col-4 col-small-padding">
+          <button (click)="orderedProductClicked(productEntry.key)" type="button"
+                  class="btn btn-danger btn-block btn-product">
+            <div>{{productEntry.key.id}}</div>
+            <div>{{productEntry.key.name}}</div>
+            <div>x{{productEntry.value}}</div>
+          </button>
+        </div>
+        <div
+          *ngFor="let i of range(getNumPadItems(orderedProducts.size, ORDER_PRODUCTS_PER_PAGE, orderPage))"
+          class="col-lg-4 col-sm-2 col-4 col-small-padding">
+          <button type="button" class="btn btn-info btn-block disabled btn-product btn-dummy"></button>
+        </div>
+      </div>
+
+      <div class="row justify-content-center pad-top">
+        <ngb-pagination [collectionSize]="orderedProducts.size" [(page)]="orderPage"
+                        [pageSize]="ORDER_PRODUCTS_PER_PAGE" size="lg"></ngb-pagination>
+      </div>
+
     </div>
   </div>
 </div>
