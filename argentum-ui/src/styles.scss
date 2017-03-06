@@ -2,6 +2,10 @@
   cursor: pointer;
 }
 
+.btn.disabled {
+  cursor: default;
+}
+
 .col-small-padding {
   padding: 1px;
 }
