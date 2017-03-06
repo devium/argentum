@@ -1,1 +1,7 @@
-<button type="button" class="btn btn-info">Bootstrap works</button>
+<div *ngIf="products" class="container-fluid">
+  <div *ngFor="let row of [0,1,2]" class="row">
+    <div *ngFor="let product of products.slice(row * 4, row * 4 + 4)" class="col-sm-3 col-6  col-small-padding">
+      <button type="button" class="btn btn-info btn-block">{{product.id}}: {{product.name}}</button>
+    </div>
+  </div>
+</div>
