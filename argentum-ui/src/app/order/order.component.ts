@@ -8,8 +8,8 @@ import { ProductService } from "../product.service";
   styleUrls: ['order.component.scss']
 })
 export class OrderComponent implements OnInit {
-  private readonly RANGE_PRODUCTS_PER_PAGE = 24;
-  private readonly ORDER_PRODUCTS_PER_PAGE = 12;
+  private readonly RANGE_PRODUCTS_PER_PAGE = 30;
+  private readonly ORDER_PRODUCTS_PER_PAGE = 15;
   private rangePage = 0;
   private orderPage = 0;
   private products: Product[] = [];
@@ -28,7 +28,6 @@ export class OrderComponent implements OnInit {
     } else {
       this.orderedProducts.set(product, 1);
     }
-    console.info(this.orderedProducts.size);
   }
 
   private orderedProductClicked(product: Product): void {
@@ -45,7 +44,6 @@ export class OrderComponent implements OnInit {
   }
 
   getNumPadItems(count: number, pageSize: number, page: number): number {
-    console.info("Count: %s", count);
     if (count == 0) {
       return pageSize;
     }
@@ -62,6 +60,16 @@ export class OrderComponent implements OnInit {
       range.push(i);
     }
     return range;
+  }
+
+  private isDarkBackground(color: string): boolean {
+    let r = parseInt(color.substr(1, 2), 16);
+    let g = parseInt(color.substr(3, 2), 16);
+    let b = parseInt(color.substr(5, 2), 16);
+
+    let luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+
+    return luminance < 128;
   }
 
 }

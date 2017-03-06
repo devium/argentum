@@ -12,7 +12,8 @@
         <div
           *ngFor="let product of getPaginated(products, RANGE_PRODUCTS_PER_PAGE, rangePage)"
           class="col-sm-2 col-4 col-small-padding">
-          <button (click)="rangeProductClicked(product)" type="button" class="btn btn-info btn-block btn-product">
+          <button (click)="rangeProductClicked(product)" type="button" class="btn btn-block btn-product"
+                  [style.background-color]="product.color" [class.dark-bg]="isDarkBackground(product.color)">
             <div>{{product.id}}</div>
             <div>{{product.name}}</div>
           </button>
@@ -43,7 +44,8 @@
           *ngFor="let productEntry of orderedProducts | iterable | slice:(ORDER_PRODUCTS_PER_PAGE * (orderPage - 1)):(ORDER_PRODUCTS_PER_PAGE * orderPage)"
           class="col-lg-4 col-sm-2 col-4 col-small-padding">
           <button (click)="orderedProductClicked(productEntry.key)" type="button"
-                  class="btn btn-danger btn-block btn-product">
+                  class="btn btn-block btn-product" [style.background-color]="productEntry.key.color"
+                  [class.dark-bg]="isDarkBackground(productEntry.key.color)">
             <div>{{productEntry.key.id}}</div>
             <div>{{productEntry.key.name}}</div>
             <div>x{{productEntry.value}}</div>
