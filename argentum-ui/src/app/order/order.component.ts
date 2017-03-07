@@ -15,6 +15,9 @@ export class OrderComponent implements OnInit {
   private products: Product[] = [];
   private orderedProducts: Map<Product, number> = new Map<Product, number>();
 
+  @Output()
+  customProductEvent = new EventEmitter();
+
   constructor(private productService: ProductService, private ngZone: NgZone) {
     window.onresize = (event) => {
       this.ngZone.run(() => {
@@ -75,9 +78,7 @@ export class OrderComponent implements OnInit {
     return luminance < 128;
   }
 
-  @Output() customProductEvent = new EventEmitter();
   private addCustomProduct(): void {
     this.customProductEvent.emit(null);
   }
-
 }
