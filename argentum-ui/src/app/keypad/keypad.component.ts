@@ -13,12 +13,20 @@ export class KeypadComponent {
   }
 
   entry(char: any): void {
-    if (char == '.' && this.display.indexOf('.') > -1) {
+    let decimalPos = this.display.indexOf('.');
+    if (this.display.length > 8) {
+      return;
+    } else if (char == '.' && decimalPos > -1) {
       return;
     } else if (char == 0 && this.display == '0') {
       return;
+    } else if (decimalPos > -1 && this.display.length - decimalPos == 3) {
+      return;
     }
     this.display += char;
+    if (this.display == '.') {
+      this.display = '0.';
+    }
   }
 
   delete(): void {
