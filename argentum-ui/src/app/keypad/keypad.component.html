@@ -2,7 +2,10 @@
 
   <div class="row">
     <div class="col-8 p-05">
-      <div class="h-100 form-control disabled text-right keypad-display">{{display}}</div>
+      <div class="h-100 input-group">
+        <div class="input-group-addon keypad-display">&euro;</div>
+        <div class="form-control disabled text-right keypad-display">{{display}}</div>
+      </div>
     </div>
     <div class="col-4 p-05">
       <button (click)="delete()" type="button" class="btn btn-primary btn-block btn-lg"><i
