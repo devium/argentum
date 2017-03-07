@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from "@angular/core";
+import { Component, OnInit, NgZone, EventEmitter, Output } from "@angular/core";
 import { Product } from "../product";
 import { ProductService } from "../product.service";
 
@@ -84,8 +84,9 @@ export class OrderComponent implements OnInit {
     return luminance < 128;
   }
 
+  @Output() customProductEvent = new EventEmitter();
   private addCustomProduct(): void {
-    console.info('TODO');
+    this.customProductEvent.emit(null);
   }
 
 }
