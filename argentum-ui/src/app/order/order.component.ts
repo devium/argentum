@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { Product } from '../product';
-import { ProductService } from '../product.service';
+import { Component, OnInit, NgZone } from "@angular/core";
+import { Product } from "../product";
+import { ProductService } from "../product.service";
 
 @Component({
   selector: 'app-order',
@@ -8,14 +8,26 @@ import { ProductService } from '../product.service';
   styleUrls: ['order.component.scss']
 })
 export class OrderComponent implements OnInit {
-  private readonly RANGE_PRODUCTS_PER_PAGE = 36;
-  private readonly ORDER_PRODUCTS_PER_PAGE = 18;
+  private rangeProductsPerPage;
+  private orderProductsPerPage;
   private rangePage = 0;
   private orderPage = 0;
   private products: Product[] = [];
   private orderedProducts: Map<Product, number> = new Map<Product, number>();
 
-  constructor(private productService: ProductService) {
+  constructor(private productService: ProductService, private ngZone: NgZone) {
+    window.onresize = (event) => {
+      this.ngZone.run(() => {
+        if (window.innerWidth < 576) {
+          this.rangeProductsPerPage = 14;
+          this.orderProductsPerPage = 6;
+        } else {
+          this.rangeProductsPerPage = 35;
+          this.orderProductsPerPage = 18;
+        }
+      });
+    };
+    window.onresize(null);
   }
 
   ngOnInit() {
@@ -70,6 +82,10 @@ export class OrderComponent implements OnInit {
     let luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
 
     return luminance < 128;
+  }
+
+  private addCustomProduct(): void {
+    console.info('TODO');
   }
 
 }
