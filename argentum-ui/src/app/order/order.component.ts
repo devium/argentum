@@ -1,6 +1,8 @@
-import { Component, OnInit, NgZone, EventEmitter, Output } from "@angular/core";
-import { Product } from "../product";
-import { ProductService } from "../product.service";
+import { Component, OnInit, NgZone, EventEmitter, Output } from '@angular/core';
+import { Product } from '../product';
+import { ProductService } from '../product.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { KeypadComponent } from '../keypad/keypad.component';
 
 @Component({
   selector: 'app-order',
@@ -18,7 +20,7 @@ export class OrderComponent implements OnInit {
   @Output()
   customProductEvent = new EventEmitter();
 
-  constructor(private productService: ProductService, private ngZone: NgZone) {
+  constructor(private productService: ProductService, private ngZone: NgZone, private modalService: NgbModal) {
     window.onresize = (event) => {
       this.ngZone.run(() => {
         if (window.innerWidth < 576) {
@@ -79,6 +81,12 @@ export class OrderComponent implements OnInit {
   }
 
   private addCustomProduct(): void {
-    this.customProductEvent.emit(null);
+    let modal = this.modalService.open(KeypadComponent, { backdrop: 'static', size: 'sm' });
+    modal.result.then(result => this.confirmKeypad(result), result => void(0));
+  }
+
+  private confirmKeypad(result: number): void {
+    // TODO
+    console.info(result);
   }
 }
