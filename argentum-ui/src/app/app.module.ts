@@ -7,12 +7,14 @@ import { OrderComponent } from "./order/order.component";
 import { ProductService } from "./product.service";
 import { IterablePipe } from "./iterable.pipe";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+import { KeypadComponent } from "./keypad/keypad.component";
 
 @NgModule({
   declarations: [
     AppComponent,
     OrderComponent,
-    IterablePipe
+    IterablePipe,
+    KeypadComponent
   ],
   imports: [
     BrowserModule,
@@ -23,7 +25,12 @@ import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
   providers: [
     ProductService
   ],
-  bootstrap: [ AppComponent ]
+  bootstrap: [
+    AppComponent
+  ],
+  entryComponents: [
+    KeypadComponent
+  ]
 })
 export class AppModule {
 }
