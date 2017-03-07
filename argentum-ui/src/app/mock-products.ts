@@ -7,7 +7,7 @@ export const PRODUCTS = [
   { id: 6, name: "Sprite", color: "#800000" },
   { id: 7, name: "Coke", color: "#800000" },
   { id: 8, name: "Pepsi", color: "#800000" },
-  { id: 9, name: "Tea", color: "#ffffff" },
+  { id: 9, name: "Tea", color: "#eeeeee" },
   { id: 10, name: "Chai Latte", color: "#800000" },
   { id: 11, name: "Coffee", color: "#800000" },
   { id: 12, name: "Red Bull", color: "#eeeeff" },
