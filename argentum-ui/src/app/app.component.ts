@@ -14,6 +14,6 @@ export class AppComponent {
   }
 
   openKeypad(): void {
-    this.modalService.open(KeypadComponent, { backdrop: 'static' });
+    this.modalService.open(KeypadComponent, { backdrop: 'static', size: 'sm' });
   }
 }

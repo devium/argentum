@@ -1,0 +1,38 @@
+<div class="modal-body mx-4 my-3 p-0">
+
+  <div class="row">
+    <div class="col-8 p-05">
+      <div class="h-100 form-control disabled text-right keypad-display">12.34</div>
+    </div>
+    <div class="col-4 p-05">
+      <button type="button" class="btn btn-primary btn-block btn-lg"><i class="fa fa-caret-square-o-left fa-lg"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div *ngFor="let i of [1,2,3,4,5,6,7,8,9]" class="col-4 p-05">
+      <button type="button" class="btn btn-primary btn-block btn-lg">{{i}}</button>
+    </div>
+
+
+    <div class="col-4 p-05">
+      <button type="button" class="btn btn-primary btn-block btn-lg">.</button>
+    </div>
+    <div class="col-4 p-05">
+      <button type="button" class="btn btn-primary btn-block btn-lg">0</button>
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-4 p-05">
+      <button type="button" class="btn btn-secondary btn-block btn-lg"
+              (click)="activeModal.dismiss('Cancel click')"><i class="fa fa-close fa-lg"></i>
+      </button>
+    </div>
+    <div class="col-8 p-05">
+      <button type="button" class="btn btn-primary btn-block btn-lg"><i class="fa fa-check fa-lg"></i></button>
+    </div>
+  </div>
+
+</div>

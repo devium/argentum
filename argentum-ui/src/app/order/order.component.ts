@@ -60,18 +60,9 @@ export class OrderComponent implements OnInit {
       return pageSize;
     }
     if (count - pageSize * (page - 1) < pageSize) {
-      let a = pageSize - count % pageSize;
-      return a;
+      return pageSize - count % pageSize;
     }
     return 0;
-  }
-
-  private range(n: number): number[] {
-    let range = [];
-    for (let i = 0; i < n; i++) {
-      range.push(i);
-    }
-    return range;
   }
 
   private isDarkBackground(color: string): boolean {

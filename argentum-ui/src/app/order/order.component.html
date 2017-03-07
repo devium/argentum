@@ -1,6 +1,6 @@
 <div *ngIf="products" class="container-fluid">
   <div class="row">
-    <div class="col-lg-8 col-big-gutter">
+    <div class="col-lg-8 px-4">
 
       <div class="row">
         <div class="col">
@@ -11,7 +11,7 @@
       <div class="row">
         <div
           *ngFor="let product of getPaginated(products, rangeProductsPerPage, rangePage)"
-          class="col-sm-2 col-4 col-small-padding">
+          class="col-sm-2 col-4 p-05">
           <button (click)="rangeProductClicked(product)" type="button" class="btn btn-block btn-product"
                   [style.background-color]="product.color" [class.dark-bg]="isDarkBackground(product.color)">
             <div>{{product.id}}</div>
@@ -19,24 +19,24 @@
           </button>
         </div>
         <div
-          *ngFor="let i of range(getNumPadItems(products.length, rangeProductsPerPage, rangePage))"
-          class="col-sm-2 col-4 col-small-padding">
+          *ngFor="let i of 1 | range : getNumPadItems(products.length, rangeProductsPerPage, rangePage)"
+          class="col-sm-2 col-4 p-05">
           <button type="button" class="btn btn-block disabled btn-product btn-dummy"></button>
         </div>
-        <div class="col-sm-2 col-4 col-small-padding">
+        <div class="col-sm-2 col-4 p-05">
           <button (click)="addCustomProduct()" type="button"
                   class="btn btn-outline-primary btn-block btn-product btn-product-custom">Custom
           </button>
         </div>
       </div>
 
-      <div class="row justify-content-center pad-top">
+      <div class="row justify-content-center mt-2">
         <ngb-pagination [collectionSize]="products.length" [(page)]="rangePage" [pageSize]="rangeProductsPerPage"
                         size="lg"></ngb-pagination>
       </div>
 
     </div>
-    <div class="col-lg-4 col-big-gutter">
+    <div class="col-lg-4 px-4">
 
       <div class="row">
         <div class="col">
@@ -47,7 +47,7 @@
       <div class="row">
         <div
           *ngFor="let productEntry of orderedProducts | iterable | slice:(orderProductsPerPage * (orderPage - 1)):(orderProductsPerPage * orderPage)"
-          class="col-lg-4 col-sm-2 col-4 col-small-padding">
+          class="col-lg-4 col-sm-2 col-4 p-05">
           <button (click)="orderedProductClicked(productEntry.key)" type="button"
                   class="btn btn-block btn-product" [style.background-color]="productEntry.key.color"
                   [class.dark-bg]="isDarkBackground(productEntry.key.color)">
@@ -57,13 +57,13 @@
           </button>
         </div>
         <div
-          *ngFor="let i of range(getNumPadItems(orderedProducts.size, orderProductsPerPage, orderPage))"
-          class="col-lg-4 col-sm-2 col-4 col-small-padding">
+          *ngFor="let i of 1 | range : getNumPadItems(orderedProducts.size, orderProductsPerPage, orderPage)"
+          class="col-lg-4 col-sm-2 col-4 p-05">
           <button type="button" class="btn btn-block disabled btn-product btn-dummy"></button>
         </div>
       </div>
 
-      <div class="row justify-content-center pad-top">
+      <div class="row justify-content-center mt-2">
         <ngb-pagination [collectionSize]="orderedProducts.size" [(page)]="orderPage"
                         [pageSize]="orderProductsPerPage" size="lg"></ngb-pagination>
       </div>
