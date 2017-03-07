@@ -8,13 +8,15 @@ import { ProductService } from "./product.service";
 import { IterablePipe } from "./iterable.pipe";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { KeypadComponent } from "./keypad/keypad.component";
+import { RangePipe } from "./range.pipe";
 
 @NgModule({
   declarations: [
     AppComponent,
     OrderComponent,
     IterablePipe,
-    KeypadComponent
+    KeypadComponent,
+    RangePipe
   ],
   imports: [
     BrowserModule,
