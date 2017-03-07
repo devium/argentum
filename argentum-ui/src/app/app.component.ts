@@ -1,6 +1,4 @@
-import { Component } from "@angular/core";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { KeypadComponent } from "./keypad/keypad.component";
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -9,11 +7,4 @@ import { KeypadComponent } from "./keypad/keypad.component";
 })
 export class AppComponent {
   title = 'Argentum';
-
-  constructor(private modalService: NgbModal) {
-  }
-
-  openKeypad(): void {
-    this.modalService.open(KeypadComponent, { backdrop: 'static', size: 'sm' });
-  }
 }

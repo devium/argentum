@@ -1,5 +1,5 @@
-import { Component, Output, EventEmitter } from "@angular/core";
-import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
+import { Component } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-keypad',
@@ -11,9 +11,6 @@ export class KeypadComponent {
 
   constructor(public activeModal: NgbActiveModal) {
   }
-
-  @Output()
-  keypadConfirmedEvent = new EventEmitter();
 
   entry(char: any): void {
     let decimalPos = this.display.indexOf('.');
@@ -32,13 +29,12 @@ export class KeypadComponent {
     }
   }
 
-  delete(): void {
+  deleteChar(): void {
     this.display = this.display.substr(0, this.display.length - 1);
   }
 
   confirm(): void {
-    this.activeModal.close();
     let value = parseFloat(this.display);
-    this.keypadConfirmedEvent.emit(value);
+    this.activeModal.close(value);
   }
 }
