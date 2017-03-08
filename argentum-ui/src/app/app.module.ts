@@ -9,6 +9,7 @@ import { IterablePipe } from "./iterable.pipe";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { KeypadComponent } from "./keypad/keypad.component";
 import { RangePipe } from "./range.pipe";
+import { CardComponent } from "./card/card.component";
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { RangePipe } from "./range.pipe";
     OrderComponent,
     IterablePipe,
     KeypadComponent,
-    RangePipe
+    RangePipe,
+    CardComponent
   ],
   imports: [
     BrowserModule,
