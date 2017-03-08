@@ -1,2 +1,4 @@
-<input #cardEntry (keyup)="search(cardEntry.value)" class="form-control" type="number">
-<div>{{cardResult | async}}</div>
+<div>
+  <input #cardEntry maxlength="10" (keyup)="search(cardEntry.value)"
+         class="form-control mx-auto my-3 text-center input-card" type="text">
+</div>
