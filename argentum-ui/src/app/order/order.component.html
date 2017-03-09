@@ -1,6 +1,6 @@
 <div *ngIf="products" class="container-fluid">
   <div class="row">
-    <div class="col-lg-8 px-4">
+    <div class="col-lg-8 px-4 my-2">
 
       <div class="row">
         <div class="col">
@@ -14,8 +14,8 @@
           class="col-sm-2 col-4 p-05">
           <button (click)="rangeProductClicked(product)" type="button" class="btn btn-block btn-product"
                   [style.background-color]="product.color" [class.dark-bg]="isDarkBackground(product.color)">
-            <div>{{product.id}}</div>
             <div>{{product.name}}</div>
+            <div>€ {{product.price | number: '1.2-2'}}</div>
           </button>
         </div>
         <div
@@ -30,21 +30,21 @@
         </div>
       </div>
 
-      <div class="row justify-content-center mt-2">
+      <div class="row justify-content-center my-1">
         <ngb-pagination [collectionSize]="products.length" [(page)]="rangePage" [pageSize]="rangeProductsPerPage"
                         size="lg"></ngb-pagination>
       </div>
 
-      <div class="row">
-        <button type="button" class="btn btn-primary btn-block btn-lg">Refresh product list</button>
+      <div class="row my-1">
+        <button type="button" class="btn btn-primary btn-block btn-lg"><i class="fa fa-refresh fa-lg"></i></button>
       </div>
 
     </div>
-    <div class="col-lg-4 px-4">
+    <div class="col-lg-4 px-4 my-2">
 
       <div class="row">
         <div class="col">
-          <h4 class="text-center">Current order</h4>
+          <h4 class="text-center">Current order: € {{total | number: '1.2-2'}}</h4>
         </div>
       </div>
 
@@ -52,12 +52,17 @@
         <div
           *ngFor="let productEntry of orderedProducts | iterable | slice:(orderProductsPerPage * (orderPage - 1)):(orderProductsPerPage * orderPage)"
           class="col-lg-4 col-sm-2 col-4 p-05">
-          <button (click)="orderedProductClicked(productEntry.key)" type="button"
+          <button *ngIf="productEntry.key.id > -1" (click)="orderedProductClicked(productEntry.key)" type="button"
                   class="btn btn-block btn-product" [style.background-color]="productEntry.key.color"
                   [class.dark-bg]="isDarkBackground(productEntry.key.color)">
-            <div>{{productEntry.key.id}}</div>
             <div>{{productEntry.key.name}}</div>
+            <div>€ {{productEntry.key.price | number: '1.2-2'}}</div>
             <div>x{{productEntry.value}}</div>
+          </button>
+          <button *ngIf="productEntry.key.id == -1" (click)="orderedProductClicked(productEntry.key)" type="button"
+                  class="btn btn-block btn-outline-primary btn-product btn-product-custom">
+            <div>Custom</div>
+            <div>€ {{productEntry.key.price | number: '1.2-2'}}</div>
           </button>
         </div>
         <div
@@ -67,13 +72,14 @@
         </div>
       </div>
 
-      <div class="row justify-content-center mt-2">
+      <div class="row justify-content-center my-1">
         <ngb-pagination [collectionSize]="orderedProducts.size" [(page)]="orderPage"
                         [pageSize]="orderProductsPerPage" size="lg"></ngb-pagination>
       </div>
 
-      <div class="row">
-        <button type="button" class="btn btn-primary btn-block btn-lg">Place order</button>
+      <div class="row my-1">
+        <button type="button" class="btn btn-primary btn-block btn-lg"><i class="fa fa-cart-arrow-down fa-lg"></i>
+        </button>
       </div>
 
     </div>

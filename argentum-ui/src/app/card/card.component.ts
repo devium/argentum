@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { Observable } from "rxjs";
 
 @Component({
@@ -7,7 +7,7 @@ import { Observable } from "rxjs";
   styleUrls: ['./card.component.scss']
 })
 export class CardComponent implements OnInit {
-  @ViewChild('cardEntry') cardEntry: ElementRef;
+  private readonly MAX_NAME = 25;
   private cardStream: Observable<string>;
   private card = '0088888800';
   private balance = '0.00';
@@ -28,5 +28,4 @@ export class CardComponent implements OnInit {
 
     this.cardStream.subscribe(result => this.card = result.slice(-10));
   }
-
 }

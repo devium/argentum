@@ -1,7 +1,7 @@
 <div class="sticky-top bg-primary py-1 container-fluid">
   <div class="row">
     <div class="col-12 col-sm-4 p-0 text-center">
-      <span class="align-middle text-white">{{name}}</span>
+      <span class="align-middle text-white">{{name | slice:0:MAX_NAME}}{{name.length > MAX_NAME ? '...' : ''}}</span>
     </div>
     <div class="col-6 col-sm-4 px-1 py-0">
       <input class="p-1 form-control m-auto text-center input-card" value="{{card}}" type="text" disabled>
