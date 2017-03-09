@@ -1,8 +1,8 @@
-import { Component, OnInit, NgZone, EventEmitter, Output } from '@angular/core';
-import { Product } from '../product';
-import { ProductService } from '../product.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { KeypadComponent } from '../keypad/keypad.component';
+import { Component, OnInit, NgZone, EventEmitter, Output } from "@angular/core";
+import { Product } from "../product";
+import { ProductService } from "../product.service";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { KeypadComponent } from "../keypad/keypad.component";
 
 @Component({
   selector: 'app-order',
@@ -16,6 +16,7 @@ export class OrderComponent implements OnInit {
   private orderPage = 0;
   private products: Product[] = [];
   private orderedProducts: Map<Product, number> = new Map<Product, number>();
+  private total = 0;
 
   @Output()
   customProductEvent = new EventEmitter();
@@ -40,6 +41,7 @@ export class OrderComponent implements OnInit {
   }
 
   private rangeProductClicked(product: Product): void {
+    this.total += product.price;
     if (this.orderedProducts.has(product)) {
       this.orderedProducts.set(product, this.orderedProducts.get(product) + 1);
     } else {
@@ -48,6 +50,7 @@ export class OrderComponent implements OnInit {
   }
 
   private orderedProductClicked(product: Product): void {
+    this.total -= product.price;
     let count = this.orderedProducts.get(product);
     if (count == 1) {
       this.orderedProducts.delete(product);
@@ -85,8 +88,8 @@ export class OrderComponent implements OnInit {
     modal.result.then(result => this.confirmKeypad(result), result => void(0));
   }
 
-  private confirmKeypad(result: number): void {
-    // TODO
-    console.info(result);
+  private confirmKeypad(price: number): void {
+    this.total += price;
+    this.orderedProducts.set({ id: -1, name: 'Custom', price: price, color: '#000000' }, 1);
   }
 }
