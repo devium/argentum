@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
+import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
+import { Observable } from "rxjs";
 
 @Component({
   selector: 'app-card',
@@ -8,27 +8,25 @@ import { Subject, Observable } from 'rxjs';
 })
 export class CardComponent implements OnInit {
   @ViewChild('cardEntry') cardEntry: ElementRef;
-  private cardSearch = new Subject<string>();
-  private cardResult: Observable<string>;
+  private cardStream: Observable<string>;
+  private card = '0088888800';
+  private balance = '0.00';
+  private name = 'Some Very Very Very Very Long Name';
 
   constructor() {
   }
 
   ngOnInit(): void {
-    this.cardResult = this.cardSearch
+    let numberStream = Observable.fromEvent(document, 'keydown')
+      .flatMap((event: KeyboardEvent) => event.key)
+      .filter(char => '0123456789'.indexOf(char) > -1);
+    this.cardStream = numberStream
+      .scan((acc, char) => acc + char)
       .debounceTime(500)
-      .distinctUntilChanged();
+      .first()
+      .repeat();
 
-    this.cardResult.subscribe(result => this.cardEntry.nativeElement.select());
-  }
-
-  private search(value: string): void {
-    this.cardSearch.next(value);
-  }
-
-  @HostListener('window:keydown', ['$event'])
-  ignoreEnter(event: KeyboardEvent) {
-    this.cardEntry.nativeElement.focus();
+    this.cardStream.subscribe(result => this.card = result.slice(-10));
   }
 
 }
