@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
-import { Product } from "./product";
+import { Product } from "../product";
 import "rxjs/add/operator/toPromise";
 import { PRODUCTS } from "./mock-products";
 
 @Injectable()
-export class ProductService {
+export class RestService {
   private productsUrl = 'api/products';
 
   constructor(private http: Http) {
