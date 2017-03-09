@@ -4,12 +4,14 @@ import { FormsModule } from "@angular/forms";
 import { HttpModule } from "@angular/http";
 import { AppComponent } from "./app.component";
 import { OrderComponent } from "./order/order.component";
-import { ProductService } from "./product.service";
-import { IterablePipe } from "./iterable.pipe";
+import { RestService } from "./rest-service/rest.service";
+import { IterablePipe } from "./pipes/iterable.pipe";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { KeypadComponent } from "./keypad/keypad.component";
-import { RangePipe } from "./range.pipe";
+import { RangePipe } from "./pipes/range.pipe";
 import { CardComponent } from "./card/card.component";
+import { OrderViewComponent } from "./order-view/order-view.component";
+import { AppRoutingModule } from "./app-routing/app-routing.module";
 
 @NgModule({
   declarations: [
@@ -18,16 +20,18 @@ import { CardComponent } from "./card/card.component";
     IterablePipe,
     KeypadComponent,
     RangePipe,
-    CardComponent
+    CardComponent,
+    OrderViewComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
-    NgbModule.forRoot()
+    NgbModule.forRoot(),
+    AppRoutingModule
   ],
   providers: [
-    ProductService
+    RestService
   ],
   bootstrap: [
     AppComponent

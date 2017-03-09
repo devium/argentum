@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone, EventEmitter, Output } from "@angular/core";
 import { Product } from "../product";
-import { ProductService } from "../product.service";
+import { RestService } from "../rest-service/rest.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { KeypadComponent } from "../keypad/keypad.component";
 
@@ -21,7 +21,7 @@ export class OrderComponent implements OnInit {
   @Output()
   customProductEvent = new EventEmitter();
 
-  constructor(private productService: ProductService, private ngZone: NgZone, private modalService: NgbModal) {
+  constructor(private productService: RestService, private ngZone: NgZone, private modalService: NgbModal) {
     window.onresize = (event) => {
       this.ngZone.run(() => {
         if (window.innerWidth < 576) {
@@ -41,22 +41,22 @@ export class OrderComponent implements OnInit {
   }
 
   private rangeProductClicked(product: Product): void {
-    this.total += product.price;
     if (this.orderedProducts.has(product)) {
       this.orderedProducts.set(product, this.orderedProducts.get(product) + 1);
     } else {
       this.orderedProducts.set(product, 1);
     }
+    this.updateTotal();
   }
 
   private orderedProductClicked(product: Product): void {
-    this.total -= product.price;
     let count = this.orderedProducts.get(product);
     if (count == 1) {
       this.orderedProducts.delete(product);
     } else {
       this.orderedProducts.set(product, count - 1);
     }
+    this.updateTotal();
   }
 
   private getPaginated(data: any, pageSize: number, page: number): Product[] {
@@ -89,7 +89,12 @@ export class OrderComponent implements OnInit {
   }
 
   private confirmKeypad(price: number): void {
-    this.total += price;
     this.orderedProducts.set({ id: -1, name: 'Custom', price: price, color: '#000000' }, 1);
+    this.updateTotal();
+  }
+
+  private updateTotal(): void {
+    this.total = 0;
+    this.orderedProducts.forEach((quantity: number, product: Product) => this.total += product.price * quantity);
   }
 }
