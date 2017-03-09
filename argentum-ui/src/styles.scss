@@ -9,3 +9,8 @@
 .p-05 {
   padding: 1px;
 }
+
+.overflow-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
