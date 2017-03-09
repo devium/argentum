@@ -21,7 +21,7 @@ export class OrderComponent implements OnInit {
   @Output()
   customProductEvent = new EventEmitter();
 
-  constructor(private productService: RestService, private ngZone: NgZone, private modalService: NgbModal) {
+  constructor(private restService: RestService, private ngZone: NgZone, private modalService: NgbModal) {
     window.onresize = (event) => {
       this.ngZone.run(() => {
         if (window.innerWidth < 576) {
@@ -37,7 +37,7 @@ export class OrderComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.productService.getProducts().then(products => this.products = products);
+    this.restService.getProducts().then(products => this.products = products);
   }
 
   private rangeProductClicked(product: Product): void {
@@ -89,7 +89,7 @@ export class OrderComponent implements OnInit {
   }
 
   private confirmKeypad(price: number): void {
-    this.orderedProducts.set({ id: -1, name: 'Custom', price: price, color: '#000000' }, 1);
+    this.orderedProducts.set({ id: -1, name: 'Custom', price: price, category: null }, 1);
     this.updateTotal();
   }
 

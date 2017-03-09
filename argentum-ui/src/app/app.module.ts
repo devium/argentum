@@ -12,6 +12,8 @@ import { RangePipe } from "./pipes/range.pipe";
 import { CardComponent } from "./card/card.component";
 import { OrderViewComponent } from "./order-view/order-view.component";
 import { AppRoutingModule } from "./app-routing/app-routing.module";
+import { AdminViewComponent } from "./admin-view/admin-view.component";
+import { ProductEditorComponent } from "./product-editor/product-editor.component";
 
 @NgModule({
   declarations: [
@@ -21,7 +23,9 @@ import { AppRoutingModule } from "./app-routing/app-routing.module";
     KeypadComponent,
     RangePipe,
     CardComponent,
-    OrderViewComponent
+    OrderViewComponent,
+    AdminViewComponent,
+    ProductEditorComponent
   ],
   imports: [
     BrowserModule,

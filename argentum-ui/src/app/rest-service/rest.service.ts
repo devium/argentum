@@ -3,6 +3,10 @@ import { Http } from "@angular/http";
 import { Product } from "../product";
 import "rxjs/add/operator/toPromise";
 import { PRODUCTS } from "./mock-products";
+import { ProductRange } from "../product-range";
+import { PRODUCT_RANGES } from "./mock-product-ranges";
+import { CATEGORIES } from "./mock-categories";
+import { Category } from "../category";
 
 @Injectable()
 export class RestService {
@@ -17,6 +21,14 @@ export class RestService {
     //   .then(response => response.json().data as Product[])
     //   .catch(this.handleError);
     return Promise.resolve(PRODUCTS);
+  }
+
+  getProductRanges(): Promise<ProductRange[]> {
+    return Promise.resolve(PRODUCT_RANGES);
+  }
+
+  getCategories(): Promise<Category[]> {
+    return Promise.resolve(CATEGORIES);
   }
 
   private handleError(error: any): Promise<any> {
