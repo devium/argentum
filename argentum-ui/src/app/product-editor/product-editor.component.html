@@ -1,0 +1,28 @@
+<div ngbDropdown>
+  <button class="btn btn-primary" ngbDropdownToggle>{{activeRange ? activeRange.name : "Product range"}}</button>
+  <div class="dropdown-menu">
+    <button *ngFor="let range of productRanges" (click)="setActiveRange(range)" class="dropdown-item">{{range.name}}
+    </button>
+  </div>
+</div>
+
+<div *ngIf="activeRange" class="container-fluid">
+  <div *ngFor="let product of activeRange.products" class="row">
+    <div class="col-4">
+      <span>{{product.name}}</span>
+    </div>
+    <div class="col-4">
+      <span>{{product.price}}</span>
+    </div>
+    <div class="col-4">
+      <div ngbDropdown>
+        <button class="btn btn-primary" ngbDropdownToggle>{{product.category.name}}</button>
+        <div class="dropdown-menu">
+          <button *ngFor="let category of categories" (click)="setCategory(product, category)" class="dropdown-item">
+            {{category.name}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
