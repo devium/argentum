@@ -2,7 +2,8 @@
   cursor: pointer;
 }
 
-.btn.disabled {
+.btn.disabled,
+.form-control.disabled {
   cursor: default;
 }
 

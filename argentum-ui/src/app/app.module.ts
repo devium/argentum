@@ -1,19 +1,20 @@
-import { BrowserModule } from "@angular/platform-browser";
-import { NgModule } from "@angular/core";
-import { FormsModule } from "@angular/forms";
-import { HttpModule } from "@angular/http";
-import { AppComponent } from "./app.component";
-import { OrderComponent } from "./order/order.component";
-import { RestService } from "./rest-service/rest.service";
-import { IterablePipe } from "./pipes/iterable.pipe";
-import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
-import { KeypadComponent } from "./keypad/keypad.component";
-import { RangePipe } from "./pipes/range.pipe";
-import { CardComponent } from "./card/card.component";
-import { OrderViewComponent } from "./order-view/order-view.component";
-import { AppRoutingModule } from "./app-routing/app-routing.module";
-import { AdminViewComponent } from "./admin-view/admin-view.component";
-import { ProductEditorComponent } from "./product-editor/product-editor.component";
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { HttpModule } from '@angular/http';
+import { AppComponent } from './app.component';
+import { OrderComponent } from './order/order.component';
+import { RestService } from './rest-service/rest.service';
+import { IterablePipe } from './pipes/iterable.pipe';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { KeypadComponent } from './keypad/keypad.component';
+import { RangePipe } from './pipes/range.pipe';
+import { CardComponent } from './card/card.component';
+import { OrderViewComponent } from './order-view/order-view.component';
+import { AppRoutingModule } from './app-routing/app-routing.module';
+import { AdminViewComponent } from './admin-view/admin-view.component';
+import { ProductEditorComponent } from './product-editor/product-editor.component';
+import { NavbarComponent } from './navbar/navbar.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { ProductEditorComponent } from "./product-editor/product-editor.componen
     CardComponent,
     OrderViewComponent,
     AdminViewComponent,
-    ProductEditorComponent
+    ProductEditorComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,
