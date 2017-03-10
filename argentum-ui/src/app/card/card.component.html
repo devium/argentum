@@ -1,13 +1,14 @@
-<div class="sticky-top bg-primary py-1 container-fluid">
+<div class="fixed-top bg-primary py-1 container-fluid">
   <div class="row">
-    <div class="col-12 col-sm-4 p-0 text-center">
-      <span class="align-middle text-white">{{name | slice:0:MAX_NAME}}{{name.length > MAX_NAME ? '...' : ''}}</span>
+    <div class="col-12 col-sm-5 p-0 text-center overflow-ellipsis text-white">
+      <span class="align-middle text-white text-nowrap">{{name | slice:0:MAX_NAME}}{{name.length > MAX_NAME ? '...' : ''}}</span>
     </div>
-    <div class="col-6 col-sm-4 px-1 py-0">
+    <div class="col-6 col-sm-2 px-1 py-0">
       <input class="p-1 form-control m-auto text-center input-card disabled" value="{{card}}" type="text" disabled>
     </div>
-    <div class="col-6 col-sm-4 p-0 text-center">
+    <div class="col-6 col-sm-5 p-0 text-center">
       <span class="align-middle text-white">€ {{balance}}</span>
     </div>
   </div>
 </div>
+<div class="mt-5 pt-3 mt-sm-5 pt-sm-0"></div>
