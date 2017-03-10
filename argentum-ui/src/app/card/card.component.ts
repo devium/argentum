@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, OnInit } from "@angular/core";
+import { Observable } from "rxjs";
 
 @Component({
   selector: 'app-card',
@@ -7,11 +7,11 @@ import { Observable } from 'rxjs';
   styleUrls: ['./card.component.scss']
 })
 export class CardComponent implements OnInit {
-  private readonly MAX_NAME = 25;
+  private readonly MAX_NAME = 100;
   private cardStream: Observable<string>;
   private card = '0088888800';
   private balance = '0.00';
-  private name = 'Some Very Very Very Long Name';
+  private name = 'Some Very1 Very2 Very3 Very4 Very5 Very6 Long Name';
 
   constructor() {
   }

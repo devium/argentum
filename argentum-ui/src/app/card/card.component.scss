@@ -1,3 +1,8 @@
 .input-card {
   width: 8em;
 }
+
+.overflow-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
