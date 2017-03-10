@@ -23,7 +23,11 @@ export class RestService {
     return Promise.resolve(PRODUCTS);
   }
 
-  getProductRanges(): Promise<ProductRange[]> {
+  getProductRangeEager(id: string): Promise<ProductRange> {
+    return Promise.resolve(PRODUCT_RANGES.filter(range => range.id == id)[0]);
+  }
+
+  getProductRangesMeta(): Promise<ProductRange[]> {
     return Promise.resolve(PRODUCT_RANGES);
   }
 
