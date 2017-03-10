@@ -7,20 +7,32 @@
 </div>
 
 <div *ngIf="activeRange" class="container-fluid">
-  <div *ngFor="let product of activeRange.products" class="row">
-    <div class="col-4">
-      <span>{{product.name}}</span>
+  <div *ngFor="let product of products" class="row">
+    <div class="col-3">
+      <span>{{product.edited.name}}</span>
     </div>
-    <div class="col-4">
-      <span>{{product.price}}</span>
+    <div class="col-1">
+      <span>{{product.edited.price}}</span>
     </div>
     <div class="col-4">
       <div ngbDropdown>
-        <button class="btn btn-primary" ngbDropdownToggle>{{product.category.name}}</button>
+        <button class="btn btn-primary" ngbDropdownToggle>{{product.edited.category.name}}</button>
         <div class="dropdown-menu">
           <button *ngFor="let category of categories" (click)="setCategory(product, category)" class="dropdown-item">
             {{category.name}}
           </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-4">
+      <div ngbDropdown>
+        <button class="btn btn-primary" ngbDropdownToggle>{{product.edited.ranges.length}}</button>
+        <div class="dropdown-menu">
+          <label *ngFor="let range of productRanges" class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input">
+            <span class="custom-control-indicator"></span>
+            <span class="custom-control-description">{{range.name}}</span>
+          </label>
         </div>
       </div>
     </div>

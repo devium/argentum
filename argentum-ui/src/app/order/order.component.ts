@@ -89,7 +89,7 @@ export class OrderComponent implements OnInit {
   }
 
   private confirmKeypad(price: number): void {
-    this.orderedProducts.set({ id: -1, name: 'Custom', price: price, category: null }, 1);
+    this.orderedProducts.set({ id: -1, name: 'Custom', price: price, category: null, ranges: [] }, 1);
     this.updateTotal();
   }
 
