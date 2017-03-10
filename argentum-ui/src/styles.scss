@@ -1,3 +1,11 @@
+@import 'node_modules/bootstrap/scss/bootstrap';
+
+@include media-breakpoint-up(lg) {
+  html, body {
+    height: 100%
+  }
+}
+
 .btn {
   cursor: pointer;
 }
