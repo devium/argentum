@@ -1,6 +1,10 @@
-.btn-product {
-  height: 80px;
+@import 'node_modules/bootstrap/scss/bootstrap';
+@import 'src/styles.scss';
 
+.btn-product {
+  @extend .btn;
+  @extend .btn-block;
+  @extend .h-100;
   &:not(.disabled):hover {
     background-color: #88bbbb !important;
   }
@@ -13,4 +17,46 @@
 
 .dark-bg div {
   color: white;
+}
+
+.col-product {
+  @extend .col-4;
+  @extend .p-05;
+  @extend .col-sm-2;
+  min-height: 80px;
+}
+
+.col-product-range {
+  @extend .col-product;
+}
+
+.col-product-order {
+  @extend .col-product;
+  @extend .col-lg-4;
+}
+
+.container-grid {
+  @extend .px-0;
+  @extend .px-lg-1;
+  @extend .mx-0;
+  @extend .my-2;
+  @extend .d-lg-flex;
+  @extend .flex-lg-column;
+}
+
+.container-grid-lg-8 {
+  @extend .container-grid;
+  @extend .col-lg-8;
+}
+
+.container-grid-lg-4 {
+  @extend .container-grid;
+  @extend .col-lg-4;
+}
+
+.btn-grid-bar {
+  @extend .btn;
+  @extend .btn-primary;
+  @extend .btn-block;
+  @extend .btn-lg;
 }
