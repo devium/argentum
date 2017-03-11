@@ -79,7 +79,23 @@ export const FOOD: ProductRange = {
   ]
 };
 
-export const PRODUCT_RANGES: ProductRange[] = [BEVERAGES, FOOD];
+export const CLOTHES: ProductRange = {
+  id: 'cloth', name: 'Clothes', products: []
+};
+
+export const GAMES: ProductRange = {
+  id: 'game', name: 'Games', products: []
+};
+
+export const TOOLS: ProductRange = {
+  id: 'tool', name: 'Tools', products: []
+};
+
+export const FURNITURE: ProductRange = {
+  id: 'furn', name: 'Furniture', products: []
+};
+
+export const PRODUCT_RANGES: ProductRange[] = [BEVERAGES, FOOD, GAMES, TOOLS, FURNITURE];
 
 
 // Back references.
