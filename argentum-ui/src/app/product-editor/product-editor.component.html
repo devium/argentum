@@ -1,40 +1,44 @@
 <div ngbDropdown>
   <button class="btn btn-primary" ngbDropdownToggle>{{activeRange ? activeRange.name : "Product range"}}</button>
-  <div class="dropdown-menu">
-    <button *ngFor="let range of productRanges" (click)="setActiveRange(range)" class="dropdown-item">{{range.name}}
-    </button>
-  </div>
 </div>
 
-<div *ngIf="activeRange" class="container-fluid">
-  <div *ngFor="let product of products" class="row">
-    <div class="col-3">
-      <span>{{product.edited.name}}</span>
-    </div>
-    <div class="col-1">
-      <span>{{product.edited.price}}</span>
-    </div>
-    <div class="col-4">
+<table class="table table-slim">
+  <thead>
+  <tr>
+    <th rowspan="2">Name</th>
+    <th rowspan="2">Price</th>
+    <th rowspan="2">Category</th>
+    <th>Product ranges</th>
+  </tr>
+  <tr>
+    <th *ngFor="let range of productRanges" class="rotate">
+      <div>
+        {{range.name}}
+      </div>
+    </th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <tr *ngFor="let product of products">
+    <td>{{product.edited.name}}</td>
+    <td>{{product.edited.price}}</td>
+    <td>
       <div ngbDropdown>
-        <button class="btn btn-primary" ngbDropdownToggle>{{product.edited.category.name}}</button>
+        <button class="btn btn-primary btn-sm" ngbDropdownToggle>{{product.edited.category.name}}</button>
         <div class="dropdown-menu">
           <button *ngFor="let category of categories" (click)="setCategory(product, category)" class="dropdown-item">
             {{category.name}}
           </button>
         </div>
       </div>
-    </div>
-    <div class="col-4">
-      <div ngbDropdown>
-        <button class="btn btn-primary" ngbDropdownToggle>{{product.edited.ranges.length}}</button>
-        <div class="dropdown-menu">
-          <label *ngFor="let range of productRanges" class="custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input">
-            <span class="custom-control-indicator"></span>
-            <span class="custom-control-description">{{range.name}}</span>
-          </label>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+    </td>
+    <td *ngFor="let range of productRanges">
+      <label class="custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input m-0" [checked]="product.edited.ranges.indexOf(range) > -1">
+        <span class="custom-control-indicator"></span>
+      </label>
+    </td>
+  </tr>
+  </tbody>
+</table>
