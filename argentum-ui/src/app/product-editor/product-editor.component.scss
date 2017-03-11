@@ -12,5 +12,6 @@
 }
 
 .table-slim tbody > tr > td {
-  @extend .py-0;
+  @extend .py-1;
+  @extend .my-0;
 }
