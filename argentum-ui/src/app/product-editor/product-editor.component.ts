@@ -1,16 +1,16 @@
-import { Component, OnInit } from "@angular/core";
-import { ProductRange } from "../product-range";
-import { RestService } from "../rest-service/rest.service";
-import { Category } from "../category";
-import { Product } from "../product";
+import { Component, OnInit } from '@angular/core';
+import { ProductRange } from '../product-range';
+import { RestService } from '../rest-service/rest.service';
+import { Category } from '../category';
+import { Product } from '../product';
 
 class EditorProduct {
   original: Product;
   edited: Product;
 
   constructor(original: Product) {
-    this.original = original;
-    this.edited = original;
+    this.original = Object.assign({}, original);
+    this.edited = Object.assign({}, original);
   }
 
   hasChangedName(): boolean {
@@ -38,7 +38,6 @@ class EditorProduct {
   styleUrls: ['./product-editor.component.scss']
 })
 export class ProductEditorComponent implements OnInit {
-  private activeRange: ProductRange;
   private products: EditorProduct[];
   private productRanges: ProductRange[] = [];
   private categories: Category[] = [];
@@ -47,15 +46,9 @@ export class ProductEditorComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.restService.getProducts().then(products => this.products = products.map(product => new EditorProduct(product)));
     this.restService.getProductRangesMeta().then(ranges => this.productRanges = ranges);
     this.restService.getCategories().then(categories => this.categories = categories);
-  }
-
-  setActiveRange(range: ProductRange) {
-    this.activeRange = range;
-    this.restService.getProductRangeEager(range.id).then((range: ProductRange) =>
-      this.products = range.products.map(product => new EditorProduct(product))
-    );
   }
 
   setCategory(product: EditorProduct, category: Category) {
