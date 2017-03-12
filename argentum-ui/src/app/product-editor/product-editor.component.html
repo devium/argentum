@@ -16,7 +16,7 @@
   </thead>
 
   <tbody>
-  <tr *ngFor="let product of products">
+  <tr *ngFor="let product of products" [class.changed]="product.changed">
     <td>{{product.edited.name}}</td>
     <td>{{product.edited.price}}</td>
     <td>
@@ -36,9 +36,16 @@
     <td *ngFor="let range of productRanges">
       <label class="custom-control custom-checkbox m-0 minh-1">
         <input type="checkbox" class="custom-control-input m-0"
-               [checked]="product.edited.ranges.indexOf(range) > -1">
+               [checked]="product.edited.ranges.has(range)"
+               (change)="toggleRange(product, range)">
         <span class="custom-control-indicator"></span>
       </label>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <button class="btn btn-block btn-primary"><i class="fa fa-plus pr-1"></i>New item</button>
     </td>
   </tr>
   </tbody>
