@@ -6,11 +6,13 @@ import { ProductRange } from '../product-range';
 export const BEV_ALC: Category = { id: 1, name: 'Alcoholic', color: '#aaaaee' };
 export const BEV_NONALC: Category = { id: 2, name: 'Non-alcoholic', color: '#aaeeaa' };
 export const FOOD_SWEET: Category = { id: 3, name: 'Sweets', color: '#eeaaee' };
+export const CAFFEINE: Category = { id: 4, name: 'Caffeinated', color: '#883333' }
 
 export const CATEGORIES: Category[] = [
   BEV_ALC,
   BEV_NONALC,
-  FOOD_SWEET
+  FOOD_SWEET,
+  CAFFEINE
 ];
 
 
@@ -31,8 +33,8 @@ export const CHAI_LATTE: Product = {
   category: BEV_NONALC,
   ranges: []
 };
-export const COFFEE: Product = { id: 11, name: "Coffee", price: 4.50, category: BEV_NONALC, ranges: [] };
-export const RED_BULL: Product = { id: 12, name: "Red Bull", price: 2.70, category: BEV_NONALC, ranges: [] };
+export const COFFEE: Product = { id: 11, name: "Coffee", price: 4.50, category: CAFFEINE, ranges: [] };
+export const RED_BULL: Product = { id: 12, name: "Red Bull", price: 2.70, category: CAFFEINE, ranges: [] };
 export const SHOT: Product = { id: 13, name: "Shot", price: 4.00, category: BEV_ALC, ranges: [] };
 export const CAKE: Product = { id: 14, name: "Cake", price: 10.00, category: FOOD_SWEET, ranges: [] };
 

@@ -6,7 +6,8 @@
   }
 }
 
-.btn {
+.btn,
+.dropdown-item {
   cursor: pointer;
 }
 
@@ -21,4 +22,13 @@
 
 .pagination {
   margin-bottom: 0;
+}
+
+.text-black {
+  color: black;
+}
+
+.dark-bg,
+.dark-bg div {
+  color: white;
 }

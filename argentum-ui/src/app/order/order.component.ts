@@ -1,8 +1,9 @@
-import { Component, OnInit, NgZone, EventEmitter, Output } from "@angular/core";
-import { Product } from "../product";
-import { RestService } from "../rest-service/rest.service";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { KeypadComponent } from "../keypad/keypad.component";
+import { Component, OnInit, NgZone, EventEmitter, Output } from '@angular/core';
+import { Product } from '../product';
+import { RestService } from '../rest-service/rest.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { KeypadComponent } from '../keypad/keypad.component';
+import { isDarkBackground } from '../is-dark-background';
 
 @Component({
   selector: 'app-order',
@@ -74,13 +75,7 @@ export class OrderComponent implements OnInit {
   }
 
   private isDarkBackground(color: string): boolean {
-    let r = parseInt(color.substr(1, 2), 16);
-    let g = parseInt(color.substr(3, 2), 16);
-    let b = parseInt(color.substr(5, 2), 16);
-
-    let luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-
-    return luminance < 128;
+    return isDarkBackground(color);
   }
 
   private addCustomProduct(): void {
