@@ -1,14 +1,10 @@
-<div ngbDropdown>
-  <button class="btn btn-primary" ngbDropdownToggle>{{activeRange ? activeRange.name : "Product range"}}</button>
-</div>
-
 <table class="table table-slim">
   <thead>
   <tr>
     <th rowspan="2">Name</th>
     <th rowspan="2">Price</th>
     <th rowspan="2">Category</th>
-    <th>Product ranges</th>
+    <th colspan="100">Product ranges</th>
   </tr>
   <tr>
     <th *ngFor="let range of productRanges" class="rotate">
@@ -25,17 +21,22 @@
     <td>{{product.edited.price}}</td>
     <td>
       <div ngbDropdown>
-        <button class="btn btn-primary btn-sm" ngbDropdownToggle>{{product.edited.category.name}}</button>
+        <button class="btn btn-sm text-black" ngbDropdownToggle [style.background-color]="product.edited.category.color"
+                [class.dark-bg]="isDarkBackground(product.edited.category.color)">{{product.edited.category.name}}
+        </button>
         <div class="dropdown-menu">
-          <button *ngFor="let category of categories" (click)="setCategory(product, category)" class="dropdown-item">
+          <button *ngFor="let category of categories" (click)="setCategory(product, category)" class="dropdown-item"
+                  [style.background-color]="category.color"
+                  [class.dark-bg]="isDarkBackground(category.color)">
             {{category.name}}
           </button>
         </div>
       </div>
     </td>
     <td *ngFor="let range of productRanges">
-      <label class="custom-control custom-checkbox m-0">
-        <input type="checkbox" class="custom-control-input m-0" [checked]="product.edited.ranges.indexOf(range) > -1">
+      <label class="custom-control custom-checkbox m-0 minh-1">
+        <input type="checkbox" class="custom-control-input m-0"
+               [checked]="product.edited.ranges.indexOf(range) > -1">
         <span class="custom-control-indicator"></span>
       </label>
     </td>

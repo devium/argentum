@@ -3,6 +3,7 @@ import { ProductRange } from '../product-range';
 import { RestService } from '../rest-service/rest.service';
 import { Category } from '../category';
 import { Product } from '../product';
+import { isDarkBackground } from '../is-dark-background';
 
 class EditorProduct {
   original: Product;
@@ -53,5 +54,9 @@ export class ProductEditorComponent implements OnInit {
 
   setCategory(product: EditorProduct, category: Category) {
     product.edited.category = category;
+  }
+
+  isDarkBackground(color: string): boolean {
+    return isDarkBackground(color);
   }
 }
