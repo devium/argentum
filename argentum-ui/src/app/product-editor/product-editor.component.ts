@@ -39,7 +39,8 @@ class EditorProduct {
   }
 
   updateChanged(): void {
-    this.changed = this.hasChangedName()
+    this.changed = !this.original
+      || this.hasChangedName()
       || this.hasChangedPrice()
       || this.hasChangedCategory()
       || this.hasChangedRanges();
@@ -91,7 +92,24 @@ export class ProductEditorComponent implements OnInit {
   }
 
   private remove(product: EditorProduct) {
-    product.edited = null;
-    product.displayed = product.original;
+    if (product.original) {
+      product.edited = null;
+      product.displayed = product.original;
+    } else {
+      this.products.splice(this.products.indexOf(product), 1);
+    }
+  }
+
+  private newProduct() {
+    let newProduct = new EditorProduct({
+      id: -1,
+      name: "New Product",
+      price: 0.00,
+      category: this.categories[0],
+      ranges: new Set()
+    });
+    newProduct.original = null;
+    newProduct.updateChanged();
+    this.products.push(newProduct);
   }
 }
