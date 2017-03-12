@@ -8,6 +8,7 @@ import { isDarkBackground } from '../is-dark-background';
 class EditorProduct {
   original: Product;
   edited: Product;
+  displayed: Product;
   changed: boolean = false;
 
   constructor(original: Product) {
@@ -15,6 +16,7 @@ class EditorProduct {
     this.original.ranges = new Set(original.ranges);
     this.edited = Object.assign({}, original);
     this.edited.ranges = new Set(original.ranges);
+    this.displayed = this.edited;
   }
 
   hasChangedName(): boolean {
@@ -63,12 +65,12 @@ export class ProductEditorComponent implements OnInit {
     this.restService.getCategories().then(categories => this.categories = categories);
   }
 
-  setCategory(product: EditorProduct, category: Category) {
+  private setCategory(product: EditorProduct, category: Category) {
     product.edited.category = category;
     product.updateChanged();
   }
 
-  toggleRange(product: EditorProduct, range: ProductRange) {
+  private toggleRange(product: EditorProduct, range: ProductRange) {
     if (product.edited.ranges.has(range)) {
       product.edited.ranges.delete(range);
     } else {
@@ -77,7 +79,19 @@ export class ProductEditorComponent implements OnInit {
     product.updateChanged();
   }
 
-  isDarkBackground(color: string): boolean {
+  private isDarkBackground(color: string): boolean {
     return isDarkBackground(color);
+  }
+
+  private reset(product: EditorProduct) {
+    product.edited = Object.assign({}, product.original);
+    product.edited.ranges = new Set(product.original.ranges);
+    product.displayed = product.edited;
+    product.updateChanged();
+  }
+
+  private remove(product: EditorProduct) {
+    product.edited = null;
+    product.displayed = product.original;
   }
 }
