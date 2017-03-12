@@ -8,10 +8,13 @@ import { isDarkBackground } from '../is-dark-background';
 class EditorProduct {
   original: Product;
   edited: Product;
+  changed: boolean = false;
 
   constructor(original: Product) {
     this.original = Object.assign({}, original);
+    this.original.ranges = new Set(original.ranges);
     this.edited = Object.assign({}, original);
+    this.edited.ranges = new Set(original.ranges);
   }
 
   hasChangedName(): boolean {
@@ -26,10 +29,18 @@ class EditorProduct {
     return this.original.category != this.edited.category;
   }
 
-  hasChanged(): boolean {
-    return this.hasChangedName()
+  hasChangedRanges(): boolean {
+    let equal: boolean = true;
+    this.original.ranges.forEach(range => equal = equal && this.edited.ranges.has(range));
+    this.edited.ranges.forEach(range => equal = equal && this.original.ranges.has(range));
+    return !equal;
+  }
+
+  updateChanged(): void {
+    this.changed = this.hasChangedName()
       || this.hasChangedPrice()
-      || this.hasChangedCategory();
+      || this.hasChangedCategory()
+      || this.hasChangedRanges();
   }
 }
 
@@ -54,6 +65,16 @@ export class ProductEditorComponent implements OnInit {
 
   setCategory(product: EditorProduct, category: Category) {
     product.edited.category = category;
+    product.updateChanged();
+  }
+
+  toggleRange(product: EditorProduct, range: ProductRange) {
+    if (product.edited.ranges.has(range)) {
+      product.edited.ranges.delete(range);
+    } else {
+      product.edited.ranges.add(range);
+    }
+    product.updateChanged();
   }
 
   isDarkBackground(color: string): boolean {
