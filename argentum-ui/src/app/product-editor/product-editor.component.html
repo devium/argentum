@@ -62,7 +62,9 @@
 
   <tr>
     <td [colSpan]="productRanges.length + 5">
-      <button class="btn btn-block btn-primary btn-sm"><i class="fa fa-plus pr-1"></i>New item</button>
+      <button (click)="newProduct()" class="btn btn-block btn-primary btn-sm">
+        <i class="fa fa-plus pr-1"></i><span>New item</span>
+      </button>
     </td>
   </tr>
   </tbody>
