@@ -1,9 +1,9 @@
-import { Component, OnInit, NgZone, EventEmitter, Output } from "@angular/core";
-import { Product } from "../product";
-import { RestService } from "../rest-service/rest.service";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { KeypadComponent } from "../keypad/keypad.component";
-import { isDarkBackground } from "../is-dark-background";
+import { Component, OnInit, NgZone } from '@angular/core';
+import { Product } from '../product';
+import { RestService } from '../rest-service/rest.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { KeypadComponent } from '../keypad/keypad.component';
+import { isDarkBackground } from '../is-dark-background';
 
 @Component({
   selector: 'app-order',
@@ -19,11 +19,8 @@ export class OrderComponent implements OnInit {
   private orderedProducts: Map<Product, number> = new Map<Product, number>();
   private total = 0;
 
-  @Output()
-  customProductEvent = new EventEmitter();
-
   constructor(private restService: RestService, private ngZone: NgZone, private modalService: NgbModal) {
-    window.onresize = (event) => {
+    window.onresize = () => {
       this.ngZone.run(() => {
         if (window.innerWidth < 576) {
           this.rangeProductsPerPage = 14;
@@ -80,6 +77,7 @@ export class OrderComponent implements OnInit {
 
   private addCustomProduct(): void {
     let modal = this.modalService.open(KeypadComponent, { backdrop: 'static', size: 'sm' });
+    (<KeypadComponent>modal.componentInstance).captureKeyboard = false;
     modal.result.then(result => this.confirmKeypad(result), result => void(0));
   }
 

@@ -19,10 +19,13 @@
   <tbody>
   <tr *ngFor="let product of products" [class.changed]="product.changed" [class.removed]="!product.edited">
     <td>
-      <input [value]="product.displayed.name" (keyup)="changeName(product, $event.srcElement.value)"
+      <input [value]="product.displayed.name" (input)="changeName(product, $event.target.value)"
              class="form-control p-1" [class.disabled]="!product.edited" [disabled]="!product.edited">
     </td>
-    <td>{{product.displayed.price}}</td>
+    <td class="text-right">
+      <button (click)="setProductPrice(product)" type="button" class="btn btn-primary btn-sm">
+        {{product.displayed.price | number: '1.2-2'}}
+      </button>
     <td>
       <div ngbDropdown>
         <button class="btn btn-sm text-black" ngbDropdownToggle

@@ -1,9 +1,11 @@
-import { Component, OnInit } from "@angular/core";
-import { ProductRange } from "../product-range";
-import { RestService } from "../rest-service/rest.service";
-import { Category } from "../category";
-import { Product } from "../product";
-import { isDarkBackground } from "../is-dark-background";
+import { Component, OnInit } from '@angular/core';
+import { ProductRange } from '../product-range';
+import { RestService } from '../rest-service/rest.service';
+import { Category } from '../category';
+import { Product } from '../product';
+import { isDarkBackground } from '../is-dark-background';
+import { KeypadComponent } from '../keypad/keypad.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 class EditorProduct {
   original: Product;
@@ -57,7 +59,7 @@ export class ProductEditorComponent implements OnInit {
   private productRanges: ProductRange[] = [];
   private categories: Category[] = [];
 
-  constructor(private restService: RestService) {
+  constructor(private restService: RestService, private modalService: NgbModal) {
   }
 
   ngOnInit(): void {
@@ -102,6 +104,19 @@ export class ProductEditorComponent implements OnInit {
 
   private changeName(product: EditorProduct, value: string) {
     product.displayed.name = value;
+    product.updateChanged();
+  }
+
+  private setProductPrice(product: EditorProduct) {
+    let modal = this.modalService.open(KeypadComponent, { backdrop: 'static', size: 'sm' });
+    (<KeypadComponent>modal.componentInstance).captureKeyboard = true;
+    modal.result.then((result: number) => {
+      product.displayed.price = result;
+      product.updateChanged();
+    }, result => void(0));
+  }
+
+  private changePrice(product: EditorProduct, value: string) {
     product.updateChanged();
   }
 
