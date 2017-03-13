@@ -1,5 +1,5 @@
-import { Category } from './category';
-import { ProductRange } from './product-range';
+import { Category } from "./category";
+import { ProductRange } from "./product-range";
 
 export class Product {
   id: number;
@@ -7,4 +7,5 @@ export class Product {
   price: number;
   category: Category;
   ranges: Set<ProductRange>;
+  legacy: boolean;
 }

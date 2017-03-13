@@ -1,9 +1,9 @@
-import { Component, OnInit, NgZone, EventEmitter, Output } from '@angular/core';
-import { Product } from '../product';
-import { RestService } from '../rest-service/rest.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { KeypadComponent } from '../keypad/keypad.component';
-import { isDarkBackground } from '../is-dark-background';
+import { Component, OnInit, NgZone, EventEmitter, Output } from "@angular/core";
+import { Product } from "../product";
+import { RestService } from "../rest-service/rest.service";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { KeypadComponent } from "../keypad/keypad.component";
+import { isDarkBackground } from "../is-dark-background";
 
 @Component({
   selector: 'app-order',
@@ -84,7 +84,14 @@ export class OrderComponent implements OnInit {
   }
 
   private confirmKeypad(price: number): void {
-    this.orderedProducts.set({ id: -1, name: 'Custom', price: price, category: null, ranges: new Set() }, 1);
+    this.orderedProducts.set({
+      id: -1,
+      name: 'Custom',
+      price: price,
+      category: null,
+      ranges: new Set(),
+      legacy: false
+    }, 1);
     this.updateTotal();
   }
 
