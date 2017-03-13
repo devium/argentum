@@ -18,7 +18,10 @@
 
   <tbody>
   <tr *ngFor="let product of products" [class.changed]="product.changed" [class.removed]="!product.edited">
-    <td>{{product.displayed.name}}</td>
+    <td>
+      <input [value]="product.displayed.name" (keyup)="changeName(product, $event.srcElement.value)"
+             class="form-control p-1" [class.disabled]="!product.edited" [disabled]="!product.edited">
+    </td>
     <td>{{product.displayed.price}}</td>
     <td>
       <div ngbDropdown>
@@ -62,9 +65,18 @@
 
   <tr>
     <td [colSpan]="productRanges.length + 5">
-      <button (click)="newProduct()" class="btn btn-block btn-primary btn-sm">
-        <i class="fa fa-plus pr-1"></i><span>New item</span>
-      </button>
+      <div class="row">
+        <div class="col-6">
+          <button (click)="newProduct()" class="btn btn-block btn-primary btn-sm">
+            <i class="fa fa-plus pr-1"></i><span>New item</span>
+          </button>
+        </div>
+        <div class="col-6">
+          <button (click)="save()" class="btn btn-block btn-primary btn-sm">
+            <i class="fa fa-save pr-1"></i>Save changes
+          </button>
+        </div>
+      </div>
     </td>
   </tr>
   </tbody>

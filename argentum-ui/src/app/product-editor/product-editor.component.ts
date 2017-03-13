@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { ProductRange } from '../product-range';
-import { RestService } from '../rest-service/rest.service';
-import { Category } from '../category';
-import { Product } from '../product';
-import { isDarkBackground } from '../is-dark-background';
+import { Component, OnInit } from "@angular/core";
+import { ProductRange } from "../product-range";
+import { RestService } from "../rest-service/rest.service";
+import { Category } from "../category";
+import { Product } from "../product";
+import { isDarkBackground } from "../is-dark-background";
 
 class EditorProduct {
   original: Product;
@@ -100,16 +100,34 @@ export class ProductEditorComponent implements OnInit {
     }
   }
 
+  private changeName(product: EditorProduct, value: string) {
+    product.displayed.name = value;
+    product.updateChanged();
+  }
+
   private newProduct() {
     let newProduct = new EditorProduct({
       id: -1,
       name: "New Product",
       price: 0.00,
       category: this.categories[0],
-      ranges: new Set()
+      ranges: new Set(),
+      legacy: false
     });
     newProduct.original = null;
     newProduct.updateChanged();
     this.products.push(newProduct);
+  }
+
+  private save() {
+    let changedProducts = this.products
+      .filter(product => product.changed)
+      .map(product => product.edited);
+    let deletedProducts = this.products
+      .filter(product => !product.edited)
+      .map(product => product.original);
+
+    this.restService.saveProducts(changedProducts);
+    this.restService.deleteProducts(deletedProducts);
   }
 }
