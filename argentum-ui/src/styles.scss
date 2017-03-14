@@ -32,3 +32,8 @@
 .dark-bg div {
   color: white !important;
 }
+
+.table-slim tbody > tr > td {
+  @extend .py-1;
+  @extend .my-0;
+}
