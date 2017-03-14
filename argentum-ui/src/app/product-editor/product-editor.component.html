@@ -71,12 +71,17 @@
   <tr>
     <td [colSpan]="productRanges.length + 5">
       <div class="row">
-        <div class="col-6">
+        <div class="col-4 px-1">
           <button (click)="newProduct()" class="btn btn-block btn-primary btn-sm">
             <i class="fa fa-plus pr-1"></i><span>New product</span>
           </button>
         </div>
-        <div class="col-6">
+        <div class="col-4 px-1">
+          <button (click)="resetAll()" class="btn btn-block btn-primary btn-sm">
+            <i class="fa fa-undo pr-1"></i><span>Reset all</span>
+          </button>
+        </div>
+        <div class="col-4 px-1">
           <button (click)="save()" class="btn btn-block btn-primary btn-sm">
             <i class="fa fa-save pr-1"></i>Save changes
           </button>

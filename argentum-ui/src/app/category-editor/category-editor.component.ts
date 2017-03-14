@@ -78,6 +78,16 @@ export class CategoryEditorComponent implements OnInit {
     this.categories.push(newCategory);
   }
 
+  private resetAll() {
+    this.categories.forEach(category => {
+      if (category.original) {
+        this.reset(category);
+      } else {
+        this.remove(category);
+      }
+    });
+  }
+
   private save() {
     let changedCategories = this.categories
       .filter(category => category.changed)
