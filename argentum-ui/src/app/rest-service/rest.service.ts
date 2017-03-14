@@ -46,6 +46,14 @@ export class RestService {
     products.forEach(product => product.legacy = true);
   }
 
+  saveCategories(categories: Category[]) {
+    // TODO: POST on categories
+  }
+
+  deleteCategories(categories: Category[]) {
+    // TODO: DELETE on categories + set category on affected products to null
+  }
+
   private handleError(error: any): Promise<any> {
     // TODO: error handling
     console.error('An error occurred', error);

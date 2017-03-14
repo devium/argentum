@@ -1,4 +1,15 @@
 <div class="container-fluid">
-  <app-product-editor></app-product-editor>
+  <ngb-tabset>
+    <ngb-tab title="Products">
+      <template ngbTabContent>
+        <app-product-editor></app-product-editor>
+      </template>
+    </ngb-tab>
+    <ngb-tab title="Categories">
+      <template ngbTabContent>
+        <app-category-editor></app-category-editor>
+      </template>
+    </ngb-tab>
+  </ngb-tabset>
   <app-navbar></app-navbar>
 </div>
