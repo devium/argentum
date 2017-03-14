@@ -134,6 +134,16 @@ export class ProductEditorComponent implements OnInit {
     this.products.push(newProduct);
   }
 
+  private resetAll() {
+    this.products.forEach(product => {
+      if (product.original) {
+        this.reset(product);
+      } else {
+        this.remove(product);
+      }
+    });
+  }
+
   private save() {
     let changedProducts = this.products
       .filter(product => product.changed)
