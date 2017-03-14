@@ -16,8 +16,7 @@
   </tr>
   </thead>
 
-  <tbody *ngIf="categories.length == 0">No categories defined.</tbody>
-  <tbody *ngIf="categories.length > 0">
+  <tbody>
   <tr *ngFor="let product of products" [class.changed]="product.changed" [class.removed]="!product.edited">
     <td>
       <input [value]="product.displayed.name" (input)="changeName(product, $event.target.value)"
@@ -30,11 +29,13 @@
     <td>
       <div ngbDropdown>
         <button class="btn btn-sm text-black" ngbDropdownToggle
-                [style.background-color]="product.displayed.category.color"
+                [style.background-color]="product.displayed.category ? product.displayed.category.color : '#ffffff'"
                 [disabled]="!product.edited" [class.disabled]="!product.edited"
-                [class.dark-bg]="isDarkBackground(product.displayed.category.color)">{{product.displayed.category.name}}
+                [class.dark-bg]="product.displayed.category && isDarkBackground(product.displayed.category.color)">
+          {{product.displayed.category ? product.displayed.category.name : 'No category'}}
         </button>
         <div *ngIf="product.edited" class="dropdown-menu">
+          <button (click)="setCategory(product, null)" class="dropdown-item">No category</button>
           <button *ngFor="let category of categories" (click)="setCategory(product, category)" class="dropdown-item"
                   [style.background-color]="category.color"
                   [class.dark-bg]="isDarkBackground(category.color)">

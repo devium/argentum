@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { ProductRange } from '../product-range';
-import { RestService } from '../rest-service/rest.service';
-import { Category } from '../category';
-import { Product } from '../product';
-import { isDarkBackground } from '../is-dark-background';
-import { KeypadComponent } from '../keypad/keypad.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnInit } from "@angular/core";
+import { ProductRange } from "../product-range";
+import { RestService } from "../rest-service/rest.service";
+import { Category } from "../category";
+import { Product } from "../product";
+import { isDarkBackground } from "../is-dark-background";
+import { KeypadComponent } from "../keypad/keypad.component";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 class EditorProduct {
   original: Product;
@@ -125,7 +125,7 @@ export class ProductEditorComponent implements OnInit {
       id: -1,
       name: "New Product",
       price: 0.00,
-      category: this.categories[0],
+      category: null,
       ranges: new Set(),
       legacy: false
     });
