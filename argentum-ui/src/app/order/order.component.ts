@@ -43,10 +43,10 @@ export class OrderComponent implements OnInit {
 
   private setProductRange(range: ProductRange) {
     this.selectedRange = range;
-    this.restService.getProductRangeEager(range.id).then(range => this.products = range.products);
+    this.refreshProducts();
   }
 
-  private rangeProductClicked(product: Product): void {
+  private rangeProductClicked(product: Product) {
     if (this.orderedProducts.has(product)) {
       this.orderedProducts.set(product, this.orderedProducts.get(product) + 1);
     } else {
@@ -55,7 +55,7 @@ export class OrderComponent implements OnInit {
     this.updateTotal();
   }
 
-  private orderedProductClicked(product: Product): void {
+  private orderedProductClicked(product: Product) {
     let count = this.orderedProducts.get(product);
     if (count == 1) {
       this.orderedProducts.delete(product);
@@ -89,7 +89,7 @@ export class OrderComponent implements OnInit {
     modal.result.then(result => this.confirmKeypad(result), result => void(0));
   }
 
-  private confirmKeypad(price: number): void {
+  private confirmKeypad(price: number) {
     this.orderedProducts.set({
       id: -1,
       name: 'Custom',
@@ -101,8 +101,12 @@ export class OrderComponent implements OnInit {
     this.updateTotal();
   }
 
-  private updateTotal(): void {
+  private updateTotal() {
     this.total = 0;
     this.orderedProducts.forEach((quantity: number, product: Product) => this.total += product.price * quantity);
+  }
+
+  private refreshProducts() {
+    this.restService.getProductRangeEager(this.selectedRange.id).then(range => this.products = range.products);
   }
 }
