@@ -8,7 +8,7 @@ import { Observable } from "rxjs";
   styleUrls: ['./keypad.component.scss']
 })
 export class KeypadComponent implements OnInit {
-  private display = '';
+  display = '';
   captureKeyboard = false;
 
   constructor(public activeModal: NgbActiveModal) {
@@ -29,7 +29,7 @@ export class KeypadComponent implements OnInit {
   entry(char: string): void {
     let decimalPos = this.display.indexOf('.');
     let ignore = ('.0123456789'.indexOf(char) <= -1)
-      || (this.display.length > 8)
+      || (this.display.length >= 8)
       || (char == '.' && decimalPos > -1)
       || (char == '0' && this.display == '0')
       || (decimalPos > -1 && this.display.length - decimalPos == 3);
