@@ -159,7 +159,7 @@ export const PRODUCTS: Product[] = [
 
 // Product ranges.
 export const BEVERAGES: ProductRange = {
-  id: 'bev', name: 'Beverages', products: [
+  id: 1, name: 'Beverages', products: [
     WATER,
     BEER,
     LONG_DRINK,
@@ -176,30 +176,30 @@ export const BEVERAGES: ProductRange = {
   ]
 };
 export const FOOD: ProductRange = {
-  id: 'food', name: 'Food', products: [
+  id: 2, name: 'Food', products: [
     CAKE
   ]
 };
 export const CLOTHES: ProductRange = {
-  id: 'cloth', name: 'Clothes', products: []
+  id: 3, name: 'Clothes', products: []
 };
 export const GAMES: ProductRange = {
-  id: 'game', name: 'Games', products: []
+  id: 4, name: 'Games', products: []
 };
 export const TOOLS: ProductRange = {
-  id: 'tool', name: 'Tools', products: []
+  id: 5, name: 'Tools', products: []
 };
 export const FURNITURE: ProductRange = {
-  id: 'furn', name: 'Furniture', products: []
+  id: 6, name: 'Furniture', products: []
 };
 export const ELECTRONICS: ProductRange = {
-  id: 'furn', name: 'Electronics', products: []
+  id: 7, name: 'Electronics', products: []
 };
 export const ACCESSOIRES: ProductRange = {
-  id: 'furn', name: 'Accessoires', products: []
+  id: 8, name: 'Accessoires', products: []
 };
 export const JEWELRY: ProductRange = {
-  id: 'furn', name: 'Jewelry', products: []
+  id: 9, name: 'Jewelry', products: []
 };
 
 export const PRODUCT_RANGES: ProductRange[] = [BEVERAGES, FOOD, GAMES, TOOLS, FURNITURE, ELECTRONICS, ACCESSOIRES, JEWELRY];

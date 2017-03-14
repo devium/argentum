@@ -138,10 +138,9 @@ export class ProductEditorComponent implements OnInit {
     this.products.forEach(product => {
       if (product.original) {
         this.reset(product);
-      } else {
-        this.remove(product);
       }
     });
+    this.products = this.products.filter(product => product.original);
   }
 
   private save() {

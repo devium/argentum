@@ -1,7 +1,7 @@
 import { Product } from "./product";
 
 export class ProductRange {
-  id: string;
+  id: number;
   name: string;
   products: Product[];
 }

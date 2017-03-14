@@ -18,14 +18,14 @@
              [style.background-color]="category.displayed.color" [class.disabled]="!category.edited"
              [disabled]="!category.edited">
     </td>
-    <td>
+    <td class="text-center">
       <button (click)="reset(category)" class="btn btn-primary btn-sm"
               [class.disabled]="(!category.changed && category.edited) || !category.original"
               [disabled]="!category.changed && category.edited || !category.original">
         <i class="fa fa-undo"></i>
       </button>
     </td>
-    <td>
+    <td class="text-center">
       <button (click)="remove(category)" class="btn btn-danger btn-sm" [class.disabled]="!category.edited">
         <i class="fa fa-trash"></i>
       </button>

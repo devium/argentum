@@ -37,3 +37,11 @@
   @extend .py-1;
   @extend .my-0;
 }
+
+.changed {
+  background-color: lightblue;
+}
+
+.removed {
+  background-color: lightcoral;
+}
