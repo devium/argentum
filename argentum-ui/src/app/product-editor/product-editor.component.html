@@ -54,14 +54,14 @@
         <span class="custom-control-indicator"></span>
       </label>
     </td>
-    <td>
+    <td class="text-center">
       <button (click)="reset(product)" class="btn btn-primary btn-sm"
               [class.disabled]="(!product.changed && product.edited) || !product.original"
               [disabled]="!product.changed && product.edited || !product.original">
         <i class="fa fa-undo"></i>
       </button>
     </td>
-    <td>
+    <td class="text-center">
       <button (click)="remove(product)" class="btn btn-danger btn-sm" [class.disabled]="!product.edited">
         <i class="fa fa-trash"></i>
       </button>

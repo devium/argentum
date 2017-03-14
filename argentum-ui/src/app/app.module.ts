@@ -16,6 +16,7 @@ import { AdminViewComponent } from "./admin-view/admin-view.component";
 import { ProductEditorComponent } from "./product-editor/product-editor.component";
 import { NavbarComponent } from "./navbar/navbar.component";
 import { CategoryEditorComponent } from "./category-editor/category-editor.component";
+import { RangeEditorComponent } from "./range-editor/range-editor.component";
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { CategoryEditorComponent } from "./category-editor/category-editor.compo
     AdminViewComponent,
     ProductEditorComponent,
     NavbarComponent,
-    CategoryEditorComponent
+    CategoryEditorComponent,
+    RangeEditorComponent
   ],
   imports: [
     BrowserModule,

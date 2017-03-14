@@ -82,10 +82,9 @@ export class CategoryEditorComponent implements OnInit {
     this.categories.forEach(category => {
       if (category.original) {
         this.reset(category);
-      } else {
-        this.remove(category);
       }
     });
+    this.categories = this.categories.filter(category => category.original);
   }
 
   private save() {

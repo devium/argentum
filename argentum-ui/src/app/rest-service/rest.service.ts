@@ -22,7 +22,7 @@ export class RestService {
     return Promise.resolve(PRODUCTS);
   }
 
-  getProductRangeEager(id: string): Promise<ProductRange> {
+  getProductRangeEager(id: number): Promise<ProductRange> {
     // TODO: GET on product range
     return Promise.resolve(PRODUCT_RANGES.filter(range => range.id == id)[0]);
   }
@@ -52,6 +52,14 @@ export class RestService {
 
   deleteCategories(categories: Category[]) {
     // TODO: DELETE on categories + set category on affected products to null
+  }
+
+  saveProductRanges(productRanges: ProductRange[]) {
+    // TODO: POST/PUT on product ranges
+  }
+
+  deleteProductRanges(productRanges: ProductRange[]) {
+    // TODO: DELETE on product ranges + cascade
   }
 
   private handleError(error: any): Promise<any> {
