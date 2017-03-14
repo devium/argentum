@@ -2,9 +2,10 @@ import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
 import { Product } from "../product";
 import "rxjs/add/operator/toPromise";
-import { PRODUCTS, PRODUCT_RANGES, CATEGORIES } from "./mock-products";
+import { PRODUCTS, PRODUCT_RANGES, CATEGORIES, GUESTS } from "./mock-data";
 import { ProductRange } from "../product-range";
 import { Category } from "../category";
+import { Guest } from "../guest";
 
 @Injectable()
 export class RestService {
@@ -24,7 +25,7 @@ export class RestService {
 
   getProductRangeEager(id: number): Promise<ProductRange> {
     // TODO: GET on product range
-    return Promise.resolve(PRODUCT_RANGES.filter(range => range.id == id)[0]);
+    return Promise.resolve(PRODUCT_RANGES.find(range => range.id == id));
   }
 
   getProductRangesMeta(): Promise<ProductRange[]> {
@@ -60,6 +61,11 @@ export class RestService {
 
   deleteProductRanges(productRanges: ProductRange[]) {
     // TODO: DELETE on product ranges + cascade
+  }
+
+  getGuestByCard(card: string): Promise<Guest> {
+    // TODO: GET on cards
+    return Promise.resolve(GUESTS.find(guest => guest.card == card));
   }
 
   private handleError(error: any): Promise<any> {

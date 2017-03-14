@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { OrderComponent } from "./order.component";
 import { IterablePipe } from "../pipes/iterable.pipe";
 import { RangePipe } from "../pipes/range.pipe";
-import { PRODUCT_RANGES } from "../rest-service/mock-products";
+import { PRODUCT_RANGES } from "../rest-service/mock-data";
 import { ProductRange } from "../product-range";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { RestService } from "../rest-service/rest.service";

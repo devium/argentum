@@ -7,7 +7,7 @@ import { RangePipe } from "../pipes/range.pipe";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { IterablePipe } from "../pipes/iterable.pipe";
 import { RestService } from "../rest-service/rest.service";
-import { PRODUCTS, PRODUCT_RANGES } from "../rest-service/mock-products";
+import { PRODUCTS, PRODUCT_RANGES } from "../rest-service/mock-data";
 import { Product } from "../product";
 import { ProductRange } from "../product-range";
 
