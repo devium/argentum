@@ -158,8 +158,8 @@ export const PRODUCTS: Product[] = [
 
 
 // Product ranges.
-export const BEVERAGES: ProductRange = {
-  id: 1, name: 'Beverages', products: [
+export const BAR: ProductRange = {
+  id: 1, name: 'Bar', products: [
     WATER,
     BEER,
     LONG_DRINK,
@@ -172,51 +172,24 @@ export const BEVERAGES: ProductRange = {
     CHAI_LATTE,
     COFFEE,
     RED_BULL,
-    SHOT
-  ]
-};
-export const FOOD: ProductRange = {
-  id: 2, name: 'Food', products: [
+    SHOT,
     CAKE
   ]
 };
-export const CLOTHES: ProductRange = {
-  id: 3, name: 'Clothes', products: []
+export const BUFFET: ProductRange = {
+  id: 2, name: 'Buffet', products: [
+    CAKE
+  ]
 };
-export const GAMES: ProductRange = {
-  id: 4, name: 'Games', products: []
+export const COATCHECK: ProductRange = {
+  id: 3, name: 'Coat check', products: []
 };
-export const TOOLS: ProductRange = {
-  id: 5, name: 'Tools', products: []
-};
-export const FURNITURE: ProductRange = {
-  id: 6, name: 'Furniture', products: []
-};
-export const ELECTRONICS: ProductRange = {
-  id: 7, name: 'Electronics', products: []
-};
-export const ACCESSOIRES: ProductRange = {
-  id: 8, name: 'Accessoires', products: []
-};
-export const JEWELRY: ProductRange = {
-  id: 9, name: 'Jewelry', products: []
+export const RECEPTION: ProductRange = {
+  id: 4, name: 'Reception', products: []
 };
 
-export const PRODUCT_RANGES: ProductRange[] = [BEVERAGES, FOOD, GAMES, TOOLS, FURNITURE, ELECTRONICS, ACCESSOIRES, JEWELRY];
+export const PRODUCT_RANGES: ProductRange[] = [BAR, BUFFET, COATCHECK, RECEPTION];
 
 
 // Back references.
-WATER.ranges.add(BEVERAGES);
-BEER.ranges.add(BEVERAGES);
-LONG_DRINK.ranges.add(BEVERAGES);
-TAP_WATER.ranges.add(BEVERAGES);
-COCKTAIL.ranges.add(BEVERAGES);
-SPRITE.ranges.add(BEVERAGES);
-COKE.ranges.add(BEVERAGES);
-PEPSI.ranges.add(BEVERAGES);
-TEA.ranges.add(BEVERAGES);
-CHAI_LATTE.ranges.add(BEVERAGES);
-COFFEE.ranges.add(BEVERAGES);
-RED_BULL.ranges.add(BEVERAGES);
-SHOT.ranges.add(BEVERAGES);
-CAKE.ranges.add(FOOD);
+PRODUCT_RANGES.forEach(range => range.products.forEach(product => product.ranges.add(range)));

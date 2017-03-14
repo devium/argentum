@@ -1,9 +1,10 @@
-import { Component, OnInit, NgZone } from '@angular/core';
-import { Product } from '../product';
-import { RestService } from '../rest-service/rest.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { KeypadComponent } from '../keypad/keypad.component';
-import { isDarkBackground } from '../is-dark-background';
+import { Component, OnInit, NgZone } from "@angular/core";
+import { Product } from "../product";
+import { RestService } from "../rest-service/rest.service";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { KeypadComponent } from "../keypad/keypad.component";
+import { isDarkBackground } from "../is-dark-background";
+import { ProductRange } from "../product-range";
 
 @Component({
   selector: 'app-order',
@@ -11,6 +12,8 @@ import { isDarkBackground } from '../is-dark-background';
   styleUrls: ['order.component.scss']
 })
 export class OrderComponent implements OnInit {
+  private productRanges: ProductRange[] = [];
+  private selectedRange: ProductRange = null;
   private rangeProductsPerPage;
   private orderProductsPerPage;
   private rangePage = 0;
@@ -35,7 +38,12 @@ export class OrderComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.restService.getProducts().then(products => this.products = products);
+    this.restService.getProductRangesMeta().then(ranges => this.productRanges = ranges);
+  }
+
+  private setProductRange(range: ProductRange) {
+    this.selectedRange = range;
+    this.restService.getProductRangeEager(range.id).then(range => this.products = range.products);
   }
 
   private rangeProductClicked(product: Product): void {
