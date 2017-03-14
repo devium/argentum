@@ -1,5 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { Observable } from "rxjs";
+import { RestService } from "../rest-service/rest.service";
+import { Guest } from "../guest";
 
 @Component({
   selector: 'app-card',
@@ -9,11 +11,12 @@ import { Observable } from "rxjs";
 export class CardComponent implements OnInit {
   private readonly MAX_NAME = 100;
   private cardStream: Observable<string>;
-  private card = '0088888800';
+  private card = '';
   private balance = '0.00';
-  private name = 'Some Very1 Very2 Very3 Very4 Very5 Very6 Long Name';
+  private bonus = '0.00';
+  private name = '';
 
-  constructor() {
+  constructor(private restService: RestService) {
   }
 
   ngOnInit(): void {
@@ -26,6 +29,19 @@ export class CardComponent implements OnInit {
       .first()
       .repeat();
 
-    this.cardStream.subscribe(result => this.card = result.slice(-10));
+    this.cardStream.subscribe(result => this.newNumber(result));
+  }
+
+  newNumber(card: string) {
+    this.card = card.slice(-10);
+    this.restService.getGuestByCard(card).then((guest: Guest) => {
+      if (guest) {
+        this.name = guest.name;
+        this.balance = '' + guest.balance.toFixed(2);
+        this.bonus = '' + guest.bonus.toFixed(2);
+      } else {
+
+      }
+    });
   }
 }

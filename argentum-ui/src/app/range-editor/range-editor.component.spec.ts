@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { RangeEditorComponent } from "./range-editor.component";
 import { RestService } from "../rest-service/rest.service";
 import { ProductRange } from "../product-range";
-import { PRODUCT_RANGES } from "../rest-service/mock-products";
+import { PRODUCT_RANGES } from "../rest-service/mock-data";
 
 class RestServiceStub {
   getProductRangesMeta(): Promise<ProductRange[]> {

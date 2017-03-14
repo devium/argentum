@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { ProductEditorComponent } from "./product-editor.component";
 import { RestService } from "../rest-service/rest.service";
 import { ProductRange } from "../product-range";
-import { PRODUCT_RANGES, PRODUCTS, CATEGORIES } from "../rest-service/mock-products";
+import { PRODUCT_RANGES, PRODUCTS, CATEGORIES } from "../rest-service/mock-data";
 import { Product } from "../product";
 import { Category } from "../category";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";

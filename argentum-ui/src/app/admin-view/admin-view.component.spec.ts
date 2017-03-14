@@ -5,7 +5,7 @@ import { CategoryEditorComponent } from "../category-editor/category-editor.comp
 import { RangeEditorComponent } from "../range-editor/range-editor.component";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { NavbarComponent } from "../navbar/navbar.component";
-import { CATEGORIES, PRODUCTS, PRODUCT_RANGES } from "../rest-service/mock-products";
+import { CATEGORIES, PRODUCTS, PRODUCT_RANGES } from "../rest-service/mock-data";
 import { Category } from "../category";
 import { Product } from "../product";
 import { ProductRange } from "../product-range";
