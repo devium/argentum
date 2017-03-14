@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { KeypadComponent } from "./keypad.component";
+import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 
 describe('KeypadComponent', () => {
   let component: KeypadComponent;
@@ -7,7 +8,8 @@ describe('KeypadComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [KeypadComponent]
+      declarations: [KeypadComponent],
+      providers: [NgbActiveModal]
     })
       .compileComponents();
   }));

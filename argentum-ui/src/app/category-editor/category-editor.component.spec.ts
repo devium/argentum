@@ -1,5 +1,14 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { CategoryEditorComponent } from "./category-editor.component";
+import { CATEGORIES } from "../rest-service/mock-products";
+import { Category } from "../category";
+import { RestService } from "../rest-service/rest.service";
+
+class RestServiceStub {
+  getCategories(): Promise<Category[]> {
+    return Promise.resolve(CATEGORIES);
+  }
+}
 
 describe('CategoryEditorComponent', () => {
   let component: CategoryEditorComponent;
@@ -7,7 +16,8 @@ describe('CategoryEditorComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [CategoryEditorComponent]
+      declarations: [CategoryEditorComponent],
+      providers: [{ provide: RestService, useClass: RestServiceStub }]
     })
       .compileComponents();
   }));
