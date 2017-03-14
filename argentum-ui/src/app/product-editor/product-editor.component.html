@@ -16,7 +16,8 @@
   </tr>
   </thead>
 
-  <tbody>
+  <tbody *ngIf="categories.length == 0">No categories defined.</tbody>
+  <tbody *ngIf="categories.length > 0">
   <tr *ngFor="let product of products" [class.changed]="product.changed" [class.removed]="!product.edited">
     <td>
       <input [value]="product.displayed.name" (input)="changeName(product, $event.target.value)"
