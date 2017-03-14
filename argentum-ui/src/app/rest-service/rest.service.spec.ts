@@ -1,10 +1,16 @@
 import { TestBed, inject } from "@angular/core/testing";
 import { RestService } from "./rest.service";
+import { HttpModule, XHRBackend } from "@angular/http";
+import { MockBackend } from "@angular/http/testing";
 
 describe('RestService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [RestService]
+      providers: [
+        RestService,
+        { provide: XHRBackend, useClass: MockBackend }
+      ],
+      imports: [HttpModule]
     });
   });
 
