@@ -129,6 +129,14 @@ export const CAKE: Product = {
   ranges: new Set(),
   legacy: false
 };
+export const TABLE: Product = {
+  id: 15,
+  name: "Table",
+  price: 30.00,
+  category: null,
+  ranges: new Set(),
+  legacy: false
+};
 
 export const PRODUCTS: Product[] = [
   WATER,
@@ -144,7 +152,8 @@ export const PRODUCTS: Product[] = [
   COFFEE,
   RED_BULL,
   SHOT,
-  CAKE
+  CAKE,
+  TABLE
 ];
 
 
