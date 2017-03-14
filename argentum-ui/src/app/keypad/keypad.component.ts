@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Observable } from 'rxjs';
+import { Component, OnInit } from "@angular/core";
+import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
+import { Observable } from "rxjs";
 
 @Component({
   selector: 'app-keypad',
@@ -50,6 +50,9 @@ export class KeypadComponent implements OnInit {
 
   confirm(): void {
     let value = parseFloat(this.display);
+    if (isNaN(value)) {
+      value = 0;
+    }
     this.activeModal.close(value);
   }
 }

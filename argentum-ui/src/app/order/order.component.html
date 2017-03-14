@@ -1,9 +1,9 @@
-<div *ngIf="products" class="container-fluid row col-lg d-lg-flex mx-0 px-1">
+<div class="container-fluid row col-lg d-lg-flex mx-0 px-1">
   <div class="container-grid-lg-8">
 
     <div class="row mx-0">
       <div class="col">
-        <h4 class="text-center">Product range</h4>
+        <h4 class="text-center">{{selectedRange ? selectedRange.name: "Product range"}}</h4>
       </div>
     </div>
 
@@ -35,10 +35,26 @@
     </div>
 
     <div class="row my-1 mx-0">
-      <button type="button" class="btn btn-primary btn-block btn-lg"><i class="fa fa-refresh fa-lg"></i></button>
+      <div class="col-6">
+        <div ngbDropdown [up]="true">
+          <button class="btn btn-primary btn-block btn-lg" ngbDropdownToggle>
+            {{selectedRange ? selectedRange.name : 'Select product range'}}
+          </button>
+          <div class="dropdown-menu">
+            <button *ngFor="let range of productRanges" (click)="setProductRange(range)" class="dropdown-item btn-lg">
+              {{range.name}}
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <button type="button" class="btn btn-primary btn-block btn-lg"><i class="fa fa-refresh fa-lg"></i></button>
+      </div>
     </div>
 
   </div>
+
+
   <div class="container-grid-lg-4">
 
     <div class="row mx-0">
