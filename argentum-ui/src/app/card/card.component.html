@@ -1,12 +1,19 @@
-<div class="fixed-top bg-primary py-1 container-fluid">
+<div class="fixed-top py-1 container-fluid"
+     [class.bg-primary]="state == scanState.Waiting"
+     [class.bg-success]="state == scanState.Valid"
+     [class.bg-danger]="state == scanState.NotFound">
   <div class="row">
-    <div class="col-12 col-sm-4 col-md-5 p-0 text-center overflow-ellipsis text-white">
-      <span class="align-middle text-white text-nowrap">{{name | slice:0:MAX_NAME}}{{name.length > MAX_NAME ? '...' : ''}}</span>
+    <div class="col-12 col-sm-4 col-md-5 p-0 text-center text-white overflow-ellipsis">
+      <span *ngIf="state == scanState.Waiting" class="align-middle text-nowrap">Waiting for scan...</span>
+      <span *ngIf="state == scanState.Valid" class="align-middle text-nowrap">
+        {{name | slice:0:MAX_NAME}}{{name.length > MAX_NAME ? '...' : ''}}
+      </span>
+      <span *ngIf="state == scanState.NotFound" class="align-middle text-nowrap">Card number not found.</span>
     </div>
     <div class="col-6 col-sm-4 col-md-2 p-0">
       <input class="p-1 form-control m-auto text-center input-card disabled" value="{{card}}" type="text" disabled>
     </div>
-    <div class="col-6 col-sm-4 col-md-5 p-0 row">
+    <div *ngIf="state == scanState.Valid" class="col-6 col-sm-4 col-md-5 p-0 row">
       <div class="col-6 p-0 text-center">
         <span class="align-middle text-white">€ {{balance}}</span>
       </div>
