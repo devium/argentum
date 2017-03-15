@@ -10,20 +10,22 @@
       </span>
       <span *ngIf="state == scanState.NotFound" class="align-middle text-nowrap">Card number not found.</span>
     </div>
-    <div class="col-sm-4 col-md-2 p-0" [class.col-12]="state != scanState.Valid"
-         [class.col-6]="state == scanState.Valid">
-      <div class="progress m-auto h-100">
-        <div class="progress-bar h-100" role="progressbar" [style.width]="countdown + '%'">
+
+    <div class="col-12 col-sm-8 col-md-7 p-0">
+      <div class="row">
+        <div class="col-4 p-0 text-center">
+          <span *ngIf="state == scanState.Valid" class="align-middle text-white">€ {{balance}}</span>
         </div>
-        <span class="w-100 m-auto text-white p-1">{{card}}</span>
-      </div>
-    </div>
-    <div *ngIf="state == scanState.Valid" class="col-6 col-sm-4 col-md-5 p-0 row">
-      <div class="col-6 p-0 text-center">
-        <span class="align-middle text-white">€ {{balance}}</span>
-      </div>
-      <div class="col-6 p-0 text-center">
-        <span class="align-middle text-white">(+ € {{bonus}})</span>
+        <div class="col-4 p-0">
+          <div class="progress m-auto h-100">
+            <div class="progress-bar h-100" role="progressbar" [style.width]="countdown + '%'">
+            </div>
+            <span class="w-100 m-auto text-white p-1">{{card}}</span>
+          </div>
+        </div>
+        <div class="col-4 p-0 text-center">
+          <span *ngIf="state == scanState.Valid" class="align-middle text-white">+ € {{bonus}}</span>
+        </div>
       </div>
     </div>
   </div>

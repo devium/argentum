@@ -206,5 +206,14 @@ export const JAMES: Guest = {
   balance: 10,
   bonus: 5
 };
+export const NORBERT: Guest = {
+  id: 1,
+  code: 'C-VVNORB',
+  name: 'Norbert the Waterbear',
+  mail: 'norby@smellywaterbear.com',
+  card: '11111111',
+  balance: 7.60,
+  bonus: 0
+};
 
-export const GUESTS: Guest[] = [JAMES];
+export const GUESTS: Guest[] = [JAMES, NORBERT];
