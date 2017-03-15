@@ -1,3 +1,9 @@
+@import 'node_modules/bootstrap/scss/bootstrap';
+
 .navbar-pad {
   height: 32px;
+}
+
+.active .btn-primary {
+  @extend .btn-primary.active
 }
