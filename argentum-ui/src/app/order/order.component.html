@@ -1,5 +1,5 @@
-<div class="container-fluid row col-lg d-lg-flex mx-0 px-1">
-  <div class="container-grid-lg-8">
+<div class="container-fluid row col-md mx-0 px-1 d-md-flex flex-md-column">
+  <div class="container-grid col-lg-8 flex-grow-2">
 
     <div class="row mx-0 mb-1">
       <div class="col">
@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <div class="col-lg row p-0 m-0">
+    <div class="col-md row p-0 m-0">
       <div *ngFor="let product of getPaginated(products, rangeProductsPerPage, rangePage)"
            class="col-product-range">
         <button (click)="rangeProductClicked(product)" type="button" class="btn-product"
@@ -53,7 +53,7 @@
   </div>
 
 
-  <div class="container-grid-lg-4">
+  <div class="container-grid col-lg-4 flex-grow-1">
 
     <div class="row mx-0 mb-1">
       <div class="col">
@@ -63,7 +63,7 @@
       </div>
     </div>
 
-    <div class="row col-lg p-0 m-0">
+    <div class="row col-md p-0 m-0">
       <div
         *ngFor="let productEntry of orderedProducts | iterable | slice:(orderProductsPerPage * (orderPage - 1)):(orderProductsPerPage * orderPage)"
         class="col-product-order">

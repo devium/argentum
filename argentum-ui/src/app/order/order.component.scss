@@ -37,18 +37,8 @@
   @extend .px-lg-1;
   @extend .mx-0;
   @extend .my-2;
-  @extend .d-lg-flex;
-  @extend .flex-lg-column;
-}
-
-.container-grid-lg-8 {
-  @extend .container-grid;
-  @extend .col-lg-8;
-}
-
-.container-grid-lg-4 {
-  @extend .container-grid;
-  @extend .col-lg-4;
+  @extend .d-md-flex;
+  @extend .flex-md-column;
 }
 
 .btn-grid-bar {

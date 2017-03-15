@@ -28,6 +28,9 @@ export class OrderComponent implements OnInit {
         if (window.innerWidth < 576) {
           this.rangeProductsPerPage = 14;
           this.orderProductsPerPage = 6;
+        } else if (window.innerWidth < 992) {
+          this.rangeProductsPerPage = 23;
+          this.orderProductsPerPage = 12;
         } else {
           this.rangeProductsPerPage = 35;
           this.orderProductsPerPage = 18;
