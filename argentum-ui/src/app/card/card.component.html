@@ -10,7 +10,8 @@
       </span>
       <span *ngIf="state == scanState.NotFound" class="align-middle text-nowrap">Card number not found.</span>
     </div>
-    <div class="col-6 col-sm-4 col-md-2 p-0">
+    <div class="col-sm-4 col-md-2 p-0" [class.col-12]="state != scanState.Valid"
+         [class.col-6]="state == scanState.Valid">
       <div class="progress m-auto h-100">
         <div class="progress-bar h-100" role="progressbar" [style.width]="countdown + '%'">
         </div>
