@@ -1,20 +1,13 @@
 <div class="container-fluid">
-  <ngb-tabset>
-    <ngb-tab title="Products">
-      <template ngbTabContent>
-        <app-product-editor></app-product-editor>
-      </template>
-    </ngb-tab>
-    <ngb-tab title="Categories">
-      <template ngbTabContent>
-        <app-category-editor></app-category-editor>
-      </template>
-    </ngb-tab>
-    <ngb-tab title="Product ranges">
-      <template ngbTabContent>
-        <app-range-editor></app-range-editor>
-      </template>
-    </ngb-tab>
-  </ngb-tabset>
-  <app-navbar></app-navbar>
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/admin/products" routerLinkActive="active">Products</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/admin/categories" routerLinkActive="active">Categories</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/admin/ranges" routerLinkActive="active">Product ranges</a>
+    </li>
+  </ul>
 </div>
