@@ -1,8 +1,15 @@
-.input-card {
-  width: 8em;
-}
-
 .overflow-ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.progress span {
+  position: absolute;
+  font-size: 1rem;
+}
+
+.progress {
+  position: relative;
+  max-width: 8rem;
+  background-color: rgba(0, 0, 0, 0.2);
 }
