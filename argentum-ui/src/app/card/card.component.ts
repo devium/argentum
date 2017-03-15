@@ -42,7 +42,7 @@ export class CardComponent implements OnInit {
     this.cardStream.subscribe(result => this.newNumber(result));
 
     const start = 10;
-    const tps = 5;
+    const tps = 20;
     this.countdownStream = new Subject<number>();
     this.countdownStream
       .switchMap(old => Observable
