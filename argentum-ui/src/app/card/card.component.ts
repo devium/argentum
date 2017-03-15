@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { Observable } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import { RestService } from "../rest-service/rest.service";
 import { Guest } from "../guest";
 
@@ -16,12 +16,14 @@ enum ScanState {
 })
 export class CardComponent implements OnInit {
   private scanState = ScanState;
-  private readonly MAX_NAME = 100;
+  private readonly MAX_NAME = 28;
   private cardStream: Observable<string>;
   private card = '';
   private balance = '';
   private bonus = '';
   private name = '';
+  private countdown = 0;
+  private countdownStream: Subject<number>;
   private state: ScanState = ScanState.Waiting;
 
   constructor(private restService: RestService) {
@@ -38,6 +40,25 @@ export class CardComponent implements OnInit {
       .repeat();
 
     this.cardStream.subscribe(result => this.newNumber(result));
+
+    const start = 10;
+    const tps = 5;
+    this.countdownStream = new Subject<number>();
+    this.countdownStream
+      .switchMap(old => Observable
+        .timer(0, 1000 / tps)
+        .take(start * tps + 1)
+        .map(i => (start - i / tps) / start * 100))
+      .subscribe(i => {
+        this.countdown = i;
+        if (i <= 0) {
+          this.name = '';
+          this.balance = '';
+          this.bonus = '';
+          this.card = '';
+          this.state = ScanState.Waiting;
+        }
+      });
   }
 
   newNumber(card: string) {
@@ -54,6 +75,7 @@ export class CardComponent implements OnInit {
         this.bonus = '';
         this.state = ScanState.NotFound;
       }
+      this.countdownStream.next();
     });
   }
 }

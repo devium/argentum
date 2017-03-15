@@ -11,7 +11,11 @@
       <span *ngIf="state == scanState.NotFound" class="align-middle text-nowrap">Card number not found.</span>
     </div>
     <div class="col-6 col-sm-4 col-md-2 p-0">
-      <input class="p-1 form-control m-auto text-center input-card disabled" value="{{card}}" type="text" disabled>
+      <div class="progress m-auto h-100">
+        <div class="progress-bar h-100" role="progressbar" [style.width]="countdown + '%'">
+        </div>
+        <span class="w-100 m-auto text-white p-1">{{card}}</span>
+      </div>
     </div>
     <div *ngIf="state == scanState.Valid" class="col-6 col-sm-4 col-md-5 p-0 row">
       <div class="col-6 p-0 text-center">
