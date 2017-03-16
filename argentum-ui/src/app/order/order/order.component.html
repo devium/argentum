@@ -40,7 +40,7 @@
 
     <div class="row justify-content-center mx-0 my-1">
       <ngb-pagination [collectionSize]="products.length" [(page)]="rangePage" [pageSize]="rangeProductsPerPage"
-                      size="lg"></ngb-pagination>
+                      size="lg" maxSize="5" rotate="true"></ngb-pagination>
     </div>
 
     <div class="row mx-0 my-1">
@@ -90,7 +90,7 @@
 
     <div class="row justify-content-center mx-0 my-1">
       <ngb-pagination [collectionSize]="orderedProducts.size" [(page)]="orderPage"
-                      [pageSize]="orderProductsPerPage" size="lg"></ngb-pagination>
+                      [pageSize]="orderProductsPerPage" size="lg" maxSize="5" rotate="true"></ngb-pagination>
     </div>
 
     <div class="row my-1 mx-0">

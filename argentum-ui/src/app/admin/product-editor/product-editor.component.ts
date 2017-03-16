@@ -116,10 +116,6 @@ export class ProductEditorComponent implements OnInit {
     }, result => void(0));
   }
 
-  private changePrice(product: EditorProduct, value: string) {
-    product.updateChanged();
-  }
-
   private newProduct() {
     let newProduct = new EditorProduct({
       id: -1,

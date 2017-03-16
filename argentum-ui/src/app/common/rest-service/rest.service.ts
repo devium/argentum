@@ -2,10 +2,11 @@ import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
 import { Product } from "../model/product";
 import "rxjs/add/operator/toPromise";
-import { PRODUCTS, PRODUCT_RANGES, CATEGORIES, GUESTS } from "./mock-data";
+import { PRODUCTS, PRODUCT_RANGES, CATEGORIES } from "./mock-data";
 import { ProductRange } from "../model/product-range";
 import { Category } from "../model/category";
 import { Guest } from "../model/guest";
+import { GUESTS } from "./mock-guests";
 
 @Injectable()
 export class RestService {
@@ -66,6 +67,18 @@ export class RestService {
   getGuestByCard(card: string): Promise<Guest> {
     // TODO: GET on cards
     return Promise.resolve(GUESTS.find(guest => guest.card == card));
+  }
+
+  getGuestsPaginated(pageSize: number, page: number) {
+    // TODO: paginated GET on guests
+    return Promise.resolve({
+      guests: GUESTS.slice(page * pageSize, page * pageSize + pageSize),
+      guestsTotal: GUESTS.length
+    });
+  }
+
+  updateGuestBonus(guest: Guest) {
+    // TODO: PUT on guest ID with bonus as content
   }
 
   private handleError(error: any): Promise<any> {
