@@ -2,11 +2,12 @@ import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
 import { Product } from "../model/product";
 import "rxjs/add/operator/toPromise";
-import { PRODUCTS, PRODUCT_RANGES, CATEGORIES } from "./mock-data";
+import { PRODUCT_RANGES, CATEGORIES } from "./mock-data";
 import { ProductRange } from "../model/product-range";
 import { Category } from "../model/category";
 import { Guest } from "../model/guest";
 import { GUESTS } from "./mock-guests";
+import { ALL_PRODUCTS } from "./mock-products";
 
 @Injectable()
 export class RestService {
@@ -21,7 +22,7 @@ export class RestService {
     //   .toPromise()
     //   .then(response => response.json().data as Product[])
     //   .catch(this.handleError);
-    return Promise.resolve(PRODUCTS);
+    return Promise.resolve(ALL_PRODUCTS);
   }
 
   getProductRangeEager(id: number): Promise<ProductRange> {
