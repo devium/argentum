@@ -6,6 +6,7 @@
   @extend .btn-block;
   @extend .h-100;
   @extend .p-0;
+  overflow: hidden;
   &:not(.disabled):hover {
     background-color: #88bbbb !important;
   }
