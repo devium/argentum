@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
-import { RestService } from "../rest-service/rest.service";
-import { Category } from "../category";
+import { RestService } from "../../shared/rest-service/rest.service";
+import { Category } from "../../shared/model/category";
 
 class EditorCategory {
   original: Category;
@@ -29,8 +29,8 @@ class EditorCategory {
 
 @Component({
   selector: 'app-category-editor',
-  templateUrl: './category-editor.component.html',
-  styleUrls: ['./category-editor.component.scss']
+  templateUrl: 'category-editor.component.html',
+  styleUrls: ['category-editor.component.scss']
 })
 export class CategoryEditorComponent implements OnInit {
   categories: EditorCategory[] = [];

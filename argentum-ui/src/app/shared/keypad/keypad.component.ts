@@ -4,8 +4,8 @@ import { Observable } from "rxjs";
 
 @Component({
   selector: 'app-keypad',
-  templateUrl: './keypad.component.html',
-  styleUrls: ['./keypad.component.scss']
+  templateUrl: 'keypad.component.html',
+  styleUrls: ['keypad.component.scss']
 })
 export class KeypadComponent implements OnInit {
   display = '';
