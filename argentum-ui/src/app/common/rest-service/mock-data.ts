@@ -202,7 +202,7 @@ export const JAMES: Guest = {
   code: 'C-VVJAMES',
   name: 'James the Sunderer',
   mail: 'jimmy@cherpcherp.com',
-  card: '12341234',
+  card: '8102162', // 12341234
   balance: 10,
   bonus: 5
 };
@@ -211,7 +211,7 @@ export const NORBERT: Guest = {
   code: 'C-VVNORB',
   name: 'Norbert the Waterbear',
   mail: 'norby@smellywaterbear.com',
-  card: '11111111',
+  card: '7951068', // 12121212
   balance: 7.60,
   bonus: 0
 };

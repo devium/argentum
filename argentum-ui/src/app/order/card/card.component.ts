@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { Observable, Subject } from "rxjs";
 import { RestService } from "../../common/rest-service/rest.service";
 import { Guest } from "../../common/model/guest";
+import { convertCard } from "../../common/util/convert-card";
 
 enum ScanState {
   Waiting,
@@ -37,6 +38,7 @@ export class CardComponent implements OnInit {
       .scan((acc, char) => acc + char)
       .debounceTime(500)
       .first()
+      .map(card => convertCard(card))
       .repeat();
 
     this.cardStream.subscribe(result => this.newNumber(result));
