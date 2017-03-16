@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
-import { AdminViewComponent } from "./admin-view.component";
+import { AdminNavComponent } from "./admin-nav.component";
 import { ProductEditorComponent } from "../product-editor/product-editor.component";
 import { CategoryEditorComponent } from "../category-editor/category-editor.component";
 import { RangeEditorComponent } from "../range-editor/range-editor.component";
@@ -25,14 +25,14 @@ class RestServiceStub {
   }
 }
 
-describe('AdminViewComponent', () => {
-  let component: AdminViewComponent;
-  let fixture: ComponentFixture<AdminViewComponent>;
+describe('AdminNavComponent', () => {
+  let component: AdminNavComponent;
+  let fixture: ComponentFixture<AdminNavComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
-        AdminViewComponent,
+        AdminNavComponent,
         ProductEditorComponent,
         CategoryEditorComponent,
         RangeEditorComponent,
@@ -47,7 +47,7 @@ describe('AdminViewComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AdminViewComponent);
+    fixture = TestBed.createComponent(AdminNavComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

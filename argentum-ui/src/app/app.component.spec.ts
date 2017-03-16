@@ -3,7 +3,7 @@ import { AppComponent } from "./app.component";
 import { Router } from "@angular/router";
 import { AppRoutingModule } from "./app-routing/app-routing.module";
 import { OrderViewComponent } from "./order-view/order-view.component";
-import { AdminViewComponent } from "./admin-view/admin-view.component";
+import { AdminNavComponent } from "./admin-nav/admin-nav.component";
 import { CardComponent } from "./card/card.component";
 import { RangeEditorComponent } from "./range-editor/range-editor.component";
 import { ProductEditorComponent } from "./product-editor/product-editor.component";
@@ -23,7 +23,7 @@ describe('AppComponent', () => {
       declarations: [
         AppComponent,
         OrderViewComponent,
-        AdminViewComponent,
+        AdminNavComponent,
         CardComponent,
         OrderComponent,
         NavbarComponent,
