@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
-import { RestService } from "../../shared/rest-service/rest.service";
-import { Category } from "../../shared/model/category";
+import { RestService } from "../../common/rest-service/rest.service";
+import { Category } from "../../common/model/category";
 
 class EditorCategory {
   original: Category;

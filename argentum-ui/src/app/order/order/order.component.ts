@@ -1,10 +1,10 @@
 import { Component, OnInit, NgZone } from "@angular/core";
-import { Product } from "../../shared/model/product";
-import { RestService } from "../../shared/rest-service/rest.service";
+import { Product } from "../../common/model/product";
+import { RestService } from "../../common/rest-service/rest.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { KeypadComponent } from "../../shared/keypad/keypad.component";
-import { isDarkBackground } from "../../shared/util/is-dark-background";
-import { ProductRange } from "../../shared/model/product-range";
+import { KeypadComponent } from "../../common/keypad/keypad.component";
+import { isDarkBackground } from "../../common/util/is-dark-background";
+import { ProductRange } from "../../common/model/product-range";
 
 @Component({
   selector: 'app-order',

@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
-import { RestService } from "../../shared/rest-service/rest.service";
-import { ProductRange } from "../../shared/model/product-range";
+import { RestService } from "../../common/rest-service/rest.service";
+import { ProductRange } from "../../common/model/product-range";
 
 class EditorRange {
   original: ProductRange;

@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { Observable, Subject } from "rxjs";
-import { RestService } from "../../shared/rest-service/rest.service";
-import { Guest } from "../../shared/model/guest";
+import { RestService } from "../../common/rest-service/rest.service";
+import { Guest } from "../../common/model/guest";
 
 enum ScanState {
   Waiting,
