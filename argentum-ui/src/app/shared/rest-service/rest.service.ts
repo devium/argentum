@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
-import { Product } from "../product";
+import { Product } from "../model/product";
 import "rxjs/add/operator/toPromise";
 import { PRODUCTS, PRODUCT_RANGES, CATEGORIES, GUESTS } from "./mock-data";
-import { ProductRange } from "../product-range";
-import { Category } from "../category";
-import { Guest } from "../guest";
+import { ProductRange } from "../model/product-range";
+import { Category } from "../model/category";
+import { Guest } from "../model/guest";
 
 @Injectable()
 export class RestService {

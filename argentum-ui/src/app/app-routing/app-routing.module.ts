@@ -1,9 +1,9 @@
 import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
-import { OrderViewComponent } from "../order-view/order-view.component";
-import { ProductEditorComponent } from "../product-editor/product-editor.component";
-import { RangeEditorComponent } from "../range-editor/range-editor.component";
-import { CategoryEditorComponent } from "../category-editor/category-editor.component";
+import { OrderViewComponent } from "../order/order-view/order-view.component";
+import { ProductEditorComponent } from "../admin/product-editor/product-editor.component";
+import { RangeEditorComponent } from "../admin/range-editor/range-editor.component";
+import { CategoryEditorComponent } from "../admin/category-editor/category-editor.component";
 
 const routes: Routes = [
   { path: '', redirectTo: '/order', pathMatch: 'full' },

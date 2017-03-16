@@ -1,7 +1,7 @@
-import { Product } from "../product";
-import { Category } from "../category";
-import { ProductRange } from "../product-range";
-import { Guest } from "../guest";
+import { Product } from "../model/product";
+import { Category } from "../model/category";
+import { ProductRange } from "../model/product-range";
+import { Guest } from "../model/guest";
 
 // Categories
 export const BEV_ALC: Category = { id: 1, name: 'Alcoholic', color: '#aaaaee' };

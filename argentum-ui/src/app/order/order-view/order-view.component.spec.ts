@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { OrderViewComponent } from "./order-view.component";
 import { CardComponent } from "../card/card.component";
-import { OrderComponent } from "../order/order.component";
+import { OrderComponent } from "../order/order/order.component";
 import { NavbarComponent } from "../navbar/navbar.component";
 import { RangePipe } from "../pipes/range.pipe";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";

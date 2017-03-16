@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { Observable, Subject } from "rxjs";
-import { RestService } from "../rest-service/rest.service";
-import { Guest } from "../guest";
+import { RestService } from "../../shared/rest-service/rest.service";
+import { Guest } from "../../shared/model/guest";
 
 enum ScanState {
   Waiting,
@@ -11,8 +11,8 @@ enum ScanState {
 
 @Component({
   selector: 'app-card',
-  templateUrl: './card.component.html',
-  styleUrls: ['./card.component.scss']
+  templateUrl: 'card.component.html',
+  styleUrls: ['card.component.scss']
 })
 export class CardComponent implements OnInit {
   private scanState = ScanState;

@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
-import { RestService } from "../rest-service/rest.service";
-import { ProductRange } from "../product-range";
+import { RestService } from "../../shared/rest-service/rest.service";
+import { ProductRange } from "../../shared/model/product-range";
 
 class EditorRange {
   original: ProductRange;
@@ -25,8 +25,8 @@ class EditorRange {
 
 @Component({
   selector: 'app-range-editor',
-  templateUrl: './range-editor.component.html',
-  styleUrls: ['./range-editor.component.scss']
+  templateUrl: 'range-editor.component.html',
+  styleUrls: ['range-editor.component.scss']
 })
 export class RangeEditorComponent implements OnInit {
   productRanges: EditorRange[] = [];

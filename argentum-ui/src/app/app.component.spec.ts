@@ -2,17 +2,17 @@ import { TestBed, async } from "@angular/core/testing";
 import { AppComponent } from "./app.component";
 import { Router } from "@angular/router";
 import { AppRoutingModule } from "./app-routing/app-routing.module";
-import { OrderViewComponent } from "./order-view/order-view.component";
-import { AdminNavComponent } from "./admin-nav/admin-nav.component";
-import { CardComponent } from "./card/card.component";
-import { RangeEditorComponent } from "./range-editor/range-editor.component";
-import { ProductEditorComponent } from "./product-editor/product-editor.component";
-import { NavbarComponent } from "./navbar/navbar.component";
-import { OrderComponent } from "./order/order.component";
-import { CategoryEditorComponent } from "./category-editor/category-editor.component";
+import { OrderViewComponent } from "./order/order-view/order-view.component";
+import { AdminNavComponent } from "./admin/admin-nav/admin-nav.component";
+import { CardComponent } from "./order/card/card.component";
+import { RangeEditorComponent } from "./admin/range-editor/range-editor.component";
+import { ProductEditorComponent } from "./admin/product-editor/product-editor.component";
+import { NavbarComponent } from "./shared/navbar/navbar.component";
+import { OrderComponent } from "./order/order/order.component";
+import { CategoryEditorComponent } from "./admin/category-editor/category-editor.component";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
-import { RangePipe } from "./pipes/range.pipe";
-import { IterablePipe } from "./pipes/iterable.pipe";
+import { RangePipe } from "./shared/pipes/range.pipe";
+import { IterablePipe } from "./shared/pipes/iterable.pipe";
 
 class RouterStub {
 }
