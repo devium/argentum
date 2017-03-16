@@ -1,10 +1,10 @@
 import { Component, OnInit } from "@angular/core";
-import { ProductRange } from "../../shared/model/product-range";
-import { RestService } from "../../shared/rest-service/rest.service";
-import { Category } from "../../shared/model/category";
-import { Product } from "../../shared/model/product";
-import { isDarkBackground } from "../../shared/util/is-dark-background";
-import { KeypadComponent } from "../../shared/keypad/keypad.component";
+import { ProductRange } from "../../common/model/product-range";
+import { RestService } from "../../common/rest-service/rest.service";
+import { Category } from "../../common/model/category";
+import { Product } from "../../common/model/product";
+import { isDarkBackground } from "../../common/util/is-dark-background";
+import { KeypadComponent } from "../../common/keypad/keypad.component";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 class EditorProduct {

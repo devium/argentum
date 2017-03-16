@@ -1,11 +1,11 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { OrderComponent } from "./order.component";
-import { IterablePipe } from "../../shared/pipes/iterable.pipe";
-import { RangePipe } from "../../shared/pipes/range.pipe";
-import { PRODUCT_RANGES } from "../../shared/rest-service/mock-data";
-import { ProductRange } from "../../shared/model/product-range";
+import { IterablePipe } from "../../common/pipes/iterable.pipe";
+import { RangePipe } from "../../common/pipes/range.pipe";
+import { PRODUCT_RANGES } from "../../common/rest-service/mock-data";
+import { ProductRange } from "../../common/model/product-range";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
-import { RestService } from "../../shared/rest-service/rest.service";
+import { RestService } from "../../common/rest-service/rest.service";
 
 class RestServiceStub {
   getProductRangesMeta(): Promise<ProductRange[]> {
