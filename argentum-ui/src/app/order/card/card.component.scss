@@ -1,3 +1,5 @@
+@import 'node_modules/bootstrap/scss/bootstrap';
+
 .overflow-ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -13,4 +15,14 @@
   max-width: 8rem;
   background-color: rgba(0, 0, 0, 0.2);
   min-height: 26px;
+}
+
+.card-pad {
+  height: 68px;
+}
+
+@include media-breakpoint-up(sm) {
+  .card-pad {
+    height: 34px;
+  }
 }
