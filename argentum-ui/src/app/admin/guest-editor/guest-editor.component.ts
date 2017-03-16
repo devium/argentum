@@ -3,6 +3,7 @@ import { RestService } from "../../common/rest-service/rest.service";
 import { Guest } from "../../common/model/guest";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { KeypadComponent } from "../../common/keypad/keypad.component";
+import { Subject } from "rxjs";
 
 @Component({
   selector: 'app-guest-editor',
@@ -10,19 +11,49 @@ import { KeypadComponent } from "../../common/keypad/keypad.component";
   styleUrls: ['./guest-editor.component.scss']
 })
 export class GuestEditorComponent implements OnInit {
-  private readonly PAGE_SIZE = 20;
+  private readonly PAGE_SIZE = 10;
   private page = 0;
   private guests: Guest[] = [];
   private guestsTotal = 0;
+  private codeLike = '';
+  private nameLike = '';
+  private mailLike = '';
+  private codeStream = new Subject<string>();
+  private nameStream = new Subject<string>();
+  private mailStream = new Subject<string>();
 
   constructor(private restService: RestService, private modalService: NgbModal) {
   }
 
   ngOnInit() {
+    this.codeStream
+      .debounceTime(300)
+      .distinctUntilChanged()
+      .subscribe(code => {
+        this.codeLike = code;
+        this.changePage(1);
+        this.page = 1;
+      });
+    this.nameStream
+      .debounceTime(300)
+      .distinctUntilChanged()
+      .subscribe(name => {
+        this.nameLike = name;
+        this.changePage(1);
+        this.page = 1;
+      });
+    this.mailStream
+      .debounceTime(300)
+      .distinctUntilChanged()
+      .subscribe(mail => {
+        this.mailLike = mail;
+        this.changePage(1);
+        this.page = 1;
+      });
   }
 
   changePage(newPage: number) {
-    this.restService.getGuestsPaginated(this.PAGE_SIZE, newPage - 1).then(result => {
+    this.restService.getGuestsPaginatedAndFiltered(this.PAGE_SIZE, newPage - 1, this.codeLike, this.nameLike, this.mailLike).then(result => {
       this.guests = result.guests;
       this.guestsTotal = result.guestsTotal;
     });
@@ -35,6 +66,18 @@ export class GuestEditorComponent implements OnInit {
       guest.bonus = result;
       this.restService.updateGuestBonus(guest);
     }, result => void(0));
+  }
+
+  filterCode(code: string) {
+    this.codeStream.next(code);
+  }
+
+  filterName(name: string) {
+    this.nameStream.next(name);
+  }
+
+  filterMail(mail: string) {
+    this.mailStream.next(mail);
   }
 
 }

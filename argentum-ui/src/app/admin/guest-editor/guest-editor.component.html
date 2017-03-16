@@ -3,9 +3,21 @@
 <table class="table table-slim">
   <thead>
   <tr>
-    <th>Code</th>
-    <th>Name</th>
-    <th>E-Mail</th>
+    <th>
+      <div>Code</div>
+      <div><input (input)="filterCode($event.target.value)" (focus)="$event.target.select()" type="text"
+                  class="form-control form-control-sm"></div>
+    </th>
+    <th>
+      <div>Name</div>
+      <div><input (input)="filterName($event.target.value)" (focus)="$event.target.select()" type="text"
+                  class="form-control form-control-sm"></div>
+    </th>
+    <th>
+      <div>E-Mail</div>
+      <div><input (input)="filterMail($event.target.value)" (focus)="$event.target.select()" type="text"
+                  class="form-control form-control-sm"></div>
+    </th>
     <th>Checked in</th>
     <th class="text-right">Card</th>
     <th class="text-right">Balance</th>
@@ -25,7 +37,7 @@
       {{guest.mail}}
     </td>
     <td>
-      {{guest.checkedIn}}
+      {{guest.checkedIn ? guest.checkedIn.toLocaleTimeString() : ''}}
     </td>
     <td class="text-right">
       {{guest.card}}
@@ -47,6 +59,9 @@
   <ngb-pagination (pageChange)="changePage($event)" [collectionSize]="guestsTotal" [(page)]="page"
                   [pageSize]="PAGE_SIZE"
                   maxSize="10" rotate="true"></ngb-pagination>
+</div>
+<div class="container-fluid text-center">
+  {{guestsTotal}} guests found.
 </div>
 
 <app-navbar></app-navbar>
