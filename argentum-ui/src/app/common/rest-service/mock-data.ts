@@ -187,8 +187,11 @@ export const COATCHECK: ProductRange = {
 export const RECEPTION: ProductRange = {
   id: 4, name: 'Reception', products: []
 };
+export const DRUGSTORE: ProductRange = {
+  id: 5, name: 'Drug store', products: []
+};
 
-export const PRODUCT_RANGES: ProductRange[] = [BAR, BUFFET, COATCHECK, RECEPTION];
+export const PRODUCT_RANGES: ProductRange[] = [BAR, BUFFET, COATCHECK, RECEPTION, DRUGSTORE];
 
 
 // Back references.
