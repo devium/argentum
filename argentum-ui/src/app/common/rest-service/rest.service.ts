@@ -70,11 +70,16 @@ export class RestService {
     return Promise.resolve(GUESTS.find(guest => guest.card == card));
   }
 
-  getGuestsPaginated(pageSize: number, page: number) {
-    // TODO: paginated GET on guests
+  getGuestsPaginatedAndFiltered(pageSize: number, page: number, codeLike: string, nameLike: string, mailLike: string) {
+    // TODO: paginated and filtered GET on guests
+    let filteredGuests = GUESTS
+      .filter(guest => guest.code.toLowerCase().indexOf(codeLike.toLowerCase()) > -1)
+      .filter(guest => guest.name.toLowerCase().indexOf(nameLike.toLowerCase()) > -1)
+      .filter(guest => guest.mail.toLowerCase().indexOf(mailLike.toLowerCase()) > -1);
+
     return Promise.resolve({
-      guests: GUESTS.slice(page * pageSize, page * pageSize + pageSize),
-      guestsTotal: GUESTS.length
+      guests: filteredGuests.slice(page * pageSize, page * pageSize + pageSize),
+      guestsTotal: filteredGuests.length
     });
   }
 
