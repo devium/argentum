@@ -1,0 +1,38 @@
+<app-admin-nav></app-admin-nav>
+
+<div class="container-fluid">
+
+  <div class="row my-2">
+    <div class="col-4 text-center">
+      Code column
+    </div>
+    <div class="col-4 text-center">
+      Name column
+    </div>
+    <div class="col-4 text-center">
+      E-Mail column
+    </div>
+  </div>
+  <div class="row my-2">
+    <div class="col-4">
+      <input class="form-control text-center" type="text" [value]="codeCol">
+    </div>
+    <div class="col-4">
+      <input class="form-control text-center" type="text" [value]="nameCol">
+    </div>
+    <div class="col-4">
+      <input class="form-control text-center" type="text" [value]="mailCol">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-4 offset-4 text-center my-2">
+      <label class="custom-file btn btn-block btn-primary">
+        <input type="file" class="custom-file-input" (change)="import($event.target.files[0])" hidden>
+        <span class="custom-file-control text-white"><i class="fa fa-upload pr-1"></i>Upload file (.csv)</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<app-navbar></app-navbar>
