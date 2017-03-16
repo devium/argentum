@@ -1,7 +1,6 @@
 import { Product } from "../model/product";
 import { Category } from "../model/category";
 import { ProductRange } from "../model/product-range";
-import { Guest } from "../model/guest";
 
 // Categories
 export const BEV_ALC: Category = { id: 1, name: 'Alcoholic', color: '#aaaaee' };
@@ -194,26 +193,3 @@ export const PRODUCT_RANGES: ProductRange[] = [BAR, BUFFET, COATCHECK, RECEPTION
 
 // Back references.
 PRODUCT_RANGES.forEach(range => range.products.forEach(product => product.ranges.add(range)));
-
-
-// Guests
-export const JAMES: Guest = {
-  id: 1,
-  code: 'C-VVJAMES',
-  name: 'James the Sunderer',
-  mail: 'jimmy@cherpcherp.com',
-  card: '8102162', // 12341234
-  balance: 10,
-  bonus: 5
-};
-export const NORBERT: Guest = {
-  id: 1,
-  code: 'C-VVNORB',
-  name: 'Norbert the Waterbear',
-  mail: 'norby@smellywaterbear.com',
-  card: '7951068', // 12121212
-  balance: 7.60,
-  bonus: 0
-};
-
-export const GUESTS: Guest[] = [JAMES, NORBERT];
