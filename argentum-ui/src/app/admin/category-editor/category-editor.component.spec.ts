@@ -1,8 +1,10 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { CategoryEditorComponent } from "./category-editor.component";
-import { CATEGORIES } from "../rest-service/mock-data";
-import { Category } from "../category";
-import { RestService } from "../rest-service/rest.service";
+import { CATEGORIES } from "../../common/rest-service/mock-data";
+import { Category } from "../../common/model/category";
+import { RestService } from "../../common/rest-service/rest.service";
+import { AdminNavComponent } from "../admin-nav/admin-nav.component";
+import { NavbarComponent } from "../../common/navbar/navbar.component";
 
 class RestServiceStub {
   getCategories(): Promise<Category[]> {
@@ -16,7 +18,11 @@ describe('CategoryEditorComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [CategoryEditorComponent],
+      declarations: [
+        CategoryEditorComponent,
+        AdminNavComponent,
+        NavbarComponent
+      ],
       providers: [{ provide: RestService, useClass: RestServiceStub }]
     })
       .compileComponents();

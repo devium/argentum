@@ -1,15 +1,15 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { OrderViewComponent } from "./order-view.component";
 import { CardComponent } from "../card/card.component";
-import { OrderComponent } from "../order/order/order.component";
-import { NavbarComponent } from "../navbar/navbar.component";
-import { RangePipe } from "../pipes/range.pipe";
+import { OrderComponent } from "../order/order.component";
+import { NavbarComponent } from "../../common/navbar/navbar.component";
+import { RangePipe } from "../../common/pipes/range.pipe";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
-import { IterablePipe } from "../pipes/iterable.pipe";
-import { RestService } from "../rest-service/rest.service";
-import { PRODUCTS, PRODUCT_RANGES } from "../rest-service/mock-data";
-import { Product } from "../product";
-import { ProductRange } from "../product-range";
+import { IterablePipe } from "../../common/pipes/iterable.pipe";
+import { RestService } from "../../common/rest-service/rest.service";
+import { PRODUCTS, PRODUCT_RANGES } from "../../common/rest-service/mock-data";
+import { Product } from "../../common/model/product";
+import { ProductRange } from "../../common/model/product-range";
 
 class RestServiceStub {
   getProductRangesMeta(): Promise<ProductRange[]> {

@@ -4,12 +4,12 @@ import { ProductEditorComponent } from "../product-editor/product-editor.compone
 import { CategoryEditorComponent } from "../category-editor/category-editor.component";
 import { RangeEditorComponent } from "../range-editor/range-editor.component";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
-import { NavbarComponent } from "../navbar/navbar.component";
-import { CATEGORIES, PRODUCTS, PRODUCT_RANGES } from "../rest-service/mock-data";
-import { Category } from "../category";
-import { Product } from "../product";
-import { ProductRange } from "../product-range";
-import { RestService } from "../rest-service/rest.service";
+import { NavbarComponent } from "../../common/navbar/navbar.component";
+import { CATEGORIES, PRODUCTS, PRODUCT_RANGES } from "../../common/rest-service/mock-data";
+import { Category } from "../../common/model/category";
+import { Product } from "../../common/model/product";
+import { ProductRange } from "../../common/model/product-range";
+import { RestService } from "../../common/rest-service/rest.service";
 
 class RestServiceStub {
   getProductRangesMeta(): Promise<ProductRange[]> {
