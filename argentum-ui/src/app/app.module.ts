@@ -12,7 +12,7 @@ import { RangePipe } from "./pipes/range.pipe";
 import { CardComponent } from "./card/card.component";
 import { OrderViewComponent } from "./order-view/order-view.component";
 import { AppRoutingModule } from "./app-routing/app-routing.module";
-import { AdminViewComponent } from "./admin-view/admin-view.component";
+import { AdminNavComponent } from "./admin-nav/admin-nav.component";
 import { ProductEditorComponent } from "./product-editor/product-editor.component";
 import { NavbarComponent } from "./navbar/navbar.component";
 import { CategoryEditorComponent } from "./category-editor/category-editor.component";
@@ -27,7 +27,7 @@ import { RangeEditorComponent } from "./range-editor/range-editor.component";
     RangePipe,
     CardComponent,
     OrderViewComponent,
-    AdminViewComponent,
+    AdminNavComponent,
     ProductEditorComponent,
     NavbarComponent,
     CategoryEditorComponent,
