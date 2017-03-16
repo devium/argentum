@@ -18,6 +18,7 @@ import { NavbarComponent } from "./common/navbar/navbar.component";
 import { CategoryEditorComponent } from "./admin/category-editor/category-editor.component";
 import { RangeEditorComponent } from "./admin/range-editor/range-editor.component";
 import { GuestEditorComponent } from "./admin/guest-editor/guest-editor.component";
+import { GuestImportComponent } from "./admin/guest-import/guest-import.component";
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { GuestEditorComponent } from "./admin/guest-editor/guest-editor.componen
     NavbarComponent,
     CategoryEditorComponent,
     RangeEditorComponent,
-    GuestEditorComponent
+    GuestEditorComponent,
+    GuestImportComponent
   ],
   imports: [
     BrowserModule,

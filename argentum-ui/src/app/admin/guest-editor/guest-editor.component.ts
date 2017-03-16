@@ -11,7 +11,7 @@ import { Subject } from "rxjs";
   styleUrls: ['./guest-editor.component.scss']
 })
 export class GuestEditorComponent implements OnInit {
-  private readonly PAGE_SIZE = 10;
+  private readonly PAGE_SIZE = 15;
   private page = 0;
   private guests: Guest[] = [];
   private guestsTotal = 0;
