@@ -21,7 +21,7 @@
   @extend .col-4;
   @extend .p-05;
   @extend .col-sm-2;
-  min-height: 80px;
+  min-height: 70px;
 }
 
 .col-product-range {
@@ -30,7 +30,7 @@
 
 .col-product-order {
   @extend .col-product;
-  @extend .col-lg-4;
+  @extend .col-md-4;
 }
 
 .container-grid {
@@ -46,5 +46,4 @@
   @extend .btn;
   @extend .btn-primary;
   @extend .btn-block;
-  @extend .btn-lg;
 }

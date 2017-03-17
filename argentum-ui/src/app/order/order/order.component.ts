@@ -1,10 +1,10 @@
-import { Component, OnInit, NgZone } from "@angular/core";
-import { Product } from "../../common/model/product";
-import { RestService } from "../../common/rest-service/rest.service";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { KeypadComponent } from "../../common/keypad/keypad.component";
-import { isDarkBackground } from "../../common/util/is-dark-background";
-import { ProductRange } from "../../common/model/product-range";
+import { Component, OnInit, NgZone } from '@angular/core';
+import { Product } from '../../common/model/product';
+import { RestService } from '../../common/rest-service/rest.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { KeypadComponent } from '../../common/keypad/keypad.component';
+import { isDarkBackground } from '../../common/util/is-dark-background';
+import { ProductRange } from '../../common/model/product-range';
 
 @Component({
   selector: 'app-order',
@@ -28,9 +28,12 @@ export class OrderComponent implements OnInit {
         if (window.innerWidth < 576) {
           this.rangeProductsPerPage = 14;
           this.orderProductsPerPage = 6;
-        } else if (window.innerWidth < 992) {
+        } else if (window.innerWidth < 768) {
           this.rangeProductsPerPage = 23;
           this.orderProductsPerPage = 12;
+        } else if (window.innerWidth < 992) {
+          this.rangeProductsPerPage = 17;
+          this.orderProductsPerPage = 9;
         } else {
           this.rangeProductsPerPage = 35;
           this.orderProductsPerPage = 18;
