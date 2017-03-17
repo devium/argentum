@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <div class="col-md row p-0 m-0">
+    <div (swipe)=onRangeSwipe($event) class="col-md row p-0 m-0">
       <div *ngFor="let product of getPaginated(products, rangeProductsPerPage, rangePage)"
            class="col-product-range">
         <button (click)="rangeProductClicked(product)" type="button" class="btn-product"
@@ -63,7 +63,7 @@
       </div>
     </div>
 
-    <div class="row col-md p-0 m-0">
+    <div (swipe)="onOrderSwipe($event)" class="row col-md p-0 m-0">
       <div
         *ngFor="let productEntry of orderedProducts | iterable | slice:(orderProductsPerPage * (orderPage - 1)):(orderProductsPerPage * orderPage)"
         class="col-product-order">
