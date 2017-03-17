@@ -115,4 +115,20 @@ export class OrderComponent implements OnInit {
   private refreshProducts() {
     this.restService.getProductRangeEager(this.selectedRange.id).then(range => this.products = range.products);
   }
+
+  private onRangeSwipe(event: any) {
+    if (event.direction == 2) {
+      this.rangePage = Math.min(Math.ceil(this.products.length / this.rangeProductsPerPage), this.rangePage + 1);
+    } else if (event.direction == 4) {
+      this.rangePage = Math.max(0, this.rangePage - 1);
+    }
+  }
+
+  private onOrderSwipe(event: any) {
+    if (event.direction == 2) {
+      this.orderPage = Math.min(Math.ceil(this.orderedProducts.size / this.orderProductsPerPage), this.orderPage + 1);
+    } else if (event.direction == 4) {
+      this.orderPage = Math.max(0, this.rangePage - 1);
+    }
+  }
 }
