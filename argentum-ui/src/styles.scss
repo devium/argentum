@@ -53,3 +53,7 @@
 .flex-grow-2 {
   flex-grow: 2;
 }
+
+.btn:disabled {
+  pointer-events: none;
+}
