@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Guest } from '../../common/model/guest';
 import { RestService } from '../../common/rest-service/rest.service';
+import { Subject } from 'rxjs';
 
 declare let Papa: any;
 
@@ -14,11 +15,18 @@ export class GuestImportComponent implements OnInit {
   nameCol = '';
   mailCol = '';
   statusCol = '';
+  message: string;
+  messageType: string;
+  messageStream = new Subject<{ message: string, type: string }>();
 
   constructor(private restService: RestService) {
   }
 
   ngOnInit() {
+    this.messageStream.subscribe(message => {
+      this.message = message.message;
+      this.messageType = message.type;
+    });
   }
 
   import(target: any) {
@@ -63,12 +71,16 @@ export class GuestImportComponent implements OnInit {
         });
 
         this.restService.saveGuests(guests);
+        this.success(`Successfully imported ${guests.length} guests.`);
       }
     });
   }
 
   error(message: string) {
-    // TODO
-    console.log(message);
+    this.messageStream.next({ message: message, type: 'danger' });
+  }
+
+  success(message: string) {
+    this.messageStream.next({ message: message, type: 'success' });
   }
 }
