@@ -10,7 +10,8 @@ html, body {
 }
 
 .btn.disabled,
-.form-control.disabled {
+.form-control.disabled,
+input:disabled {
   cursor: default !important;
 }
 
@@ -52,6 +53,7 @@ html, body {
   flex-grow: 2;
 }
 
-.btn:disabled {
+.btn:disabled,
+input:disabled {
   pointer-events: none;
 }

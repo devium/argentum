@@ -20,6 +20,7 @@ import { GuestEditorComponent } from './admin/guest-editor/guest-editor.componen
 import { GuestImportComponent } from './admin/guest-import/guest-import.component';
 import { CheckinComponent } from './checkin/checkin/checkin.component';
 import { NewGuestComponent } from './checkin/new-guest/new-guest.component';
+import { SearchGuestComponent } from './checkin/search-guest/search-guest.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { NewGuestComponent } from './checkin/new-guest/new-guest.component';
     GuestEditorComponent,
     GuestImportComponent,
     CheckinComponent,
-    NewGuestComponent
+    NewGuestComponent,
+    SearchGuestComponent
   ],
   imports: [
     BrowserModule,
@@ -54,7 +56,8 @@ import { NewGuestComponent } from './checkin/new-guest/new-guest.component';
   ],
   entryComponents: [
     KeypadComponent,
-    NewGuestComponent
+    NewGuestComponent,
+    SearchGuestComponent
   ]
 })
 export class AppModule {

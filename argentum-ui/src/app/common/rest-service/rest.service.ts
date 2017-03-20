@@ -8,6 +8,7 @@ import { Category } from '../model/category';
 import { Guest } from '../model/guest';
 import { GUESTS } from './mock-guests';
 import { ALL_PRODUCTS } from './mock-products';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class RestService {
@@ -66,7 +67,7 @@ export class RestService {
     return Promise.resolve(GUESTS.find(guest => guest.card == card));
   }
 
-  getGuestsPaginatedAndFiltered(pageSize: number, page: number, codeLike: string, nameLike: string, mailLike: string, statusLike: string) {
+  getGuestsPaginatedAndFiltered(pageSize: number, page: number, codeLike: string, nameLike: string, mailLike: string, statusLike: string): Promise<{ guests: Guest[], guestsTotal: number }> {
     // TODO: paginated and filtered GET on guests
     let filteredGuests = GUESTS
       .filter(guest => guest.code.toLowerCase().indexOf(codeLike.toLowerCase()) > -1)
@@ -78,6 +79,14 @@ export class RestService {
       guests: filteredGuests.slice(page * pageSize, page * pageSize + pageSize),
       guestsTotal: filteredGuests.length
     });
+  }
+
+  getGuestsByCode(codeLike: string): Observable<Guest[]> {
+    // TODO: filtered GET on guests
+    let filteredGuests = GUESTS
+      .filter(guest => guest.code.toLowerCase().indexOf(codeLike.toLowerCase()) > -1);
+
+    return Observable.of(filteredGuests.length > 5 ? [] : filteredGuests);
   }
 
   saveGuests(guests: Guest[]) {

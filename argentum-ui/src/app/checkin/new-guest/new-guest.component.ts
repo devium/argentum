@@ -12,7 +12,7 @@ export class NewGuestComponent implements OnInit {
   name = '';
   mail = '';
   status = '';
-  card = '-';
+  card: string;
   balance = 0;
   bonus = 0;
 
@@ -22,13 +22,19 @@ export class NewGuestComponent implements OnInit {
   ngOnInit() {
   }
 
+  setCard() {
+    // TODO
+  }
+
   setBalance() {
     let modal = this.modalService.open(KeypadComponent, { backdrop: 'static', size: 'sm' });
+    (<KeypadComponent>modal.componentInstance).captureKeyboard = true;
     modal.result.then(result => this.balance = result, result => void(0));
   }
 
   setBonus() {
     let modal = this.modalService.open(KeypadComponent, { backdrop: 'static', size: 'sm' });
+    (<KeypadComponent>modal.componentInstance).captureKeyboard = true;
     modal.result.then(result => this.bonus = result, result => void(0));
   }
 
