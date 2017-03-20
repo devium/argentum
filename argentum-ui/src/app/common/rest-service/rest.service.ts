@@ -80,6 +80,11 @@ export class RestService {
     });
   }
 
+  saveGuests(guests: Guest[]) {
+    // TODO: POST on guests
+    console.log(guests);
+  }
+
   updateGuestBonus(guest: Guest) {
     // TODO: PUT on guest ID with bonus as content
   }
