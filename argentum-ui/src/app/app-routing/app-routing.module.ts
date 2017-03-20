@@ -1,15 +1,17 @@
-import { NgModule } from "@angular/core";
-import { Routes, RouterModule } from "@angular/router";
-import { OrderViewComponent } from "../order/order-view/order-view.component";
-import { ProductEditorComponent } from "../admin/product-editor/product-editor.component";
-import { RangeEditorComponent } from "../admin/range-editor/range-editor.component";
-import { CategoryEditorComponent } from "../admin/category-editor/category-editor.component";
-import { GuestEditorComponent } from "../admin/guest-editor/guest-editor.component";
-import { GuestImportComponent } from "../admin/guest-import/guest-import.component";
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+import { OrderViewComponent } from '../order/order-view/order-view.component';
+import { ProductEditorComponent } from '../admin/product-editor/product-editor.component';
+import { RangeEditorComponent } from '../admin/range-editor/range-editor.component';
+import { CategoryEditorComponent } from '../admin/category-editor/category-editor.component';
+import { GuestEditorComponent } from '../admin/guest-editor/guest-editor.component';
+import { GuestImportComponent } from '../admin/guest-import/guest-import.component';
+import { CheckinComponent } from '../checkin/checkin.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/order', pathMatch: 'full' },
   { path: 'order', component: OrderViewComponent },
+  { path: 'checkin', component: CheckinComponent },
   { path: 'admin', redirectTo: '/admin/products', pathMatch: 'full' },
   { path: 'admin/products', component: ProductEditorComponent },
   { path: 'admin/categories', component: CategoryEditorComponent },
