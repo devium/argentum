@@ -1,0 +1,57 @@
+<div class="modal-body mx-4 my-3 p-0">
+
+  <div class="form-group">
+    <label for="codeInput">Code</label>
+    <input #codeInput (input)="search($event.target.value)" id="codeInput" type="text" class="form-control">
+
+    <div *ngIf="results.length > 0 && !guest" class="dropdown show">
+      <div class="dropdown-menu">
+        <button *ngFor="let guest of results" (click)="lockGuest(guest)" type="button" class="dropdown-item">
+          {{guest.code}} {{guest.name}}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <button (click)="checkIn()" type="button" [disabled]="!guest || guest.checkedIn"
+          [class.disabled]="!guest || guest.checkedIn" class="btn btn-block btn-primary mb-3">
+    Check in
+  </button>
+
+  <div *ngIf="guest && guest.checkedIn">
+
+    <div class="form-group">
+      <label for="cardButton">Card (optional)</label>
+      <button (click)="setCard()" id="cardButton" type="button" class="btn btn-block btn-primary">
+        {{guest.card ? guest.card : '-'}}
+      </button>
+    </div>
+
+    <div class="form-group">
+      <label for="balanceButton">Balance</label>
+      <button (click)="setBalance()" id="balanceButton" type="button" class="btn btn-block btn-primary"
+              [disabled]="!guest.card" [class.disabled]="!guest.card">
+        {{guest.balance | number:'1.2-2'}}
+      </button>
+    </div>
+
+    <div class="form-group">
+      <label for="bonusButton">Bonus (cannot be refunded)</label>
+      <button (click)="setBonus()" id="bonusButton" type="button" class="btn btn-block btn-primary"
+              [disabled]="!guest.card" [class.disabled]="!guest.card">
+        {{guest.bonus | number:'1.2-2'}}
+      </button>
+    </div>
+
+  </div>
+
+  <button *ngIf="!guest || !guest.checkedIn" (click)="activeModal.dismiss('Cancel click')"
+          type="button" class="btn btn-secondary btn-block btn-lg">
+    <i class="fa fa-close fa-lg"></i>
+  </button>
+  <button *ngIf="guest && guest.checkedIn" (click)="activeModal.dismiss('Confirm click')" type="button"
+          class="btn btn-primary btn-block btn-lg">
+    <i class="fa fa-check fa-lg"></i>
+  </button>
+
+</div>
