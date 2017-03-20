@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-guest-import',
@@ -9,6 +9,7 @@ export class GuestImportComponent implements OnInit {
   codeCol = '';
   nameCol = '';
   mailCol = '';
+  statusCol = '';
 
   constructor() {
   }
