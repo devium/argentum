@@ -10,7 +10,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { KeypadComponent } from './common/keypad/keypad.component';
 import { RangePipe } from './common/pipes/range.pipe';
 import { CardComponent } from './order/card/card.component';
-import { OrderViewComponent } from './order/order-view/order-view.component';
 import { AppRoutingModule } from './app-routing/app-routing.module';
 import { AdminNavComponent } from './admin/admin-nav/admin-nav.component';
 import { ProductEditorComponent } from './admin/product-editor/product-editor.component';
@@ -29,7 +28,6 @@ import { CheckinComponent } from './checkin/checkin.component';
     KeypadComponent,
     RangePipe,
     CardComponent,
-    OrderViewComponent,
     AdminNavComponent,
     ProductEditorComponent,
     NavbarComponent,
