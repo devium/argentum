@@ -3,6 +3,7 @@ export class Guest {
   code: string;
   name: string;
   mail: string;
+  status: string;
   checkedIn: Date;
   card: string;
   balance: number;

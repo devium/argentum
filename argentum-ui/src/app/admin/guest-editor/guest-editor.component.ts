@@ -18,9 +18,11 @@ export class GuestEditorComponent implements OnInit {
   private codeLike = '';
   private nameLike = '';
   private mailLike = '';
+  private statusLike = '';
   private codeStream = new Subject<string>();
   private nameStream = new Subject<string>();
   private mailStream = new Subject<string>();
+  private statusStream = new Subject<string>();
 
   constructor(private restService: RestService, private modalService: NgbModal) {
   }
@@ -50,11 +52,19 @@ export class GuestEditorComponent implements OnInit {
         this.changePage(1);
         this.page = 1;
       });
+    this.statusStream
+      .debounceTime(300)
+      .distinctUntilChanged()
+      .subscribe(status => {
+        this.statusLike = status;
+        this.changePage(1);
+        this.page = 1;
+      });
     this.changePage(1);
   }
 
   changePage(newPage: number) {
-    this.restService.getGuestsPaginatedAndFiltered(this.PAGE_SIZE, newPage - 1, this.codeLike, this.nameLike, this.mailLike).then(result => {
+    this.restService.getGuestsPaginatedAndFiltered(this.PAGE_SIZE, newPage - 1, this.codeLike, this.nameLike, this.mailLike, this.statusLike).then(result => {
       this.guests = result.guests;
       this.guestsTotal = result.guestsTotal;
     });
@@ -79,6 +89,10 @@ export class GuestEditorComponent implements OnInit {
 
   filterMail(mail: string) {
     this.mailStream.next(mail);
+  }
+
+  filterStatus(status: string) {
+    this.statusStream.next(status);
   }
 
 }

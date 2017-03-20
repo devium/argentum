@@ -18,6 +18,11 @@
       <div><input (input)="filterMail($event.target.value)" (focus)="$event.target.select()" type="text"
                   class="form-control form-control-sm"></div>
     </th>
+    <th>
+      <div>Status</div>
+      <div><input (input)="filterStatus($event.target.value)" (focus)="$event.target.select()" type="text"
+                  class="form-control form-control-sm"></div>
+    </th>
     <th>Checked in</th>
     <th class="text-right">Card</th>
     <th class="text-right">Balance</th>
@@ -35,6 +40,9 @@
     </td>
     <td>
       {{guest.mail}}
+    </td>
+    <td>
+      {{guest.status}}
     </td>
     <td>
       {{guest.checkedIn ? guest.checkedIn.toLocaleTimeString() : ''}}

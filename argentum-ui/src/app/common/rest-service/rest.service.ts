@@ -66,12 +66,13 @@ export class RestService {
     return Promise.resolve(GUESTS.find(guest => guest.card == card));
   }
 
-  getGuestsPaginatedAndFiltered(pageSize: number, page: number, codeLike: string, nameLike: string, mailLike: string) {
+  getGuestsPaginatedAndFiltered(pageSize: number, page: number, codeLike: string, nameLike: string, mailLike: string, statusLike: string) {
     // TODO: paginated and filtered GET on guests
     let filteredGuests = GUESTS
       .filter(guest => guest.code.toLowerCase().indexOf(codeLike.toLowerCase()) > -1)
       .filter(guest => guest.name.toLowerCase().indexOf(nameLike.toLowerCase()) > -1)
-      .filter(guest => guest.mail.toLowerCase().indexOf(mailLike.toLowerCase()) > -1);
+      .filter(guest => guest.mail.toLowerCase().indexOf(mailLike.toLowerCase()) > -1)
+      .filter(guest => guest.status.toLowerCase().indexOf(statusLike.toLowerCase()) > -1);
 
     return Promise.resolve({
       guests: filteredGuests.slice(page * pageSize, page * pageSize + pageSize),
