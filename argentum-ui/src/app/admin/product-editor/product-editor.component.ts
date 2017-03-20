@@ -1,11 +1,11 @@
-import { Component, OnInit } from "@angular/core";
-import { ProductRange } from "../../common/model/product-range";
-import { RestService } from "../../common/rest-service/rest.service";
-import { Category } from "../../common/model/category";
-import { Product } from "../../common/model/product";
-import { isDarkBackground } from "../../common/util/is-dark-background";
-import { KeypadComponent } from "../../common/keypad/keypad.component";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { Component, OnInit } from '@angular/core';
+import { ProductRange } from '../../common/model/product-range';
+import { RestService } from '../../common/rest-service/rest.service';
+import { Category } from '../../common/model/category';
+import { Product } from '../../common/model/product';
+import { isDarkBackground } from '../../common/util/is-dark-background';
+import { KeypadComponent } from '../../common/keypad/keypad.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 class EditorProduct {
   original: Product;
@@ -55,7 +55,9 @@ class EditorProduct {
   styleUrls: ['product-editor.component.scss']
 })
 export class ProductEditorComponent implements OnInit {
-  private products: EditorProduct[];
+  private readonly PAGE_SIZE = 15;
+  private page = 1;
+  private products: EditorProduct[] = [];
   private productRanges: ProductRange[] = [];
   private categories: Category[] = [];
 
@@ -63,7 +65,19 @@ export class ProductEditorComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.restService.getProducts().then(products => this.products = products.map(product => new EditorProduct(product)));
+    this.restService.getProducts()
+      .then(products => this.products = products
+        .map(product => new EditorProduct(product))
+        .sort((a, b) => {
+          let nameA = a.original.name.toLowerCase();
+          let nameB = b.original.name.toLowerCase();
+          if (nameA < nameB) {
+            return -1;
+          } else if (nameA > nameB) {
+            return 1;
+          }
+          return 0;
+        }));
     this.restService.getProductRangesMeta().then(ranges => this.productRanges = ranges);
     this.restService.getCategories().then(categories => this.categories = categories);
   }

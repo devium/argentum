@@ -1,15 +1,7 @@
-import { Product } from "../model/product";
-import { DRUGSTORE, BEV_NONALC, FOOD_SWEET, CAFFEINE, BEV_ALC, PRODUCTS } from "./mock-data";
+import { Product } from '../model/product';
+import { DRUGSTORE, BEV_NONALC, FOOD_SWEET, CAFFEINE, BEV_ALC, PRODUCTS } from './mock-data';
 
 export const GENERATED_PRODUCTS: Product[] = [
-  {
-    id: 16,
-    name: "Minocycline hydrochloride",
-    price: 3.43,
-    category: FOOD_SWEET,
-    ranges: new Set([DRUGSTORE]),
-    legacy: false
-  },
   {
     id: 17,
     name: "Haloperidol Decanoate",

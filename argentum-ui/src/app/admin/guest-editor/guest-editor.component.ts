@@ -1,9 +1,9 @@
-import { Component, OnInit } from "@angular/core";
-import { RestService } from "../../common/rest-service/rest.service";
-import { Guest } from "../../common/model/guest";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { KeypadComponent } from "../../common/keypad/keypad.component";
-import { Subject } from "rxjs";
+import { Component, OnInit } from '@angular/core';
+import { RestService } from '../../common/rest-service/rest.service';
+import { Guest } from '../../common/model/guest';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { KeypadComponent } from '../../common/keypad/keypad.component';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-guest-editor',
@@ -12,7 +12,7 @@ import { Subject } from "rxjs";
 })
 export class GuestEditorComponent implements OnInit {
   private readonly PAGE_SIZE = 15;
-  private page = 0;
+  private page = 1;
   private guests: Guest[] = [];
   private guestsTotal = 0;
   private codeLike = '';

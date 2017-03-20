@@ -39,11 +39,11 @@
 }
 
 .changed {
-  background-color: lightblue;
+  background-color: $state-info-bg;
 }
 
 .removed {
-  background-color: lightcoral;
+  background-color: $state-danger-bg;
 }
 
 .flex-grow-1 {

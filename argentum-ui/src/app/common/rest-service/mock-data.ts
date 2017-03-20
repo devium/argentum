@@ -1,6 +1,6 @@
-import { Product } from "../model/product";
-import { Category } from "../model/category";
-import { ProductRange } from "../model/product-range";
+import { Product } from '../model/product';
+import { Category } from '../model/category';
+import { ProductRange } from '../model/product-range';
 
 // Categories
 export const BEV_ALC: Category = { id: 1, name: 'Alcoholic', color: '#aaaaee' };
@@ -137,6 +137,14 @@ export const TABLE: Product = {
   ranges: new Set(),
   legacy: false
 };
+export const TABLE2: Product = {
+  id: 16,
+  name: "Table",
+  price: 25.00,
+  category: null,
+  ranges: new Set(),
+  legacy: false
+};
 
 export const PRODUCTS: Product[] = [
   WATER,
@@ -153,7 +161,8 @@ export const PRODUCTS: Product[] = [
   RED_BULL,
   SHOT,
   CAKE,
-  TABLE
+  TABLE,
+  TABLE2
 ];
 
 
