@@ -50,6 +50,7 @@ export class GuestEditorComponent implements OnInit {
         this.changePage(1);
         this.page = 1;
       });
+    this.changePage(1);
   }
 
   changePage(newPage: number) {
