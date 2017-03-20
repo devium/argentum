@@ -1,9 +1,7 @@
 @import 'node_modules/bootstrap/scss/bootstrap';
 
-@include media-breakpoint-up(md) {
-  html, body {
-    height: 100%
-  }
+html, body {
+  height: 100%;
 }
 
 .btn,
