@@ -18,7 +18,8 @@ import { CategoryEditorComponent } from './admin/category-editor/category-editor
 import { RangeEditorComponent } from './admin/range-editor/range-editor.component';
 import { GuestEditorComponent } from './admin/guest-editor/guest-editor.component';
 import { GuestImportComponent } from './admin/guest-import/guest-import.component';
-import { CheckinComponent } from './checkin/checkin.component';
+import { CheckinComponent } from './checkin/checkin/checkin.component';
+import { NewGuestComponent } from './checkin/new-guest/new-guest.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { CheckinComponent } from './checkin/checkin.component';
     RangeEditorComponent,
     GuestEditorComponent,
     GuestImportComponent,
-    CheckinComponent
+    CheckinComponent,
+    NewGuestComponent
   ],
   imports: [
     BrowserModule,
@@ -51,7 +53,8 @@ import { CheckinComponent } from './checkin/checkin.component';
     AppComponent
   ],
   entryComponents: [
-    KeypadComponent
+    KeypadComponent,
+    NewGuestComponent
   ]
 })
 export class AppModule {
