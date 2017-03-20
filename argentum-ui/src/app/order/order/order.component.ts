@@ -25,13 +25,13 @@ export class OrderComponent implements OnInit {
   constructor(private restService: RestService, private ngZone: NgZone, private modalService: NgbModal) {
     window.onresize = () => {
       this.ngZone.run(() => {
-        if (window.innerWidth < 576) {
+        if (window.outerWidth < 576) {
           this.rangeProductsPerPage = 14;
           this.orderProductsPerPage = 6;
-        } else if (window.innerWidth < 768) {
+        } else if (window.outerWidth < 768) {
           this.rangeProductsPerPage = 23;
           this.orderProductsPerPage = 12;
-        } else if (window.innerWidth < 992) {
+        } else if (window.outerWidth < 992) {
           this.rangeProductsPerPage = 17;
           this.orderProductsPerPage = 9;
         } else {
