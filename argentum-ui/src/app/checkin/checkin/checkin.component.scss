@@ -1,0 +1,11 @@
+@import 'node_modules/bootstrap/scss/bootstrap';
+
+.btn-huge {
+  height: 200px;
+}
+
+@include media-breakpoint-down(xs) {
+  .btn-huge {
+    height: 100%;
+  }
+}

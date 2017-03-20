@@ -1,0 +1,53 @@
+<div class="modal-body mx-4 my-3 p-0">
+
+  <div class="form-group">
+    <label for="nameInput">Name (optional)</label>
+    <input id="nameInput" type="text" class="form-control" [(ngModel)]="name">
+  </div>
+
+  <div class="form-group">
+    <label for="mailInput">E-Mail (optional)</label>
+    <input id="mailInput" type="text" class="form-control" [(ngModel)]="mail">
+  </div>
+
+  <div class="form-group">
+    <label for="statusInput">Status (optional)</label>
+    <input id="statusInput" type="text" class="form-control" [(ngModel)]="status">
+  </div>
+
+  <div class="form-group">
+    <label for="cardButton">Card (optional)</label>
+    <button (click)="setCard()" id="cardButton" type="button" class="btn btn-block btn-primary">
+      {{card}}
+    </button>
+  </div>
+
+  <div class="form-group">
+    <label for="balanceButton">Balance</label>
+    <button (click)="setBalance()" id="balanceButton" type="button" class="btn btn-block btn-primary">
+      {{balance | number:'1.2-2'}}
+    </button>
+  </div>
+
+  <div class="form-group">
+    <label for="bonusButton">Bonus (cannot not be refunded)</label>
+    <button (click)="setBonus()" id="bonusButton" type="button" class="btn btn-block btn-primary">
+      {{bonus | number:'1.2-2'}}
+    </button>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-6 p-1">
+      <button (click)="activeModal.dismiss('Cancel click')"
+              type="button" class="btn btn-secondary btn-block btn-lg">
+        <i class="fa fa-close fa-lg"></i>
+      </button>
+    </div>
+    <div class="col-6 p-1">
+      <button (click)="confirm()" type="button" class="btn btn-primary btn-block btn-lg">
+        <i class="fa fa-check fa-lg"></i>
+      </button>
+    </div>
+  </div>
+
+</div>
