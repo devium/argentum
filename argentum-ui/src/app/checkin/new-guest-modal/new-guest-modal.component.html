@@ -23,51 +23,45 @@
   </div>
 
   <div class="form-group">
+
     <label for="balanceInput">Balance (requires card)</label>
 
-    <div class="row">
-      <div class="col-2 pr-0">
-        <button (click)="subBalance()" type="button" class="btn btn-block btn-primary" [disabled]="!card"
+    <div class="d-flex">
+      <button (click)="subBalance()" type="button" class="btn btn-primary" [disabled]="!card"
                 [class.disabled]="!card">
           <i class="fa fa-minus"></i>
         </button>
-      </div>
 
-      <div class="col-8 p-0">
-        <input id="balanceInput" disabled class="disabled form-control text-center" [value]="balance | number:'1.2-2'">
-      </div>
+      <input id="balanceInput" disabled class="disabled form-control text-center flex-grow-1"
+             [value]="balance | number:'1.2-2'">
 
-      <div class="col-2 pl-0">
-        <button (click)="addBalance()" type="button" class="btn btn-block btn-primary" [disabled]="!card"
-                [class.disabled]="!card">
+      <button (click)="addBalance()" type="button" class="btn btn-primary" [disabled]="!card"
+              [class.disabled]="!card">
           <i class="fa fa-plus"></i>
         </button>
-      </div>
     </div>
+
   </div>
 
   <div class="form-group">
+
     <label for="bonusInput">Bonus (requires card)</label>
 
-    <div class="row">
-      <div class="col-2 pr-0">
-        <button (click)="subBonus()" type="button" class="btn btn-block btn-primary" [disabled]="!card"
-                [class.disabled]="!card">
-          <i class="fa fa-minus"></i>
-        </button>
-      </div>
+    <div class="d-flex">
+      <button (click)="subBonus()" type="button" class="btn btn-primary" [disabled]="!card"
+              [class.disabled]="!card">
+        <i class="fa fa-minus"></i>
+      </button>
 
-      <div class="col-8 p-0">
-        <input id="bonusInput" disabled class="disabled form-control text-center" [value]="bonus | number:'1.2-2'">
-      </div>
+      <input id="bonusInput" disabled class="disabled form-control text-center d-inline-block flex-grow-1"
+             [value]="bonus | number:'1.2-2'">
 
-      <div class="col-2 pl-0">
-        <button (click)="addBonus()" type="button" class="btn btn-block btn-primary" [disabled]="!card"
-                [class.disabled]="!card">
-          <i class="fa fa-plus"></i>
-        </button>
-      </div>
+      <button (click)="addBonus()" type="button" class="btn btn-primary" [disabled]="!card"
+              [class.disabled]="!card">
+        <i class="fa fa-plus"></i>
+      </button>
     </div>
+
   </div>
 
   <div class="row mt-2">
