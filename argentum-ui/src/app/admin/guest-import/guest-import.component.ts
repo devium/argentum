@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Guest } from '../../common/model/guest';
 import { RestService } from '../../common/rest-service/rest.service';
-import { Subject } from 'rxjs';
+import { MessageComponent } from '../../common/message/message.component';
 
 declare let Papa: any;
 
@@ -15,18 +15,14 @@ export class GuestImportComponent implements OnInit {
   nameCol = '';
   mailCol = '';
   statusCol = '';
-  message: string;
-  messageType: string;
-  messageStream = new Subject<{ message: string, type: string }>();
+
+  @ViewChild(MessageComponent)
+  private message: MessageComponent;
 
   constructor(private restService: RestService) {
   }
 
   ngOnInit() {
-    this.messageStream.subscribe(message => {
-      this.message = message.message;
-      this.messageType = message.type;
-    });
   }
 
   import(target: any) {
@@ -49,7 +45,7 @@ export class GuestImportComponent implements OnInit {
         let requiredFields = [this.codeCol, this.nameCol, this.mailCol, this.statusCol];
         for (let field of requiredFields) {
           if (results.meta.fields.indexOf(field) == -1) {
-            this.error(`Column "${field}" not found in imported file.`);
+            this.message.error(`Column "${field}" not found in imported file.`);
             return;
           }
         }
@@ -70,17 +66,14 @@ export class GuestImportComponent implements OnInit {
           });
         });
 
-        this.restService.createGuests(guests);
-        this.success(`Successfully imported ${guests.length} guests.`);
+        this.restService.createGuests(guests)
+          .then(savedGuests => {
+            this.message.success(`Successfully imported ${guests.length} guests.`);
+          })
+          .catch(reason => {
+            this.message.error(`Error: ${reason}`);
+          });
       }
     });
-  }
-
-  error(message: string) {
-    this.messageStream.next({ message: message, type: 'danger' });
-  }
-
-  success(message: string) {
-    this.messageStream.next({ message: message, type: 'success' });
   }
 }
