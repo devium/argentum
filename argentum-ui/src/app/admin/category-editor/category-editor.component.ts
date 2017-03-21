@@ -55,12 +55,10 @@ export class CategoryEditorComponent implements OnInit {
   }
 
   changeName(category: EditorCategory, value: string) {
-    category.displayed.name = value;
     category.updateChanged();
   }
 
   changeColor(category: EditorCategory, value: string) {
-    category.displayed.color = value;
     category.updateChanged();
   }
 
