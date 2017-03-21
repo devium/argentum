@@ -22,7 +22,7 @@
   <tr *ngFor="let product of products.slice((page - 1) * PAGE_SIZE, (page - 1) * PAGE_SIZE + PAGE_SIZE)"
       [class.changed]="product.changed" [class.removed]="!product.edited">
     <td>
-      <input [value]="product.displayed.name" (input)="changeName(product, $event.target.value)"
+      <input [(ngModel)]="product.displayed.name" (input)="changeName(product, $event.target.value)"
              class="form-control p-1" [class.disabled]="!product.edited" [disabled]="!product.edited">
     </td>
     <td class="text-right">

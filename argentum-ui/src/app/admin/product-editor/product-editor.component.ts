@@ -117,7 +117,6 @@ export class ProductEditorComponent implements OnInit {
   }
 
   private changeName(product: EditorProduct, value: string) {
-    product.displayed.name = value;
     product.updateChanged();
   }
 
