@@ -28,16 +28,28 @@ export class NewGuestModalComponent implements OnInit {
     modal.result.then(result => this.card = result, result => void(0));
   }
 
-  setBalance() {
+  addBalance() {
     let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
-    modal.result.then(result => this.balance = result, result => void(0));
+    modal.result.then(result => this.balance += result, result => void(0));
   }
 
-  setBonus() {
+  subBalance() {
     let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
-    modal.result.then(result => this.bonus = result, result => void(0));
+    modal.result.then(result => this.balance -= result, result => void(0));
+  }
+
+  addBonus() {
+    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
+    modal.result.then(result => this.bonus += result, result => void(0));
+  }
+
+  subBonus() {
+    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
+    modal.result.then(result => this.bonus -= result, result => void(0));
   }
 
   confirm(): void {

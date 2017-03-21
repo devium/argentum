@@ -4,6 +4,7 @@ import { Guest } from '../../common/model/guest';
 import { Observable, Subject } from 'rxjs';
 import { RestService } from '../../common/rest-service/rest.service';
 import { CardModalComponent } from '../card-modal/card-modal.component';
+import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.component';
 
 @Component({
   selector: 'app-search-guest',
@@ -14,7 +15,6 @@ export class SearchGuestModalComponent implements OnInit {
   private codeStream = new Subject<string>();
   results: Guest[] = [];
   guest: Guest;
-  card: string;
 
   @ViewChild('codeInput')
   codeInput: ElementRef;
@@ -46,7 +46,31 @@ export class SearchGuestModalComponent implements OnInit {
 
   setCard() {
     let modal = this.modalService.open(CardModalComponent, { backdrop: 'static', size: 'sm' });
-    modal.result.then(result => this.card = result, result => void(0));
+    modal.result.then(result => this.guest.card = result, result => void(0));
+  }
+
+  addBalance() {
+    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
+    modal.result.then(result => this.guest.balance += result, result => void(0));
+  }
+
+  subBalance() {
+    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
+    modal.result.then(result => this.guest.balance -= result, result => void(0));
+  }
+
+  addBonus() {
+    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
+    modal.result.then(result => this.guest.bonus += result, result => void(0));
+  }
+
+  subBonus() {
+    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
+    modal.result.then(result => this.guest.bonus -= result, result => void(0));
   }
 
   confirm(): void {
