@@ -7,9 +7,9 @@ import { OrderComponent } from './order/order/order.component';
 import { RestService } from './common/rest-service/rest.service';
 import { IterablePipe } from './common/pipes/iterable.pipe';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { KeypadComponent } from './common/keypad/keypad.component';
+import { KeypadModalComponent } from './common/keypad-modal/keypad-modal.component';
 import { RangePipe } from './common/pipes/range.pipe';
-import { CardComponent } from './order/card/card.component';
+import { CardBarComponent } from './order/card-bar/card-bar.component';
 import { AppRoutingModule } from './app-routing/app-routing.module';
 import { AdminNavComponent } from './admin/admin-nav/admin-nav.component';
 import { ProductEditorComponent } from './admin/product-editor/product-editor.component';
@@ -19,17 +19,18 @@ import { RangeEditorComponent } from './admin/range-editor/range-editor.componen
 import { GuestEditorComponent } from './admin/guest-editor/guest-editor.component';
 import { GuestImportComponent } from './admin/guest-import/guest-import.component';
 import { CheckinComponent } from './checkin/checkin/checkin.component';
-import { NewGuestComponent } from './checkin/new-guest/new-guest.component';
-import { SearchGuestComponent } from './checkin/search-guest/search-guest.component';
+import { NewGuestModalComponent } from './checkin/new-guest-modal/new-guest-modal.component';
+import { SearchGuestModalComponent } from './checkin/search-guest-modal/search-guest-modal.component';
+import { CardModalComponent } from './checkin/card-modal/card-modal.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     OrderComponent,
     IterablePipe,
-    KeypadComponent,
+    KeypadModalComponent,
     RangePipe,
-    CardComponent,
+    CardBarComponent,
     AdminNavComponent,
     ProductEditorComponent,
     NavbarComponent,
@@ -38,8 +39,9 @@ import { SearchGuestComponent } from './checkin/search-guest/search-guest.compon
     GuestEditorComponent,
     GuestImportComponent,
     CheckinComponent,
-    NewGuestComponent,
-    SearchGuestComponent
+    NewGuestModalComponent,
+    SearchGuestModalComponent,
+    CardModalComponent
   ],
   imports: [
     BrowserModule,
@@ -55,9 +57,10 @@ import { SearchGuestComponent } from './checkin/search-guest/search-guest.compon
     AppComponent
   ],
   entryComponents: [
-    KeypadComponent,
-    NewGuestComponent,
-    SearchGuestComponent
+    KeypadModalComponent,
+    NewGuestModalComponent,
+    SearchGuestModalComponent,
+    CardModalComponent
   ]
 })
 export class AppModule {

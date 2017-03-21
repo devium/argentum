@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { NewGuestComponent } from '../new-guest/new-guest.component';
-import { SearchGuestComponent } from '../search-guest/search-guest.component';
+import { NewGuestModalComponent } from '../new-guest-modal/new-guest-modal.component';
+import { SearchGuestModalComponent } from '../search-guest-modal/search-guest-modal.component';
 import { Guest } from '../../common/model/guest';
 import { RestService } from '../../common/rest-service/rest.service';
 
@@ -19,12 +19,12 @@ export class CheckinComponent implements OnInit {
   }
 
   newGuest() {
-    let modal = this.modalService.open(NewGuestComponent, { backdrop: 'static' });
+    let modal = this.modalService.open(NewGuestModalComponent, { backdrop: 'static' });
     modal.result.then((guest: Guest) => this.restService.saveGuests([guest]), result => void(0));
   }
 
   searchGuest() {
-    let modal = this.modalService.open(SearchGuestComponent, { backdrop: 'static' });
+    let modal = this.modalService.open(SearchGuestModalComponent, { backdrop: 'static' });
   }
 
 }

@@ -1,4 +1,4 @@
-import { convertCard } from "./convert-card";
+import { convertCard } from './convert-card';
 
 const TEST_CARDS_A: string[] = [
   '0004374727',
@@ -78,7 +78,7 @@ describe('convertCard', () => {
     expect(() => convertCard('25565537')).toThrow(new RangeError('Card number exceeds supported range.'));
   });
 
-  it('should result in the same string for two different card readers', () => {
+  it('should result in the same string for two different card-bar readers', () => {
     for (let i = 0; i < TEST_CARDS_A.length; ++i) {
       expect(convertCard(TEST_CARDS_A[i])).toBe(convertCard(TEST_CARDS_B[i]));
     }

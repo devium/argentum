@@ -4,7 +4,7 @@ import { RestService } from '../../common/rest-service/rest.service';
 import { Category } from '../../common/model/category';
 import { Product } from '../../common/model/product';
 import { isDarkBackground } from '../../common/util/is-dark-background';
-import { KeypadComponent } from '../../common/keypad/keypad.component';
+import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 class EditorProduct {
@@ -122,8 +122,8 @@ export class ProductEditorComponent implements OnInit {
   }
 
   private setProductPrice(product: EditorProduct) {
-    let modal = this.modalService.open(KeypadComponent, { backdrop: 'static', size: 'sm' });
-    (<KeypadComponent>modal.componentInstance).captureKeyboard = true;
+    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
     modal.result.then((result: number) => {
       product.displayed.price = result;
       product.updateChanged();

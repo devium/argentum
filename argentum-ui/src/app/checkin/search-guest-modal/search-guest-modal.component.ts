@@ -3,16 +3,18 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Guest } from '../../common/model/guest';
 import { Observable, Subject } from 'rxjs';
 import { RestService } from '../../common/rest-service/rest.service';
+import { CardModalComponent } from '../card-modal/card-modal.component';
 
 @Component({
   selector: 'app-search-guest',
-  templateUrl: 'search-guest.component.html',
-  styleUrls: ['search-guest.component.scss']
+  templateUrl: 'search-guest-modal.component.html',
+  styleUrls: ['search-guest-modal.component.scss']
 })
-export class SearchGuestComponent implements OnInit {
+export class SearchGuestModalComponent implements OnInit {
   private codeStream = new Subject<string>();
   results: Guest[] = [];
   guest: Guest;
+  card: string;
 
   @ViewChild('codeInput')
   codeInput: ElementRef;
@@ -43,7 +45,8 @@ export class SearchGuestComponent implements OnInit {
   }
 
   setCard() {
-    // TODO
+    let modal = this.modalService.open(CardModalComponent, { backdrop: 'static', size: 'sm' });
+    modal.result.then(result => this.card = result, result => void(0));
   }
 
   confirm(): void {
