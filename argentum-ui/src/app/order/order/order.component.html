@@ -48,7 +48,8 @@
 
       <div class="row m-0">
         <div class="col-12 px-1">
-          <button (click)="refreshProducts()" type="button" class="btn-grid-bar">
+          <button (click)="refreshProducts()" type="button" class="btn-grid-bar" [disabled]="!selectedRange"
+                  [class.disabled]="!selectedRange">
             <i class="fa fa-refresh fa-lg"></i></button>
         </div>
       </div>

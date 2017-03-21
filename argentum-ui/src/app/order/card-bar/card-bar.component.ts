@@ -43,7 +43,7 @@ export class CardBarComponent implements OnInit {
     this.cardStream.subscribe(result => this.newNumber(result));
 
     const start = 10;
-    const tps = 20;
+    const tps = 1;
     this.countdownStream = new Subject<number>();
     this.countdownStream
       .switchMap(old => Observable
