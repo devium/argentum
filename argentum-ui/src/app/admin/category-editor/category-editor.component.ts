@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { RestService } from '../../common/rest-service/rest.service';
 import { Category } from '../../common/model/category';
-import { Subject } from 'rxjs';
+import { MessageComponent } from '../../common/message/message.component';
 
 class EditorCategory {
   original: Category;
@@ -35,18 +35,14 @@ class EditorCategory {
 })
 export class CategoryEditorComponent implements OnInit {
   categories: EditorCategory[] = [];
-  message: string;
-  messageType: string;
-  messageStream = new Subject<{ message: string, type: string }>();
+
+  @ViewChild(MessageComponent)
+  private message: MessageComponent;
 
   constructor(private restService: RestService) {
   }
 
   ngOnInit() {
-    this.messageStream.subscribe(message => {
-      this.message = message.message;
-      this.messageType = message.type;
-    });
     this.loadCategories();
   }
 
@@ -114,19 +110,11 @@ export class CategoryEditorComponent implements OnInit {
 
     Promise.all([pCreate, pUpdate, pDelete])
       .then(result => {
-        this.success(`Categories saved successfully. (${createdCategories.length} created, ${changedCategories.length} updated, ${deletedCategories.length} deleted)`);
+        this.message.success(`Categories saved successfully. (${createdCategories.length} created, ${changedCategories.length} updated, ${deletedCategories.length} deleted)`);
         this.loadCategories();
       })
       .catch(reason => {
-        this.error(`Error: ${reason}`);
+        this.message.error(`Error: ${reason}`);
       });
-  }
-
-  error(message: string) {
-    this.messageStream.next({ message: message, type: 'danger' });
-  }
-
-  success(message: string) {
-    this.messageStream.next({ message: message, type: 'success' });
   }
 }
