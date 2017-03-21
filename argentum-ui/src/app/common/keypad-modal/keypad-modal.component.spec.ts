@@ -1,12 +1,12 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
-import { KeypadComponent } from "./keypad.component";
-import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
-import { By } from "@angular/platform-browser";
-import { DebugElement } from "@angular/core";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { KeypadModalComponent } from './keypad-modal.component';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { By } from '@angular/platform-browser';
+import { DebugElement } from '@angular/core';
 
-describe('KeypadComponent', () => {
-  let component: KeypadComponent;
-  let fixture: ComponentFixture<KeypadComponent>;
+describe('KeypadModalComponent', () => {
+  let component: KeypadModalComponent;
+  let fixture: ComponentFixture<KeypadModalComponent>;
   let buttons: DebugElement[];
   let b0: any;
   let b1: any;
@@ -28,14 +28,14 @@ describe('KeypadComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [KeypadComponent],
+      declarations: [KeypadModalComponent],
       providers: [NgbActiveModal]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(KeypadComponent);
+    fixture = TestBed.createComponent(KeypadModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
 
@@ -55,7 +55,7 @@ describe('KeypadComponent', () => {
     close = fixture.debugElement.query(By.css('.btn-secondary')).nativeElement;
     confirm = buttons[12].nativeElement;
 
-    display = fixture.debugElement.query(By.css('.form-control.keypad-display')).nativeElement;
+    display = fixture.debugElement.query(By.css('.form-control.keypad-modal-display')).nativeElement;
 
     activeModal = fixture.debugElement.injector.get(NgbActiveModal);
     spyOn(activeModal, 'close');

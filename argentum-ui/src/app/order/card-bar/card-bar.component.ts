@@ -1,8 +1,8 @@
-import { Component, OnInit } from "@angular/core";
-import { Observable, Subject } from "rxjs";
-import { RestService } from "../../common/rest-service/rest.service";
-import { Guest } from "../../common/model/guest";
-import { convertCard } from "../../common/util/convert-card";
+import { Component, OnInit } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+import { RestService } from '../../common/rest-service/rest.service';
+import { Guest } from '../../common/model/guest';
+import { convertCard } from '../../common/util/convert-card';
 
 enum ScanState {
   Waiting,
@@ -11,11 +11,11 @@ enum ScanState {
 }
 
 @Component({
-  selector: 'app-card',
-  templateUrl: 'card.component.html',
-  styleUrls: ['card.component.scss']
+  selector: 'app-card-bar',
+  templateUrl: 'card-bar.component.html',
+  styleUrls: ['card-bar.component.scss']
 })
-export class CardComponent implements OnInit {
+export class CardBarComponent implements OnInit {
   private scanState = ScanState;
   private readonly MAX_NAME = 28;
   private cardStream: Observable<string>;
@@ -31,10 +31,9 @@ export class CardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    let numberStream = Observable.fromEvent(document, 'keydown')
+    this.cardStream = Observable.fromEvent(document, 'keydown')
+      .filter((event: KeyboardEvent) => '0123456789'.indexOf(event.key) > -1)
       .flatMap((event: KeyboardEvent) => event.key)
-      .filter(char => '0123456789'.indexOf(char) > -1);
-    this.cardStream = numberStream
       .scan((acc, char) => acc + char)
       .debounceTime(500)
       .first()

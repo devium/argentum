@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RestService } from '../../common/rest-service/rest.service';
 import { Guest } from '../../common/model/guest';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { KeypadComponent } from '../../common/keypad/keypad.component';
+import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.component';
 import { Subject } from 'rxjs';
 
 @Component({
@@ -71,8 +71,8 @@ export class GuestEditorComponent implements OnInit {
   }
 
   setBonus(guest: Guest) {
-    let modal = this.modalService.open(KeypadComponent, { backdrop: 'static', size: 'sm' });
-    (<KeypadComponent>modal.componentInstance).captureKeyboard = true;
+    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
     modal.result.then((result: number) => {
       guest.bonus = result;
       this.restService.updateGuestBonus(guest);

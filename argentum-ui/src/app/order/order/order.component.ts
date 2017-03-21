@@ -1,8 +1,8 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { Product } from '../../common/model/product';
 import { RestService } from '../../common/rest-service/rest.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { KeypadComponent } from '../../common/keypad/keypad.component';
+import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.component';
 import { isDarkBackground } from '../../common/util/is-dark-background';
 import { ProductRange } from '../../common/model/product-range';
 
@@ -90,8 +90,8 @@ export class OrderComponent implements OnInit {
   }
 
   private addCustomProduct(): void {
-    let modal = this.modalService.open(KeypadComponent, { backdrop: 'static', size: 'sm' });
-    (<KeypadComponent>modal.componentInstance).captureKeyboard = false;
+    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = false;
     modal.result.then(result => this.confirmKeypad(result), result => void(0));
   }
 

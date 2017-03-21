@@ -1,7 +1,7 @@
 export function convertCard(card: string): string {
   card = card.substr(0, 10);
   if (card.length == 8) {
-    // 8-digit type card reader (3 digit facility code + 5 digit card number).
+    // 8-digit type card-bar reader (3 digit facility code + 5 digit card-bar number).
     let first = card.substr(0, 3);
     let second = card.substr(3);
     let major = parseInt(first) << 16;

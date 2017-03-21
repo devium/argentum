@@ -1,13 +1,13 @@
-import { Component, OnInit } from "@angular/core";
-import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
-import { Observable } from "rxjs";
+import { Component, OnInit } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-keypad',
-  templateUrl: 'keypad.component.html',
-  styleUrls: ['keypad.component.scss']
+  templateUrl: 'keypad-modal.component.html',
+  styleUrls: ['keypad-modal.component.scss']
 })
-export class KeypadComponent implements OnInit {
+export class KeypadModalComponent implements OnInit {
   display = '';
   captureKeyboard = false;
 

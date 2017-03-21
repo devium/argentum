@@ -1,0 +1,20 @@
+<div class="modal-body mx-4 my-3 p-0 text-center">
+  Please scan your card now.
+
+  <input type="text" disabled class="disabled form-control text-center" [value]="card ? card : ''">
+
+  <div class="row mt-2">
+    <div class="col-6 p-1">
+      <button (click)="activeModal.dismiss('Cancel click')"
+              type="button" class="btn btn-secondary btn-block btn-lg">
+        <i class="fa fa-close fa-lg"></i>
+      </button>
+    </div>
+    <div class="col-6 p-1">
+      <button (click)="confirm()" type="button" class="btn btn-primary btn-block btn-lg" [disabled]="!card"
+              [class.disabled]="!card">
+        <i class="fa fa-check fa-lg"></i>
+      </button>
+    </div>
+  </div>
+</div>

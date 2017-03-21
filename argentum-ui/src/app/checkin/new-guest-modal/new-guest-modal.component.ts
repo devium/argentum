@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { KeypadComponent } from '../../common/keypad/keypad.component';
+import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.component';
 import { Guest } from '../../common/model/guest';
+import { CardModalComponent } from '../card-modal/card-modal.component';
 
 @Component({
   selector: 'app-new-guest',
-  templateUrl: 'new-guest.component.html',
-  styleUrls: ['new-guest.component.scss']
+  templateUrl: 'new-guest-modal.component.html',
+  styleUrls: ['new-guest-modal.component.scss']
 })
-export class NewGuestComponent implements OnInit {
+export class NewGuestModalComponent implements OnInit {
   name = '';
   mail = '';
   status = '';
@@ -23,18 +24,19 @@ export class NewGuestComponent implements OnInit {
   }
 
   setCard() {
-    // TODO
+    let modal = this.modalService.open(CardModalComponent, { backdrop: 'static', size: 'sm' });
+    modal.result.then(result => this.card = result, result => void(0));
   }
 
   setBalance() {
-    let modal = this.modalService.open(KeypadComponent, { backdrop: 'static', size: 'sm' });
-    (<KeypadComponent>modal.componentInstance).captureKeyboard = true;
+    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
     modal.result.then(result => this.balance = result, result => void(0));
   }
 
   setBonus() {
-    let modal = this.modalService.open(KeypadComponent, { backdrop: 'static', size: 'sm' });
-    (<KeypadComponent>modal.componentInstance).captureKeyboard = true;
+    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
     modal.result.then(result => this.bonus = result, result => void(0));
   }
 
