@@ -22,6 +22,7 @@ import { CheckinComponent } from './checkin/checkin/checkin.component';
 import { NewGuestModalComponent } from './checkin/new-guest-modal/new-guest-modal.component';
 import { SearchGuestModalComponent } from './checkin/search-guest-modal/search-guest-modal.component';
 import { CardModalComponent } from './checkin/card-modal/card-modal.component';
+import { MessageComponent } from './common/message/message.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { CardModalComponent } from './checkin/card-modal/card-modal.component';
     CheckinComponent,
     NewGuestModalComponent,
     SearchGuestModalComponent,
-    CardModalComponent
+    CardModalComponent,
+    MessageComponent
   ],
   imports: [
     BrowserModule,

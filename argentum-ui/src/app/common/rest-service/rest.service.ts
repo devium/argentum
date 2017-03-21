@@ -113,14 +113,12 @@ export class RestService {
 
   addBalance(guest: Guest, value: number): Promise<number> {
     // TODO: PUT on /guests/{id}/balance
-    guest.balance += value;
-    return Promise.resolve(guest.balance);
+    return Promise.resolve(guest.balance + value);
   }
 
   addBonus(guest: Guest, value: number): Promise<number> {
     // TODO: PUT on /guests/{id}/bonus
-    guest.bonus += value;
-    return Promise.resolve(guest.bonus);
+    return Promise.resolve(guest.bonus + value);
   }
 
   registerCard(guest: Guest, card: string): Promise<void> {
