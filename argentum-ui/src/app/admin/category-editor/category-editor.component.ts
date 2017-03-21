@@ -47,7 +47,9 @@ export class CategoryEditorComponent implements OnInit {
   }
 
   loadCategories() {
-    this.restService.getCategories().then(categories => this.categories = categories.map(category => new EditorCategory(category)));
+    this.restService.getCategories()
+      .then(categories => this.categories = categories.map(category => new EditorCategory(category)))
+      .catch(reason => this.message.error(`Error: ${reason}`));
   }
 
   changeName(category: EditorCategory, value: string) {
@@ -113,8 +115,6 @@ export class CategoryEditorComponent implements OnInit {
         this.message.success(`Categories saved successfully. (${createdCategories.length} created, ${changedCategories.length} updated, ${deletedCategories.length} deleted)`);
         this.loadCategories();
       })
-      .catch(reason => {
-        this.message.error(`Error: ${reason}`);
-      });
+      .catch(reason => this.message.error(`Error: ${reason}`));
   }
 }

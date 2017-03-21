@@ -84,9 +84,7 @@ export class GuestEditorComponent implements OnInit {
           guest.balance = newBalance;
           this.message.success(`Added € ${result.toFixed(2)} to balance of "${guest.name}". New balance: € ${newBalance.toFixed(2)}`);
         })
-        .catch(reason => {
-          this.message.error(`Error: ${reason}`);
-        });
+        .catch(reason => this.message.error(`Error: ${reason}`));
     }, result => void(0));
   }
 
@@ -100,9 +98,7 @@ export class GuestEditorComponent implements OnInit {
           guest.balance = newBalance;
           this.message.success(`Removed € ${result.toFixed(2)} from balance of "${guest.name}". New balance: € ${newBalance.toFixed(2)}`);
         })
-        .catch(reason => {
-          this.message.error(`Error: ${reason}`);
-        });
+        .catch(reason => this.message.error(`Error: ${reason}`));
     }, result => void(0));
   }
 
@@ -116,9 +112,7 @@ export class GuestEditorComponent implements OnInit {
           guest.bonus = newBonus;
           this.message.success(`Added € ${result.toFixed(2)} to bonus of "${guest.name}". New bonus: € ${newBonus.toFixed(2)}`);
         })
-        .catch(reason => {
-          this.message.error(`Error: ${reason}`);
-        });
+        .catch(reason => this.message.error(`Error: ${reason}`));
     }, result => void(0));
   }
 
@@ -132,9 +126,7 @@ export class GuestEditorComponent implements OnInit {
           guest.bonus = newBonus;
           this.message.success(`Removed € ${result.toFixed(2)} from bonus of "${guest.name}". New bonus: € ${newBonus.toFixed(2)}`);
         })
-        .catch(reason => {
-          this.message.error(`Error: ${reason}`);
-        });
+        .catch(reason => this.message.error(`Error: ${reason}`));
     }, result => void(0));
   }
 

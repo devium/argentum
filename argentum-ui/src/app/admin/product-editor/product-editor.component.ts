@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ProductRange } from '../../common/model/product-range';
 import { RestService } from '../../common/rest-service/rest.service';
 import { Category } from '../../common/model/category';
@@ -6,6 +6,7 @@ import { Product } from '../../common/model/product';
 import { isDarkBackground } from '../../common/util/is-dark-background';
 import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { MessageComponent } from '../../common/message/message.component';
 
 class EditorProduct {
   original: Product;
@@ -22,18 +23,22 @@ class EditorProduct {
   }
 
   hasChangedName(): boolean {
-    return this.original.name != this.edited.name;
+    return !this.original || this.original.name != this.edited.name;
   }
 
   hasChangedPrice(): boolean {
-    return this.original.price != this.edited.price;
+    return !this.original || this.original.price != this.edited.price;
   }
 
   hasChangedCategory(): boolean {
-    return this.original.category != this.edited.category;
+    return !this.original || this.original.category != this.edited.category;
   }
 
   hasChangedRanges(): boolean {
+    if (!this.original) {
+      return true;
+    }
+
     let equal: boolean = true;
     this.original.ranges.forEach(range => equal = equal && this.edited.ranges.has(range));
     this.edited.ranges.forEach(range => equal = equal && this.original.ranges.has(range));
@@ -41,8 +46,7 @@ class EditorProduct {
   }
 
   updateChanged(): void {
-    this.changed = !this.original
-      || this.hasChangedName()
+    this.changed = this.hasChangedName()
       || this.hasChangedPrice()
       || this.hasChangedCategory()
       || this.hasChangedRanges();
@@ -61,11 +65,18 @@ export class ProductEditorComponent implements OnInit {
   private productRanges: ProductRange[] = [];
   private categories: Category[] = [];
 
+  @ViewChild(MessageComponent)
+  private message: MessageComponent;
+
   constructor(private restService: RestService, private modalService: NgbModal) {
   }
 
   ngOnInit(): void {
-    this.restService.getProducts()
+    this.loadProducts();
+  }
+
+  private loadProducts() {
+    let pProducts = this.restService.getProducts()
       .then(products => this.products = products
         .map(product => new EditorProduct(product))
         .sort((a, b) => {
@@ -78,8 +89,15 @@ export class ProductEditorComponent implements OnInit {
           }
           return 0;
         }));
-    this.restService.getProductRangesMeta().then(ranges => this.productRanges = ranges);
-    this.restService.getCategories().then(categories => this.categories = categories);
+
+    let pRanges = this.restService.getProductRangesMeta()
+      .then(ranges => this.productRanges = ranges);
+
+    let pCategories = this.restService.getCategories()
+      .then(categories => this.categories = categories);
+
+    Promise.all([pProducts, pRanges, pCategories])
+      .catch(reason => this.message.error(`Error: ${reason}`))
   }
 
   private setCategory(product: EditorProduct, category: Category) {
@@ -140,7 +158,7 @@ export class ProductEditorComponent implements OnInit {
     });
     newProduct.original = null;
     newProduct.updateChanged();
-    this.products.push(newProduct);
+    this.products.unshift(newProduct);
   }
 
   private resetAll() {
@@ -153,14 +171,26 @@ export class ProductEditorComponent implements OnInit {
   }
 
   private save() {
-    let changedProducts = this.products
-      .filter(product => product.changed)
+    // Products with changed name or price will not be updated but instead recreated.
+    let createdProducts = this.products
+      .filter(product => product.edited && (product.hasChangedName() || product.hasChangedPrice()))
+      .map(product => product.edited);
+    let updatedProducts = this.products
+      .filter(product => product.original && product.changed && !product.hasChangedName() && !product.hasChangedPrice())
       .map(product => product.edited);
     let deletedProducts = this.products
-      .filter(product => !product.edited)
+      .filter(product => product.original && (!product.edited || product.hasChangedName() || product.hasChangedPrice()))
       .map(product => product.original);
 
-    this.restService.createProducts(changedProducts);
-    this.restService.deleteProducts(deletedProducts);
+    let pCreate = this.restService.createProducts(createdProducts);
+    let pUpdate = this.restService.updateProducts(updatedProducts);
+    let pDelete = this.restService.deleteProducts(deletedProducts);
+
+    Promise.all([pCreate, pUpdate, pDelete])
+      .then(() => {
+        this.message.success(`Products saved successfully. ${createdProducts.length} created, ${updatedProducts.length} updated, ${deletedProducts.length} deleted)`);
+        this.loadProducts();
+      })
+      .catch(reason => this.message.error(`Error: ${reason}`))
   }
 }
