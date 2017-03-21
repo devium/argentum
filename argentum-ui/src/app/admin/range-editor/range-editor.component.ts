@@ -39,7 +39,6 @@ export class RangeEditorComponent implements OnInit {
   }
 
   changeName(range: EditorRange, value: string) {
-    range.displayed.name = value;
     range.updateChanged();
   }
 
