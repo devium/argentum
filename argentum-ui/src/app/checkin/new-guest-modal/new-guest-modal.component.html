@@ -23,19 +23,51 @@
   </div>
 
   <div class="form-group">
-    <label for="balanceButton">Balance</label>
-    <button (click)="setBalance()" id="balanceButton" type="button" class="btn btn-block btn-primary" [disabled]="!card"
-            [class.disabled]="!card">
-      {{balance | number:'1.2-2'}}
-    </button>
+    <label for="balanceInput">Balance (requires card)</label>
+
+    <div class="row">
+      <div class="col-2 pr-0">
+        <button (click)="subBalance()" type="button" class="btn btn-block btn-primary" [disabled]="!card"
+                [class.disabled]="!card">
+          <i class="fa fa-minus"></i>
+        </button>
+      </div>
+
+      <div class="col-8 p-0">
+        <input id="balanceInput" disabled class="disabled form-control text-center" [value]="balance | number:'1.2-2'">
+      </div>
+
+      <div class="col-2 pl-0">
+        <button (click)="addBalance()" type="button" class="btn btn-block btn-primary" [disabled]="!card"
+                [class.disabled]="!card">
+          <i class="fa fa-plus"></i>
+        </button>
+      </div>
+    </div>
   </div>
 
   <div class="form-group">
-    <label for="bonusButton">Bonus (cannot be refunded)</label>
-    <button (click)="setBonus()" id="bonusButton" type="button" class="btn btn-block btn-primary" [disabled]="!card"
-            [class.disabled]="!card">
-      {{bonus | number:'1.2-2'}}
-    </button>
+    <label for="bonusInput">Bonus (requires card)</label>
+
+    <div class="row">
+      <div class="col-2 pr-0">
+        <button (click)="subBonus()" type="button" class="btn btn-block btn-primary" [disabled]="!card"
+                [class.disabled]="!card">
+          <i class="fa fa-minus"></i>
+        </button>
+      </div>
+
+      <div class="col-8 p-0">
+        <input id="bonusInput" disabled class="disabled form-control text-center" [value]="bonus | number:'1.2-2'">
+      </div>
+
+      <div class="col-2 pl-0">
+        <button (click)="addBonus()" type="button" class="btn btn-block btn-primary" [disabled]="!card"
+                [class.disabled]="!card">
+          <i class="fa fa-plus"></i>
+        </button>
+      </div>
+    </div>
   </div>
 
   <div class="row mt-2">
