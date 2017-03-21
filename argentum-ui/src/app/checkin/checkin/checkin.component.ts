@@ -20,7 +20,7 @@ export class CheckinComponent implements OnInit {
 
   newGuest() {
     let modal = this.modalService.open(NewGuestModalComponent, { backdrop: 'static' });
-    modal.result.then((guest: Guest) => this.restService.saveGuests([guest]), result => void(0));
+    modal.result.then((guest: Guest) => this.restService.createGuests([guest]), result => void(0));
   }
 
   searchGuest() {
