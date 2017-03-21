@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RestService } from '../../common/rest-service/rest.service';
 import { Category } from '../../common/model/category';
+import { Subject } from 'rxjs';
 
 class EditorCategory {
   original: Category;
@@ -34,11 +35,22 @@ class EditorCategory {
 })
 export class CategoryEditorComponent implements OnInit {
   categories: EditorCategory[] = [];
+  message: string;
+  messageType: string;
+  messageStream = new Subject<{ message: string, type: string }>();
 
   constructor(private restService: RestService) {
   }
 
   ngOnInit() {
+    this.messageStream.subscribe(message => {
+      this.message = message.message;
+      this.messageType = message.type;
+    });
+    this.loadCategories();
+  }
+
+  loadCategories() {
     this.restService.getCategories().then(categories => this.categories = categories.map(category => new EditorCategory(category)));
   }
 
@@ -98,8 +110,25 @@ export class CategoryEditorComponent implements OnInit {
       .filter(category => !category.edited)
       .map(category => category.original);
 
-    this.restService.createCategories(createdCategories);
-    this.restService.updateCategories(changedCategories);
-    this.restService.deleteCategories(deletedCategories);
+    let pCreate = this.restService.createCategories(createdCategories);
+    let pUpdate = this.restService.updateCategories(changedCategories);
+    let pDelete = this.restService.deleteCategories(deletedCategories);
+
+    Promise.all([pCreate, pUpdate, pDelete])
+      .then(result => {
+        this.success(`Categories saved successfully. (${createdCategories.length} created, ${changedCategories.length} updated, ${deletedCategories.length} deleted)`);
+        this.loadCategories();
+      })
+      .catch(reason => {
+        this.error(`Error: ${reason}`);
+      });
+  }
+
+  error(message: string) {
+    this.messageStream.next({ message: message, type: 'danger' });
+  }
+
+  success(message: string) {
+    this.messageStream.next({ message: message, type: 'success' });
   }
 }
