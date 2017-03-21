@@ -29,60 +29,49 @@
 
 
     <div class="form-group">
+
       <label for="balanceInput">Balance (requires card)</label>
 
-      <div class="row">
-        <div class="col-2 pr-0">
-          <button (click)="subBalance()" type="button" class="btn btn-block btn-primary" [disabled]="!guest.card"
-                  [class.disabled]="!guest.card">
-            <i class="fa fa-minus"></i>
-          </button>
-        </div>
+      <div class="d-flex">
+        <button (click)="subBalance()" type="button" class="btn btn-primary" [disabled]="!guest.card"
+                [class.disabled]="!guest.card">
+          <i class="fa fa-minus"></i>
+        </button>
 
-        <div class="col-8 p-0">
-          <input id="balanceInput" disabled class="disabled form-control text-center"
-                 [value]="guest.balance | number:'1.2-2'">
-        </div>
-
-        <div class="col-2 pl-0">
-          <button (click)="addBalance()" type="button" class="btn btn-block btn-primary" [disabled]="!guest.card"
-                  [class.disabled]="!guest.card">
-            <i class="fa fa-plus"></i>
-          </button>
-        </div>
+        <input id="balanceInput" disabled class="disabled form-control text-center flex-grow-1"
+               [value]="guest.balance | number:'1.2-2'">
+        <button (click)="addBalance()" type="button" class="btn btn-primary" [disabled]="!guest.card"
+                [class.disabled]="!guest.card">
+          <i class="fa fa-plus"></i>
+        </button>
       </div>
+
     </div>
 
     <div class="form-group">
+
       <label for="bonusInput">Bonus (requires card)</label>
 
-      <div class="row">
-        <div class="col-2 pr-0">
-          <button (click)="subBonus()" type="button" class="btn btn-block btn-primary" [disabled]="!guest.card"
-                  [class.disabled]="!guest.card">
-            <i class="fa fa-minus"></i>
-          </button>
-        </div>
+      <div class="d-flex">
+        <button (click)="subBonus()" type="button" class="btn btn-primary" [disabled]="!guest.card"
+                [class.disabled]="!guest.card">
+          <i class="fa fa-minus"></i>
+        </button>
 
-        <div class="col-8 p-0">
-          <input id="bonusInput" disabled class="disabled form-control text-center"
-                 [value]="guest.bonus | number:'1.2-2'">
-        </div>
+        <input id="bonusInput" disabled class="disabled form-control text-center flex-grow-1"
+               [value]="guest.bonus | number:'1.2-2'">
 
-        <div class="col-2 pl-0">
-          <button (click)="addBonus()" type="button" class="btn btn-block btn-primary" [disabled]="!guest.card"
-                  [class.disabled]="!guest.card">
-            <i class="fa fa-plus"></i>
-          </button>
-        </div>
+        <button (click)="addBonus()" type="button" class="btn btn-primary" [disabled]="!guest.card"
+                [class.disabled]="!guest.card">
+          <i class="fa fa-plus"></i>
+        </button>
       </div>
+
     </div>
 
+    <button (click)="activeModal.dismiss('Cancel click')"
+            type="button" class="btn btn-secondary btn-block btn-lg">
+      <i class="fa fa-close fa-lg"></i>
+    </button>
+
   </div>
-
-  <button (click)="activeModal.dismiss('Cancel click')"
-          type="button" class="btn btn-secondary btn-block btn-lg">
-    <i class="fa fa-close fa-lg"></i>
-  </button>
-
-</div>

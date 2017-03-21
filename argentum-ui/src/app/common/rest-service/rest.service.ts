@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import { Product } from '../model/product';
 import 'rxjs/add/operator/toPromise';
-import { PRODUCT_RANGES, CATEGORIES } from './mock-data';
+import { CATEGORIES, PRODUCT_RANGES } from './mock-data';
 import { ProductRange } from '../model/product-range';
 import { Category } from '../model/category';
 import { Guest } from '../model/guest';
@@ -18,57 +18,57 @@ export class RestService {
   }
 
   getProducts(): Promise<Product[]> {
-    // TODO: GET on products
+    // TODO: GET on /products, returns only non-legacy products
     return Promise.resolve(ALL_PRODUCTS);
   }
 
   getProductRangeEager(id: number): Promise<ProductRange> {
-    // TODO: GET on product range
+    // TODO: GET on /ranges/{id}, returns only non-legacy products (eagerly)
     return Promise.resolve(PRODUCT_RANGES.find(range => range.id == id));
   }
 
   getProductRangesMeta(): Promise<ProductRange[]> {
-    // TODO: GET on product ranges
+    // TODO: GET on /ranges, returns product range meta data (no products)
     return Promise.resolve(PRODUCT_RANGES);
   }
 
   getCategories(): Promise<Category[]> {
-    // TODO: GET on categories
+    // TODO: GET on /categories, returns all categories
     return Promise.resolve(CATEGORIES);
   }
 
   saveProducts(products: Product[]) {
-    // TODO: POST on products
+    // TODO: POST on /products, IDs will be assigned
   }
 
   deleteProducts(products: Product[]) {
-    // TODO: PUT on products with legacy set to true
+    // TODO: DELETE on /products, array of IDs, flags products as legacy
     products.forEach(product => product.legacy = true);
   }
 
   saveCategories(categories: Category[]) {
-    // TODO: POST on categories
+    // TODO: POST on /categories, IDs will be assigned
   }
 
   deleteCategories(categories: Category[]) {
-    // TODO: DELETE on categories + set category on affected products to null
+    // TODO: DELETE on /categories, cascade to null on products
   }
 
   saveProductRanges(productRanges: ProductRange[]) {
-    // TODO: POST/PUT on product ranges
+    // TODO: POST on /ranges for new ranges (ID=-1) and PUT on /ranges/{id} for existing ranges
   }
 
   deleteProductRanges(productRanges: ProductRange[]) {
-    // TODO: DELETE on product ranges + cascade
+    // TODO: DELETE on /ranges, cascade to delete on product join table
   }
 
   getGuestByCard(card: string): Promise<Guest> {
-    // TODO: GET on cards
+    // TODO: GET on /guests/card/{card}
     return Promise.resolve(GUESTS.find(guest => guest.card == card));
   }
 
   getGuestsPaginatedAndFiltered(pageSize: number, page: number, codeLike: string, nameLike: string, mailLike: string, statusLike: string): Promise<{ guests: Guest[], guestsTotal: number }> {
-    // TODO: paginated and filtered GET on guests
+    // TODO: GET on /guests, paginated & filtered
     let filteredGuests = GUESTS
       .filter(guest => guest.code.toLowerCase().indexOf(codeLike.toLowerCase()) > -1)
       .filter(guest => guest.name.toLowerCase().indexOf(nameLike.toLowerCase()) > -1)
@@ -82,7 +82,7 @@ export class RestService {
   }
 
   getGuestsByCode(codeLike: string): Observable<Guest[]> {
-    // TODO: filtered GET on guests
+    // TODO: GET on /guests/code/{code}, partial match
     let filteredGuests = GUESTS
       .filter(guest => guest.code.toLowerCase().indexOf(codeLike.toLowerCase()) > -1);
 
@@ -90,12 +90,16 @@ export class RestService {
   }
 
   saveGuests(guests: Guest[]) {
-    // TODO: POST on guests
+    // TODO: POST on /guests
     console.log(guests);
   }
 
-  updateGuestBonus(guest: Guest) {
-    // TODO: PUT on guest ID with bonus as content
+  addBalance(guest: Guest, value: number) {
+    // TODO: PUT on /guests/{id}/balance
+  }
+
+  addBonus(guest: Guest, value: number) {
+    // TODO: PUT on /guests/{id}/bonus
   }
 
   private handleError(error: any): Promise<any> {

@@ -1,6 +1,6 @@
 <app-admin-nav></app-admin-nav>
 
-<table class="table table-slim">
+<table class="table table-sm">
   <thead>
   <tr>
     <th>
@@ -50,13 +50,41 @@
     <td class="text-right">
       {{guest.card}}
     </td>
-    <td class="text-right">
-      {{guest.balance | number:'1.2-2'}}
+
+    <td>
+
+      <div class="d-flex value-control ml-auto">
+        <button (click)="subBalance(guest)" type="button" class="btn btn-sm btn-primary">
+          <i class="fa fa-minus"></i>
+        </button>
+
+        <input id="balanceInput" disabled
+               class="disabled form-control form-control-sm d-inline-block flex-grow-1 text-center"
+               [value]="guest.balance | number:'1.2-2'">
+
+        <button (click)="addBalance(guest)" type="button" class="btn btn-sm btn-primary">
+          <i class="fa fa-plus"></i>
+        </button>
+      </div>
+
     </td>
-    <td class="text-right">
-      <button (click)="setBonus(guest)" type="button" class="btn btn-primary btn-sm">
-        {{guest.bonus | number:'1.2-2'}}
+
+    <td>
+
+      <div class="d-flex value-control ml-auto">
+        <button (click)="subBonus(guest)" type="button" class="btn btn-sm btn-primary">
+          <i class="fa fa-minus"></i>
       </button>
+
+        <input id="bonusInput" disabled
+               class="disabled form-control form-control-sm d-inline-block flex-grow-1 text-center"
+               [value]="guest.bonus | number:'1.2-2'">
+
+        <button (click)="addBonus(guest)" type="button" class="btn btn-sm btn-primary">
+          <i class="fa fa-plus"></i>
+        </button>
+      </div>
+
     </td>
   </tr>
 

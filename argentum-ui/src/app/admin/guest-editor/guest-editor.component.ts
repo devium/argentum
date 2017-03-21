@@ -70,12 +70,39 @@ export class GuestEditorComponent implements OnInit {
     });
   }
 
-  setBonus(guest: Guest) {
+  addBalance(guest: Guest) {
     let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
-    modal.result.then((result: number) => {
-      guest.bonus = result;
-      this.restService.updateGuestBonus(guest);
+    modal.result.then(result => {
+      guest.balance += result;
+      this.restService.addBalance(guest, result);
+    }, result => void(0));
+  }
+
+  subBalance(guest: Guest) {
+    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
+    modal.result.then(result => {
+      guest.balance -= result;
+      this.restService.addBalance(guest, -result);
+    }, result => void(0));
+  }
+
+  addBonus(guest: Guest) {
+    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
+    modal.result.then(result => {
+      guest.bonus += result;
+      this.restService.addBonus(guest, result);
+    }, result => void(0));
+  }
+
+  subBonus(guest: Guest) {
+    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
+    modal.result.then(result => {
+      guest.bonus -= result;
+      this.restService.addBonus(guest, -result);
     }, result => void(0));
   }
 

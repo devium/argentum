@@ -32,11 +32,6 @@ input:disabled {
   color: white !important;
 }
 
-.table-slim tbody > tr > td {
-  @extend .py-1;
-  @extend .my-0;
-}
-
 .changed {
   background-color: $state-info-bg;
 }
