@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { RestService } from '../../common/rest-service/rest.service';
 import { ProductRange } from '../../common/model/product-range';
+import { MessageComponent } from '../../common/message/message.component';
 
 class EditorRange {
   original: ProductRange;
@@ -31,11 +32,20 @@ class EditorRange {
 export class RangeEditorComponent implements OnInit {
   productRanges: EditorRange[] = [];
 
+  @ViewChild(MessageComponent)
+  private message: MessageComponent;
+
   constructor(private restService: RestService) {
   }
 
   ngOnInit() {
-    this.restService.getProductRangesMeta().then(ranges => this.productRanges = ranges.map(range => new EditorRange(range)));
+    this.loadRanges();
+  }
+
+  loadRanges() {
+    this.restService.getProductRangesMeta()
+      .then(ranges => this.productRanges = ranges.map(range => new EditorRange(range)))
+      .catch(reason => this.message.error(`Error: ${reason}`));
   }
 
   changeName(range: EditorRange, value: string) {
@@ -65,7 +75,7 @@ export class RangeEditorComponent implements OnInit {
     });
     newRange.original = null;
     newRange.updateChanged();
-    this.productRanges.push(newRange);
+    this.productRanges.unshift(newRange);
   }
 
   private resetAll() {
@@ -81,15 +91,22 @@ export class RangeEditorComponent implements OnInit {
     let createdRanges = this.productRanges
       .filter(range => range.changed && !range.original)
       .map(range => range.edited);
-    let changedRanges = this.productRanges
+    let updatedRanges = this.productRanges
       .filter(range => range.changed && range.original)
       .map(range => range.edited);
     let deletedRanges = this.productRanges
       .filter(range => !range.edited)
       .map(range => range.original);
 
-    this.restService.createProductRanges(createdRanges);
-    this.restService.updateProductRanges(changedRanges);
-    this.restService.deleteProductRanges(deletedRanges);
+    let pCreate = this.restService.createProductRanges(createdRanges);
+    let pUpdate = this.restService.updateProductRanges(updatedRanges);
+    let pDelete = this.restService.deleteProductRanges(deletedRanges);
+
+    Promise.all([pCreate, pUpdate, pDelete])
+      .then(() => {
+        this.message.success(`Product ranges saved successfully. ${createdRanges.length} created, ${updatedRanges.length} updated, ${deletedRanges.length} deleted)`);
+        this.loadRanges();
+      })
+      .catch(reason => this.message.error(`Error: ${reason}`));
   }
 }
