@@ -1,7 +1,7 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Guest } from '../../common/model/guest';
-import { Subject, Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { RestService } from '../../common/rest-service/rest.service';
 
 @Component({
@@ -34,7 +34,6 @@ export class SearchGuestComponent implements OnInit {
 
   lockGuest(guest: Guest) {
     this.guest = guest;
-    console.log(this.codeInput);
     this.codeInput.nativeElement.value = `${guest.code} ${guest.name}`;
     this.codeInput.nativeElement.disabled = true;
   }
