@@ -21,7 +21,7 @@ export class OrderComponent implements OnInit {
   private products: Product[] = [];
   private orderedProducts: Map<Product, number> = new Map<Product, number>();
   private total = 0;
-  private pagesShown = 3;
+  private pagesShown = 5;
 
   constructor(private restService: RestService, private ngZone: NgZone, private modalService: NgbModal) {
     window.onresize = () => {
