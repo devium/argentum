@@ -19,6 +19,8 @@ export class KeypadModalComponent implements OnInit {
       if (this.captureKeyboard) {
         if (event.keyCode == 8 /* Backspace */) {
           this.deleteChar();
+        } else if (event.keyCode == 13 /* Enter */) {
+          this.confirm();
         } else {
           this.entry(event.key)
         }
