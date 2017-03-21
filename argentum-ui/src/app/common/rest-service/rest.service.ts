@@ -42,6 +42,11 @@ export class RestService {
     return Promise.resolve([]);
   }
 
+  updateProducts(products: Product[]): Promise<void> {
+    // TODO: PUT on /products
+    return Promise.resolve([]);
+  }
+
   deleteProducts(products: Product[]): Promise<void> {
     // TODO: DELETE on /products, array of IDs, flags products as legacy
     products.forEach(product => product.legacy = true);

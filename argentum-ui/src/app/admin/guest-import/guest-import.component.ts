@@ -70,9 +70,7 @@ export class GuestImportComponent implements OnInit {
           .then(savedGuests => {
             this.message.success(`Successfully imported ${guests.length} guests.`);
           })
-          .catch(reason => {
-            this.message.error(`Error: ${reason}`);
-          });
+          .catch(reason => this.message.error(`Error: ${reason}`));
       }
     });
   }
