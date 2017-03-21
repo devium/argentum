@@ -1,6 +1,6 @@
-import { Component, OnInit } from "@angular/core";
-import { RestService } from "../../common/rest-service/rest.service";
-import { Category } from "../../common/model/category";
+import { Component, OnInit } from '@angular/core';
+import { RestService } from '../../common/rest-service/rest.service';
+import { Category } from '../../common/model/category';
 
 class EditorCategory {
   original: Category;
@@ -88,14 +88,18 @@ export class CategoryEditorComponent implements OnInit {
   }
 
   private save() {
+    let createdCategories = this.categories
+      .filter(category => category.changed && !category.original)
+      .map(category => category.edited);
     let changedCategories = this.categories
-      .filter(category => category.changed)
+      .filter(category => category.changed && category.original)
       .map(category => category.edited);
     let deletedCategories = this.categories
       .filter(category => !category.edited)
       .map(category => category.original);
 
-    this.restService.saveCategories(changedCategories);
+    this.restService.createCategories(createdCategories);
+    this.restService.updateCategories(changedCategories);
     this.restService.deleteCategories(deletedCategories);
   }
 }

@@ -161,7 +161,7 @@ export class ProductEditorComponent implements OnInit {
       .filter(product => !product.edited)
       .map(product => product.original);
 
-    this.restService.saveProducts(changedProducts);
+    this.restService.createProducts(changedProducts);
     this.restService.deleteProducts(deletedProducts);
   }
 }
