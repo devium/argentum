@@ -59,4 +59,6 @@
   </tbody>
 </table>
 
+<ngb-alert *ngIf="message" [type]="messageType" (close)="message = null">{{message}}</ngb-alert>
+
 <app-navbar></app-navbar>
