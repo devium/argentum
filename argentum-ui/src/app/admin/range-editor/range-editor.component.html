@@ -10,7 +10,7 @@
   <tbody>
   <tr *ngFor="let range of productRanges" [class.changed]="range.changed" [class.removed]="!range.edited">
     <td>
-      <input [value]="range.displayed.name" (input)="changeName(range, $event.target.value)"
+      <input [(ngModel)]="range.displayed.name" (input)="changeName(range, $event.target.value)"
              class="form-control p-1" [class.disabled]="!range.edited" [disabled]="!range.edited">
     </td>
     <td class="text-center">
