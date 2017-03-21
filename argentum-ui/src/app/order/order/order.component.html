@@ -43,7 +43,7 @@
 
       <div class="row justify-content-center mx-0 my-1">
         <ngb-pagination [collectionSize]="products.length" [(page)]="rangePage" [pageSize]="rangeProductsPerPage"
-                        [maxSize]="3" [rotate]="true" [ellipses]="false"></ngb-pagination>
+                        [maxSize]="pagesShown" [rotate]="true" [ellipses]="false"></ngb-pagination>
       </div>
 
       <div class="row m-0">
@@ -93,7 +93,7 @@
 
       <div class="row justify-content-center mx-0 my-1">
         <ngb-pagination [collectionSize]="orderedProducts.size" [(page)]="orderPage"
-                        [pageSize]="orderProductsPerPage" [maxSize]="3" [rotate]="true" [ellipses]="false">
+                        [pageSize]="orderProductsPerPage" [maxSize]="pagesShown" [rotate]="true" [ellipses]="false">
 
         </ngb-pagination>
       </div>

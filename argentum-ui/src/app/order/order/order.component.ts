@@ -21,6 +21,7 @@ export class OrderComponent implements OnInit {
   private products: Product[] = [];
   private orderedProducts: Map<Product, number> = new Map<Product, number>();
   private total = 0;
+  private pagesShown = 3;
 
   constructor(private restService: RestService, private ngZone: NgZone, private modalService: NgbModal) {
     window.onresize = () => {
@@ -28,15 +29,19 @@ export class OrderComponent implements OnInit {
         if (window.outerWidth < 576) {
           this.rangeProductsPerPage = 14;
           this.orderProductsPerPage = 6;
+          this.pagesShown = 5;
         } else if (window.outerWidth < 768) {
           this.rangeProductsPerPage = 23;
           this.orderProductsPerPage = 12;
+          this.pagesShown = 10;
         } else if (window.outerWidth < 992) {
           this.rangeProductsPerPage = 17;
           this.orderProductsPerPage = 9;
+          this.pagesShown = 10;
         } else {
           this.rangeProductsPerPage = 35;
           this.orderProductsPerPage = 18;
+          this.pagesShown = 10;
         }
       });
     };
