@@ -70,7 +70,7 @@ export class GuestImportComponent implements OnInit {
           });
         });
 
-        this.restService.saveGuests(guests);
+        this.restService.createGuests(guests);
         this.success(`Successfully imported ${guests.length} guests.`);
       }
     });

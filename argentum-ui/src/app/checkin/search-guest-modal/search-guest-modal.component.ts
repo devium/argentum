@@ -46,7 +46,10 @@ export class SearchGuestModalComponent implements OnInit {
 
   setCard() {
     let modal = this.modalService.open(CardModalComponent, { backdrop: 'static', size: 'sm' });
-    modal.result.then(result => this.guest.card = result, result => void(0));
+    modal.result.then(result => {
+      this.guest.card = result;
+      this.restService.registerCard(this.guest, result);
+    }, result => void(0));
   }
 
   addBalance() {

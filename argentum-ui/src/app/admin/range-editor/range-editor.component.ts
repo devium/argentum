@@ -1,6 +1,6 @@
-import { Component, OnInit } from "@angular/core";
-import { RestService } from "../../common/rest-service/rest.service";
-import { ProductRange } from "../../common/model/product-range";
+import { Component, OnInit } from '@angular/core';
+import { RestService } from '../../common/rest-service/rest.service';
+import { ProductRange } from '../../common/model/product-range';
 
 class EditorRange {
   original: ProductRange;
@@ -79,14 +79,18 @@ export class RangeEditorComponent implements OnInit {
   }
 
   private save() {
+    let createdRanges = this.productRanges
+      .filter(range => range.changed && !range.original)
+      .map(range => range.edited);
     let changedRanges = this.productRanges
-      .filter(range => range.changed)
+      .filter(range => range.changed && range.original)
       .map(range => range.edited);
     let deletedRanges = this.productRanges
       .filter(range => !range.edited)
       .map(range => range.original);
 
-    this.restService.saveProductRanges(changedRanges);
+    this.restService.createProductRanges(createdRanges);
+    this.restService.updateProductRanges(changedRanges);
     this.restService.deleteProductRanges(deletedRanges);
   }
 }

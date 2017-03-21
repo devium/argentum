@@ -37,29 +37,45 @@ export class RestService {
     return Promise.resolve(CATEGORIES);
   }
 
-  saveProducts(products: Product[]) {
+  createProducts(products: Product[]): Promise<Product[]> {
     // TODO: POST on /products, IDs will be assigned
+    return Promise.resolve([]);
   }
 
-  deleteProducts(products: Product[]) {
+  deleteProducts(products: Product[]): Promise<void> {
     // TODO: DELETE on /products, array of IDs, flags products as legacy
     products.forEach(product => product.legacy = true);
+    return Promise.resolve();
   }
 
-  saveCategories(categories: Category[]) {
+  createCategories(categories: Category[]): Promise<Category[]> {
     // TODO: POST on /categories, IDs will be assigned
+    return Promise.resolve([]);
   }
 
-  deleteCategories(categories: Category[]) {
+  updateCategories(categories: Category[]): Promise<void> {
+    // TODO: PUT on /categories
+    return Promise.resolve();
+  }
+
+  deleteCategories(categories: Category[]): Promise<void> {
     // TODO: DELETE on /categories, cascade to null on products
+    return Promise.resolve();
   }
 
-  saveProductRanges(productRanges: ProductRange[]) {
-    // TODO: POST on /ranges for new ranges (ID=-1) and PUT on /ranges/{id} for existing ranges
+  createProductRanges(productRanges: ProductRange[]): Promise<ProductRange[]> {
+    // TODO POST on /ranges
+    return Promise.resolve([]);
   }
 
-  deleteProductRanges(productRanges: ProductRange[]) {
+  updateProductRanges(productRanges: ProductRange[]): Promise<void> {
+    // TODO: PUT on /ranges
+    return Promise.resolve([]);
+  }
+
+  deleteProductRanges(productRanges: ProductRange[]): Promise<void> {
     // TODO: DELETE on /ranges, cascade to delete on product join table
+    return Promise.resolve();
   }
 
   getGuestByCard(card: string): Promise<Guest> {
@@ -89,17 +105,27 @@ export class RestService {
     return Observable.of(filteredGuests.length > 5 ? [] : filteredGuests);
   }
 
-  saveGuests(guests: Guest[]) {
+  createGuests(guests: Guest[]): Promise<Guest[]> {
     // TODO: POST on /guests
     console.log(guests);
+    return Promise.resolve([]);
   }
 
-  addBalance(guest: Guest, value: number) {
+  addBalance(guest: Guest, value: number): Promise<number> {
     // TODO: PUT on /guests/{id}/balance
+    guest.balance += value;
+    return Promise.resolve(guest.balance);
   }
 
-  addBonus(guest: Guest, value: number) {
+  addBonus(guest: Guest, value: number): Promise<number> {
     // TODO: PUT on /guests/{id}/bonus
+    guest.bonus += value;
+    return Promise.resolve(guest.bonus);
+  }
+
+  registerCard(guest: Guest, card: string): Promise<void> {
+    // TODO: PUT on /guests/{id}/card, remove card from previous guest if exists
+    return Promise.resolve();
   }
 
   private handleError(error: any): Promise<any> {
