@@ -1,0 +1,81 @@
+<div class="modal-body mx-4 my-3 p-0">
+
+  <div class="form-group">
+    <label for="nameInput">Name (optional)</label>
+    <input #nameInput id="nameInput" type="text" class="form-control" [(ngModel)]="name">
+  </div>
+
+  <div class="form-group">
+    <label for="mailInput">E-Mail (optional)</label>
+    <input id="mailInput" type="text" class="form-control" [(ngModel)]="mail">
+  </div>
+
+  <div class="form-group">
+    <label for="statusInput">Status (optional)</label>
+    <input id="statusInput" type="text" class="form-control" [(ngModel)]="status">
+  </div>
+
+  <div class="form-group">
+    <label for="cardButton">Card (optional)</label>
+    <button (click)="setCard()" id="cardButton" type="button" class="btn btn-block btn-primary">
+      {{card ? card : '-'}}
+    </button>
+  </div>
+
+  <div class="form-group">
+
+    <label for="balanceInput">Balance (requires card)</label>
+
+    <div class="d-flex">
+      <button (click)="subBalance()" type="button" class="btn btn-primary" [disabled]="!card"
+                [class.disabled]="!card">
+          <i class="fa fa-minus"></i>
+        </button>
+
+      <input id="balanceInput" disabled class="disabled form-control text-center flex-grow-1"
+             [value]="balance | number:'1.2-2'">
+
+      <button (click)="addBalance()" type="button" class="btn btn-primary" [disabled]="!card"
+              [class.disabled]="!card">
+          <i class="fa fa-plus"></i>
+        </button>
+    </div>
+
+  </div>
+
+  <div class="form-group">
+
+    <label for="bonusInput">Bonus (requires card)</label>
+
+    <div class="d-flex">
+      <button (click)="subBonus()" type="button" class="btn btn-primary" [disabled]="!card"
+              [class.disabled]="!card">
+        <i class="fa fa-minus"></i>
+      </button>
+
+      <input id="bonusInput" disabled class="disabled form-control text-center d-inline-block flex-grow-1"
+             [value]="bonus | number:'1.2-2'">
+
+      <button (click)="addBonus()" type="button" class="btn btn-primary" [disabled]="!card"
+              [class.disabled]="!card">
+        <i class="fa fa-plus"></i>
+      </button>
+    </div>
+
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-6 p-1">
+      <button (click)="activeModal.dismiss('Cancel click')"
+              type="button" class="btn btn-secondary btn-block btn-lg">
+        <i class="fa fa-close fa-lg"></i>
+      </button>
+    </div>
+    <div class="col-6 p-1">
+      <button (click)="confirm()" type="button" class="btn btn-primary btn-block btn-lg">
+        <i class="fa fa-check fa-lg"></i>
+      </button>
+    </div>
+  </div>
+
+</div>

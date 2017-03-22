@@ -1,0 +1,14 @@
+.rotate {
+  height: 100px;
+  white-space: nowrap;
+}
+
+.rotate > div {
+  transform: rotate(315deg);
+
+  width: 30px;
+}
+
+.minh-1 {
+  min-height: 1rem;
+}

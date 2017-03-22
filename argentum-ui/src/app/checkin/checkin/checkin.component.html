@@ -1,0 +1,25 @@
+<div class="container-fluid h-100 d-flex flex-column m-0">
+
+  <div class="row p-2 col m-0">
+    <div class="col-sm-4 p-1 align-self-sm-center">
+      <button (click)="newGuest()" class="btn btn-primary btn-block btn-huge">
+        <i class="fa fa-plus fa-lg pr-1"></i>New guest
+      </button>
+    </div>
+    <div class="col-sm-4 p-1 align-self-sm-center">
+      <button (click)="searchGuest()" class="btn btn-primary btn-block btn-huge">
+        <i class="fa fa-search fa-lg pr-1"></i>Search guest
+      </button>
+    </div>
+    <div class="col-sm-4 p-1 align-self-sm-center">
+      <button (click)="recharge()" class="btn btn-primary btn-block btn-huge">
+        <i class="fa fa-credit-card-alt fa-lg pr-1"></i>Recharge
+      </button>
+    </div>
+  </div>
+
+  <app-message class="m-5 text-center"></app-message>
+
+  <app-navbar></app-navbar>
+
+</div>

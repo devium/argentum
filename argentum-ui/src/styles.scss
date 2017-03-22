@@ -1,0 +1,79 @@
+@import 'node_modules/bootstrap/scss/bootstrap';
+
+html, body {
+  height: 100%;
+}
+
+.btn,
+.dropdown-item {
+  cursor: pointer;
+}
+
+.btn.disabled,
+.form-control.disabled,
+input:disabled {
+  cursor: default !important;
+}
+
+.p-05 {
+  padding: 1px;
+}
+
+.pagination {
+  margin-bottom: 0;
+}
+
+.text-black {
+  color: black;
+}
+
+.dark-bg,
+.dark-bg div {
+  color: white !important;
+}
+
+.changed {
+  background-color: $state-info-bg;
+}
+
+.removed {
+  background-color: $state-danger-bg;
+}
+
+.flex-grow-1 {
+  flex-grow: 1;
+}
+
+.flex-grow-2 {
+  flex-grow: 2;
+}
+
+.btn:disabled,
+input:disabled {
+  pointer-events: none;
+}
+
+.modal {
+  display: table !important;
+  height: 100%;
+  width: 100%;
+}
+
+.modal-dialog {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.modal-content {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.modal-sm .modal-content {
+  max-width: 300px;
+}
+
+.modal:nth-of-type(2),
+.modal-backdrop:nth-of-type(2) {
+  z-index: 2100;
+}

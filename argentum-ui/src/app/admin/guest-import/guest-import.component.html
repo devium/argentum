@@ -1,0 +1,46 @@
+<app-admin-nav></app-admin-nav>
+
+<div class="container-fluid">
+
+  <div class="row my-2">
+    <div class="col-3 text-center">
+      Code column
+    </div>
+    <div class="col-3 text-center">
+      Name column
+    </div>
+    <div class="col-3 text-center">
+      E-Mail column
+    </div>
+    <div class="col-3 text-center">
+      Status column
+    </div>
+  </div>
+  <div class="row my-2">
+    <div class="col-3">
+      <input class="form-control text-center" type="text" [(ngModel)]="codeCol">
+    </div>
+    <div class="col-3">
+      <input class="form-control text-center" type="text" [(ngModel)]="nameCol">
+    </div>
+    <div class="col-3">
+      <input class="form-control text-center" type="text" [(ngModel)]="mailCol">
+    </div>
+    <div class="col-3">
+      <input class="form-control text-center" type="text" [(ngModel)]="statusCol">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-4 offset-4 text-center my-2">
+      <label class="custom-file btn btn-block btn-primary">
+        <input type="file" class="custom-file-input" (change)="import($event.target)" hidden accept=".csv">
+        <span class="custom-file-control text-white"><i class="fa fa-upload pr-1"></i>Upload file (.csv)</span>
+      </label>
+    </div>
+  </div>
+
+  <app-message></app-message>
+</div>
+
+<app-navbar></app-navbar>

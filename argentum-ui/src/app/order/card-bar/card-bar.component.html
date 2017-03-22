@@ -1,0 +1,44 @@
+<div class="fixed-top py-1 container-fluid"
+     [class.bg-primary]="state == scanState.Waiting"
+     [class.bg-success]="state == scanState.Valid"
+     [class.bg-danger]="state == scanState.NotFound">
+
+  <div class="row">
+    <div class="col-12 col-sm-4 col-md-5 p-0 text-center text-white overflow-ellipsis">
+      <span *ngIf="state == scanState.Waiting" class="align-middle text-nowrap">Waiting for scan...</span>
+      <span *ngIf="state == scanState.Valid" class="align-middle text-nowrap">
+        {{guest.name | slice:0:MAX_NAME}}{{guest.name.length > MAX_NAME ? '...' : ''}}
+      </span>
+      <span *ngIf="state == scanState.NotFound" class="align-middle text-nowrap">Card number not found.</span>
+    </div>
+
+    <div class="col-12 col-sm-8 col-md-7 p-0">
+
+      <div class="row">
+
+        <div class="col-4 p-0 text-center">
+          <span *ngIf="state == scanState.Valid"
+                class="align-middle text-white">€{{guest.balance | number:'1.2-2'}}</span>
+        </div>
+
+        <div class="col-4 p-0">
+          <div class="progress m-auto h-100">
+            <span class="w-100 m-auto text-white p-1">{{card}}</span>
+            <div [@startCountdown]="countdownState" (@startCountdown.done)="countdownAnimationDone($event)"
+                 class="progress-bar h-100" role="progressbar">
+            </div>
+          </div>
+        </div>
+
+        <div class="col-4 p-0 text-center">
+          <span *ngIf="state == scanState.Valid"
+                class="align-middle text-white">+ €{{guest.bonus | number:'1.2-2'}}</span>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>
+<div class="container-fluid card-pad"></div>
