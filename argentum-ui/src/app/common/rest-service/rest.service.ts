@@ -10,6 +10,7 @@ import { GUESTS } from './mock-guests';
 import { ALL_PRODUCTS } from './mock-products';
 import { Observable } from 'rxjs';
 import { OrderConfirmation } from '../model/order-confirmation';
+import { Statistics } from '../model/statistics';
 
 @Injectable()
 export class RestService {
@@ -161,6 +162,20 @@ export class RestService {
     } else {
       return Promise.reject(`"${guest.name}" has insufficient funds for order of total ${total.toFixed(2)}. Balance: €${guest.balance.toFixed(2)} (+ €${guest.bonus.toFixed(2)})`);
     }
+  }
+
+  getStatistics(): Promise<Statistics> {
+    // TODO: GET on /statistics
+    return Promise.resolve({
+      guestsTotal: GUESTS.length,
+      guestsCheckedIn: GUESTS.filter(guest => guest.checkedIn).length,
+      totalBalance: GUESTS.map(guest => guest.balance).reduce((a, b) => a + b, 0),
+      totalBonus: GUESTS.map(guest => guest.bonus).reduce((a, b) => a + b, 0),
+      totalSpent: 12345,
+      numProducts: ALL_PRODUCTS.length,
+      numRanges: PRODUCT_RANGES.length,
+      numCategories: CATEGORIES.length
+    });
   }
 
   private handleError(error: any): Promise<any> {
