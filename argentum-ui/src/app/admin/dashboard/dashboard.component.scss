@@ -1,0 +1,11 @@
+@import 'node_modules/bootstrap/scss/bootstrap';
+
+.table-stats {
+  td:nth-of-type(2) {
+    @extend .text-right;
+  }
+}
+
+.container {
+  max-width: 30rem;
+}
