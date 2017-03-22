@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { animate, AnimationTransitionEvent, Component, OnInit, state, style, transition, trigger } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { RestService } from '../../common/rest-service/rest.service';
 import { Guest } from '../../common/model/guest';
@@ -10,21 +10,32 @@ enum ScanState {
   NotFound
 }
 
+const CARD_TIMEOUT_MS = 10000;
+
 @Component({
   selector: 'app-card-bar',
   templateUrl: 'card-bar.component.html',
-  styleUrls: ['card-bar.component.scss']
+  styleUrls: ['card-bar.component.scss'],
+  animations: [
+    trigger('startCountdown', [
+      state('full', style({
+        width: '100%'
+      })),
+      state('empty', style({
+        width: '0%'
+      })),
+      transition('full => empty', animate(`${CARD_TIMEOUT_MS}ms linear`))
+    ])
+  ]
 })
 export class CardBarComponent implements OnInit {
   private scanState = ScanState;
   private readonly MAX_NAME = 28;
   private cardStream: Observable<string>;
   private card = '';
-  private balance = '';
-  private bonus = '';
-  private name = '';
-  private countdown = 0;
-  private countdownStream: Subject<number>;
+  private guest: Guest;
+  private countdownState = 'empty';
+  private countdownStream = new Subject();
   private state: ScanState = ScanState.Waiting;
 
   constructor(private restService: RestService) {
@@ -42,41 +53,39 @@ export class CardBarComponent implements OnInit {
 
     this.cardStream.subscribe(result => this.newNumber(result));
 
-    const start = 10;
-    const tps = 1;
-    this.countdownStream = new Subject<number>();
     this.countdownStream
-      .switchMap(old => Observable
-        .timer(0, 1000 / tps)
-        .take(start * tps + 1)
-        .map(i => (start - i / tps) / start * 100))
-      .subscribe(i => {
-        this.countdown = i;
-        if (i <= 0) {
-          this.name = '';
-          this.balance = '';
-          this.bonus = '';
-          this.card = '';
-          this.state = ScanState.Waiting;
-        }
-      });
+      .debounceTime(CARD_TIMEOUT_MS)
+      .subscribe(() => this.setState(ScanState.Waiting));
   }
 
   newNumber(card: string) {
     this.card = card.slice(-10);
     this.restService.getGuestByCard(card).then((guest: Guest) => {
       if (guest) {
-        this.name = guest.name;
-        this.balance = '' + guest.balance.toFixed(2);
-        this.bonus = '' + guest.bonus.toFixed(2);
-        this.state = ScanState.Valid;
+        this.guest = guest;
+        this.setState(ScanState.Valid);
       } else {
-        this.name = '';
-        this.balance = '';
-        this.bonus = '';
-        this.state = ScanState.NotFound;
+        this.setState(ScanState.NotFound);
       }
+
+      this.countdownState = 'full';
       this.countdownStream.next();
     });
+  }
+
+  countdownAnimationDone(event: AnimationTransitionEvent) {
+    if (event.toState == 'full') {
+      this.countdownState = 'empty';
+    }
+  }
+
+  setState(state: ScanState) {
+    this.state = state;
+    if (state == ScanState.Waiting) {
+      this.guest = null;
+      this.card = '';
+    } else if (state == ScanState.NotFound) {
+      this.guest = null;
+    }
   }
 }
