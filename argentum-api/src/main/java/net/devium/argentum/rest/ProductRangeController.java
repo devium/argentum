@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +38,7 @@ public class ProductRangeController {
                 .map(range -> new ProductRangeResponseMeta(range.getId(), range.getName()))
                 .collect(Collectors.toList());
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 
     @RequestMapping(path = "/{rangeId}", method = RequestMethod.GET)
@@ -56,7 +55,7 @@ public class ProductRangeController {
                 .collect(Collectors.toList());
 
         ProductRangeResponseEager response = new ProductRangeResponseEager(range.getId(), range.getName(), products);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -65,7 +64,7 @@ public class ProductRangeController {
         newRange = productRangeRepository.save(newRange);
 
         ProductRangeResponseMeta response = new ProductRangeResponseMeta(newRange.getId(), newRange.getName());
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 
     @RequestMapping(path = "/{rangeId}", method = RequestMethod.DELETE)

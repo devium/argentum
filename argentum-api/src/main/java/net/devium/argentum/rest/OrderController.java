@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -54,7 +53,7 @@ public class OrderController {
                 .map(OrderController::toOrderResponse)
                 .collect(Collectors.toList());
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 
     @RequestMapping(path = "/{orderId}", method = RequestMethod.GET)
@@ -66,7 +65,7 @@ public class OrderController {
             throw new ResourceNotFoundException();
         }
 
-        return new ResponseEntity<>(toOrderResponse(order), HttpStatus.OK);
+        return ResponseEntity.ok(toOrderResponse(order));
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -97,7 +96,7 @@ public class OrderController {
         newOrder.setOrderItems(orderItems);
         orderRepository.save(newOrder);
 
-        return new ResponseEntity<>(toOrderResponse(newOrder), HttpStatus.OK);
+        return ResponseEntity.ok(toOrderResponse(newOrder));
     }
 
 }
