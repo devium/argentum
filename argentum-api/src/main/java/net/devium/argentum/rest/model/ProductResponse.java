@@ -7,12 +7,12 @@ public class ProductResponse {
     private long id;
     private String name;
     private BigDecimal price;
-    private List<String> ranges;
+    private List<Integer> ranges;
 
     public ProductResponse() {
     }
 
-    public ProductResponse(long id, String name, BigDecimal price, List<String> ranges) {
+    public ProductResponse(long id, String name, BigDecimal price, List<Integer> ranges) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -31,7 +31,7 @@ public class ProductResponse {
         return price;
     }
 
-    public List<String> getRanges() {
+    public List<Integer> getRanges() {
         return ranges;
     }
 }

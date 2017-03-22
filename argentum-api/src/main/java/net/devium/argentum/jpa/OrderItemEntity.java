@@ -15,12 +15,25 @@ public class OrderItemEntity {
 
     private int quantity;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "order_id")
+    private OrderEntity order;
+
     public OrderItemEntity() {
     }
 
-    public OrderItemEntity(ProductEntity product, int quantity) {
+    public OrderItemEntity(ProductEntity product, int quantity, OrderEntity order) {
         this.product = product;
         this.quantity = quantity;
+        this.order = order;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public ProductEntity getProduct() {
@@ -37,5 +50,13 @@ public class OrderItemEntity {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public OrderEntity getOrder() {
+        return order;
+    }
+
+    public void setOrder(OrderEntity order) {
+        this.order = order;
     }
 }

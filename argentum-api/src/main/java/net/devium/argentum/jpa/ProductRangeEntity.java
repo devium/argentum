@@ -8,7 +8,8 @@ import java.util.List;
 @Table(name = "product_ranges")
 public class ProductRangeEntity {
     @Id
-    private String id;
+    @GeneratedValue
+    private int id;
     private String name;
 
     @ManyToMany(mappedBy = "productRanges", fetch = FetchType.EAGER)
@@ -17,16 +18,15 @@ public class ProductRangeEntity {
     public ProductRangeEntity() {
     }
 
-    public ProductRangeEntity(String id, String name) {
-        this.id = id;
+    public ProductRangeEntity(String name) {
         this.name = name;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

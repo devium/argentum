@@ -3,19 +3,19 @@ package net.devium.argentum.rest.model;
 import java.util.List;
 
 public class OrderRequest {
-    private String range;
+    private int guestId;
     private List<OrderItemRequest> items;
 
     public OrderRequest() {
     }
 
-    public OrderRequest(String range, List<OrderItemRequest> items) {
-        this.range = range;
+    public OrderRequest(int guestId, List<OrderItemRequest> items) {
+        this.guestId = guestId;
         this.items = items;
     }
 
-    public String getRange() {
-        return range;
+    public int getGuestId() {
+        return guestId;
     }
 
     public List<OrderItemRequest> getItems() {
