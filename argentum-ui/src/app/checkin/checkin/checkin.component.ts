@@ -50,7 +50,7 @@ export class CheckinComponent implements OnInit {
         this.restService.getGuestByCard(card)
           .then((guest: Guest) => {
             this.restService.addBalance(guest, value)
-              .then(() => this.message.success(`Recharged balance of "${guest.name}" with € ${value.toFixed(2)}`))
+              .then(() => this.message.success(`Recharged balance of "${guest.name}" with €${value.toFixed(2)}`))
               .catch(reason => this.message.error(`Error: ${reason}`));
           })
           .catch(reason => this.message.error(`Error: ${reason}`));

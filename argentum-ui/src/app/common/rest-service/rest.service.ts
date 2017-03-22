@@ -9,6 +9,7 @@ import { Guest } from '../model/guest';
 import { GUESTS } from './mock-guests';
 import { ALL_PRODUCTS } from './mock-products';
 import { Observable } from 'rxjs';
+import { OrderConfirmation } from '../model/order-confirmation';
 
 @Injectable()
 export class RestService {
@@ -22,9 +23,9 @@ export class RestService {
     return Promise.resolve(ALL_PRODUCTS);
   }
 
-  getProductRangeEager(id: number): Promise<ProductRange> {
+  getProductRangeEager(range: ProductRange): Promise<ProductRange> {
     // TODO: GET on /ranges/{id}, returns only non-legacy products (eagerly)
-    return Promise.resolve(PRODUCT_RANGES.find(range => range.id == id));
+    return Promise.resolve(PRODUCT_RANGES.find(eagerRange => eagerRange.id == range.id));
   }
 
   getProductRangesMeta(): Promise<ProductRange[]> {
@@ -135,6 +136,31 @@ export class RestService {
   checkIn(guest: Guest): Promise<Date> {
     // TODO: POST on /guests/{id}/checkin
     return Promise.resolve(new Date());
+  }
+
+  placeOrder(guest: Guest, products: Map<Product, number>): Promise<OrderConfirmation> {
+    // TODO: POST on /orders, check for sufficient funds
+
+    let total = 0;
+    products.forEach((quantity: number, product: Product) => total += product.price * quantity);
+
+    if (guest.balance + guest.bonus >= total) {
+      if (total >= guest.bonus) {
+        guest.balance -= total - guest.bonus;
+        guest.bonus = 0;
+      } else {
+        guest.bonus -= total;
+      }
+
+      let confirmation: OrderConfirmation = {
+        products: products,
+        guest: guest,
+        total: total
+      };
+      return Promise.resolve(confirmation);
+    } else {
+      return Promise.reject(`"${guest.name}" has insufficient funds for order of total ${total.toFixed(2)}. Balance: €${guest.balance.toFixed(2)} (+ €${guest.bonus.toFixed(2)})`);
+    }
   }
 
   private handleError(error: any): Promise<any> {

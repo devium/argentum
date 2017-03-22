@@ -71,7 +71,7 @@ export class SearchGuestModalComponent implements OnInit {
       this.restService.addBalance(this.guest, value)
         .then(newBalance => {
           this.guest.balance = newBalance;
-          this.message.success(`Added € ${value.toFixed(2)} to balance of "${this.guest.name}". New balance: € ${newBalance.toFixed(2)}`);
+          this.message.success(`Added €${value.toFixed(2)} to balance of "${this.guest.name}". New balance: €${newBalance.toFixed(2)}`);
         })
         .catch(reason => this.message.error(`Error: ${reason}`));
     }, result => void(0));
@@ -84,7 +84,7 @@ export class SearchGuestModalComponent implements OnInit {
       this.restService.addBalance(this.guest, -value)
         .then(newBalance => {
           this.guest.balance = newBalance;
-          this.message.success(`Removed € ${value.toFixed(2)} from balance of "${this.guest.name}". New balance: € ${newBalance.toFixed(2)}`);
+          this.message.success(`Removed €${value.toFixed(2)} from balance of "${this.guest.name}". New balance: €${newBalance.toFixed(2)}`);
         })
         .catch(reason => this.message.error(`Error: ${reason}`));
     }, result => void(0));
@@ -97,7 +97,7 @@ export class SearchGuestModalComponent implements OnInit {
       this.restService.addBonus(this.guest, value)
         .then(newBonus => {
           this.guest.bonus = newBonus;
-          this.message.success(`Added € ${value.toFixed(2)} to bonus of "${this.guest.name}". New bonus: € ${newBonus.toFixed(2)}`);
+          this.message.success(`Added €${value.toFixed(2)} to bonus of "${this.guest.name}". New bonus: €${newBonus.toFixed(2)}`);
         })
         .catch(reason => this.message.error(`Error: ${reason}`));
     }, result => void(0));
@@ -110,7 +110,7 @@ export class SearchGuestModalComponent implements OnInit {
       this.restService.addBonus(this.guest, -value)
         .then(newBonus => {
           this.guest.bonus = newBonus;
-          this.message.success(`Removed € ${value.toFixed(2)} from bonus of "${this.guest.name}". New bonus: € ${newBonus.toFixed(2)}`);
+          this.message.success(`Removed €${value.toFixed(2)} from bonus of "${this.guest.name}". New bonus: €${newBonus.toFixed(2)}`);
         })
         .catch(reason => this.message.error(`Error: ${reason}`));
     }, result => void(0));
