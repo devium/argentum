@@ -85,7 +85,8 @@ export class RestService {
 
   getGuestByCard(card: string): Promise<Guest> {
     // TODO: GET on /guests/card/{card}
-    return Promise.resolve(GUESTS.find(guest => guest.card == card));
+    let cardGuest = GUESTS.find(guest => guest.card == card);
+    return cardGuest ? Promise.resolve(cardGuest) : Promise.reject(`Card ${card} not registered.`);
   }
 
   getGuestsPaginatedAndFiltered(pageSize: number, page: number, codeLike: string, nameLike: string, mailLike: string, statusLike: string): Promise<{ guests: Guest[], guestsTotal: number }> {
@@ -129,6 +130,11 @@ export class RestService {
   registerCard(guest: Guest, card: string): Promise<void> {
     // TODO: PUT on /guests/{id}/card, remove card from previous guest if exists
     return Promise.resolve();
+  }
+
+  checkIn(guest: Guest): Promise<Date> {
+    // TODO: POST on /guests/{id}/checkin
+    return Promise.resolve(new Date());
   }
 
   private handleError(error: any): Promise<any> {

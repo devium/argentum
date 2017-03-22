@@ -21,6 +21,8 @@ export class KeypadModalComponent implements OnInit {
           this.deleteChar();
         } else if (event.keyCode == 13 /* Enter */) {
           this.confirm();
+          // Prevent click-through to possibly focused buttons.
+          event.preventDefault();
         } else {
           this.entry(event.key)
         }

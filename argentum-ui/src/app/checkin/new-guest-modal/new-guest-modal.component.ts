@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.component';
 import { Guest } from '../../common/model/guest';
@@ -17,10 +17,14 @@ export class NewGuestModalComponent implements OnInit {
   balance = 0;
   bonus = 0;
 
+  @ViewChild('nameInput')
+  nameInput: ElementRef;
+
   constructor(private modalService: NgbModal, public activeModal: NgbActiveModal) {
   }
 
   ngOnInit() {
+    this.nameInput.nativeElement.focus();
   }
 
   setCard() {

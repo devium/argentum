@@ -15,7 +15,7 @@
 
   <button (click)="checkIn()" type="button" [disabled]="!guest || guest.checkedIn"
           [class.disabled]="!guest || guest.checkedIn" class="btn btn-block btn-primary mb-3">
-    Check in
+    {{ guest && guest.checkedIn ? 'Checked in at ' + guest.checkedIn.toLocaleTimeString() : 'Check in' }}
   </button>
 
   <div *ngIf="guest && guest.checkedIn">
