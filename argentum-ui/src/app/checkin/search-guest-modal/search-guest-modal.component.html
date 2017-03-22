@@ -1,0 +1,79 @@
+<div class="modal-body mx-4 my-3 p-0">
+
+  <div class="form-group">
+    <label for="codeInput">Code</label>
+    <input #codeInput (input)="search($event.target.value)" id="codeInput" type="text" class="form-control">
+
+    <div *ngIf="results.length > 0 && !guest" class="dropdown show">
+      <div class="dropdown-menu">
+        <button *ngFor="let guest of results" (click)="lockGuest(guest)" type="button" class="dropdown-item">
+          {{guest.code}} {{guest.name}}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <button (click)="checkIn()" type="button" [disabled]="!guest || guest.checkedIn"
+          [class.disabled]="!guest || guest.checkedIn" class="btn btn-block btn-primary mb-3">
+    {{ guest && guest.checkedIn ? 'Checked in at ' + guest.checkedIn.toLocaleTimeString() : 'Check in' }}
+  </button>
+
+  <div *ngIf="guest && guest.checkedIn">
+
+    <div class="form-group">
+      <label for="cardButton">Card (optional)</label>
+      <button (click)="setCard()" id="cardButton" type="button" class="btn btn-block btn-primary">
+        {{guest.card ? guest.card : '-'}}
+      </button>
+    </div>
+
+
+    <div class="form-group">
+
+      <label for="balanceInput">Balance (requires card)</label>
+
+      <div class="d-flex">
+        <button (click)="subBalance()" type="button" class="btn btn-primary" [disabled]="!guest.card"
+                [class.disabled]="!guest.card">
+          <i class="fa fa-minus"></i>
+        </button>
+
+        <input id="balanceInput" disabled class="disabled form-control text-center flex-grow-1"
+               [value]="guest.balance | number:'1.2-2'">
+        <button (click)="addBalance()" type="button" class="btn btn-primary" [disabled]="!guest.card"
+                [class.disabled]="!guest.card">
+          <i class="fa fa-plus"></i>
+        </button>
+      </div>
+
+    </div>
+
+    <div class="form-group">
+
+      <label for="bonusInput">Bonus (requires card)</label>
+
+      <div class="d-flex">
+        <button (click)="subBonus()" type="button" class="btn btn-primary" [disabled]="!guest.card"
+                [class.disabled]="!guest.card">
+          <i class="fa fa-minus"></i>
+        </button>
+
+        <input id="bonusInput" disabled class="disabled form-control text-center flex-grow-1"
+               [value]="guest.bonus | number:'1.2-2'">
+
+        <button (click)="addBonus()" type="button" class="btn btn-primary" [disabled]="!guest.card"
+                [class.disabled]="!guest.card">
+          <i class="fa fa-plus"></i>
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <button (click)="activeModal.dismiss('Cancel click')"
+          type="button" class="btn btn-secondary btn-block btn-lg">
+    <i class="fa fa-close fa-lg"></i>
+  </button>
+
+</div>

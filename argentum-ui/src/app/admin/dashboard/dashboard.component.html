@@ -1,0 +1,52 @@
+<app-admin-nav></app-admin-nav>
+
+<div class="container m-0">
+  <table *ngIf="stats" class="table table-sm table-striped table-stats">
+    <tbody>
+    <tr>
+      <td>Guests</td>
+      <td>{{stats.guestsTotal}}</td>
+    </tr>
+    <tr>
+      <td>Guests checked in</td>
+      <td>{{stats.guestsCheckedIn}}</td>
+    </tr>
+    <tr>
+      <td>Guests not checked in</td>
+      <td>{{stats.guestsTotal - stats.guestsCheckedIn}}</td>
+    </tr>
+    <tr>
+      <td>Total balance available to guests</td>
+      <td>€{{stats.totalBalance | number:'1.2-2'}}</td>
+    </tr>
+    <tr>
+      <td>Total bonus available to guests</td>
+      <td>€{{stats.totalBonus | number:'1.2-2'}}</td>
+    </tr>
+    <tr>
+      <td>Total funds spent (including bonus)</td>
+      <td>€{{stats.totalSpent | number:'1.2-2'}}</td>
+    </tr>
+    <tr>
+      <td>Products</td>
+      <td>{{stats.numProducts}}</td>
+    </tr>
+    <tr>
+      <td>Product ranges</td>
+      <td>{{stats.numRanges}}</td>
+    </tr>
+    <tr>
+      <td>Categories</td>
+      <td>{{stats.numCategories}}</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <button (click)='refresh()' type="button" class="btn btn-block btn-primary">
+    <i class="fa fa-refresh"></i>
+  </button>
+</div>
+
+<app-message></app-message>
+
+<app-navbar></app-navbar>
