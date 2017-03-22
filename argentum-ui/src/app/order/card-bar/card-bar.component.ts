@@ -29,14 +29,15 @@ const CARD_TIMEOUT_MS = 10000;
   ]
 })
 export class CardBarComponent implements OnInit {
-  private scanState = ScanState;
-  private readonly MAX_NAME = 28;
-  private cardStream: Observable<string>;
-  private card = '';
-  private guest: Guest;
-  private countdownState = 'empty';
-  private countdownStream = new Subject();
-  private state: ScanState = ScanState.Waiting;
+  scanState = ScanState;
+  readonly MAX_NAME = 28;
+
+  cardStream: Observable<string>;
+  card = '';
+  guest: Guest;
+  countdownState = 'empty';
+  countdownStream = new Subject();
+  state: ScanState = ScanState.Waiting;
 
   constructor(private restService: RestService) {
   }
@@ -60,17 +61,21 @@ export class CardBarComponent implements OnInit {
 
   newNumber(card: string) {
     this.card = card.slice(-10);
-    this.restService.getGuestByCard(card).then((guest: Guest) => {
-      if (guest) {
+    this.restService.getGuestByCard(card)
+      .then((guest: Guest) => {
         this.guest = guest;
         this.setState(ScanState.Valid);
-      } else {
+        this.startCountdown();
+      })
+      .catch(reason => {
         this.setState(ScanState.NotFound);
-      }
+        this.startCountdown();
+      });
+  }
 
-      this.countdownState = 'full';
-      this.countdownStream.next();
-    });
+  startCountdown() {
+    this.countdownState = 'full';
+    this.countdownStream.next();
   }
 
   countdownAnimationDone(event: AnimationTransitionEvent) {

@@ -17,7 +17,8 @@
       <div class="row">
 
         <div class="col-4 p-0 text-center">
-          <span *ngIf="state == scanState.Valid" class="align-middle text-white">€ {{guest.balance}}</span>
+          <span *ngIf="state == scanState.Valid"
+                class="align-middle text-white">€{{guest.balance | number:'1.2-2'}}</span>
         </div>
 
         <div class="col-4 p-0">
@@ -30,7 +31,8 @@
         </div>
 
         <div class="col-4 p-0 text-center">
-          <span *ngIf="state == scanState.Valid" class="align-middle text-white">+ € {{guest.bonus}}</span>
+          <span *ngIf="state == scanState.Valid"
+                class="align-middle text-white">+ €{{guest.bonus | number:'1.2-2'}}</span>
         </div>
 
       </div>

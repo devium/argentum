@@ -47,3 +47,11 @@
   @extend .btn-primary;
   @extend .btn-block;
 }
+
+app-message {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10000;
+}

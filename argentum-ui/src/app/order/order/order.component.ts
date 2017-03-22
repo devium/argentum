@@ -1,10 +1,13 @@
-import { Component, NgZone, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Product } from '../../common/model/product';
 import { RestService } from '../../common/rest-service/rest.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.component';
 import { isDarkBackground } from '../../common/util/is-dark-background';
 import { ProductRange } from '../../common/model/product-range';
+import { MessageComponent } from '../../common/message/message.component';
+import { CardBarComponent } from '../card-bar/card-bar.component';
+import { OrderConfirmation } from '../../common/model/order-confirmation';
 
 @Component({
   selector: 'app-order',
@@ -12,16 +15,23 @@ import { ProductRange } from '../../common/model/product-range';
   styleUrls: ['order.component.scss']
 })
 export class OrderComponent implements OnInit {
-  private productRanges: ProductRange[] = [];
-  private selectedRange: ProductRange = null;
-  private rangeProductsPerPage;
-  private orderProductsPerPage;
-  private rangePage = 0;
-  private orderPage = 0;
-  private products: Product[] = [];
-  private orderedProducts: Map<Product, number> = new Map<Product, number>();
-  private total = 0;
-  private pagesShown = 5;
+  productRanges: ProductRange[] = [];
+  selectedRange: ProductRange = null;
+  rangeProductsPerPage: number;
+  orderProductsPerPage: number;
+  pagesShown: number;
+  rangePage = 0;
+  orderPage = 0;
+  products: Product[] = [];
+  orderedProducts: Map<Product, number> = new Map<Product, number>();
+  total = 0;
+  waitingForOrder = false;
+
+  @ViewChild(MessageComponent)
+  message: MessageComponent;
+
+  @ViewChild(CardBarComponent)
+  cardBar: CardBarComponent;
 
   constructor(private restService: RestService, private ngZone: NgZone, private modalService: NgbModal) {
     window.onresize = () => {
@@ -49,15 +59,35 @@ export class OrderComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.restService.getProductRangesMeta().then(ranges => this.productRanges = ranges);
+    this.refreshRanges();
+    this.refreshProducts();
   }
 
-  private setProductRange(range: ProductRange) {
+  refreshRanges() {
+    this.restService.getProductRangesMeta()
+      .then(ranges => this.productRanges = ranges)
+      .catch(reason => this.message.error(`Error: ${reason}`));
+  }
+
+  refreshProducts() {
+    if (this.selectedRange) {
+      this.restService.getProductRangeEager(this.selectedRange)
+        .then(range => this.products = range.products)
+        .catch(reason => this.message.error(`Error: ${reason}`));
+    }
+  }
+
+  updateTotal() {
+    this.total = 0;
+    this.orderedProducts.forEach((quantity: number, product: Product) => this.total += product.price * quantity);
+  }
+
+  setProductRange(range: ProductRange) {
     this.selectedRange = range;
     this.refreshProducts();
   }
 
-  private rangeProductClicked(product: Product) {
+  rangeProductClicked(product: Product) {
     if (this.orderedProducts.has(product)) {
       this.orderedProducts.set(product, this.orderedProducts.get(product) + 1);
     } else {
@@ -66,7 +96,7 @@ export class OrderComponent implements OnInit {
     this.updateTotal();
   }
 
-  private orderedProductClicked(product: Product) {
+  orderedProductClicked(product: Product) {
     let count = this.orderedProducts.get(product);
     if (count == 1) {
       this.orderedProducts.delete(product);
@@ -76,7 +106,7 @@ export class OrderComponent implements OnInit {
     this.updateTotal();
   }
 
-  private getPaginated(data: any, pageSize: number, page: number): Product[] {
+  getPaginated(data: any[], pageSize: number, page: number): Product[] {
     return data.slice(pageSize * (page - 1), pageSize * page);
   }
 
@@ -90,17 +120,17 @@ export class OrderComponent implements OnInit {
     return 0;
   }
 
-  private isDarkBackground(color: string): boolean {
+  isDarkBackground(color: string): boolean {
     return isDarkBackground(color);
   }
 
-  private addCustomProduct(): void {
+  addCustomProduct(): void {
     let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = false;
     modal.result.then(result => this.confirmKeypad(result), result => void(0));
   }
 
-  private confirmKeypad(price: number) {
+  confirmKeypad(price: number) {
     this.orderedProducts.set({
       id: -1,
       name: 'Custom',
@@ -112,16 +142,7 @@ export class OrderComponent implements OnInit {
     this.updateTotal();
   }
 
-  private updateTotal() {
-    this.total = 0;
-    this.orderedProducts.forEach((quantity: number, product: Product) => this.total += product.price * quantity);
-  }
-
-  private refreshProducts() {
-    this.restService.getProductRangeEager(this.selectedRange.id).then(range => this.products = range.products);
-  }
-
-  private onRangeSwipe(event: any) {
+  onRangeSwipe(event: any) {
     if (event.direction == 2) {
       this.rangePage = Math.min(Math.ceil(this.products.length / this.rangeProductsPerPage), this.rangePage + 1);
     } else if (event.direction == 4) {
@@ -129,11 +150,26 @@ export class OrderComponent implements OnInit {
     }
   }
 
-  private onOrderSwipe(event: any) {
+  onOrderSwipe(event: any) {
     if (event.direction == 2) {
       this.orderPage = Math.min(Math.ceil(this.orderedProducts.size / this.orderProductsPerPage), this.orderPage + 1);
     } else if (event.direction == 4) {
       this.orderPage = Math.max(0, this.rangePage - 1);
     }
+  }
+
+  placeOrder(): void {
+    this.waitingForOrder = true;
+    this.restService.placeOrder(this.cardBar.guest, this.orderedProducts)
+      .then((confirmation: OrderConfirmation) => {
+        this.message.success(`Order placed for "${confirmation.guest.name}". Total: €${confirmation.total.toFixed(2)}. Remaining balance: €${confirmation.guest.balance.toFixed(2)} (+ €${confirmation.guest.bonus.toFixed(2)})`);
+        this.orderedProducts.clear();
+        this.updateTotal();
+        this.waitingForOrder = false;
+      })
+      .catch(reason => {
+        this.message.error(`Error: ${reason}`);
+        this.waitingForOrder = false;
+      });
   }
 }
