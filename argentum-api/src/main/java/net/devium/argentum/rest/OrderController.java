@@ -9,10 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.invoke.MethodHandles;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,6 +30,7 @@ public class OrderController {
     private ProductRangeRepository productRangeRepository;
     private OrderItemRepository orderItemRepository;
 
+    @Autowired
     public OrderController(OrderRepository orderRepository,
                            ProductRepository productRepository,
                            ProductRangeRepository productRangeRepository,
@@ -37,68 +41,63 @@ public class OrderController {
         this.orderItemRepository = orderItemRepository;
     }
 
-    @Autowired
-
-
     private static OrderResponse toOrderResponse(OrderEntity order) {
         List<OrderItemResponse> orderItems = order.getOrderItems().stream()
                 .map(orderItem -> new OrderItemResponse(orderItem.getProduct().getId(), orderItem.getQuantity()))
                 .collect(Collectors.toList());
-        return new OrderResponse(order.getId(), order.getProductRange().getId(), orderItems);
+        return new OrderResponse(order.getId(), orderItems, order.getTotal());
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public List<OrderResponse> getOrders() {
-        return StreamSupport.stream(orderRepository.findAll().spliterator(), false)
+    public ResponseEntity<List<OrderResponse>> getOrders() {
+        List<OrderResponse> response = StreamSupport.stream(orderRepository.findAll().spliterator(), false)
                 .map(OrderController::toOrderResponse)
                 .collect(Collectors.toList());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @RequestMapping(path = "/{orderId}", method = RequestMethod.GET)
-    public OrderResponse getOrder(@PathVariable long orderId) {
+    public ResponseEntity<OrderResponse> getOrder(@PathVariable long orderId) {
         OrderEntity order = orderRepository.findOne(orderId);
+
         if (order == null) {
             LOGGER.info("Order with ID {} not found.", orderId);
             throw new ResourceNotFoundException();
         }
-        return toOrderResponse(order);
+
+        return new ResponseEntity<>(toOrderResponse(order), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public OrderResponse createOrder(@RequestBody OrderRequest order) {
+    public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest order) {
         Set<Long> unknownProducts = order.getItems().stream()
                 .map(OrderItemRequest::getProductId)
                 .filter(productId -> !productRepository.exists(productId))
                 .collect(Collectors.toSet());
+
         if (!unknownProducts.isEmpty()) {
             String message = String.format("Product(s) %s not found.", unknownProducts);
             throw new ResourceNotFoundException(message);
         }
 
-        // Find all products in the request that are not in the specified product range.
-        Set<Long> notInRangeProducts = order.getItems().stream()
-                .map(orderItem -> productRepository.findOne(orderItem.getProductId()))
-                .filter(product -> product.getProductRanges().stream()
-                        .noneMatch(productRange -> productRange.getId().equals(order.getRange())))
-                .map(ProductEntity::getId)
-                .collect(Collectors.toSet());
-
-        if (!notInRangeProducts.isEmpty()) {
-            String message = String.format("Product(s) %s are not in the specified product range.", notInRangeProducts);
-            throw new ResourceNotFoundException(message);
-        }
-
-        ProductRangeEntity range = productRangeRepository.findOne(order.getRange());
+        // Oh no, it's retarded.
+        final OrderEntity newOrder = orderRepository.save(new OrderEntity());
 
         List<OrderItemEntity> orderItems = order.getItems().stream()
                 .map(orderItem -> new OrderItemEntity(productRepository.findOne(orderItem.getProductId()),
-                        orderItem.getQuantity()))
+                        orderItem.getQuantity(), newOrder))
                 .collect(Collectors.toList());
         orderItems.forEach(orderItemRepository::save);
-        OrderEntity newOrder = new OrderEntity(range, orderItems);
-        newOrder = orderRepository.save(newOrder);
 
-        return toOrderResponse(newOrder);
+        newOrder.setTotal(orderItems.stream()
+                .map(orderItem -> orderItem.getProduct().getPrice().multiply(new BigDecimal(orderItem.getQuantity())))
+                .reduce(new BigDecimal(0), BigDecimal::add));
+
+        newOrder.setOrderItems(orderItems);
+        orderRepository.save(newOrder);
+
+        return new ResponseEntity<>(toOrderResponse(newOrder), HttpStatus.OK);
     }
 
 }

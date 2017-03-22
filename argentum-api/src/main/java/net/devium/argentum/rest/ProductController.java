@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,23 +35,29 @@ public class ProductController {
     }
 
     @RequestMapping(path = "/{productId}", method = RequestMethod.GET)
-    public ProductResponse getProduct(@PathVariable long productId) {
+    public ResponseEntity<ProductResponse> getProduct(@PathVariable long productId) {
         ProductEntity product = productRepository.findOne(productId);
+
         if (product == null) {
             LOGGER.info("Product with ID {} not found.", productId);
             throw new ResourceNotFoundException();
         }
-        List<String> rangeIds = product.getProductRanges().stream()
+
+        List<Integer> rangeIds = product.getProductRanges().stream()
                 .map(ProductRangeEntity::getId)
                 .collect(Collectors.toList());
-        return new ProductResponse(product.getId(), product.getName(), product.getPrice(), rangeIds);
+
+        ProductResponse response = new ProductResponse(product.getId(), product.getName(), product.getPrice(),
+                rangeIds);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ProductResponse createProduct(@RequestBody ProductRequest product) {
-        Set<String> unknownRanges = product.getRanges().stream()
+    public ResponseEntity<ProductResponse> createProduct(@RequestBody ProductRequest product) {
+        Set<Integer> unknownRanges = product.getRanges().stream()
                 .filter(rangeId -> !productRangeRepository.exists(rangeId))
                 .collect(Collectors.toSet());
+
         if (!unknownRanges.isEmpty()) {
             String message = String.format("Product range(s) %s not found.", unknownRanges);
             throw new ResourceNotFoundException(message);
@@ -59,15 +66,17 @@ public class ProductController {
         List<ProductRangeEntity> ranges = product.getRanges().stream()
                 .map(productRangeRepository::findOne)
                 .collect(Collectors.toList());
+
         ProductEntity newProduct = new ProductEntity(product.getName(), product.getPrice(), ranges);
         productRepository.save(newProduct);
 
-        return new ProductResponse(newProduct.getId(), newProduct.getName(), newProduct.getPrice(),
+        ProductResponse response = new ProductResponse(newProduct.getId(), newProduct.getName(), newProduct.getPrice(),
                 product.getRanges());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @RequestMapping(path = "/{productId}", method = RequestMethod.DELETE)
-    public ResponseEntity<String> deleteProduct(@PathVariable long productId) {
+    public ResponseEntity<Void> deleteProduct(@PathVariable long productId) {
         try {
             productRepository.delete(productId);
         } catch (EmptyResultDataAccessException e) {

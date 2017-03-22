@@ -1,30 +1,31 @@
 package net.devium.argentum.rest.model;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class OrderResponse {
     private long id;
-    private String range;
     private List<OrderItemResponse> items;
+    private BigDecimal total;
 
     public OrderResponse() {
     }
 
-    public OrderResponse(long id, String range, List<OrderItemResponse> items) {
+    public OrderResponse(long id, List<OrderItemResponse> items, BigDecimal total) {
         this.id = id;
-        this.range = range;
         this.items = items;
+        this.total = total;
     }
 
     public long getId() {
         return id;
     }
 
-    public String getRange() {
-        return range;
-    }
-
     public List<OrderItemResponse> getItems() {
         return items;
+    }
+
+    public BigDecimal getTotal() {
+        return total;
     }
 }

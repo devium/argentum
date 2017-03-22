@@ -60,8 +60,8 @@ public class ProductControllerTest {
 
     @Test
     public void testGetProduct() throws Exception {
-        ProductRangeEntity range1 = new ProductRangeEntity("someRange", "someName");
-        ProductRangeEntity range2 = new ProductRangeEntity("someOtherRange", "someOtherName");
+        ProductRangeEntity range1 = new ProductRangeEntity("someName");
+        ProductRangeEntity range2 = new ProductRangeEntity("someOtherName");
         productRangeRepository.save(range1);
         productRangeRepository.save(range2);
         List<ProductRangeEntity> ranges = ImmutableList.of(range1, range2);
@@ -74,7 +74,7 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.id", is((int) id)))
                 .andExpect(jsonPath("$.name", is("someProduct")))
                 .andExpect(jsonPath("$.price", closeTo(3.5, 0.0001)))
-                .andExpect(jsonPath("$.ranges", contains("someRange", "someOtherRange")));
+                .andExpect(jsonPath("$.ranges", contains(range1.getId(), range2.getId())));
     }
 
     @Test
@@ -86,13 +86,15 @@ public class ProductControllerTest {
 
     @Test
     public void testCreateProduct() throws Exception {
-        String body = "{ 'name': 'someProduct', 'price': 3.5, 'ranges': [ 'someRange', 'someOtherRange' ] }";
-        body = body.replace('\'', '"');
 
-        ProductRangeEntity range1 = new ProductRangeEntity("someRange", "someName");
-        ProductRangeEntity range2 = new ProductRangeEntity("someOtherRange", "someOtherName");
-        productRangeRepository.save(range1);
-        productRangeRepository.save(range2);
+        ProductRangeEntity range1 = new ProductRangeEntity("someName");
+        ProductRangeEntity range2 = new ProductRangeEntity("someOtherName");
+        range1 = productRangeRepository.save(range1);
+        range2 = productRangeRepository.save(range2);
+
+        String body = "{ 'name': 'someProduct', 'price': 3.5, 'ranges': [ %s, %s ] }";
+        body = String.format(body, range1.getId(), range2.getId());
+        body = body.replace('\'', '"');
 
         mockMvc.perform(post("/products")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -102,17 +104,17 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.name", is("someProduct")))
                 .andExpect(jsonPath("$.price", closeTo(3.5, 0.0001)))
-                .andExpect(jsonPath("$.ranges", contains("someRange", "someOtherRange")));
+                .andExpect(jsonPath("$.ranges", contains(range1.getId(), range2.getId())));
 
-        range1 = productRangeRepository.findOne("someRange");
-        range2 = productRangeRepository.findOne("someRange");
+        range1 = productRangeRepository.findOne(range1.getId());
+        range2 = productRangeRepository.findOne(range2.getId());
         assertThat(range1.getProducts(), hasSize(1));
         assertThat(range2.getProducts(), hasSize(1));
     }
 
     @Test
     public void testCreateProductRangeNotFound() throws Exception {
-        String body = "{ 'name': 'someProduct', 'price': 3.5, 'ranges': [ 'someRange', 'someOtherRange' ] }";
+        String body = "{ 'name': 'someProduct', 'price': 3.5, 'ranges': [ 1, 2 ] }";
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/products")
@@ -124,8 +126,8 @@ public class ProductControllerTest {
 
     @Test
     public void testDeleteProduct() throws Exception {
-        ProductRangeEntity range1 = new ProductRangeEntity("someRange", "someName");
-        ProductRangeEntity range2 = new ProductRangeEntity("someOtherRange", "someOtherName");
+        ProductRangeEntity range1 = new ProductRangeEntity("someName");
+        ProductRangeEntity range2 = new ProductRangeEntity("someOtherName");
         productRangeRepository.save(range1);
         productRangeRepository.save(range2);
         List<ProductRangeEntity> ranges = ImmutableList.of(range1, range2);

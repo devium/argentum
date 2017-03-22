@@ -1,6 +1,7 @@
 package net.devium.argentum.jpa;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -10,20 +11,16 @@ public class OrderEntity {
     @GeneratedValue
     private long id;
 
-    @ManyToOne
-    @JoinColumn(name = "product_range_id")
-    private ProductRangeEntity productRange;
-
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "order_id")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "order")
     private List<OrderItemEntity> orderItems;
+
+    private BigDecimal total = new BigDecimal(0);
 
     public OrderEntity() {
     }
 
-    public OrderEntity(ProductRangeEntity productRange, List<OrderItemEntity> orderItems) {
-        this.productRange = productRange;
-        this.orderItems = orderItems;
+    public OrderEntity(BigDecimal total) {
+        this.total = total;
     }
 
     public long getId() {
@@ -34,19 +31,19 @@ public class OrderEntity {
         this.id = id;
     }
 
-    public ProductRangeEntity getProductRange() {
-        return productRange;
-    }
-
-    public void setProductRange(ProductRangeEntity productRange) {
-        this.productRange = productRange;
-    }
-
     public List<OrderItemEntity> getOrderItems() {
         return orderItems;
     }
 
     public void setOrderItems(List<OrderItemEntity> orderItems) {
         this.orderItems = orderItems;
+    }
+
+    public BigDecimal getTotal() {
+        return total;
+    }
+
+    public void setTotal(BigDecimal total) {
+        this.total = total;
     }
 }

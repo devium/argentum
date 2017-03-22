@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -54,21 +55,23 @@ public class ProductRangeControllerTest {
 
     @Test
     public void testGetProductRanges() throws Exception {
-        ProductRangeEntity range1 = new ProductRangeEntity("someRange", "someName");
-        ProductRangeEntity range2 = new ProductRangeEntity("someOtherRange", "someOtherName");
+        ProductRangeEntity range1 = new ProductRangeEntity("someName");
+        ProductRangeEntity range2 = new ProductRangeEntity("someOtherName");
         productRangeRepository.save(range1);
         productRangeRepository.save(range2);
 
         mockMvc.perform(get("/product_ranges"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0]", is("someRange")))
-                .andExpect(jsonPath("$.[1]", is("someOtherRange")));
+                .andExpect(jsonPath("$.[0].id", is(range1.getId())))
+                .andExpect(jsonPath("$.[0].name", is("someName")))
+                .andExpect(jsonPath("$.[1].id", is(range2.getId())))
+                .andExpect(jsonPath("$.[1].name", is("someOtherName")));
     }
 
     @Test
     public void testGetProductRange() throws Exception {
-        ProductRangeEntity range = new ProductRangeEntity("someRange", "someName");
+        ProductRangeEntity range = new ProductRangeEntity("someName");
         ProductEntity product1 = new ProductEntity("someProduct", new BigDecimal(3.50),
                 Collections.singletonList(range));
         ProductEntity product2 = new ProductEntity("someOtherProduct", new BigDecimal(8.20),
@@ -77,10 +80,10 @@ public class ProductRangeControllerTest {
         productRepository.save(product1);
         productRepository.save(product2);
 
-        mockMvc.perform(get("/product_ranges/someRange"))
+        mockMvc.perform(get("/product_ranges/{id}", range.getId()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is("someRange")))
+                .andExpect(jsonPath("$.id", is(range.getId())))
                 .andExpect(jsonPath("$.name", is("someName")))
                 .andExpect(jsonPath("$.products", hasSize(2)))
                 .andExpect(jsonPath("$.products[0].name", is("someProduct")))
@@ -89,42 +92,43 @@ public class ProductRangeControllerTest {
 
     @Test
     public void testGetProductRangeNotFound() throws Exception {
-        mockMvc.perform(get("/product_ranges/someRange"))
+        mockMvc.perform(get("/product_ranges/1"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void testCreateProductRange() throws Exception {
-        String body = "{ 'id': 'someRange', 'name': 'someName' }";
+        String body = "{ 'name': 'someName' }";
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/product_ranges")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(body))
                 .andDo(print())
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
 
-        ProductRangeEntity range = productRangeRepository.findOne("someRange");
-        assertEquals("someName", range.getName());
-        assertTrue(range.getProducts().isEmpty());
+        List<ProductRangeEntity> ranges = productRangeRepository.findAll();
+        assertEquals(1, ranges.size());
+        assertEquals("someName", ranges.get(0).getName());
+        assertTrue(ranges.get(0).getProducts().isEmpty());
     }
 
     @Test
     public void testDeleteProductRange() throws Exception {
-        ProductRangeEntity range = new ProductRangeEntity("someRange", "someName");
-        productRangeRepository.save(range);
+        ProductRangeEntity range = new ProductRangeEntity("someName");
+        range = productRangeRepository.save(range);
 
-        mockMvc.perform(delete("/product_ranges/someRange"))
+        mockMvc.perform(delete("/product_ranges/{id}", range.getId()))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        assertFalse(productRangeRepository.exists("someRange"));
+        assertFalse(productRangeRepository.exists(range.getId()));
     }
 
     @Test
     public void testDeleteProductRangeNotFound() throws Exception {
-        mockMvc.perform(delete("/product_ranges/someRange"))
+        mockMvc.perform(delete("/product_ranges/1"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
