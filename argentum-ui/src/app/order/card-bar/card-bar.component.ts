@@ -10,8 +10,6 @@ enum ScanState {
   NotFound
 }
 
-const CARD_TIMEOUT_MS = 10000;
-
 @Component({
   selector: 'app-card-bar',
   templateUrl: 'card-bar.component.html',
@@ -24,7 +22,7 @@ const CARD_TIMEOUT_MS = 10000;
       state('empty', style({
         width: '0%'
       })),
-      transition('full => empty', animate(`${CARD_TIMEOUT_MS}ms linear`))
+      transition('full => empty', animate(`10s linear`))
     ])
   ]
 })
@@ -55,7 +53,7 @@ export class CardBarComponent implements OnInit {
     this.cardStream.subscribe(result => this.newNumber(result));
 
     this.countdownStream
-      .debounceTime(CARD_TIMEOUT_MS)
+      .debounceTime(10000)
       .subscribe(() => this.setState(ScanState.Waiting));
   }
 
