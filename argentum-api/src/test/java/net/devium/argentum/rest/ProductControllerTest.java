@@ -20,7 +20,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -138,7 +137,9 @@ public class ProductControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        assertFalse(productRepository.exists(product.getId()));
+        product = productRepository.findOne(product.getId());
+        assertThat(product, notNullValue());
+        assertThat(product.isLegacy(), is(true));
     }
 
     @Test

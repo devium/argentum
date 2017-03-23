@@ -10,7 +10,6 @@ import net.devium.argentum.rest.model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -79,13 +78,16 @@ public class ProductController {
 
     @RequestMapping(path = "/{productId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteProduct(@PathVariable long productId) {
-        try {
-            productRepository.delete(productId);
-        } catch (EmptyResultDataAccessException e) {
+        ProductEntity product = productRepository.findOne(productId);
+
+        if (product == null) {
             String message = String.format("Product with ID %s not found.", productId);
             LOGGER.info(message);
             return Response.notFound(message);
         }
+
+        product.setLegacy(true);
+        productRepository.save(product);
 
         return ResponseEntity.noContent().build();
     }
