@@ -1,12 +1,12 @@
 package net.devium.argentum.rest;
 
+import net.devium.argentum.jpa.CategoryRepository;
 import net.devium.argentum.jpa.ProductEntity;
-import net.devium.argentum.jpa.ProductRangeEntity;
 import net.devium.argentum.jpa.ProductRangeRepository;
 import net.devium.argentum.jpa.ProductRepository;
-import net.devium.argentum.rest.model.ProductRequest;
-import net.devium.argentum.rest.model.ProductResponse;
-import net.devium.argentum.rest.model.Response;
+import net.devium.argentum.rest.model.request.ProductRequest;
+import net.devium.argentum.rest.model.response.ProductResponse;
+import net.devium.argentum.rest.model.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +24,14 @@ import java.util.stream.Collectors;
 public class ProductController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
     private final ProductRangeRepository productRangeRepository;
 
     @Autowired
-    public ProductController(ProductRepository productRepository, ProductRangeRepository productRangeRepository) {
+    public ProductController(ProductRepository productRepository, CategoryRepository categoryRepository,
+                             ProductRangeRepository productRangeRepository) {
         this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
         this.productRangeRepository = productRangeRepository;
     }
 
@@ -58,6 +61,12 @@ public class ProductController {
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> createProduct(@RequestBody ProductRequest product) {
+        if (product.getCategory() != -1 && !categoryRepository.exists(product.getCategory())) {
+            String message = String.format("Category %s not found.", product.getCategory());
+            LOGGER.info(message);
+            return Response.badRequest(message);
+        }
+
         Set<Long> unknownRanges = product.getRanges().stream()
                 .filter(rangeId -> !productRangeRepository.exists(rangeId))
                 .collect(Collectors.toSet());
@@ -65,16 +74,10 @@ public class ProductController {
         if (!unknownRanges.isEmpty()) {
             String message = String.format("Product range(s) %s not found.", unknownRanges);
             LOGGER.info(message);
-            return Response.notFound(message);
+            return Response.badRequest(message);
         }
 
-        List<ProductRangeEntity> ranges = product.getRanges().stream()
-                .map(productRangeRepository::findOne)
-                .collect(Collectors.toList());
-
-        ProductEntity newProduct = new ProductEntity(product.getName(), product.getPrice(), ranges);
-        productRepository.save(newProduct);
-
+        ProductEntity newProduct = productRepository.save(product.toEntity(categoryRepository, productRangeRepository));
         return Response.ok(ProductResponse.from(newProduct));
     }
 

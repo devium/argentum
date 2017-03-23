@@ -1,4 +1,4 @@
-package net.devium.argentum.rest.model;
+package net.devium.argentum.rest.model.response;
 
 import net.devium.argentum.jpa.ProductEntity;
 
@@ -8,12 +8,14 @@ public class ProductResponseMeta {
     private final long id;
     private final String name;
     private final BigDecimal price;
+    private final long category;
     private final boolean legacy;
 
-    private ProductResponseMeta(long id, String name, BigDecimal price, boolean legacy) {
+    private ProductResponseMeta(long id, String name, BigDecimal price, long category, boolean legacy) {
         this.id = id;
         this.name = name;
         this.price = price;
+        this.category = category;
         this.legacy = legacy;
     }
 
@@ -22,6 +24,7 @@ public class ProductResponseMeta {
                 product.getId(),
                 product.getName(),
                 product.getPrice(),
+                product.getCategory().getId(),
                 product.isLegacy()
         );
     }
@@ -36,6 +39,10 @@ public class ProductResponseMeta {
 
     public BigDecimal getPrice() {
         return price;
+    }
+
+    public long getCategory() {
+        return category;
     }
 
     public boolean isLegacy() {

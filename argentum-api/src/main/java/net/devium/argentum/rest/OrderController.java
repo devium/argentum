@@ -1,10 +1,10 @@
 package net.devium.argentum.rest;
 
 import net.devium.argentum.jpa.*;
-import net.devium.argentum.rest.model.OrderItemRequest;
-import net.devium.argentum.rest.model.OrderRequest;
-import net.devium.argentum.rest.model.OrderResponse;
-import net.devium.argentum.rest.model.Response;
+import net.devium.argentum.rest.model.request.OrderItemRequest;
+import net.devium.argentum.rest.model.request.OrderRequest;
+import net.devium.argentum.rest.model.response.OrderResponse;
+import net.devium.argentum.rest.model.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,7 @@ public class OrderController {
                 .map(OrderResponse::from)
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(response);
+        return Response.ok(response);
     }
 
     @RequestMapping(path = "/{orderId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

@@ -2,10 +2,10 @@ package net.devium.argentum.rest;
 
 import net.devium.argentum.jpa.ProductRangeEntity;
 import net.devium.argentum.jpa.ProductRangeRepository;
-import net.devium.argentum.rest.model.ProductRangeRequest;
-import net.devium.argentum.rest.model.ProductRangeResponseEager;
-import net.devium.argentum.rest.model.ProductRangeResponseMeta;
-import net.devium.argentum.rest.model.Response;
+import net.devium.argentum.rest.model.request.ProductRangeRequest;
+import net.devium.argentum.rest.model.response.ProductRangeResponseEager;
+import net.devium.argentum.rest.model.response.ProductRangeResponseMeta;
+import net.devium.argentum.rest.model.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

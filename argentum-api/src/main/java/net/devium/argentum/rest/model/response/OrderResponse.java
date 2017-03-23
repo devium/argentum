@@ -1,4 +1,4 @@
-package net.devium.argentum.rest.model;
+package net.devium.argentum.rest.model.response;
 
 import net.devium.argentum.jpa.OrderEntity;
 

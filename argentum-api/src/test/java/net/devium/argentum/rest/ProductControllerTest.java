@@ -1,10 +1,7 @@
 package net.devium.argentum.rest;
 
 import com.google.common.collect.ImmutableList;
-import net.devium.argentum.jpa.ProductEntity;
-import net.devium.argentum.jpa.ProductRangeEntity;
-import net.devium.argentum.jpa.ProductRangeRepository;
-import net.devium.argentum.jpa.ProductRepository;
+import net.devium.argentum.jpa.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +30,8 @@ public class ProductControllerTest {
     @Autowired
     private ProductRepository productRepository;
     @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
     private ProductRangeRepository productRangeRepository;
 
     private ProductController sut;
@@ -41,21 +40,37 @@ public class ProductControllerTest {
 
     @Before
     public void setUp() {
-        sut = new ProductController(productRepository, productRangeRepository);
+        sut = new ProductController(productRepository, categoryRepository, productRangeRepository);
         mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
     }
 
     @After
     public void tearDown() throws Exception {
         productRepository.deleteAll();
+        categoryRepository.deleteAll();
         productRangeRepository.deleteAll();
     }
 
     @Test
     public void testGetProducts() throws Exception {
-        ProductEntity product1 = new ProductEntity("someProduct", new BigDecimal(2.50), Collections.emptyList());
-        ProductEntity product2 = new ProductEntity("someOtherProduct", new BigDecimal(3.50), Collections.emptyList());
-        ProductEntity product3 = new ProductEntity("someThirdProduct", new BigDecimal(4.50), Collections.emptyList());
+        CategoryEntity category1 = categoryRepository.save(new CategoryEntity("someCategory", "#112233"));
+        CategoryEntity category2 = categoryRepository.save(new CategoryEntity("someOtherCategory", "#332211"));
+
+        ProductEntity product1 = new ProductEntity(
+                "someProduct",
+                new BigDecimal(2.50),
+                category1,
+                Collections.emptyList());
+        ProductEntity product2 = new ProductEntity(
+                "someOtherProduct",
+                new BigDecimal(3.50),
+                category2,
+                Collections.emptyList());
+        ProductEntity product3 = new ProductEntity(
+                "someThirdProduct",
+                new BigDecimal(4.50),
+                category1,
+                Collections.emptyList());
         product3.setLegacy(true);
 
         product1 = productRepository.save(product1);
@@ -68,22 +83,24 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.data", hasSize(2)))
                 .andExpect(jsonPath("$.data[0].id", is((int) product1.getId())))
                 .andExpect(jsonPath("$.data[0].price", closeTo(2.50, 0.001)))
+                .andExpect(jsonPath("$.data[0].category", is((int) category1.getId())))
                 .andExpect(jsonPath("$.data[0].ranges", is(Collections.emptyList())))
                 .andExpect(jsonPath("$.data[0].legacy", is(false)))
                 .andExpect(jsonPath("$.data[1].id", is((int) product2.getId())))
                 .andExpect(jsonPath("$.data[1].price", closeTo(3.50, 0.001)))
+                .andExpect(jsonPath("$.data[1].category", is((int) category2.getId())))
                 .andExpect(jsonPath("$.data[1].ranges", is(Collections.emptyList())))
                 .andExpect(jsonPath("$.data[1].legacy", is(false)));
     }
 
     @Test
     public void testGetProduct() throws Exception {
-        ProductRangeEntity range1 = new ProductRangeEntity("someName");
-        ProductRangeEntity range2 = new ProductRangeEntity("someOtherName");
-        productRangeRepository.save(range1);
-        productRangeRepository.save(range2);
+        CategoryEntity category = categoryRepository.save(new CategoryEntity("someCategory", "#112233"));
+        ProductRangeEntity range1 = productRangeRepository.save(new ProductRangeEntity("someName"));
+        ProductRangeEntity range2 = productRangeRepository.save(new ProductRangeEntity("someOtherName"));
+
         List<ProductRangeEntity> ranges = ImmutableList.of(range1, range2);
-        ProductEntity product = new ProductEntity("someProduct", new BigDecimal(3.50), ranges);
+        ProductEntity product = new ProductEntity("someProduct", new BigDecimal(3.50), category, ranges);
         long id = productRepository.save(product).getId();
 
         mockMvc.perform(get("/products/{id}", id))
@@ -92,6 +109,7 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.data.id", is((int) id)))
                 .andExpect(jsonPath("$.data.name", is("someProduct")))
                 .andExpect(jsonPath("$.data.price", closeTo(3.5, 0.0001)))
+                .andExpect(jsonPath("$.data.category", is((int) category.getId())))
                 .andExpect(jsonPath("$.data.legacy", is(false)))
                 .andExpect(jsonPath("$.data.ranges", contains((int) range1.getId(), (int) range2.getId())));
     }
@@ -105,14 +123,12 @@ public class ProductControllerTest {
 
     @Test
     public void testCreateProduct() throws Exception {
+        CategoryEntity category = categoryRepository.save(new CategoryEntity("someCategory", "#112233"));
+        ProductRangeEntity range1 = productRangeRepository.save(new ProductRangeEntity("someName"));
+        ProductRangeEntity range2 = productRangeRepository.save(new ProductRangeEntity("someOtherName"));
 
-        ProductRangeEntity range1 = new ProductRangeEntity("someName");
-        ProductRangeEntity range2 = new ProductRangeEntity("someOtherName");
-        range1 = productRangeRepository.save(range1);
-        range2 = productRangeRepository.save(range2);
-
-        String body = "{ 'name': 'someProduct', 'price': 3.5, 'ranges': [ %s, %s ] }";
-        body = String.format(body, range1.getId(), range2.getId());
+        String body = "{ 'name': 'someProduct', 'price': 3.5, 'category': %s, 'ranges': [ %s, %s ] }";
+        body = String.format(body, category.getId(), range1.getId(), range2.getId());
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/products")
@@ -123,6 +139,7 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.data.id").isNumber())
                 .andExpect(jsonPath("$.data.name", is("someProduct")))
                 .andExpect(jsonPath("$.data.price", closeTo(3.5, 0.0001)))
+                .andExpect(jsonPath("$.data.category", is((int) category.getId())))
                 .andExpect(jsonPath("$.data.ranges", contains((int) range1.getId(), (int) range2.getId())));
 
         range1 = productRangeRepository.findOne(range1.getId());
@@ -133,24 +150,38 @@ public class ProductControllerTest {
 
     @Test
     public void testCreateProductRangeNotFound() throws Exception {
-        String body = "{ 'name': 'someProduct', 'price': 3.5, 'ranges': [ 1, 2 ] }";
+        CategoryEntity category = categoryRepository.save(new CategoryEntity("someCategory", "#112233"));
+        String body = "{ 'name': 'someProduct', 'price': 3.5, 'category': %s, 'ranges': [ 1, 2 ] }";
+        body = String.format(body, category.getId());
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/products")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(body))
                 .andDo(print())
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testCreateProductCategoryNotFound() throws Exception {
+        String body = "{ 'name': 'someProduct', 'price': 3.5, 'category': 1, 'ranges': [] }";
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(post("/products")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     public void testDeleteProduct() throws Exception {
-        ProductRangeEntity range1 = new ProductRangeEntity("someName");
-        ProductRangeEntity range2 = new ProductRangeEntity("someOtherName");
-        productRangeRepository.save(range1);
-        productRangeRepository.save(range2);
+        CategoryEntity category = categoryRepository.save(new CategoryEntity("someCategory", "#112233"));
+        ProductRangeEntity range1 = productRangeRepository.save(new ProductRangeEntity("someName"));
+        ProductRangeEntity range2 = productRangeRepository.save(new ProductRangeEntity("someOtherName"));
+
         List<ProductRangeEntity> ranges = ImmutableList.of(range1, range2);
-        ProductEntity product = new ProductEntity("someProduct", new BigDecimal(3.50), ranges);
+        ProductEntity product = new ProductEntity("someProduct", new BigDecimal(3.50), category, ranges);
         product = productRepository.save(product);
 
         mockMvc.perform(delete("/products/{id}", product.getId()))

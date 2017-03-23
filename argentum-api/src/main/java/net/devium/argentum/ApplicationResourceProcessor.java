@@ -1,5 +1,6 @@
 package net.devium.argentum;
 
+import net.devium.argentum.rest.CategoryController;
 import net.devium.argentum.rest.OrderController;
 import net.devium.argentum.rest.ProductController;
 import net.devium.argentum.rest.ProductRangeController;
@@ -15,6 +16,7 @@ public class ApplicationResourceProcessor implements ResourceProcessor<Repositor
         resource.add(ControllerLinkBuilder.linkTo(ProductRangeController.class).withRel("product_ranges"));
         resource.add(ControllerLinkBuilder.linkTo(ProductController.class).withRel("products"));
         resource.add(ControllerLinkBuilder.linkTo(OrderController.class).withRel("orders"));
+        resource.add(ControllerLinkBuilder.linkTo(CategoryController.class).withRel("categories"));
         return resource;
     }
 }
