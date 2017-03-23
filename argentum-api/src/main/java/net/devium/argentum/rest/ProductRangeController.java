@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.invoke.MethodHandles;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -41,7 +42,7 @@ public class ProductRangeController {
         return ResponseEntity.ok(response);
     }
 
-    @RequestMapping(path = "/{rangeId}", method = RequestMethod.GET)
+    @RequestMapping(path = "/{rangeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ProductRangeResponseEager> getProductRange(@PathVariable Integer rangeId) {
         ProductRangeEntity range = productRangeRepository.findOne(rangeId);
 
@@ -58,7 +59,8 @@ public class ProductRangeController {
         return ResponseEntity.ok(response);
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ProductRangeResponseMeta> createProductRange(@RequestBody ProductRangeRequest range) {
         ProductRangeEntity newRange = new ProductRangeEntity(range.getName());
         newRange = productRangeRepository.save(newRange);
@@ -80,8 +82,14 @@ public class ProductRangeController {
         return ResponseEntity.noContent().build();
     }
 
-    @RequestMapping(method = RequestMethod.DELETE)
-    public ResponseEntity<Void> deleteProductRanges(List<Integer> rangeIds) {
+    @RequestMapping(method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<?> deleteProductRanges(@RequestBody LinkedList<Integer> rangeIds) {
+        if (rangeIds.isEmpty()) {
+            String message = "No ranges to delete.";
+            LOGGER.info(message);
+            return ResponseEntity.badRequest().body(message);
+        }
+
         List<Integer> unknownRanges = rangeIds.stream()
                 .filter(rangeId -> productRangeRepository.findOne(rangeId) == null)
                 .collect(Collectors.toList());
@@ -89,10 +97,10 @@ public class ProductRangeController {
         if (!unknownRanges.isEmpty()) {
             String message = String.format("Product range(s) %s not found.", unknownRanges);
             LOGGER.info(message);
-            throw new ResourceNotFoundException(message);
+            return ResponseEntity.badRequest().body(message);
         }
 
-        unknownRanges.forEach(productRangeRepository::delete);
+        rangeIds.forEach(productRangeRepository::delete);
 
         return ResponseEntity.noContent().build();
     }

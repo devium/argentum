@@ -56,7 +56,7 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
-    @RequestMapping(path = "/{orderId}", method = RequestMethod.GET)
+    @RequestMapping(path = "/{orderId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<OrderResponse> getOrder(@PathVariable long orderId) {
         OrderEntity order = orderRepository.findOne(orderId);
 
@@ -68,7 +68,8 @@ public class OrderController {
         return ResponseEntity.ok(toOrderResponse(order));
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest order) {
         Set<Long> unknownProducts = order.getItems().stream()
                 .map(OrderItemRequest::getProductId)

@@ -20,8 +20,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -131,5 +130,53 @@ public class ProductRangeControllerTest {
         mockMvc.perform(delete("/product_ranges/1"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testDeleteProductRanges() throws Exception {
+        ProductRangeEntity range1 = new ProductRangeEntity("someName");
+        ProductRangeEntity range2 = new ProductRangeEntity("someOtherName");
+        ProductRangeEntity range3 = new ProductRangeEntity("someThirdName");
+        range1 = productRangeRepository.save(range1);
+        range2 = productRangeRepository.save(range2);
+        range3 = productRangeRepository.save(range3);
+
+        String body = String.format("[ %s, %s ]", range1.getId(), range2.getId());
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(delete("/product_ranges")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        assertThat(productRangeRepository.findAll(), hasSize(1));
+        assertThat(productRangeRepository.findOne(range3.getId()), notNullValue());
+    }
+
+    @Test
+    public void testDeleteProductEmpty() throws Exception {
+        String body = "[]";
+
+        mockMvc.perform(delete("/product_ranges")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testDeleteProductRangesNotFound() throws Exception {
+        ProductRangeEntity range = new ProductRangeEntity("someName");
+        range = productRangeRepository.save(range);
+
+        String body = String.format("[ %s, %s ]", range.getId(), range.getId() + 1);
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(delete("/product_ranges")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 }
