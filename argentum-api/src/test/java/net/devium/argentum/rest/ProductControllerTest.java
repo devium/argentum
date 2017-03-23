@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
@@ -51,10 +52,28 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testGetProductsNotFound() throws Exception {
+    public void testGetProducts() throws Exception {
+        ProductEntity product1 = new ProductEntity("someProduct", new BigDecimal(2.50), Collections.emptyList());
+        ProductEntity product2 = new ProductEntity("someOtherProduct", new BigDecimal(3.50), Collections.emptyList());
+        ProductEntity product3 = new ProductEntity("someThirdProduct", new BigDecimal(4.50), Collections.emptyList());
+        product3.setLegacy(true);
+
+        product1 = productRepository.save(product1);
+        product2 = productRepository.save(product2);
+        productRepository.save(product3);
+
         mockMvc.perform(get("/products"))
                 .andDo(print())
-                .andExpect(status().isMethodNotAllowed());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data", hasSize(2)))
+                .andExpect(jsonPath("$.data[0].id", is((int) product1.getId())))
+                .andExpect(jsonPath("$.data[0].price", closeTo(2.50, 0.001)))
+                .andExpect(jsonPath("$.data[0].ranges", is(Collections.emptyList())))
+                .andExpect(jsonPath("$.data[0].legacy", is(false)))
+                .andExpect(jsonPath("$.data[1].id", is((int) product2.getId())))
+                .andExpect(jsonPath("$.data[1].price", closeTo(3.50, 0.001)))
+                .andExpect(jsonPath("$.data[1].ranges", is(Collections.emptyList())))
+                .andExpect(jsonPath("$.data[1].legacy", is(false)));
     }
 
     @Test
@@ -73,6 +92,7 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.data.id", is((int) id)))
                 .andExpect(jsonPath("$.data.name", is("someProduct")))
                 .andExpect(jsonPath("$.data.price", closeTo(3.5, 0.0001)))
+                .andExpect(jsonPath("$.data.legacy", is(false)))
                 .andExpect(jsonPath("$.data.ranges", contains((int) range1.getId(), (int) range2.getId())));
     }
 

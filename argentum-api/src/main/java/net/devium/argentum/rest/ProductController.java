@@ -32,6 +32,16 @@ public class ProductController {
         this.productRangeRepository = productRangeRepository;
     }
 
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<?> getProducts() {
+        List<ProductResponse> products = productRepository.findAll().stream()
+                .filter(product -> !product.isLegacy())
+                .map(ProductResponse::from)
+                .collect(Collectors.toList());
+
+        return Response.ok(products);
+    }
+
     @RequestMapping(path = "/{productId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> getProduct(@PathVariable long productId) {
         ProductEntity product = productRepository.findOne(productId);
@@ -42,13 +52,7 @@ public class ProductController {
             return Response.notFound(message);
         }
 
-        List<Long> rangeIds = product.getProductRanges().stream()
-                .map(ProductRangeEntity::getId)
-                .collect(Collectors.toList());
-
-        ProductResponse response = new ProductResponse(product.getId(), product.getName(), product.getPrice(),
-                rangeIds);
-        return Response.ok(response);
+        return Response.ok(ProductResponse.from(product));
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
@@ -71,9 +75,7 @@ public class ProductController {
         ProductEntity newProduct = new ProductEntity(product.getName(), product.getPrice(), ranges);
         productRepository.save(newProduct);
 
-        ProductResponse response = new ProductResponse(newProduct.getId(), newProduct.getName(), newProduct.getPrice(),
-                product.getRanges());
-        return Response.ok(response);
+        return Response.ok(ProductResponse.from(newProduct));
     }
 
     @RequestMapping(path = "/{productId}", method = RequestMethod.DELETE)
