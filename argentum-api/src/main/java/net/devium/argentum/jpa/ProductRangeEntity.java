@@ -52,4 +52,19 @@ public class ProductRangeEntity {
     public void setProducts(List<ProductEntity> products) {
         this.products = products;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ProductRangeEntity that = (ProductRangeEntity) o;
+
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (id ^ (id >>> 32));
+    }
 }

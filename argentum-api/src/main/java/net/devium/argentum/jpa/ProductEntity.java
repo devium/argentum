@@ -92,4 +92,23 @@ public class ProductEntity {
     public void setProductRanges(List<ProductRangeEntity> productRanges) {
         this.productRanges = productRanges;
     }
+
+    public void removeProductRanges(List<ProductRangeEntity> ranges) {
+        this.productRanges.removeAll(ranges);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ProductEntity that = (ProductEntity) o;
+
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (id ^ (id >>> 32));
+    }
 }
