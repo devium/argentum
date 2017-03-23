@@ -26,8 +26,19 @@ public class ProductEntity {
     public ProductEntity() {
     }
 
+    // Create
     public ProductEntity(String name, BigDecimal price, CategoryEntity category,
                          List<ProductRangeEntity> productRanges) {
+        this.name = name;
+        this.price = price;
+        this.category = category;
+        this.productRanges = productRanges;
+    }
+
+    // Update
+    public ProductEntity(long id, String name, BigDecimal price, CategoryEntity category,
+                         List<ProductRangeEntity> productRanges) {
+        this.id = id;
         this.name = name;
         this.price = price;
         this.category = category;

@@ -11,11 +11,11 @@ public class ProductResponse {
     private final long id;
     private final String name;
     private final BigDecimal price;
-    private final long category;
+    private final Long category;
     private final boolean legacy;
     private final List<Long> ranges;
 
-    private ProductResponse(long id, String name, BigDecimal price, long category, boolean legacy, List<Long> ranges) {
+    private ProductResponse(long id, String name, BigDecimal price, Long category, boolean legacy, List<Long> ranges) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -29,7 +29,7 @@ public class ProductResponse {
                 product.getId(),
                 product.getName(),
                 product.getPrice(),
-                product.getCategory().getId(),
+                product.getCategory() != null ? product.getCategory().getId() : null,
                 product.isLegacy(),
                 product.getProductRanges().stream().map(ProductRangeEntity::getId).collect(Collectors.toList())
         );
@@ -47,7 +47,7 @@ public class ProductResponse {
         return price;
     }
 
-    public long getCategory() {
+    public Long getCategory() {
         return category;
     }
 
