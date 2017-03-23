@@ -33,7 +33,7 @@ public class ProductController {
         this.productRangeRepository = productRangeRepository;
     }
 
-    @RequestMapping(path = "/{productId}", method = RequestMethod.GET)
+    @RequestMapping(path = "/{productId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ProductResponse> getProduct(@PathVariable long productId) {
         ProductEntity product = productRepository.findOne(productId);
 
@@ -51,7 +51,8 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ProductResponse> createProduct(@RequestBody ProductRequest product) {
         Set<Integer> unknownRanges = product.getRanges().stream()
                 .filter(rangeId -> !productRangeRepository.exists(rangeId))
