@@ -94,11 +94,11 @@ public class ProductRangeControllerTest {
                 .andExpect(jsonPath("$.data", hasSize(4)))
                 .andExpect(jsonPath("$.data[0].id", is((int) range1.getId())))
                 .andExpect(jsonPath("$.data[0].name", is("someUpdatedName")))
-                .andExpect(jsonPath("$.data[1].id", notNullValue()))
+                .andExpect(jsonPath("$.data[1].id").isNumber())
                 .andExpect(jsonPath("$.data[1].name", is("someOtherName")))
-                .andExpect(jsonPath("$.data[2].id", notNullValue()))
+                .andExpect(jsonPath("$.data[2].id").isNumber())
                 .andExpect(jsonPath("$.data[2].name", is("someThirdName")))
-                .andExpect(jsonPath("$.data[3].id", notNullValue()))
+                .andExpect(jsonPath("$.data[3].id").isNumber())
                 .andExpect(jsonPath("$.data[3].name", is("")));
 
         assertThat(productRangeRepository.findAll(), hasSize(4));
@@ -149,6 +149,11 @@ public class ProductRangeControllerTest {
                 .content(body))
                 .andDo(print())
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testDeleteProductRangesCascade() throws Exception {
+        // TODO
     }
 
     @Test

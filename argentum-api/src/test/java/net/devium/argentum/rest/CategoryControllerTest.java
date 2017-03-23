@@ -13,7 +13,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -82,13 +83,13 @@ public class CategoryControllerTest {
                 .andExpect(jsonPath("$.data[0].id", is((int) category1.getId())))
                 .andExpect(jsonPath("$.data[0].name", is("someUpdatedCategory")))
                 .andExpect(jsonPath("$.data[0].color", is("#998877")))
-                .andExpect(jsonPath("$.data[1].id", notNullValue()))
+                .andExpect(jsonPath("$.data[1].id").isNumber())
                 .andExpect(jsonPath("$.data[1].name", is("someOtherCategory")))
                 .andExpect(jsonPath("$.data[1].color", is("#112233")))
-                .andExpect(jsonPath("$.data[2].id", notNullValue()))
+                .andExpect(jsonPath("$.data[2].id").isNumber())
                 .andExpect(jsonPath("$.data[2].name", is("someThirdCategory")))
                 .andExpect(jsonPath("$.data[2].color", is("#332211")))
-                .andExpect(jsonPath("$.data[3].id", notNullValue()))
+                .andExpect(jsonPath("$.data[3].id").isNumber())
                 .andExpect(jsonPath("$.data[3].name", is("")))
                 .andExpect(jsonPath("$.data[3].color", is("#ffffff")));
 
