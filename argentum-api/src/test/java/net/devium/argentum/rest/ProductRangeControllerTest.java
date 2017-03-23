@@ -62,10 +62,10 @@ public class ProductRangeControllerTest {
         mockMvc.perform(get("/product_ranges"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0].id", is(range1.getId())))
-                .andExpect(jsonPath("$.[0].name", is("someName")))
-                .andExpect(jsonPath("$.[1].id", is(range2.getId())))
-                .andExpect(jsonPath("$.[1].name", is("someOtherName")));
+                .andExpect(jsonPath("$.data[0].id", is(range1.getId())))
+                .andExpect(jsonPath("$.data[0].name", is("someName")))
+                .andExpect(jsonPath("$.data[1].id", is(range2.getId())))
+                .andExpect(jsonPath("$.data[1].name", is("someOtherName")));
     }
 
     @Test
@@ -82,11 +82,11 @@ public class ProductRangeControllerTest {
         mockMvc.perform(get("/product_ranges/{id}", range.getId()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(range.getId())))
-                .andExpect(jsonPath("$.name", is("someName")))
-                .andExpect(jsonPath("$.products", hasSize(2)))
-                .andExpect(jsonPath("$.products[0].name", is("someProduct")))
-                .andExpect(jsonPath("$.products[1].name", is("someOtherProduct")));
+                .andExpect(jsonPath("$.data.id", is(range.getId())))
+                .andExpect(jsonPath("$.data.name", is("someName")))
+                .andExpect(jsonPath("$.data.products", hasSize(2)))
+                .andExpect(jsonPath("$.data.products[0].name", is("someProduct")))
+                .andExpect(jsonPath("$.data.products[1].name", is("someOtherProduct")));
     }
 
     @Test
@@ -177,6 +177,6 @@ public class ProductRangeControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(body))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 }
