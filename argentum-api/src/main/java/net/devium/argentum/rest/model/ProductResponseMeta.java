@@ -5,15 +5,12 @@ import net.devium.argentum.jpa.ProductEntity;
 import java.math.BigDecimal;
 
 public class ProductResponseMeta {
-    private long id;
-    private String name;
-    private BigDecimal price;
-    private boolean legacy;
+    private final long id;
+    private final String name;
+    private final BigDecimal price;
+    private final boolean legacy;
 
-    public ProductResponseMeta() {
-    }
-
-    public ProductResponseMeta(long id, String name, BigDecimal price, boolean legacy) {
+    private ProductResponseMeta(long id, String name, BigDecimal price, boolean legacy) {
         this.id = id;
         this.name = name;
         this.price = price;

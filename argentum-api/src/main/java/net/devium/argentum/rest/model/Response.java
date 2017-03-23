@@ -4,19 +4,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 public class Response<T> {
-    private T data;
-    private String error;
+    private final T data;
+    private final String error;
 
-    public Response(T data, String error) {
+    private Response(T data) {
         this.data = data;
-        this.error = error;
+        this.error = null;
     }
 
-    public Response(T data) {
-        this.data = data;
-    }
-
-    public Response(String error) {
+    private Response(String error) {
+        this.data = null;
         this.error = error;
     }
 

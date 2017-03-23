@@ -3,14 +3,11 @@ package net.devium.argentum.rest.model;
 import net.devium.argentum.jpa.OrderItemEntity;
 
 public class OrderItemResponse {
-    private long id;
-    private long productId;
-    private int quantity;
+    private final long id;
+    private final long productId;
+    private final int quantity;
 
-    public OrderItemResponse() {
-    }
-
-    public OrderItemResponse(long id, long productId, int quantity) {
+    private OrderItemResponse(long id, long productId, int quantity) {
         this.id = id;
         this.productId = productId;
         this.quantity = quantity;

@@ -33,7 +33,7 @@ public class ProductRangeController {
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> getProductRanges() {
         List<ProductRangeResponseMeta> response = productRangeRepository.findAll().stream()
-                .map(range -> new ProductRangeResponseMeta(range.getId(), range.getName()))
+                .map(ProductRangeResponseMeta::from)
                 .collect(Collectors.toList());
 
         return Response.ok(response);

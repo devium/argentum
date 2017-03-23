@@ -3,13 +3,10 @@ package net.devium.argentum.rest.model;
 import net.devium.argentum.jpa.ProductRangeEntity;
 
 public class ProductRangeResponseMeta {
-    private long id;
-    private String name;
+    private final long id;
+    private final String name;
 
-    public ProductRangeResponseMeta() {
-    }
-
-    public ProductRangeResponseMeta(long id, String name) {
+    private ProductRangeResponseMeta(long id, String name) {
         this.id = id;
         this.name = name;
     }

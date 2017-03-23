@@ -7,14 +7,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class OrderResponse {
-    private long id;
-    private List<OrderItemResponse> items;
-    private BigDecimal total;
+    private final long id;
+    private final List<OrderItemResponse> items;
+    private final BigDecimal total;
 
-    public OrderResponse() {
-    }
-
-    public OrderResponse(long id, List<OrderItemResponse> items, BigDecimal total) {
+    private OrderResponse(long id, List<OrderItemResponse> items, BigDecimal total) {
         this.id = id;
         this.items = items;
         this.total = total;

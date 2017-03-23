@@ -8,16 +8,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ProductResponse {
-    private long id;
-    private String name;
-    private BigDecimal price;
-    private boolean legacy;
-    private List<Long> ranges;
+    private final long id;
+    private final String name;
+    private final BigDecimal price;
+    private final boolean legacy;
+    private final List<Long> ranges;
 
-    public ProductResponse() {
-    }
-
-    public ProductResponse(long id, String name, BigDecimal price, boolean legacy, List<Long> ranges) {
+    private ProductResponse(long id, String name, BigDecimal price, boolean legacy, List<Long> ranges) {
         this.id = id;
         this.name = name;
         this.price = price;
