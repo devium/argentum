@@ -39,7 +39,7 @@ public class ProductRangeControllerTest {
 
     @Before
     public void setUp() {
-        sut = new ProductRangeController(productRangeRepository);
+        sut = new ProductRangeController(productRangeRepository, productRepository);
         mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
     }
 
@@ -113,7 +113,6 @@ public class ProductRangeControllerTest {
         ProductRangeEntity range3 = productRangeRepository.save(new ProductRangeEntity("someThirdName"));
 
         String body = String.format("[ %s, %s ]", range1.getId(), range2.getId());
-        body = body.replace('\'', '"');
 
         mockMvc.perform(delete("/product_ranges")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -142,7 +141,6 @@ public class ProductRangeControllerTest {
         range = productRangeRepository.save(range);
 
         String body = String.format("[ %s, %s ]", range.getId(), range.getId() + 1);
-        body = body.replace('\'', '"');
 
         mockMvc.perform(delete("/product_ranges")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -153,7 +151,23 @@ public class ProductRangeControllerTest {
 
     @Test
     public void testDeleteProductRangesCascade() throws Exception {
-        // TODO
+        ProductRangeEntity range = productRangeRepository.save(new ProductRangeEntity("someName"));
+        ProductEntity product = productRepository.save(new ProductEntity(
+                "someProduct",
+                new BigDecimal(2.50),
+                null,
+                Collections.singletonList(range)
+        ));
+
+        String body = String.format("[ %s ]", range.getId());
+
+        mockMvc.perform(delete("/product_ranges")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        assertThat(productRepository.findOne(product.getId()).getProductRanges(), empty());
     }
 
     @Test

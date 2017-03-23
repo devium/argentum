@@ -1,7 +1,9 @@
 package net.devium.argentum.rest;
 
+import net.devium.argentum.jpa.ProductEntity;
 import net.devium.argentum.jpa.ProductRangeEntity;
 import net.devium.argentum.jpa.ProductRangeRepository;
+import net.devium.argentum.jpa.ProductRepository;
 import net.devium.argentum.rest.model.request.ProductRangeRequest;
 import net.devium.argentum.rest.model.response.ProductRangeResponseEager;
 import net.devium.argentum.rest.model.response.ProductRangeResponseMeta;
@@ -14,7 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.invoke.MethodHandles;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -22,10 +26,12 @@ import java.util.stream.Collectors;
 public class ProductRangeController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final ProductRangeRepository productRangeRepository;
+    private final ProductRepository productRepository;
 
     @Autowired
-    public ProductRangeController(ProductRangeRepository productRangeRepository) {
+    public ProductRangeController(ProductRangeRepository productRangeRepository, ProductRepository productRepository) {
         this.productRangeRepository = productRangeRepository;
+        this.productRepository = productRepository;
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -59,9 +65,18 @@ public class ProductRangeController {
             return Response.badRequest(message);
         }
 
-        List<Long> unknownRanges = rangeIds.stream()
-                .filter(rangeId -> !productRangeRepository.exists(rangeId))
-                .collect(Collectors.toList());
+        List<Long> unknownRanges = new LinkedList<>();
+        List<ProductRangeEntity> ranges = new LinkedList<>();
+
+        for (long rangeId : rangeIds) {
+            ProductRangeEntity range = productRangeRepository.findOne(rangeId);
+
+            if (range == null) {
+                unknownRanges.add(rangeId);
+            } else {
+                ranges.add(range);
+            }
+        }
 
         if (!unknownRanges.isEmpty()) {
             String message = String.format("Product range(s) %s not found.", unknownRanges);
@@ -69,7 +84,17 @@ public class ProductRangeController {
             return Response.notFound(message);
         }
 
-        rangeIds.forEach(productRangeRepository::delete);
+        // Remove from products. Products own the relationship so this has to be done explicitly. Makes for easier
+        // product creation and modification though.
+        Set<ProductEntity> modifiedProducts = ranges.stream()
+                .map(ProductRangeEntity::getProducts)
+                .flatMap(List::stream)
+                .collect(Collectors.toSet());
+
+        modifiedProducts.forEach(product -> product.removeProductRanges(ranges));
+
+        productRepository.save(modifiedProducts);
+        productRangeRepository.delete(ranges);
 
         return ResponseEntity.noContent().build();
     }
