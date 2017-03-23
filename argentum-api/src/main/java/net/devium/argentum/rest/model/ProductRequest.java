@@ -8,15 +8,6 @@ public class ProductRequest {
     private BigDecimal price;
     private List<Long> ranges;
 
-    public ProductRequest() {
-    }
-
-    public ProductRequest(String name, BigDecimal price, List<Long> ranges) {
-        this.name = name;
-        this.price = price;
-        this.ranges = ranges;
-    }
-
     public String getName() {
         return name;
     }
