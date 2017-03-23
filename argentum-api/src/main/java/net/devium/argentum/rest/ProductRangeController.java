@@ -86,7 +86,7 @@ public class ProductRangeController {
         }
 
         List<Long> unknownRanges = rangeIds.stream()
-                .filter(rangeId -> productRangeRepository.findOne(rangeId) == null)
+                .filter(rangeId -> !productRangeRepository.exists(rangeId))
                 .collect(Collectors.toList());
 
         if (!unknownRanges.isEmpty()) {

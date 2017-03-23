@@ -13,6 +13,7 @@ public class ProductEntity {
     private long id;
     private String name;
     private BigDecimal price;
+    private boolean legacy = false;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "range_products")
@@ -49,6 +50,14 @@ public class ProductEntity {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public boolean isLegacy() {
+        return legacy;
+    }
+
+    public void setLegacy(boolean legacy) {
+        this.legacy = legacy;
     }
 
     public List<ProductRangeEntity> getProductRanges() {
