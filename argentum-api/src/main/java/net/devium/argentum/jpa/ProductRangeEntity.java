@@ -18,7 +18,14 @@ public class ProductRangeEntity {
     public ProductRangeEntity() {
     }
 
+    // Create
     public ProductRangeEntity(String name) {
+        this.name = name;
+    }
+
+    // Update
+    public ProductRangeEntity(long id, String name) {
+        this.id = id;
         this.name = name;
     }
 

@@ -45,6 +45,10 @@ public class CategoryController {
                 .map(CategoryRequest::toEntity)
                 .collect(Collectors.toList());
 
-        return Response.ok(categoryRepository.save(mergedCategories));
+        List<CategoryResponse> response = categoryRepository.save(mergedCategories).stream()
+                .map(CategoryResponse::from)
+                .collect(Collectors.toList());
+
+        return Response.ok(response);
     }
 }

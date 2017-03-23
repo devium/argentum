@@ -15,10 +15,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.List;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -68,36 +67,6 @@ public class ProductRangeControllerTest {
     }
 
     @Test
-    public void testGetProductRange() throws Exception {
-        CategoryEntity category1 = categoryRepository.save(new CategoryEntity("someCategory", "#112233"));
-        CategoryEntity category2 = categoryRepository.save(new CategoryEntity("someOtherCategory", "#332211"));
-
-        ProductRangeEntity range = productRangeRepository.save(new ProductRangeEntity("someName"));
-        ProductEntity product1 = new ProductEntity(
-                "someProduct",
-                new BigDecimal(3.50),
-                category1,
-                Collections.singletonList(range));
-        ProductEntity product2 = new ProductEntity(
-                "someOtherProduct",
-                new BigDecimal(8.20),
-                category2,
-                ImmutableList.of(range));
-
-        productRepository.save(product1);
-        productRepository.save(product2);
-
-        mockMvc.perform(get("/product_ranges/{id}", range.getId()))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.id", is((int) range.getId())))
-                .andExpect(jsonPath("$.data.name", is("someName")))
-                .andExpect(jsonPath("$.data.products", hasSize(2)))
-                .andExpect(jsonPath("$.data.products[0].name", is("someProduct")))
-                .andExpect(jsonPath("$.data.products[1].name", is("someOtherProduct")));
-    }
-
-    @Test
     public void testGetProductRangeNotFound() throws Exception {
         mockMvc.perform(get("/product_ranges/1"))
                 .andDo(print())
@@ -105,49 +74,43 @@ public class ProductRangeControllerTest {
     }
 
     @Test
-    public void testCreateProductRange() throws Exception {
-        String body = "{ 'name': 'someName' }";
+    public void testMergeProductRanges() throws Exception {
+        ProductRangeEntity range1 = productRangeRepository.save(new ProductRangeEntity("someName"));
+
+        String body = "[" +
+                "   { 'id': %s, 'name': 'someUpdatedName' }," +
+                "   { 'name': 'someOtherName' }," +
+                "   { 'name': 'someThirdName' }," +
+                "   {}" +
+                "]";
+        body = String.format(body, range1.getId());
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/product_ranges")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(body))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data", hasSize(4)))
+                .andExpect(jsonPath("$.data[0].id", is((int) range1.getId())))
+                .andExpect(jsonPath("$.data[0].name", is("someUpdatedName")))
+                .andExpect(jsonPath("$.data[1].id", notNullValue()))
+                .andExpect(jsonPath("$.data[1].name", is("someOtherName")))
+                .andExpect(jsonPath("$.data[2].id", notNullValue()))
+                .andExpect(jsonPath("$.data[2].name", is("someThirdName")))
+                .andExpect(jsonPath("$.data[3].id", notNullValue()))
+                .andExpect(jsonPath("$.data[3].name", is("")));
 
-        List<ProductRangeEntity> ranges = productRangeRepository.findAll();
-        assertEquals(1, ranges.size());
-        assertEquals("someName", ranges.get(0).getName());
-        assertTrue(ranges.get(0).getProducts().isEmpty());
-    }
-
-    @Test
-    public void testDeleteProductRange() throws Exception {
-        ProductRangeEntity range = new ProductRangeEntity("someName");
-        range = productRangeRepository.save(range);
-
-        mockMvc.perform(delete("/product_ranges/{id}", range.getId()))
-                .andDo(print())
-                .andExpect(status().isNoContent());
-
-        assertFalse(productRangeRepository.exists(range.getId()));
-    }
-
-    @Test
-    public void testDeleteProductRangeNotFound() throws Exception {
-        mockMvc.perform(delete("/product_ranges/1"))
-                .andDo(print())
-                .andExpect(status().isNotFound());
+        assertThat(productRangeRepository.findAll(), hasSize(4));
+        range1 = productRangeRepository.findOne(range1.getId());
+        assertThat(range1.getName(), is("someUpdatedName"));
     }
 
     @Test
     public void testDeleteProductRanges() throws Exception {
-        ProductRangeEntity range1 = new ProductRangeEntity("someName");
-        ProductRangeEntity range2 = new ProductRangeEntity("someOtherName");
-        ProductRangeEntity range3 = new ProductRangeEntity("someThirdName");
-        range1 = productRangeRepository.save(range1);
-        range2 = productRangeRepository.save(range2);
-        range3 = productRangeRepository.save(range3);
+        ProductRangeEntity range1 = productRangeRepository.save(new ProductRangeEntity("someName"));
+        ProductRangeEntity range2 = productRangeRepository.save(new ProductRangeEntity("someOtherName"));
+        ProductRangeEntity range3 = productRangeRepository.save(new ProductRangeEntity("someThirdName"));
 
         String body = String.format("[ %s, %s ]", range1.getId(), range2.getId());
         body = body.replace('\'', '"');
@@ -186,5 +149,35 @@ public class ProductRangeControllerTest {
                 .content(body))
                 .andDo(print())
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testGetProductRange() throws Exception {
+        CategoryEntity category1 = categoryRepository.save(new CategoryEntity("someCategory", "#112233"));
+        CategoryEntity category2 = categoryRepository.save(new CategoryEntity("someOtherCategory", "#332211"));
+
+        ProductRangeEntity range = productRangeRepository.save(new ProductRangeEntity("someName"));
+        ProductEntity product1 = new ProductEntity(
+                "someProduct",
+                new BigDecimal(3.50),
+                category1,
+                Collections.singletonList(range));
+        ProductEntity product2 = new ProductEntity(
+                "someOtherProduct",
+                new BigDecimal(8.20),
+                category2,
+                ImmutableList.of(range));
+
+        productRepository.save(product1);
+        productRepository.save(product2);
+
+        mockMvc.perform(get("/product_ranges/{id}", range.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.id", is((int) range.getId())))
+                .andExpect(jsonPath("$.data.name", is("someName")))
+                .andExpect(jsonPath("$.data.products", hasSize(2)))
+                .andExpect(jsonPath("$.data.products[0].name", is("someProduct")))
+                .andExpect(jsonPath("$.data.products[1].name", is("someOtherProduct")));
     }
 }
