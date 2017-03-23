@@ -9,7 +9,7 @@ import java.util.List;
 public class ProductRangeEntity {
     @Id
     @GeneratedValue
-    private int id;
+    private long id;
     private String name;
 
     @ManyToMany(mappedBy = "productRanges", fetch = FetchType.EAGER)
@@ -22,11 +22,11 @@ public class ProductRangeEntity {
         this.name = name;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

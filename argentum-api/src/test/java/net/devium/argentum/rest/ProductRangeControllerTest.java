@@ -62,9 +62,9 @@ public class ProductRangeControllerTest {
         mockMvc.perform(get("/product_ranges"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data[0].id", is(range1.getId())))
+                .andExpect(jsonPath("$.data[0].id", is((int) range1.getId())))
                 .andExpect(jsonPath("$.data[0].name", is("someName")))
-                .andExpect(jsonPath("$.data[1].id", is(range2.getId())))
+                .andExpect(jsonPath("$.data[1].id", is((int) range2.getId())))
                 .andExpect(jsonPath("$.data[1].name", is("someOtherName")));
     }
 
@@ -82,7 +82,7 @@ public class ProductRangeControllerTest {
         mockMvc.perform(get("/product_ranges/{id}", range.getId()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.id", is(range.getId())))
+                .andExpect(jsonPath("$.data.id", is((int) range.getId())))
                 .andExpect(jsonPath("$.data.name", is("someName")))
                 .andExpect(jsonPath("$.data.products", hasSize(2)))
                 .andExpect(jsonPath("$.data.products[0].name", is("someProduct")))

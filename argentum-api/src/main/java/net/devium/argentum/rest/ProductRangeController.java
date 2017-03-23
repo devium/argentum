@@ -37,7 +37,7 @@ public class ProductRangeController {
     }
 
     @RequestMapping(path = "/{rangeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<?> getProductRange(@PathVariable Integer rangeId) {
+    public ResponseEntity<?> getProductRange(@PathVariable long rangeId) {
         ProductRangeEntity range = productRangeRepository.findOne(rangeId);
 
         if (range == null) {
@@ -65,7 +65,7 @@ public class ProductRangeController {
     }
 
     @RequestMapping(path = "/{rangeId}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteProductRange(@PathVariable Integer rangeId) {
+    public ResponseEntity<?> deleteProductRange(@PathVariable long rangeId) {
         try {
             productRangeRepository.delete(rangeId);
         } catch (EmptyResultDataAccessException e) {
@@ -78,14 +78,14 @@ public class ProductRangeController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<?> deleteProductRanges(@RequestBody LinkedList<Integer> rangeIds) {
+    public ResponseEntity<?> deleteProductRanges(@RequestBody LinkedList<Long> rangeIds) {
         if (rangeIds.isEmpty()) {
             String message = "No ranges to delete.";
             LOGGER.info(message);
             return Response.badRequest(message);
         }
 
-        List<Integer> unknownRanges = rangeIds.stream()
+        List<Long> unknownRanges = rangeIds.stream()
                 .filter(rangeId -> productRangeRepository.findOne(rangeId) == null)
                 .collect(Collectors.toList());
 

@@ -1,14 +1,10 @@
 package net.devium.argentum.rest;
 
 import net.devium.argentum.jpa.*;
-import net.devium.argentum.rest.model.OrderItemRequest;
-import net.devium.argentum.rest.model.OrderItemResponse;
-import net.devium.argentum.rest.model.OrderRequest;
-import net.devium.argentum.rest.model.OrderResponse;
+import net.devium.argentum.rest.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +14,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/orders")
@@ -48,8 +43,8 @@ public class OrderController {
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<List<OrderResponse>> getOrders() {
-        List<OrderResponse> response = StreamSupport.stream(orderRepository.findAll().spliterator(), false)
+    public ResponseEntity<?> getOrders() {
+        List<OrderResponse> response = orderRepository.findAll().stream()
                 .map(OrderController::toOrderResponse)
                 .collect(Collectors.toList());
 
@@ -57,20 +52,21 @@ public class OrderController {
     }
 
     @RequestMapping(path = "/{orderId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<OrderResponse> getOrder(@PathVariable long orderId) {
+    public ResponseEntity<?> getOrder(@PathVariable long orderId) {
         OrderEntity order = orderRepository.findOne(orderId);
 
         if (order == null) {
-            LOGGER.info("Order with ID {} not found.", orderId);
-            throw new ResourceNotFoundException();
+            String message = String.format("Order with ID %s not found.", orderId);
+            LOGGER.info(message);
+            return Response.notFound(message);
         }
 
-        return ResponseEntity.ok(toOrderResponse(order));
+        return Response.ok(toOrderResponse(order));
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest order) {
+    public ResponseEntity<?> createOrder(@RequestBody OrderRequest order) {
         Set<Long> unknownProducts = order.getItems().stream()
                 .map(OrderItemRequest::getProductId)
                 .filter(productId -> !productRepository.exists(productId))
@@ -78,7 +74,8 @@ public class OrderController {
 
         if (!unknownProducts.isEmpty()) {
             String message = String.format("Product(s) %s not found.", unknownProducts);
-            throw new ResourceNotFoundException(message);
+            LOGGER.info(message);
+            return Response.notFound(message);
         }
 
         // Oh no, it's retarded.
@@ -88,7 +85,7 @@ public class OrderController {
                 .map(orderItem -> new OrderItemEntity(productRepository.findOne(orderItem.getProductId()),
                         orderItem.getQuantity(), newOrder))
                 .collect(Collectors.toList());
-        orderItems.forEach(orderItemRepository::save);
+        orderItemRepository.save(orderItems);
 
         newOrder.setTotal(orderItems.stream()
                 .map(orderItem -> orderItem.getProduct().getPrice().multiply(new BigDecimal(orderItem.getQuantity())))
@@ -97,7 +94,7 @@ public class OrderController {
         newOrder.setOrderItems(orderItems);
         orderRepository.save(newOrder);
 
-        return ResponseEntity.ok(toOrderResponse(newOrder));
+        return Response.ok(toOrderResponse(newOrder));
     }
 
 }
