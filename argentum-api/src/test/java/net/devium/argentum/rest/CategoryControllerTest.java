@@ -62,11 +62,15 @@ public class CategoryControllerTest {
     }
 
     @Test
-    public void testCreateCategories() throws Exception {
+    public void testMergeCategories() throws Exception {
+        CategoryEntity category1 = categoryRepository.save(new CategoryEntity("someCategory", "#778899"));
         String body = "[" +
-                "   { 'name': 'someCategory', 'color': '#112233' }," +
-                "   { 'name': 'someOtherCategory', 'color': '#332211' }" +
+                "   { 'id': %s, 'name': 'someUpdatedCategory', 'color': '#998877' }," +
+                "   { 'name': 'someOtherCategory', 'color': '#112233' }," +
+                "   { 'name': 'someThirdCategory', 'color': '#332211' }," +
+                "   {}" +
                 "]";
+        body = String.format(body, category1.getId());
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/categories")
@@ -74,14 +78,23 @@ public class CategoryControllerTest {
                 .content(body))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data", hasSize(2)))
-                .andExpect(jsonPath("$.data[0].id", notNullValue()))
-                .andExpect(jsonPath("$.data[0].name", is("someCategory")))
-                .andExpect(jsonPath("$.data[0].color", is("#112233")))
+                .andExpect(jsonPath("$.data", hasSize(4)))
+                .andExpect(jsonPath("$.data[0].id", is((int) category1.getId())))
+                .andExpect(jsonPath("$.data[0].name", is("someUpdatedCategory")))
+                .andExpect(jsonPath("$.data[0].color", is("#998877")))
                 .andExpect(jsonPath("$.data[1].id", notNullValue()))
                 .andExpect(jsonPath("$.data[1].name", is("someOtherCategory")))
-                .andExpect(jsonPath("$.data[1].color", is("#332211")));
+                .andExpect(jsonPath("$.data[1].color", is("#112233")))
+                .andExpect(jsonPath("$.data[2].id", notNullValue()))
+                .andExpect(jsonPath("$.data[2].name", is("someThirdCategory")))
+                .andExpect(jsonPath("$.data[2].color", is("#332211")))
+                .andExpect(jsonPath("$.data[3].id", notNullValue()))
+                .andExpect(jsonPath("$.data[3].name", is("")))
+                .andExpect(jsonPath("$.data[3].color", is("#ffffff")));
 
-        assertThat(categoryRepository.findAll(), hasSize(2));
+        assertThat(categoryRepository.findAll(), hasSize(4));
+        category1 = categoryRepository.findOne(category1.getId());
+        assertThat(category1.getName(), is("someUpdatedCategory"));
+        assertThat(category1.getColor(), is("#998877"));
     }
 }

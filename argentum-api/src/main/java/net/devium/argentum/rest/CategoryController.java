@@ -40,15 +40,11 @@ public class CategoryController {
     }
 
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<?> createCategories(@RequestBody List<CategoryRequest> categories) {
-        List<CategoryEntity> newCategories = categories.stream()
+    public ResponseEntity<?> mergeCategories(@RequestBody List<CategoryRequest> categories) {
+        List<CategoryEntity> mergedCategories = categories.stream()
                 .map(CategoryRequest::toEntity)
                 .collect(Collectors.toList());
 
-        newCategories = newCategories.stream()
-                .map(categoryRepository::save)
-                .collect(Collectors.toList());
-
-        return Response.ok(newCategories);
+        return Response.ok(categoryRepository.save(mergedCategories));
     }
 }

@@ -12,12 +12,20 @@ public class CategoryEntity {
     private String name;
     private String color;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
+    @OneToMany(mappedBy = "category")
     private List<ProductEntity> products;
 
     public CategoryEntity() {
     }
 
+    // PUT
+    public CategoryEntity(long id, String name, String color) {
+        this.id = id;
+        this.name = name;
+        this.color = color;
+    }
+
+    // POST
     public CategoryEntity(String name, String color) {
         this.name = name;
         this.color = color;
@@ -53,5 +61,10 @@ public class CategoryEntity {
 
     public void setProducts(List<ProductEntity> products) {
         this.products = products;
+    }
+
+    public void assign(CategoryEntity other) {
+        this.name = other.getName();
+        this.color = other.getColor();
     }
 }
