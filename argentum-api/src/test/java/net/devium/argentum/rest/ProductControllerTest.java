@@ -71,10 +71,10 @@ public class ProductControllerTest {
         mockMvc.perform(get("/products/{id}", id))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is((int) id)))
-                .andExpect(jsonPath("$.name", is("someProduct")))
-                .andExpect(jsonPath("$.price", closeTo(3.5, 0.0001)))
-                .andExpect(jsonPath("$.ranges", contains(range1.getId(), range2.getId())));
+                .andExpect(jsonPath("$.data.id", is((int) id)))
+                .andExpect(jsonPath("$.data.name", is("someProduct")))
+                .andExpect(jsonPath("$.data.price", closeTo(3.5, 0.0001)))
+                .andExpect(jsonPath("$.data.ranges", contains((int) range1.getId(), (int) range2.getId())));
     }
 
     @Test
@@ -101,10 +101,10 @@ public class ProductControllerTest {
                 .content(body))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").isNumber())
-                .andExpect(jsonPath("$.name", is("someProduct")))
-                .andExpect(jsonPath("$.price", closeTo(3.5, 0.0001)))
-                .andExpect(jsonPath("$.ranges", contains(range1.getId(), range2.getId())));
+                .andExpect(jsonPath("$.data.id").isNumber())
+                .andExpect(jsonPath("$.data.name", is("someProduct")))
+                .andExpect(jsonPath("$.data.price", closeTo(3.5, 0.0001)))
+                .andExpect(jsonPath("$.data.ranges", contains((int) range1.getId(), (int) range2.getId())));
 
         range1 = productRangeRepository.findOne(range1.getId());
         range2 = productRangeRepository.findOne(range2.getId());

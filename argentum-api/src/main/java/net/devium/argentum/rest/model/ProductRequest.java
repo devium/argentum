@@ -6,12 +6,12 @@ import java.util.List;
 public class ProductRequest {
     private String name;
     private BigDecimal price;
-    private List<Integer> ranges;
+    private List<Long> ranges;
 
     public ProductRequest() {
     }
 
-    public ProductRequest(String name, BigDecimal price, List<Integer> ranges) {
+    public ProductRequest(String name, BigDecimal price, List<Long> ranges) {
         this.name = name;
         this.price = price;
         this.ranges = ranges;
@@ -25,7 +25,7 @@ public class ProductRequest {
         return price;
     }
 
-    public List<Integer> getRanges() {
+    public List<Long> getRanges() {
         return ranges;
     }
 }

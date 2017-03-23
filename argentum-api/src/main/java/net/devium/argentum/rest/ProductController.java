@@ -6,11 +6,11 @@ import net.devium.argentum.jpa.ProductRangeRepository;
 import net.devium.argentum.jpa.ProductRepository;
 import net.devium.argentum.rest.model.ProductRequest;
 import net.devium.argentum.rest.model.ProductResponse;
+import net.devium.argentum.rest.model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,33 +34,35 @@ public class ProductController {
     }
 
     @RequestMapping(path = "/{productId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<ProductResponse> getProduct(@PathVariable long productId) {
+    public ResponseEntity<?> getProduct(@PathVariable long productId) {
         ProductEntity product = productRepository.findOne(productId);
 
         if (product == null) {
-            LOGGER.info("Product with ID {} not found.", productId);
-            throw new ResourceNotFoundException();
+            String message = String.format("Product with ID %s not found.", productId);
+            LOGGER.info(message);
+            return Response.notFound(message);
         }
 
-        List<Integer> rangeIds = product.getProductRanges().stream()
+        List<Long> rangeIds = product.getProductRanges().stream()
                 .map(ProductRangeEntity::getId)
                 .collect(Collectors.toList());
 
         ProductResponse response = new ProductResponse(product.getId(), product.getName(), product.getPrice(),
                 rangeIds);
-        return ResponseEntity.ok(response);
+        return Response.ok(response);
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<ProductResponse> createProduct(@RequestBody ProductRequest product) {
-        Set<Integer> unknownRanges = product.getRanges().stream()
+    public ResponseEntity<?> createProduct(@RequestBody ProductRequest product) {
+        Set<Long> unknownRanges = product.getRanges().stream()
                 .filter(rangeId -> !productRangeRepository.exists(rangeId))
                 .collect(Collectors.toSet());
 
         if (!unknownRanges.isEmpty()) {
             String message = String.format("Product range(s) %s not found.", unknownRanges);
-            throw new ResourceNotFoundException(message);
+            LOGGER.info(message);
+            return Response.notFound(message);
         }
 
         List<ProductRangeEntity> ranges = product.getRanges().stream()
@@ -72,16 +74,17 @@ public class ProductController {
 
         ProductResponse response = new ProductResponse(newProduct.getId(), newProduct.getName(), newProduct.getPrice(),
                 product.getRanges());
-        return ResponseEntity.ok(response);
+        return Response.ok(response);
     }
 
     @RequestMapping(path = "/{productId}", method = RequestMethod.DELETE)
-    public ResponseEntity<Void> deleteProduct(@PathVariable long productId) {
+    public ResponseEntity<?> deleteProduct(@PathVariable long productId) {
         try {
             productRepository.delete(productId);
         } catch (EmptyResultDataAccessException e) {
-            LOGGER.info("Product with ID {} not found.", productId, e);
-            throw new ResourceNotFoundException();
+            String message = String.format("Product with ID %s not found.", productId);
+            LOGGER.info(message);
+            return Response.notFound(message);
         }
 
         return ResponseEntity.noContent().build();

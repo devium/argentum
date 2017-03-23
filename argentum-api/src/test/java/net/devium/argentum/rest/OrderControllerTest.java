@@ -105,12 +105,12 @@ public class OrderControllerTest {
         mockMvc.perform(get("/orders/{id}", orders.get(0).getId()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is((int) orders.get(0).getId())))
-                .andExpect(jsonPath("$.items", hasSize(1)))
-                .andExpect(jsonPath("$.total", closeTo(7.00, 0.001)))
-                .andExpect(jsonPath("$.items[0].productId",
+                .andExpect(jsonPath("$.data.id", is((int) orders.get(0).getId())))
+                .andExpect(jsonPath("$.data.items", hasSize(1)))
+                .andExpect(jsonPath("$.data.total", closeTo(7.00, 0.001)))
+                .andExpect(jsonPath("$.data.items[0].productId",
                         is((int) orders.get(0).getOrderItems().get(0).getProduct().getId())))
-                .andExpect(jsonPath("$.items[0].quantity", is(2)));
+                .andExpect(jsonPath("$.data.items[0].quantity", is(2)));
     }
 
     @Test
@@ -145,12 +145,12 @@ public class OrderControllerTest {
                 .content(body))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").isNumber())
-                .andExpect(jsonPath("$.items[0].productId", is((int) product1.getId())))
-                .andExpect(jsonPath("$.items[0].quantity", is(2)))
-                .andExpect(jsonPath("$.items[1].productId", is((int) product2.getId())))
-                .andExpect(jsonPath("$.items[1].quantity", is(1)))
-                .andExpect(jsonPath("$.total", closeTo(12.80, 0.001)));
+                .andExpect(jsonPath("$.data.id").isNumber())
+                .andExpect(jsonPath("$.data.items[0].productId", is((int) product1.getId())))
+                .andExpect(jsonPath("$.data.items[0].quantity", is(2)))
+                .andExpect(jsonPath("$.data.items[1].productId", is((int) product2.getId())))
+                .andExpect(jsonPath("$.data.items[1].quantity", is(1)))
+                .andExpect(jsonPath("$.data.total", closeTo(12.80, 0.001)));
 
         assertFalse(orderRepository.findAll().isEmpty());
     }
