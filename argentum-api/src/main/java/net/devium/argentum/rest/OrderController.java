@@ -1,7 +1,10 @@
 package net.devium.argentum.rest;
 
 import net.devium.argentum.jpa.*;
-import net.devium.argentum.rest.model.*;
+import net.devium.argentum.rest.model.OrderItemRequest;
+import net.devium.argentum.rest.model.OrderRequest;
+import net.devium.argentum.rest.model.OrderResponse;
+import net.devium.argentum.rest.model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,17 +38,10 @@ public class OrderController {
         this.orderItemRepository = orderItemRepository;
     }
 
-    private static OrderResponse toOrderResponse(OrderEntity order) {
-        List<OrderItemResponse> orderItems = order.getOrderItems().stream()
-                .map(orderItem -> new OrderItemResponse(orderItem.getProduct().getId(), orderItem.getQuantity()))
-                .collect(Collectors.toList());
-        return new OrderResponse(order.getId(), orderItems, order.getTotal());
-    }
-
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> getOrders() {
         List<OrderResponse> response = orderRepository.findAll().stream()
-                .map(OrderController::toOrderResponse)
+                .map(OrderResponse::from)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(response);
@@ -61,7 +57,7 @@ public class OrderController {
             return Response.notFound(message);
         }
 
-        return Response.ok(toOrderResponse(order));
+        return Response.ok(OrderResponse.from(order));
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
@@ -94,7 +90,7 @@ public class OrderController {
         newOrder.setOrderItems(orderItems);
         orderRepository.save(newOrder);
 
-        return Response.ok(toOrderResponse(newOrder));
+        return Response.ok(OrderResponse.from(newOrder));
     }
 
 }

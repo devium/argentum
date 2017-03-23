@@ -2,7 +2,10 @@ package net.devium.argentum.rest;
 
 import net.devium.argentum.jpa.ProductRangeEntity;
 import net.devium.argentum.jpa.ProductRangeRepository;
-import net.devium.argentum.rest.model.*;
+import net.devium.argentum.rest.model.ProductRangeRequest;
+import net.devium.argentum.rest.model.ProductRangeResponseEager;
+import net.devium.argentum.rest.model.ProductRangeResponseMeta;
+import net.devium.argentum.rest.model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,12 +49,7 @@ public class ProductRangeController {
             return Response.notFound(message);
         }
 
-        List<ProductResponseMeta> products = range.getProducts().stream()
-                .map(product -> new ProductResponseMeta(product.getId(), product.getName(), product.getPrice()))
-                .collect(Collectors.toList());
-
-        ProductRangeResponseEager response = new ProductRangeResponseEager(range.getId(), range.getName(), products);
-        return Response.ok(response);
+        return Response.ok(ProductRangeResponseEager.from(range));
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
@@ -60,8 +58,7 @@ public class ProductRangeController {
         ProductRangeEntity newRange = new ProductRangeEntity(range.getName());
         newRange = productRangeRepository.save(newRange);
 
-        ProductRangeResponseMeta response = new ProductRangeResponseMeta(newRange.getId(), newRange.getName());
-        return Response.ok(response);
+        return Response.ok(ProductRangeResponseEager.from(newRange));
     }
 
     @RequestMapping(path = "/{rangeId}", method = RequestMethod.DELETE)
