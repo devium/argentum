@@ -168,7 +168,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testMergeProductCategoryNotFound() throws Exception {
+    public void testMergeProductsCategoryNotFound() throws Exception {
         String body = "{ 'name': 'someProduct', 'price': 3.5, 'category': 1, 'ranges': [] }";
         body = body.replace('\'', '"');
 
@@ -180,7 +180,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testMergeProductRangeNotFound() throws Exception {
+    public void testMergeProductsRangeNotFound() throws Exception {
         CategoryEntity category = categoryRepository.save(new CategoryEntity("someCategory", "#112233"));
         String body = "{ 'name': 'someProduct', 'price': 3.5, 'category': %s, 'ranges': [ 1, 2 ] }";
         body = String.format(body, category.getId());
@@ -191,6 +191,52 @@ public class ProductControllerTest {
                 .content(body))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testMergeProductsNoRangeOrphanDeletion() throws Exception {
+        ProductRangeEntity range = productRangeRepository.save(new ProductRangeEntity("someName"));
+        ProductEntity product = productRepository.save(new ProductEntity(
+                "someProduct",
+                new BigDecimal(2.50),
+                null,
+                Collections.singletonList(range)));
+
+        String body = "[ { 'id': %s, 'name': 'someProduct', 'price': 2.50, 'ranges': [] } ]";
+        body = String.format(body, product.getId());
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(post("/products")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        assertThat(productRangeRepository.findAll(), hasSize(1));
+        assertThat(productRangeRepository.findOne(range.getId()), notNullValue());
+    }
+
+    @Test
+    public void testMergeProductsNoCategoryOrphanDeletion() throws Exception {
+        CategoryEntity category = categoryRepository.save(new CategoryEntity("someCategory", "#112233"));
+        ProductEntity product = productRepository.save(new ProductEntity(
+                "someProduct",
+                new BigDecimal(2.50),
+                category,
+                Collections.emptyList()));
+
+        String body = "[ { 'id': %s, 'name': 'someProduct', 'price': 2.50, 'category': null } ]";
+        body = String.format(body, product.getId());
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(post("/products")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        assertThat(categoryRepository.findAll(), hasSize(1));
+        assertThat(categoryRepository.findOne(category.getId()), notNullValue());
     }
 
     @Test
@@ -210,7 +256,7 @@ public class ProductControllerTest {
         body = String.format(body, product2.getId());
         body = body.replace('\'', '"');
 
-        mockMvc.perform(delete("/products/")
+        mockMvc.perform(delete("/products")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(body))
                 .andDo(print())
@@ -225,7 +271,7 @@ public class ProductControllerTest {
     public void testDeleteProductsNotFound() throws Exception {
         String body = "[ 1, 2 ]";
 
-        mockMvc.perform(delete("/products/")
+        mockMvc.perform(delete("/products")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(body))
                 .andDo(print())
