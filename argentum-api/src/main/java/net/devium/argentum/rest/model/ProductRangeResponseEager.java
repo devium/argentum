@@ -6,14 +6,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ProductRangeResponseEager {
-    private long id;
-    private String name;
-    private List<ProductResponseMeta> products;
+    private final long id;
+    private final String name;
+    private final List<ProductResponseMeta> products;
 
-    public ProductRangeResponseEager() {
-    }
-
-    public ProductRangeResponseEager(long id, String name, List<ProductResponseMeta> products) {
+    private ProductRangeResponseEager(long id, String name, List<ProductResponseMeta> products) {
         this.id = id;
         this.name = name;
         this.products = products;
