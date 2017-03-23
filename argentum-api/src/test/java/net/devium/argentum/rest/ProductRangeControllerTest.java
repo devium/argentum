@@ -1,10 +1,7 @@
 package net.devium.argentum.rest;
 
 import com.google.common.collect.ImmutableList;
-import net.devium.argentum.jpa.ProductEntity;
-import net.devium.argentum.jpa.ProductRangeEntity;
-import net.devium.argentum.jpa.ProductRangeRepository;
-import net.devium.argentum.jpa.ProductRepository;
+import net.devium.argentum.jpa.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +29,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ProductRangeControllerTest {
     @Autowired
     private ProductRangeRepository productRangeRepository;
-
+    @Autowired
+    private CategoryRepository categoryRepository;
     @Autowired
     private ProductRepository productRepository;
 
@@ -49,6 +47,7 @@ public class ProductRangeControllerTest {
     @After
     public void tearDown() throws Exception {
         productRepository.deleteAll();
+        categoryRepository.deleteAll();
         productRangeRepository.deleteAll();
     }
 
@@ -70,12 +69,21 @@ public class ProductRangeControllerTest {
 
     @Test
     public void testGetProductRange() throws Exception {
-        ProductRangeEntity range = new ProductRangeEntity("someName");
-        ProductEntity product1 = new ProductEntity("someProduct", new BigDecimal(3.50),
+        CategoryEntity category1 = categoryRepository.save(new CategoryEntity("someCategory", "#112233"));
+        CategoryEntity category2 = categoryRepository.save(new CategoryEntity("someOtherCategory", "#332211"));
+
+        ProductRangeEntity range = productRangeRepository.save(new ProductRangeEntity("someName"));
+        ProductEntity product1 = new ProductEntity(
+                "someProduct",
+                new BigDecimal(3.50),
+                category1,
                 Collections.singletonList(range));
-        ProductEntity product2 = new ProductEntity("someOtherProduct", new BigDecimal(8.20),
+        ProductEntity product2 = new ProductEntity(
+                "someOtherProduct",
+                new BigDecimal(8.20),
+                category2,
                 ImmutableList.of(range));
-        productRangeRepository.save(range);
+
         productRepository.save(product1);
         productRepository.save(product2);
 

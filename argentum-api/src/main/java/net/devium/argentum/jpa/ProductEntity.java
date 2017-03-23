@@ -13,6 +13,10 @@ public class ProductEntity {
     private long id;
     private String name;
     private BigDecimal price;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_id")
+    private CategoryEntity category;
     private boolean legacy = false;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -22,9 +26,11 @@ public class ProductEntity {
     public ProductEntity() {
     }
 
-    public ProductEntity(String name, BigDecimal price, List<ProductRangeEntity> productRanges) {
+    public ProductEntity(String name, BigDecimal price, CategoryEntity category,
+                         List<ProductRangeEntity> productRanges) {
         this.name = name;
         this.price = price;
+        this.category = category;
         this.productRanges = productRanges;
     }
 
@@ -50,6 +56,14 @@ public class ProductEntity {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public CategoryEntity getCategory() {
+        return category;
+    }
+
+    public void setCategory(CategoryEntity category) {
+        this.category = category;
     }
 
     public boolean isLegacy() {

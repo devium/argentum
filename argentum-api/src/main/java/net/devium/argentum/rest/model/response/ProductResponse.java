@@ -1,4 +1,4 @@
-package net.devium.argentum.rest.model;
+package net.devium.argentum.rest.model.response;
 
 import net.devium.argentum.jpa.ProductEntity;
 import net.devium.argentum.jpa.ProductRangeEntity;
@@ -11,13 +11,15 @@ public class ProductResponse {
     private final long id;
     private final String name;
     private final BigDecimal price;
+    private final long category;
     private final boolean legacy;
     private final List<Long> ranges;
 
-    private ProductResponse(long id, String name, BigDecimal price, boolean legacy, List<Long> ranges) {
+    private ProductResponse(long id, String name, BigDecimal price, long category, boolean legacy, List<Long> ranges) {
         this.id = id;
         this.name = name;
         this.price = price;
+        this.category = category;
         this.legacy = legacy;
         this.ranges = ranges;
     }
@@ -27,6 +29,7 @@ public class ProductResponse {
                 product.getId(),
                 product.getName(),
                 product.getPrice(),
+                product.getCategory().getId(),
                 product.isLegacy(),
                 product.getProductRanges().stream().map(ProductRangeEntity::getId).collect(Collectors.toList())
         );
@@ -42,6 +45,10 @@ public class ProductResponse {
 
     public BigDecimal getPrice() {
         return price;
+    }
+
+    public long getCategory() {
+        return category;
     }
 
     public boolean isLegacy() {

@@ -32,6 +32,8 @@ public class OrderControllerTest {
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
     private ProductRepository productRepository;
     @Autowired
     private ProductRangeRepository productRangeRepository;
@@ -43,14 +45,20 @@ public class OrderControllerTest {
     private MockMvc mockMvc;
 
     private List<OrderEntity> saveOrders() {
-        ProductRangeEntity range1 = new ProductRangeEntity("someName");
-        ProductRangeEntity range2 = new ProductRangeEntity("someOtherName");
-        range1 = productRangeRepository.save(range1);
-        range2 = productRangeRepository.save(range2);
+        CategoryEntity category1 = categoryRepository.save(new CategoryEntity("someCategory", "#112233"));
+        CategoryEntity category2 = categoryRepository.save(new CategoryEntity("someOtherCategory", "#332211"));
+        ProductRangeEntity range1 = productRangeRepository.save(new ProductRangeEntity("someName"));
+        ProductRangeEntity range2 = productRangeRepository.save(new ProductRangeEntity("someOtherName"));
 
-        ProductEntity product1 = new ProductEntity("someProduct", new BigDecimal(3.50),
+        ProductEntity product1 = new ProductEntity(
+                "someProduct",
+                new BigDecimal(3.50),
+                category1,
                 Collections.singletonList(range1));
-        ProductEntity product2 = new ProductEntity("someOtherProduct", new BigDecimal(8.20),
+        ProductEntity product2 = new ProductEntity(
+                "someOtherProduct",
+                new BigDecimal(8.20),
+                category2,
                 Collections.singletonList(range2));
         product1 = productRepository.save(product1);
         product2 = productRepository.save(product2);
@@ -85,6 +93,7 @@ public class OrderControllerTest {
         orderRepository.deleteAll();
         orderItemRepository.deleteAll();
         productRepository.deleteAll();
+        categoryRepository.deleteAll();
         productRangeRepository.deleteAll();
     }
 
@@ -95,7 +104,7 @@ public class OrderControllerTest {
         mockMvc.perform(get("/orders"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)));
+                .andExpect(jsonPath("$.data", hasSize(2)));
     }
 
     @Test
@@ -122,12 +131,22 @@ public class OrderControllerTest {
 
     @Test
     public void testCreateOrder() throws Exception {
-        ProductRangeEntity range = new ProductRangeEntity("someName");
-        ProductEntity product1 = new ProductEntity("someProduct", new BigDecimal(3.50),
+        CategoryEntity category1 = categoryRepository.save(new CategoryEntity("someCategory", "#112233"));
+        CategoryEntity category2 = categoryRepository.save(new CategoryEntity("someOtherCategory", "#332211"));
+
+        ProductRangeEntity range = productRangeRepository.save(new ProductRangeEntity("someName"));
+
+        ProductEntity product1 = new ProductEntity(
+                "someProduct",
+                new BigDecimal(3.50),
+                category1,
                 Collections.singletonList(range));
-        ProductEntity product2 = new ProductEntity("someOtherProduct", new BigDecimal(5.80),
+        ProductEntity product2 = new ProductEntity(
+                "someOtherProduct",
+                new BigDecimal(5.80),
+                category2,
                 Collections.singletonList(range));
-        productRangeRepository.save(range);
+
         product1 = productRepository.save(product1);
         product2 = productRepository.save(product2);
 
