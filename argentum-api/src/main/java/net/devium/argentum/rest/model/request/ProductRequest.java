@@ -11,13 +11,13 @@ import java.util.Set;
 import static net.devium.argentum.ApplicationConstants.DECIMAL_PLACES;
 
 public class ProductRequest {
-    private long id;
+    private Long id;
     private String name;
     private BigDecimal price;
     private Long category;
     private List<Long> ranges;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -39,7 +39,7 @@ public class ProductRequest {
 
     public ProductEntity toEntity(CategoryEntity category, Set<ProductRangeEntity> ranges) {
         return new ProductEntity(
-                id,
+                id != null ? id : -1,
                 name != null ? name : "",
                 price != null ? price.setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)
                         : new BigDecimal(0).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP),

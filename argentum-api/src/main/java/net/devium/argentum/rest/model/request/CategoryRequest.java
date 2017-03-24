@@ -3,12 +3,11 @@ package net.devium.argentum.rest.model.request;
 import net.devium.argentum.jpa.CategoryEntity;
 
 public class CategoryRequest {
-    // PUT only, ignored on POST
-    private long id;
+    private Long id;
     private String name;
     private String color;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -22,7 +21,7 @@ public class CategoryRequest {
 
     public CategoryEntity toEntity() {
         return new CategoryEntity(
-                id,
+                id != null ? id : -1,
                 name != null ? name : "",
                 color != null ? color : "#ffffff"
         );
