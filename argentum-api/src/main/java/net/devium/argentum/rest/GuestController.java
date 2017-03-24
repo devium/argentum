@@ -18,7 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.invoke.MethodHandles;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -53,6 +56,37 @@ public class GuestController {
         List<GuestEntity> mergedGuests = guests.stream()
                 .map(GuestRequest::toEntity)
                 .collect(Collectors.toList());
+
+        List<String> codes = mergedGuests.stream()
+                .map(GuestEntity::getCode)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        List<String> cards = mergedGuests.stream()
+                .map(GuestEntity::getCard)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        // Check for code and card duplicates.
+        if (new HashSet<>(codes).size() < codes.size()) {
+            String message = "Duplicate codes found in request.";
+            LOGGER.info(message);
+            return Response.badRequest(message);
+        }
+        if (new HashSet<>(cards).size() < cards.size()) {
+            String message = "Duplicate cards found in request.";
+            LOGGER.info(message);
+            return Response.badRequest(message);
+        }
+
+        // Steal code and card if already in use.
+        List<GuestEntity> codeVictims = guestRepository.findByCodeIn(codes);
+        codeVictims.forEach(guest -> guest.setCode(null));
+        List<GuestEntity> cardVictims = guestRepository.findByCardIn(cards);
+        cardVictims.forEach(guest -> guest.setCard(null));
+
+        List<GuestEntity> allVictims = new LinkedList<>(codeVictims);
+        allVictims.addAll(cardVictims);
+        guestRepository.save(allVictims);
 
         List<GuestResponse> response = this.guestRepository.save(mergedGuests).stream()
                 .map(GuestResponse::from)

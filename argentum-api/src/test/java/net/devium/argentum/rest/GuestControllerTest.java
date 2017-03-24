@@ -203,7 +203,7 @@ public class GuestControllerTest {
                 .andExpect(jsonPath("$.data[2].balance", closeTo(2.10, 0.001)))
                 .andExpect(jsonPath("$.data[2].bonus", closeTo(1.50, 0.001)))
                 .andExpect(jsonPath("$.data[3].id").isNumber())
-                .andExpect(jsonPath("$.data[3].code", is("")))
+                .andExpect(jsonPath("$.data[3].code", nullValue()))
                 .andExpect(jsonPath("$.data[3].name", is("")))
                 .andExpect(jsonPath("$.data[3].mail", is("")))
                 .andExpect(jsonPath("$.data[3].status", is("")))
@@ -222,5 +222,93 @@ public class GuestControllerTest {
         assertThat(guest1.getCard(), is("someCard"));
         assertThat(guest1.getBalance(), is(new BigDecimal(0.0).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
         assertThat(guest1.getBonus(), is(new BigDecimal(3.70).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+    }
+
+    @Test
+    public void testMergeGuestsStealCode() throws Exception {
+        GuestEntity guest1 = guestRepository.save(new GuestEntity(
+                "someCode",
+                "someName",
+                "someMail",
+                "someStatus",
+                null,
+                null,
+                new BigDecimal(3.80),
+                new BigDecimal(2.30)
+        ));
+
+        String body = "[ { 'code': 'someCode', 'name': 'someUpdatedName' } ]";
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(post("/guests")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        assertThat(guestRepository.findAll(), hasSize(2));
+        assertThat(guestRepository.findOne(guest1.getId()).getCode(), nullValue());
+    }
+
+    @Test
+    public void testMergeGuestsStealCard() throws Exception {
+        GuestEntity guest1 = guestRepository.save(new GuestEntity(
+                "someCode",
+                "someName",
+                "someMail",
+                "someStatus",
+                null,
+                "someCard",
+                new BigDecimal(3.80),
+                new BigDecimal(2.30)
+        ));
+
+        String body = "[ { 'card': 'someCard', 'name': 'someUpdatedName' } ]";
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(post("/guests")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        assertThat(guestRepository.findAll(), hasSize(2));
+        assertThat(guestRepository.findOne(guest1.getId()).getCard(), nullValue());
+    }
+
+    @Test
+    public void testMergeGuestsDuplicateCode() throws Exception {
+
+        String body = "[" +
+                "   { 'code': 'someCode', 'name': 'someName' }," +
+                "   { 'code': 'someCode', 'name': 'someOtherName' }, " +
+                "]";
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(post("/guests")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+        assertThat(guestRepository.findAll(), empty());
+    }
+
+    @Test
+    public void testMergeGuestsDuplicateCard() throws Exception {
+
+        String body = "[" +
+                "   { 'card': 'someCard', 'name': 'someName' }," +
+                "   { 'card': 'someCard', 'name': 'someOtherName' }, " +
+                "]";
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(post("/guests")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+        assertThat(guestRepository.findAll(), empty());
     }
 }
