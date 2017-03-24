@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.invoke.MethodHandles;
@@ -45,6 +46,7 @@ public class ProductRangeController {
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @Transactional
     public ResponseEntity<?> mergeProductRanges(@RequestBody List<ProductRangeRequest> ranges) {
         List<ProductRangeEntity> mergedRanges = ranges.stream()
                 .map(ProductRangeRequest::toEntity)
@@ -58,6 +60,7 @@ public class ProductRangeController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @Transactional
     public ResponseEntity<?> deleteProductRanges(@RequestBody List<Long> rangeIds) {
         if (rangeIds.isEmpty()) {
             String message = "No ranges to delete.";

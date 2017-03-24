@@ -1,9 +1,6 @@
 package net.devium.argentum;
 
-import net.devium.argentum.rest.CategoryController;
-import net.devium.argentum.rest.OrderController;
-import net.devium.argentum.rest.ProductController;
-import net.devium.argentum.rest.ProductRangeController;
+import net.devium.argentum.rest.*;
 import org.springframework.data.rest.webmvc.RepositoryLinksResource;
 import org.springframework.hateoas.ResourceProcessor;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
@@ -17,6 +14,7 @@ public class ApplicationResourceProcessor implements ResourceProcessor<Repositor
         resource.add(ControllerLinkBuilder.linkTo(ProductController.class).withRel("products"));
         resource.add(ControllerLinkBuilder.linkTo(OrderController.class).withRel("orders"));
         resource.add(ControllerLinkBuilder.linkTo(CategoryController.class).withRel("categories"));
+        resource.add(ControllerLinkBuilder.linkTo(GuestController.class).withRel("guests"));
         return resource;
     }
 }
