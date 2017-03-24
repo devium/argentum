@@ -49,8 +49,8 @@ public class ProductController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @Transactional
     public ResponseEntity<?> mergeProducts(@RequestBody List<ProductRequest> products) {
-        List<Long> unknownCategories = new LinkedList<>();
-        List<Long> unknownRanges = new LinkedList<>();
+        Set<Long> unknownCategories = new HashSet<>();
+        Set<Long> unknownRanges = new HashSet<>();
         List<ProductEntity> mergedProducts = new LinkedList<>();
 
         // Find all unknown categories and ranges. Directly use known entities to initialize new product entities.
@@ -121,7 +121,7 @@ public class ProductController {
     @RequestMapping(method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @Transactional
     public ResponseEntity<?> deleteProducts(@RequestBody List<Long> productIds) {
-        List<Long> unknownProducts = new LinkedList<>();
+        Set<Long> unknownProducts = new HashSet<>();
         List<ProductEntity> products = new LinkedList<>();
 
         for (long productId : productIds) {

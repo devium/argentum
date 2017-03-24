@@ -22,6 +22,11 @@ public class OrderItemEntity {
     public OrderItemEntity() {
     }
 
+    public OrderItemEntity(ProductEntity product, int quantity) {
+        this.product = product;
+        this.quantity = quantity;
+    }
+
     public OrderItemEntity(ProductEntity product, int quantity, OrderEntity order) {
         this.product = product;
         this.quantity = quantity;
@@ -58,5 +63,20 @@ public class OrderItemEntity {
 
     public void setOrder(OrderEntity order) {
         this.order = order;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        OrderItemEntity that = (OrderItemEntity) o;
+
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (id ^ (id >>> 32));
     }
 }
