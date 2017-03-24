@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Date;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.Matchers.*;
@@ -38,6 +39,8 @@ public class OrderControllerTest {
     private ProductRangeRepository productRangeRepository;
     @Autowired
     private OrderItemRepository orderItemRepository;
+    @Autowired
+    private GuestRepository guestRepository;
 
     private OrderController sut;
 
@@ -45,7 +48,8 @@ public class OrderControllerTest {
 
     @Before
     public void setUp() {
-        sut = new OrderController(orderRepository, productRepository, productRangeRepository, orderItemRepository);
+        sut = new OrderController(orderRepository, productRepository, productRangeRepository, orderItemRepository,
+                guestRepository);
         mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
     }
 
@@ -53,6 +57,7 @@ public class OrderControllerTest {
     public void tearDown() throws Exception {
         orderRepository.deleteAll();
         orderItemRepository.deleteAll();
+        guestRepository.deleteAll();
         productRepository.deleteAll();
         categoryRepository.deleteAll();
         productRangeRepository.deleteAll();
@@ -60,29 +65,63 @@ public class OrderControllerTest {
 
     @Test
     public void testGetOrders() throws Exception {
+        GuestEntity guest = new GuestEntity(
+                "someCode",
+                "someName",
+                "someMail",
+                "someStatus",
+                new Date(),
+                "someCard",
+                new BigDecimal(32.40),
+                new BigDecimal(50.10)
+        );
+        guest = guestRepository.save(guest);
         ProductEntity product1 = new ProductEntity("someProduct", new BigDecimal(3.50), null, Collections.emptySet());
         ProductEntity product2 = new ProductEntity("someProduct", new BigDecimal(4.25), null, Collections.emptySet());
         product1 = productRepository.save(product1);
         product2 = productRepository.save(product2);
 
-        OrderEntity order1 = orderRepository.save(new OrderEntity(new BigDecimal(19.75)));
+        OrderEntity order1 = orderRepository.save(new OrderEntity(guest, new BigDecimal(19.75)));
         orderItemRepository.save(new OrderItemEntity(product1, 2, order1));
         orderItemRepository.save(new OrderItemEntity(product2, 3, order1));
-        OrderEntity order2 = orderRepository.save(new OrderEntity(new BigDecimal(4.25)));
+        OrderEntity order2 = orderRepository.save(new OrderEntity(guest, new BigDecimal(4.25)));
         orderItemRepository.save(new OrderItemEntity(product1, 1, order2));
 
         mockMvc.perform(get("/orders"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data", hasSize(2)));
+                .andExpect(jsonPath("$.data", hasSize(2)))
+                .andExpect(jsonPath("$.data[0].guestId", is((int) guest.getId())))
+                .andExpect(jsonPath("$.data[0].items", hasSize(2)))
+                .andExpect(jsonPath("$.data[0].items[0].productId").isNumber())
+                .andExpect(jsonPath("$.data[0].items[0].quantity").isNumber())
+                .andExpect(jsonPath("$.data[0].items[1].productId").isNumber())
+                .andExpect(jsonPath("$.data[0].items[1].quantity").isNumber())
+                .andExpect(jsonPath("$.data[0].total", closeTo(19.75, 0.001)))
+                .andExpect(jsonPath("$.data[1].guestId", is((int) guest.getId())))
+                .andExpect(jsonPath("$.data[1].items", hasSize(1)))
+                .andExpect(jsonPath("$.data[1].items[0].productId").isNumber())
+                .andExpect(jsonPath("$.data[1].items[0].quantity").isNumber())
+                .andExpect(jsonPath("$.data[1].total", closeTo(4.25, 0.001)));
     }
 
     @Test
     public void testGetOrder() throws Exception {
+        GuestEntity guest = new GuestEntity(
+                "someCode",
+                "someName",
+                "someMail",
+                "someStatus",
+                new Date(),
+                "someCard",
+                new BigDecimal(32.40),
+                new BigDecimal(50.10)
+        );
+        guest = guestRepository.save(guest);
         ProductEntity product = new ProductEntity("someProduct", new BigDecimal(3.50), null, Collections.emptySet());
         product = productRepository.save(product);
 
-        OrderEntity order = orderRepository.save(new OrderEntity(new BigDecimal(7.00)));
+        OrderEntity order = orderRepository.save(new OrderEntity(guest, new BigDecimal(7.00)));
         orderItemRepository.save(new OrderItemEntity(product, 2, order));
 
         mockMvc.perform(get("/orders/{id}", order.getId()))
@@ -104,24 +143,37 @@ public class OrderControllerTest {
 
     @Test
     public void testCreateOrder() throws Exception {
+        GuestEntity guest = new GuestEntity(
+                "someCode",
+                "someName",
+                "someMail",
+                "someStatus",
+                new Date(),
+                "someCard",
+                new BigDecimal(32.40),
+                new BigDecimal(50.10)
+        );
+        guest = guestRepository.save(guest);
+
         CategoryEntity category = categoryRepository.save(new CategoryEntity("someCategory", "#112233"));
 
         ProductRangeEntity range = productRangeRepository.save(new ProductRangeEntity("someName"));
 
-        ProductEntity product1 = new ProductEntity(
+        ProductEntity product = new ProductEntity(
                 "someProduct",
                 new BigDecimal(3.50),
                 category,
                 ImmutableSet.of(range));
 
-        product1 = productRepository.save(product1);
+        product = productRepository.save(product);
 
         String body = "{" +
+                "   'guestId': %s," +
                 "   'items': [" +
-                "       { 'productId': %d, 'quantity': 2 }" +
+                "       { 'productId': %s, 'quantity': 2 }" +
                 "   ]" +
                 "}";
-        body = String.format(body, product1.getId());
+        body = String.format(body, guest.getId(), product.getId());
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/orders")
@@ -130,8 +182,9 @@ public class OrderControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").isNumber())
+                .andExpect(jsonPath("$.data.guestId", is((int) guest.getId())))
                 .andExpect(jsonPath("$.data.items", hasSize(1)))
-                .andExpect(jsonPath("$.data.items[0].productId", is((int) product1.getId())))
+                .andExpect(jsonPath("$.data.items[0].productId", is((int) product.getId())))
                 .andExpect(jsonPath("$.data.items[0].quantity", is(2)))
                 .andExpect(jsonPath("$.data.total", closeTo(7.00, 0.001)));
 
@@ -140,13 +193,81 @@ public class OrderControllerTest {
 
     @Test
     public void testCreateOrderProductNotFound() throws Exception {
+        GuestEntity guest = new GuestEntity(
+                "someCode",
+                "someName",
+                "someMail",
+                "someStatus",
+                new Date(),
+                "someCard",
+                new BigDecimal(32.40),
+                new BigDecimal(50.10)
+        );
+        guest = guestRepository.save(guest);
+
         String body = "{" +
+                "   'guestId': %s," +
                 "   'items': [" +
-                "       { 'productId': %d, 'quantity': 2 }," +
-                "       { 'productId': %d, 'quantity': 1 }" +
+                "       { 'productId': 1, 'quantity': 2 }," +
+                "       { 'productId': 2, 'quantity': 1 }" +
                 "   ]" +
                 "}";
-        body = String.format(body, 1, 2);
+        body = String.format(body, guest.getId());
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(post("/orders")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+
+        assertTrue(orderRepository.findAll().isEmpty());
+    }
+
+    @Test
+    public void testCreateOrderGuestNull() throws Exception {
+        ProductEntity product = new ProductEntity(
+                "someProduct",
+                new BigDecimal(3.50),
+                null,
+                Collections.emptySet());
+
+        product = productRepository.save(product);
+
+        String body = "{" +
+                "   'items': [" +
+                "       { 'productId': %s, 'quantity': 2 }" +
+                "   ]" +
+                "}";
+        body = String.format(body, product.getId());
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(post("/orders")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+
+        assertTrue(orderRepository.findAll().isEmpty());
+    }
+
+    @Test
+    public void testCreateOrderGuestNotFound() throws Exception {
+        ProductEntity product = new ProductEntity(
+                "someProduct",
+                new BigDecimal(3.50),
+                null,
+                Collections.emptySet());
+
+        product = productRepository.save(product);
+
+        String body = "{" +
+                "   'guestId': 1," +
+                "   'items': [" +
+                "       { 'productId': %s, 'quantity': 2 }" +
+                "   ]" +
+                "}";
+        body = String.format(body, product.getId());
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/orders")

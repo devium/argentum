@@ -3,10 +3,10 @@ package net.devium.argentum.rest.model.request;
 import java.util.List;
 
 public class OrderRequest {
-    private long guestId;
+    private Long guestId;
     private List<OrderItemRequest> items;
 
-    public long getGuestId() {
+    public Long getGuestId() {
         return guestId;
     }
 

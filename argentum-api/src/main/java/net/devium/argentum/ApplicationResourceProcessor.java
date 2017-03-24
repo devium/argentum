@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class ApplicationResourceProcessor implements ResourceProcessor<RepositoryLinksResource> {
     @Override
     public RepositoryLinksResource process(RepositoryLinksResource resource) {
-        resource.add(ControllerLinkBuilder.linkTo(ProductRangeController.class).withRel("product_ranges"));
+        resource.add(ControllerLinkBuilder.linkTo(ProductRangeController.class).withRel("ranges"));
         resource.add(ControllerLinkBuilder.linkTo(ProductController.class).withRel("products"));
         resource.add(ControllerLinkBuilder.linkTo(OrderController.class).withRel("orders"));
         resource.add(ControllerLinkBuilder.linkTo(CategoryController.class).withRel("categories"));

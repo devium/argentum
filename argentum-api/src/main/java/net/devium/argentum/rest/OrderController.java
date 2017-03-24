@@ -30,16 +30,19 @@ public class OrderController {
     private ProductRepository productRepository;
     private ProductRangeRepository productRangeRepository;
     private OrderItemRepository orderItemRepository;
+    private GuestRepository guestRepository;
 
     @Autowired
     public OrderController(OrderRepository orderRepository,
                            ProductRepository productRepository,
                            ProductRangeRepository productRangeRepository,
-                           OrderItemRepository orderItemRepository) {
+                           OrderItemRepository orderItemRepository,
+                           GuestRepository guestRepository) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.productRangeRepository = productRangeRepository;
         this.orderItemRepository = orderItemRepository;
+        this.guestRepository = guestRepository;
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -88,7 +91,14 @@ public class OrderController {
             return Response.notFound(message);
         }
 
-        OrderEntity newOrder = orderRepository.save(new OrderEntity(total));
+        GuestEntity guest = order.getGuestId() != null ? guestRepository.findOne(order.getGuestId()) : null;
+        if (guest == null) {
+            String message = String.format("Guest %s not found.", order.getGuestId());
+            LOGGER.info(message);
+            return Response.notFound(message);
+        }
+
+        OrderEntity newOrder = orderRepository.save(new OrderEntity(guest, total));
         orderItems.forEach(orderItem -> orderItem.setOrder(newOrder));
         orderItems = orderItemRepository.save(orderItems);
         newOrder.setOrderItems(ImmutableSet.copyOf(orderItems));
