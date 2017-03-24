@@ -12,7 +12,7 @@ public class CategoryEntity {
     private String name;
     private String color;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
     private Set<ProductEntity> products;
 
     public CategoryEntity() {
