@@ -2,7 +2,7 @@ package net.devium.argentum.jpa;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "orders")
@@ -12,7 +12,7 @@ public class OrderEntity {
     private long id;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "order")
-    private List<OrderItemEntity> orderItems;
+    private Set<OrderItemEntity> orderItems;
 
     private BigDecimal total = new BigDecimal(0);
 
@@ -31,11 +31,11 @@ public class OrderEntity {
         this.id = id;
     }
 
-    public List<OrderItemEntity> getOrderItems() {
+    public Set<OrderItemEntity> getOrderItems() {
         return orderItems;
     }
 
-    public void setOrderItems(List<OrderItemEntity> orderItems) {
+    public void setOrderItems(Set<OrderItemEntity> orderItems) {
         this.orderItems = orderItems;
     }
 

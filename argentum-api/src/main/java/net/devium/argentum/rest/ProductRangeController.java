@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.invoke.MethodHandles;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -66,7 +67,7 @@ public class ProductRangeController {
         }
 
         List<Long> unknownRanges = new LinkedList<>();
-        List<ProductRangeEntity> ranges = new LinkedList<>();
+        Set<ProductRangeEntity> ranges = new HashSet<>();
 
         for (long rangeId : rangeIds) {
             ProductRangeEntity range = productRangeRepository.findOne(rangeId);
@@ -88,7 +89,7 @@ public class ProductRangeController {
         // product creation and modification though.
         Set<ProductEntity> modifiedProducts = ranges.stream()
                 .map(ProductRangeEntity::getProducts)
-                .flatMap(List::stream)
+                .flatMap(Set::stream)
                 .collect(Collectors.toSet());
 
         modifiedProducts.forEach(product -> product.removeProductRanges(ranges));

@@ -2,7 +2,7 @@ package net.devium.argentum.jpa;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "products")
@@ -21,14 +21,14 @@ public class ProductEntity {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "range_products")
-    private List<ProductRangeEntity> productRanges;
+    private Set<ProductRangeEntity> productRanges;
 
     public ProductEntity() {
     }
 
     // Create
     public ProductEntity(String name, BigDecimal price, CategoryEntity category,
-                         List<ProductRangeEntity> productRanges) {
+                         Set<ProductRangeEntity> productRanges) {
         this.name = name;
         this.price = price;
         this.category = category;
@@ -37,7 +37,7 @@ public class ProductEntity {
 
     // Update
     public ProductEntity(long id, String name, BigDecimal price, CategoryEntity category,
-                         List<ProductRangeEntity> productRanges) {
+                         Set<ProductRangeEntity> productRanges) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -85,15 +85,15 @@ public class ProductEntity {
         this.legacy = legacy;
     }
 
-    public List<ProductRangeEntity> getProductRanges() {
+    public Set<ProductRangeEntity> getProductRanges() {
         return productRanges;
     }
 
-    public void setProductRanges(List<ProductRangeEntity> productRanges) {
+    public void setProductRanges(Set<ProductRangeEntity> productRanges) {
         this.productRanges = productRanges;
     }
 
-    public void removeProductRanges(List<ProductRangeEntity> ranges) {
+    public void removeProductRanges(Set<ProductRangeEntity> ranges) {
         this.productRanges.removeAll(ranges);
     }
 

@@ -1,6 +1,6 @@
 package net.devium.argentum.rest;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.devium.argentum.jpa.*;
 import org.junit.After;
 import org.junit.Before;
@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -60,17 +60,17 @@ public class ProductControllerTest {
                 "someProduct",
                 new BigDecimal(2.50),
                 category1,
-                Collections.emptyList());
+                Collections.emptySet());
         ProductEntity product2 = new ProductEntity(
                 "someOtherProduct",
                 new BigDecimal(3.50),
                 category2,
-                Collections.emptyList());
+                Collections.emptySet());
         ProductEntity product3 = new ProductEntity(
                 "someThirdProduct",
                 new BigDecimal(4.50),
                 category1,
-                Collections.emptyList());
+                Collections.emptySet());
         product3.setLegacy(true);
 
         product1 = productRepository.save(product1);
@@ -102,12 +102,12 @@ public class ProductControllerTest {
                 "someProduct",
                 new BigDecimal(2.50),
                 category,
-                Collections.singletonList(range1)));
+                ImmutableSet.of(range1)));
         ProductEntity product2 = productRepository.save(new ProductEntity(
                 "yetSomeOtherProduct",
                 new BigDecimal(6.75),
                 null,
-                ImmutableList.of(range1, range2)));
+                ImmutableSet.of(range1, range2)));
 
         String body = "[" +
                 // product1 has its name and price updated. Should create a new product.
@@ -200,7 +200,7 @@ public class ProductControllerTest {
                 "someProduct",
                 new BigDecimal(2.50),
                 null,
-                Collections.singletonList(range)));
+                ImmutableSet.of(range)));
 
         String body = "[ { 'id': %s, 'name': 'someProduct', 'price': 2.50, 'ranges': [] } ]";
         body = String.format(body, product.getId());
@@ -223,7 +223,7 @@ public class ProductControllerTest {
                 "someProduct",
                 new BigDecimal(2.50),
                 category,
-                Collections.emptyList()));
+                Collections.emptySet()));
 
         String body = "[ { 'id': %s, 'name': 'someProduct', 'price': 2.50, 'category': null } ]";
         body = String.format(body, product.getId());
@@ -245,12 +245,12 @@ public class ProductControllerTest {
                 "someProduct",
                 new BigDecimal(2.50),
                 null,
-                Collections.emptyList()));
+                Collections.emptySet()));
         ProductEntity product2 = productRepository.save(new ProductEntity(
                 "someOtherProduct",
                 new BigDecimal(3.50),
                 null,
-                Collections.emptyList()));
+                Collections.emptySet()));
 
         String body = "[ %s ]";
         body = String.format(body, product2.getId());
@@ -284,7 +284,7 @@ public class ProductControllerTest {
         ProductRangeEntity range1 = productRangeRepository.save(new ProductRangeEntity("someName"));
         ProductRangeEntity range2 = productRangeRepository.save(new ProductRangeEntity("someOtherName"));
 
-        List<ProductRangeEntity> ranges = ImmutableList.of(range1, range2);
+        Set<ProductRangeEntity> ranges = ImmutableSet.of(range1, range2);
         ProductEntity product = new ProductEntity("someProduct", new BigDecimal(3.50), category, ranges);
         long id = productRepository.save(product).getId();
 
@@ -296,7 +296,7 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.data.price", closeTo(3.5, 0.0001)))
                 .andExpect(jsonPath("$.data.category", is((int) category.getId())))
                 .andExpect(jsonPath("$.data.legacy", is(false)))
-                .andExpect(jsonPath("$.data.ranges", contains((int) range1.getId(), (int) range2.getId())));
+                .andExpect(jsonPath("$.data.ranges", containsInAnyOrder((int) range1.getId(), (int) range2.getId())));
     }
 
     @Test

@@ -1,7 +1,7 @@
 package net.devium.argentum.jpa;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "categories")
@@ -13,7 +13,7 @@ public class CategoryEntity {
     private String color;
 
     @OneToMany(mappedBy = "category")
-    private List<ProductEntity> products;
+    private Set<ProductEntity> products;
 
     public CategoryEntity() {
     }
@@ -55,11 +55,11 @@ public class CategoryEntity {
         this.color = color;
     }
 
-    public List<ProductEntity> getProducts() {
+    public Set<ProductEntity> getProducts() {
         return products;
     }
 
-    public void setProducts(List<ProductEntity> products) {
+    public void setProducts(Set<ProductEntity> products) {
         this.products = products;
     }
 

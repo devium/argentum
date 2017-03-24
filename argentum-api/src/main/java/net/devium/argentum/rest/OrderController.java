@@ -77,10 +77,10 @@ public class OrderController {
         // Oh no, it's retarded.
         final OrderEntity newOrder = orderRepository.save(new OrderEntity());
 
-        List<OrderItemEntity> orderItems = order.getItems().stream()
+        Set<OrderItemEntity> orderItems = order.getItems().stream()
                 .map(orderItem -> new OrderItemEntity(productRepository.findOne(orderItem.getProductId()),
                         orderItem.getQuantity(), newOrder))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
         orderItemRepository.save(orderItems);
 
         newOrder.setTotal(orderItems.stream()
