@@ -1,5 +1,6 @@
 package net.devium.argentum.rest;
 
+import com.google.common.collect.ImmutableSet;
 import net.devium.argentum.jpa.*;
 import net.devium.argentum.rest.model.request.OrderItemRequest;
 import net.devium.argentum.rest.model.request.OrderRequest;
@@ -10,10 +11,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -62,11 +66,21 @@ public class OrderController {
 
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @Transactional
     public ResponseEntity<?> createOrder(@RequestBody OrderRequest order) {
-        Set<Long> unknownProducts = order.getItems().stream()
-                .map(OrderItemRequest::getProductId)
-                .filter(productId -> !productRepository.exists(productId))
-                .collect(Collectors.toSet());
+        Set<Long> unknownProducts = new HashSet<>();
+        List<OrderItemEntity> orderItems = new LinkedList<>();
+        BigDecimal total = new BigDecimal(0.00);
+
+        for (OrderItemRequest orderItem : order.getItems()) {
+            ProductEntity product = productRepository.findOne(orderItem.getProductId());
+            if (product == null) {
+                unknownProducts.add(orderItem.getProductId());
+            } else {
+                total = total.add(product.getPrice().multiply(new BigDecimal(orderItem.getQuantity())));
+                orderItems.add(new OrderItemEntity(product, orderItem.getQuantity()));
+            }
+        }
 
         if (!unknownProducts.isEmpty()) {
             String message = String.format("Product(s) %s not found.", unknownProducts);
@@ -74,21 +88,10 @@ public class OrderController {
             return Response.notFound(message);
         }
 
-        // Oh no, it's retarded.
-        final OrderEntity newOrder = orderRepository.save(new OrderEntity());
-
-        Set<OrderItemEntity> orderItems = order.getItems().stream()
-                .map(orderItem -> new OrderItemEntity(productRepository.findOne(orderItem.getProductId()),
-                        orderItem.getQuantity(), newOrder))
-                .collect(Collectors.toSet());
-        orderItemRepository.save(orderItems);
-
-        newOrder.setTotal(orderItems.stream()
-                .map(orderItem -> orderItem.getProduct().getPrice().multiply(new BigDecimal(orderItem.getQuantity())))
-                .reduce(new BigDecimal(0), BigDecimal::add));
-
-        newOrder.setOrderItems(orderItems);
-        orderRepository.save(newOrder);
+        OrderEntity newOrder = orderRepository.save(new OrderEntity(total));
+        orderItems.forEach(orderItem -> orderItem.setOrder(newOrder));
+        orderItems = orderItemRepository.save(orderItems);
+        newOrder.setOrderItems(ImmutableSet.copyOf(orderItems));
 
         return Response.ok(OrderResponse.from(newOrder));
     }

@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.lang.invoke.MethodHandles;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -66,7 +65,7 @@ public class ProductRangeController {
             return Response.badRequest(message);
         }
 
-        List<Long> unknownRanges = new LinkedList<>();
+        Set<Long> unknownRanges = new HashSet<>();
         Set<ProductRangeEntity> ranges = new HashSet<>();
 
         for (long rangeId : rangeIds) {
