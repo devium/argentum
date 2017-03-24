@@ -26,7 +26,21 @@ public class GuestEntity {
     public GuestEntity() {
     }
 
-    public GuestEntity(String code, String name, String mail, String status, Date checkedIn, String card, BigDecimal balance, BigDecimal bonus) {
+    public GuestEntity(long id, String code, String name, String mail, String status, Date checkedIn, String card,
+                       BigDecimal balance, BigDecimal bonus) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.mail = mail;
+        this.status = status;
+        this.checkedIn = checkedIn;
+        this.card = card;
+        this.balance = balance;
+        this.bonus = bonus;
+    }
+
+    public GuestEntity(String code, String name, String mail, String status, Date checkedIn, String card,
+                       BigDecimal balance, BigDecimal bonus) {
         this.code = code;
         this.name = name;
         this.mail = mail;

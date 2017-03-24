@@ -2,6 +2,7 @@ package net.devium.argentum.rest;
 
 import net.devium.argentum.jpa.GuestEntity;
 import net.devium.argentum.jpa.GuestRepository;
+import net.devium.argentum.rest.model.request.GuestRequest;
 import net.devium.argentum.rest.model.response.GuestResponse;
 import net.devium.argentum.rest.model.response.GuestResponsePaginated;
 import net.devium.argentum.rest.model.response.Response;
@@ -13,12 +14,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 
 import java.lang.invoke.MethodHandles;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/guests")
@@ -43,5 +44,20 @@ public class GuestController {
 
         Page<GuestResponse> response = guests.map(GuestResponse::from);
         return Response.ok(new GuestResponsePaginated(response.getContent(), response.getTotalElements()));
+    }
+
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @Transactional
+    public ResponseEntity<?> mergeGuests(@RequestBody List<GuestRequest> guests) {
+        List<GuestEntity> mergedGuests = guests.stream()
+                .map(GuestRequest::toEntity)
+                .collect(Collectors.toList());
+
+        List<GuestResponse> response = this.guestRepository.save(mergedGuests).stream()
+                .map(GuestResponse::from)
+                .collect(Collectors.toList());
+
+        return Response.ok(response);
     }
 }
