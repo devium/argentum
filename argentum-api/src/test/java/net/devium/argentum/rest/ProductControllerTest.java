@@ -154,7 +154,7 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.data[4].id").isNumber())
                 .andExpect(jsonPath("$.data[4].name", is("")))
                 // Should actually be closeTo(0.00) but Jayway is a bitch (type mismatch).
-                .andExpect(jsonPath("$.data[4].price", is(0)))
+                .andExpect(jsonPath("$.data[4].price", is(0.0)))
                 .andExpect(jsonPath("$.data[4].category", nullValue()))
                 .andExpect(jsonPath("$.data[4].legacy", is(false)))
                 .andExpect(jsonPath("$.data[4].ranges", empty()));
