@@ -56,7 +56,7 @@ public class ProductRangeControllerTest {
         productRangeRepository.save(range1);
         productRangeRepository.save(range2);
 
-        mockMvc.perform(get("/product_ranges"))
+        mockMvc.perform(get("/ranges"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data[0].id", is((int) range1.getId())))
@@ -67,7 +67,7 @@ public class ProductRangeControllerTest {
 
     @Test
     public void testGetProductRangeNotFound() throws Exception {
-        mockMvc.perform(get("/product_ranges/1"))
+        mockMvc.perform(get("/ranges/1"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
@@ -85,7 +85,7 @@ public class ProductRangeControllerTest {
         body = String.format(body, range1.getId());
         body = body.replace('\'', '"');
 
-        mockMvc.perform(post("/product_ranges")
+        mockMvc.perform(post("/ranges")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(body))
                 .andDo(print())
@@ -113,7 +113,7 @@ public class ProductRangeControllerTest {
 
         String body = String.format("[ %s, %s ]", range1.getId(), range2.getId());
 
-        mockMvc.perform(delete("/product_ranges")
+        mockMvc.perform(delete("/ranges")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(body))
                 .andDo(print())
@@ -127,7 +127,7 @@ public class ProductRangeControllerTest {
     public void testDeleteProductEmpty() throws Exception {
         String body = "[]";
 
-        mockMvc.perform(delete("/product_ranges")
+        mockMvc.perform(delete("/ranges")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(body))
                 .andDo(print())
@@ -141,7 +141,7 @@ public class ProductRangeControllerTest {
 
         String body = String.format("[ %s, %s ]", range.getId(), range.getId() + 1);
 
-        mockMvc.perform(delete("/product_ranges")
+        mockMvc.perform(delete("/ranges")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(body))
                 .andDo(print())
@@ -160,7 +160,7 @@ public class ProductRangeControllerTest {
 
         String body = String.format("[ %s ]", range.getId());
 
-        mockMvc.perform(delete("/product_ranges")
+        mockMvc.perform(delete("/ranges")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(body))
                 .andDo(print())
@@ -189,7 +189,7 @@ public class ProductRangeControllerTest {
         productRepository.save(product1);
         productRepository.save(product2);
 
-        mockMvc.perform(get("/product_ranges/{id}", range.getId()))
+        mockMvc.perform(get("/ranges/{id}", range.getId()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id", is((int) range.getId())))

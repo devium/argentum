@@ -11,6 +11,10 @@ public class OrderEntity {
     @GeneratedValue
     private long id;
 
+    @ManyToOne
+    @JoinColumn(name = "guest_id")
+    private GuestEntity guest;
+
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "order")
     private Set<OrderItemEntity> orderItems;
 
@@ -19,7 +23,8 @@ public class OrderEntity {
     public OrderEntity() {
     }
 
-    public OrderEntity(BigDecimal total) {
+    public OrderEntity(GuestEntity guest, BigDecimal total) {
+        this.guest = guest;
         this.total = total;
     }
 
@@ -29,6 +34,14 @@ public class OrderEntity {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public GuestEntity getGuest() {
+        return guest;
+    }
+
+    public void setGuest(GuestEntity guest) {
+        this.guest = guest;
     }
 
     public Set<OrderItemEntity> getOrderItems() {
