@@ -1,8 +1,7 @@
 package net.devium.argentum.jpa;
 
 import javax.persistence.*;
-import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "product_ranges")
@@ -13,7 +12,7 @@ public class ProductRangeEntity {
     private String name;
 
     @ManyToMany(mappedBy = "productRanges", fetch = FetchType.EAGER)
-    private List<ProductEntity> products = Collections.emptyList();
+    private Set<ProductEntity> products;
 
     public ProductRangeEntity() {
     }
@@ -45,11 +44,11 @@ public class ProductRangeEntity {
         this.name = name;
     }
 
-    public List<ProductEntity> getProducts() {
+    public Set<ProductEntity> getProducts() {
         return products;
     }
 
-    public void setProducts(List<ProductEntity> products) {
+    public void setProducts(Set<ProductEntity> products) {
         this.products = products;
     }
 

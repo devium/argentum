@@ -6,6 +6,7 @@ import net.devium.argentum.jpa.ProductRangeEntity;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 public class ProductRequest {
     private long id;
@@ -34,7 +35,7 @@ public class ProductRequest {
         return ranges;
     }
 
-    public ProductEntity toEntity(CategoryEntity category, List<ProductRangeEntity> ranges) {
+    public ProductEntity toEntity(CategoryEntity category, Set<ProductRangeEntity> ranges) {
         return new ProductEntity(
                 id,
                 name != null ? name : "",

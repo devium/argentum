@@ -1,6 +1,6 @@
 package net.devium.argentum.rest;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.devium.argentum.jpa.*;
 import org.junit.After;
 import org.junit.Before;
@@ -15,11 +15,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -44,44 +43,6 @@ public class OrderControllerTest {
 
     private MockMvc mockMvc;
 
-    private List<OrderEntity> saveOrders() {
-        CategoryEntity category1 = categoryRepository.save(new CategoryEntity("someCategory", "#112233"));
-        CategoryEntity category2 = categoryRepository.save(new CategoryEntity("someOtherCategory", "#332211"));
-        ProductRangeEntity range1 = productRangeRepository.save(new ProductRangeEntity("someName"));
-        ProductRangeEntity range2 = productRangeRepository.save(new ProductRangeEntity("someOtherName"));
-
-        ProductEntity product1 = new ProductEntity(
-                "someProduct",
-                new BigDecimal(3.50),
-                category1,
-                Collections.singletonList(range1));
-        ProductEntity product2 = new ProductEntity(
-                "someOtherProduct",
-                new BigDecimal(8.20),
-                category2,
-                Collections.singletonList(range2));
-        product1 = productRepository.save(product1);
-        product2 = productRepository.save(product2);
-
-        OrderEntity order1 = new OrderEntity(new BigDecimal(7.00));
-        OrderEntity order2 = new OrderEntity(new BigDecimal(19.90));
-        order1 = orderRepository.save(order1);
-        order2 = orderRepository.save(order2);
-
-        OrderItemEntity orderItem1 = new OrderItemEntity(product1, 2, order1);
-        OrderItemEntity orderItem2 = new OrderItemEntity(product1, 1, order2);
-        OrderItemEntity orderItem3 = new OrderItemEntity(product2, 2, order2);
-        orderItemRepository.save(orderItem1);
-        orderItemRepository.save(orderItem2);
-        orderItemRepository.save(orderItem3);
-
-        // Find again for updated relationship references.
-        order1 = orderRepository.findOne(order1.getId());
-        order2 = orderRepository.findOne(order2.getId());
-
-        return ImmutableList.of(order1, order2);
-    }
-
     @Before
     public void setUp() {
         sut = new OrderController(orderRepository, productRepository, productRangeRepository, orderItemRepository);
@@ -99,7 +60,16 @@ public class OrderControllerTest {
 
     @Test
     public void testGetOrders() throws Exception {
-        saveOrders();
+        ProductEntity product1 = new ProductEntity("someProduct", new BigDecimal(3.50), null, Collections.emptySet());
+        ProductEntity product2 = new ProductEntity("someProduct", new BigDecimal(4.25), null, Collections.emptySet());
+        product1 = productRepository.save(product1);
+        product2 = productRepository.save(product2);
+
+        OrderEntity order1 = orderRepository.save(new OrderEntity(new BigDecimal(19.75)));
+        orderItemRepository.save(new OrderItemEntity(product1, 2, order1));
+        orderItemRepository.save(new OrderItemEntity(product2, 3, order1));
+        OrderEntity order2 = orderRepository.save(new OrderEntity(new BigDecimal(4.25)));
+        orderItemRepository.save(new OrderItemEntity(product1, 1, order2));
 
         mockMvc.perform(get("/orders"))
                 .andDo(print())
@@ -109,16 +79,19 @@ public class OrderControllerTest {
 
     @Test
     public void testGetOrder() throws Exception {
-        List<OrderEntity> orders = saveOrders();
+        ProductEntity product = new ProductEntity("someProduct", new BigDecimal(3.50), null, Collections.emptySet());
+        product = productRepository.save(product);
 
-        mockMvc.perform(get("/orders/{id}", orders.get(0).getId()))
+        OrderEntity order = orderRepository.save(new OrderEntity(new BigDecimal(7.00)));
+        orderItemRepository.save(new OrderItemEntity(product, 2, order));
+
+        mockMvc.perform(get("/orders/{id}", order.getId()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.id", is((int) orders.get(0).getId())))
-                .andExpect(jsonPath("$.data.items", hasSize(1)))
+                .andExpect(jsonPath("$.data.id", is((int) order.getId())))
                 .andExpect(jsonPath("$.data.total", closeTo(7.00, 0.001)))
-                .andExpect(jsonPath("$.data.items[0].productId",
-                        is((int) orders.get(0).getOrderItems().get(0).getProduct().getId())))
+                .andExpect(jsonPath("$.data.items", hasSize(1)))
+                .andExpect(jsonPath("$.data.items[0].productId", is((int) product.getId())))
                 .andExpect(jsonPath("$.data.items[0].quantity", is(2)));
     }
 
@@ -131,32 +104,24 @@ public class OrderControllerTest {
 
     @Test
     public void testCreateOrder() throws Exception {
-        CategoryEntity category1 = categoryRepository.save(new CategoryEntity("someCategory", "#112233"));
-        CategoryEntity category2 = categoryRepository.save(new CategoryEntity("someOtherCategory", "#332211"));
+        CategoryEntity category = categoryRepository.save(new CategoryEntity("someCategory", "#112233"));
 
         ProductRangeEntity range = productRangeRepository.save(new ProductRangeEntity("someName"));
 
         ProductEntity product1 = new ProductEntity(
                 "someProduct",
                 new BigDecimal(3.50),
-                category1,
-                Collections.singletonList(range));
-        ProductEntity product2 = new ProductEntity(
-                "someOtherProduct",
-                new BigDecimal(5.80),
-                category2,
-                Collections.singletonList(range));
+                category,
+                ImmutableSet.of(range));
 
         product1 = productRepository.save(product1);
-        product2 = productRepository.save(product2);
 
         String body = "{" +
                 "   'items': [" +
-                "       { 'productId': %d, 'quantity': 2 }," +
-                "       { 'productId': %d, 'quantity': 1 }" +
+                "       { 'productId': %d, 'quantity': 2 }" +
                 "   ]" +
                 "}";
-        body = String.format(body, product1.getId(), product2.getId());
+        body = String.format(body, product1.getId());
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/orders")
@@ -165,13 +130,12 @@ public class OrderControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").isNumber())
+                .andExpect(jsonPath("$.data.items", hasSize(1)))
                 .andExpect(jsonPath("$.data.items[0].productId", is((int) product1.getId())))
                 .andExpect(jsonPath("$.data.items[0].quantity", is(2)))
-                .andExpect(jsonPath("$.data.items[1].productId", is((int) product2.getId())))
-                .andExpect(jsonPath("$.data.items[1].quantity", is(1)))
-                .andExpect(jsonPath("$.data.total", closeTo(12.80, 0.001)));
+                .andExpect(jsonPath("$.data.total", closeTo(7.00, 0.001)));
 
-        assertFalse(orderRepository.findAll().isEmpty());
+        assertThat(orderRepository.findAll(), hasSize(1));
     }
 
     @Test

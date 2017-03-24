@@ -1,6 +1,6 @@
 package net.devium.argentum.rest;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.devium.argentum.jpa.*;
 import org.junit.After;
 import org.junit.Before;
@@ -14,7 +14,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -156,7 +155,7 @@ public class ProductRangeControllerTest {
                 "someProduct",
                 new BigDecimal(2.50),
                 null,
-                Collections.singletonList(range)
+                ImmutableSet.of(range)
         ));
 
         String body = String.format("[ %s ]", range.getId());
@@ -180,12 +179,12 @@ public class ProductRangeControllerTest {
                 "someProduct",
                 new BigDecimal(3.50),
                 category1,
-                Collections.singletonList(range));
+                ImmutableSet.of(range));
         ProductEntity product2 = new ProductEntity(
                 "someOtherProduct",
                 new BigDecimal(8.20),
                 category2,
-                ImmutableList.of(range));
+                ImmutableSet.of(range));
 
         productRepository.save(product1);
         productRepository.save(product2);

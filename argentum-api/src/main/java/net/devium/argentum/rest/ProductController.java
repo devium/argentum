@@ -13,8 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.invoke.MethodHandles;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -63,7 +65,7 @@ public class ProductController {
                 category = null;
             }
 
-            List<ProductRangeEntity> ranges = new LinkedList<>();
+            Set<ProductRangeEntity> ranges = new HashSet<>();
             if (product.getRanges() != null) {
                 for (Long rangeId : product.getRanges()) {
                     ProductRangeEntity range = productRangeRepository.findOne(rangeId);
