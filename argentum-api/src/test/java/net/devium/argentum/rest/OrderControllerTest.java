@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.Date;
 
 import static junit.framework.TestCase.assertTrue;
+import static net.devium.argentum.ApplicationConstants.DECIMAL_PLACES;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -258,7 +259,6 @@ public class OrderControllerTest {
                 new BigDecimal(3.50),
                 null,
                 Collections.emptySet());
-
         product = productRepository.save(product);
 
         String body = "{" +
@@ -277,5 +277,124 @@ public class OrderControllerTest {
                 .andExpect(status().isNotFound());
 
         assertTrue(orderRepository.findAll().isEmpty());
+    }
+
+    @Test
+    public void testCreateOrderBonusPayed() throws Exception {
+        ProductEntity product = new ProductEntity(
+                "someProduct",
+                new BigDecimal(3.50),
+                null,
+                Collections.emptySet());
+        product = productRepository.save(product);
+
+        GuestEntity guest = new GuestEntity(
+                "someCode",
+                "someName",
+                "someMail",
+                "someStatus",
+                new Date(),
+                "someCard",
+                new BigDecimal(0.00),
+                new BigDecimal(7.20)
+        );
+        guest = guestRepository.save(guest);
+
+        String body = "{" +
+                "   'guestId': %s," +
+                "   'items': [" +
+                "       { 'productId': %s, 'quantity': 2 }" +
+                "   ]" +
+                "}";
+        body = String.format(body, guest.getId(), product.getId());
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(post("/orders")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        guest = guestRepository.findOne(guest.getId());
+        assertThat(guest.getBalance(), is(new BigDecimal(0.00).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+        assertThat(guest.getBonus(), is(new BigDecimal(0.20).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+    }
+
+    @Test
+    public void testCreateOrderBalanceAndBonusPayed() throws Exception {
+        ProductEntity product = new ProductEntity(
+                "someProduct",
+                new BigDecimal(3.50),
+                null,
+                Collections.emptySet());
+        product = productRepository.save(product);
+
+        GuestEntity guest = new GuestEntity(
+                "someCode",
+                "someName",
+                "someMail",
+                "someStatus",
+                new Date(),
+                "someCard",
+                new BigDecimal(2.50),
+                new BigDecimal(5.20)
+        );
+        guest = guestRepository.save(guest);
+
+        String body = "{" +
+                "   'guestId': %s," +
+                "   'items': [" +
+                "       { 'productId': %s, 'quantity': 2 }" +
+                "   ]" +
+                "}";
+        body = String.format(body, guest.getId(), product.getId());
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(post("/orders")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        guest = guestRepository.findOne(guest.getId());
+        assertThat(guest.getBalance(), is(new BigDecimal(0.70).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+        assertThat(guest.getBonus(), is(new BigDecimal(0.00).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+    }
+
+    @Test
+    public void testCreateOrderInsufficientFunds() throws Exception {
+        ProductEntity product = new ProductEntity(
+                "someProduct",
+                new BigDecimal(3.50),
+                null,
+                Collections.emptySet());
+        product = productRepository.save(product);
+
+        GuestEntity guest = new GuestEntity(
+                "someCode",
+                "someName",
+                "someMail",
+                "someStatus",
+                new Date(),
+                "someCard",
+                new BigDecimal(2.50),
+                new BigDecimal(2.20)
+        );
+        guest = guestRepository.save(guest);
+
+        String body = "{" +
+                "   'guestId': %s," +
+                "   'items': [" +
+                "       { 'productId': %s, 'quantity': 2 }" +
+                "   ]" +
+                "}";
+        body = String.format(body, guest.getId(), product.getId());
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(post("/orders")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 }

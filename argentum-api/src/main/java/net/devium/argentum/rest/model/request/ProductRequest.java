@@ -8,6 +8,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
+import static net.devium.argentum.ApplicationConstants.DECIMAL_PLACES;
+
 public class ProductRequest {
     private long id;
     private String name;
@@ -39,7 +41,8 @@ public class ProductRequest {
         return new ProductEntity(
                 id,
                 name != null ? name : "",
-                price != null ? price : new BigDecimal(0.00),
+                price != null ? price.setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)
+                        : new BigDecimal(0).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP),
                 category,
                 ranges
         );

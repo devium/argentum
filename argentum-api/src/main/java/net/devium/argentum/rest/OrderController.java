@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static net.devium.argentum.ApplicationConstants.DECIMAL_PLACES;
+
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
@@ -75,6 +77,7 @@ public class OrderController {
         List<OrderItemEntity> orderItems = new LinkedList<>();
         BigDecimal total = new BigDecimal(0.00);
 
+        // Enumerate products and check for existence.
         for (OrderItemRequest orderItem : order.getItems()) {
             ProductEntity product = productRepository.findOne(orderItem.getProductId());
             if (product == null) {
@@ -84,6 +87,7 @@ public class OrderController {
                 orderItems.add(new OrderItemEntity(product, orderItem.getQuantity()));
             }
         }
+        total = total.setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP);
 
         if (!unknownProducts.isEmpty()) {
             String message = String.format("Product(s) %s not found.", unknownProducts);
@@ -91,12 +95,26 @@ public class OrderController {
             return Response.notFound(message);
         }
 
+        // Lookup / check guest.
         GuestEntity guest = order.getGuestId() != null ? guestRepository.findOne(order.getGuestId()) : null;
         if (guest == null) {
             String message = String.format("Guest %s not found.", order.getGuestId());
             LOGGER.info(message);
             return Response.notFound(message);
         }
+
+        // Check balance.
+        if (guest.getBonus().compareTo(total) > 0) {
+            guest.setBonus(guest.getBonus().subtract(total));
+        } else if (guest.getBalance().compareTo(total.subtract(guest.getBonus())) > 0) {
+            guest.setBalance(guest.getBalance().subtract(total.subtract(guest.getBonus())));
+            guest.setBonus(new BigDecimal(0).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP));
+        } else {
+            String message = "Insufficient funds.";
+            LOGGER.info(message);
+            return Response.badRequest(message);
+        }
+        guestRepository.save(guest);
 
         OrderEntity newOrder = orderRepository.save(new OrderEntity(guest, total));
         orderItems.forEach(orderItem -> orderItem.setOrder(newOrder));
