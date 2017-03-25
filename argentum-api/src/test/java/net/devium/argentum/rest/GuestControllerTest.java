@@ -20,8 +20,7 @@ import java.util.List;
 import static net.devium.argentum.ApplicationConstants.DECIMAL_PLACES;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -337,5 +336,57 @@ public class GuestControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data", empty()));
+    }
+
+    @Test
+    public void testAddBalance() throws Exception {
+        GuestEntity guest = guestRepository.save(new GuestEntity(
+                "someCode", "someName", "someMail", "someStatus", null, null, new BigDecimal(3.00), new BigDecimal(0)
+        ));
+
+        mockMvc.perform(put("/guests/{guestId}/balance", guest.getId())
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content("2.20"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data", closeTo(5.20, 0.001)));
+
+        guest = guestRepository.findOne(guest.getId());
+        assertThat(guest.getBalance(), is(new BigDecimal(5.20).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+    }
+
+    @Test
+    public void testAddBalanceGuestNotFound() throws Exception {
+        mockMvc.perform(put("/guests/1/balance")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content("2.20"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testAddBonus() throws Exception {
+        GuestEntity guest = guestRepository.save(new GuestEntity(
+                "someCode", "someName", "someMail", "someStatus", null, null, new BigDecimal(0), new BigDecimal(2.30)
+        ));
+
+        mockMvc.perform(put("/guests/{guestId}/bonus", guest.getId())
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content("5.20"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data", closeTo(7.50, 0.001)));
+
+        guest = guestRepository.findOne(guest.getId());
+        assertThat(guest.getBonus(), is(new BigDecimal(7.50).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+    }
+
+    @Test
+    public void testAddBonusGuestNotFound() throws Exception {
+        mockMvc.perform(put("/guests/1/bonus")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content("5.20"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 }
