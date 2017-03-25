@@ -169,6 +169,7 @@ export class RestService {
     return Promise.resolve({
       guestsTotal: GUESTS.length,
       guestsCheckedIn: GUESTS.filter(guest => guest.checkedIn).length,
+      cardsTotal: GUESTS.filter(guest => guest.card).length,
       totalBalance: GUESTS.map(guest => guest.balance).reduce((a, b) => a + b, 0),
       totalBonus: GUESTS.map(guest => guest.bonus).reduce((a, b) => a + b, 0),
       totalSpent: 12345,
