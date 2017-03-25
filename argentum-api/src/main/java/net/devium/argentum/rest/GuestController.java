@@ -154,4 +154,28 @@ public class GuestController {
         guest = guestRepository.save(guest);
         return Response.ok(guest.getBonus());
     }
+
+    @RequestMapping(path = "/{guestId}/card", method = RequestMethod.PUT,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @Transactional
+    public ResponseEntity<?> setCard(@PathVariable long guestId, @RequestBody String card) {
+        GuestEntity guest = guestRepository.findOne(guestId);
+
+        if (guest == null) {
+            String message = String.format("Guest %s not found.", guestId);
+            LOGGER.info(message);
+            return Response.notFound(message);
+        }
+
+        // Steal card from old guest.
+        GuestEntity victim = guestRepository.findByCard(card);
+        if (victim != null) {
+            victim.setCard(null);
+            guestRepository.save(victim);
+        }
+
+        guest.setCard(card);
+        guest = guestRepository.save(guest);
+        return ResponseEntity.noContent().build();
+    }
 }
