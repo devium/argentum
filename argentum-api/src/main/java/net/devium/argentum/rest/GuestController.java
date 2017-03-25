@@ -19,10 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static net.devium.argentum.ApplicationConstants.DECIMAL_PLACES;
@@ -175,7 +172,24 @@ public class GuestController {
         }
 
         guest.setCard(card);
-        guest = guestRepository.save(guest);
+        guestRepository.save(guest);
+        return ResponseEntity.noContent().build();
+    }
+
+    @RequestMapping(path = "/{guestId}/checkin", method = RequestMethod.PUT)
+    @Transactional
+    public ResponseEntity<?> checkIn(@PathVariable long guestId) {
+        GuestEntity guest = guestRepository.findOne(guestId);
+
+        if (guest == null) {
+            String message = String.format("Guest %s not found.", guestId);
+            LOGGER.info(message);
+            return Response.notFound(message);
+        }
+
+        guest.setCheckedIn(new Date());
+        guestRepository.save(guest);
+
         return ResponseEntity.noContent().build();
     }
 }

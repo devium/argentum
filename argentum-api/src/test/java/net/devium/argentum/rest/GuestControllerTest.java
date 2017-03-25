@@ -433,4 +433,27 @@ public class GuestControllerTest {
         guest1 = guestRepository.findOne(guest1.getId());
         assertThat(guest1.getCard(), nullValue());
     }
+
+    @Test
+    public void testCheckIn() throws Exception {
+        GuestEntity guest = guestRepository.save(new GuestEntity(
+                "someCode", "someName", "someMail", "someStatus", null, null, new BigDecimal(0), new BigDecimal(0)
+        ));
+
+        mockMvc.perform(put("/guests/{guestId}/checkin", guest.getId())
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        guest = guestRepository.findOne(guest.getId());
+        assertThat(guest.getCheckedIn(), notNullValue());
+    }
+
+    @Test
+    public void testCheckInGuestNotFound() throws Exception {
+        mockMvc.perform(put("/guests/1/checkin")
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
 }
