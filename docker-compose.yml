@@ -15,6 +15,7 @@ services:
   ui:
     build: argentum-ui
     image: argentum-ui
+    image: 514036853215.dkr.ecr.eu-central-1.amazonaws.com/argentum-ui:latest
     ports:
       - '80:80'
     depends_on:
