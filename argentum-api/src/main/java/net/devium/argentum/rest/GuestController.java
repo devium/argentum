@@ -94,4 +94,27 @@ public class GuestController {
 
         return Response.ok(response);
     }
+
+    @RequestMapping(path = "/card/{card}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<?> getByCard(@PathVariable String card) {
+        GuestEntity guest = guestRepository.findByCard(card);
+        if (guest == null) {
+            String message = String.format("Card %s not found.", card);
+            LOGGER.info(message);
+            return Response.notFound(message);
+        }
+
+        return Response.ok(GuestResponse.from(guest));
+    }
+
+    @RequestMapping(path = "/code/{code}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<?> getByCode(@PathVariable String code) {
+        List<GuestEntity> guests = guestRepository.findFirst3ByCodeContainsIgnoreCase(code);
+
+        List<GuestResponse> response = guests.stream()
+                .map(GuestResponse::from)
+                .collect(Collectors.toList());
+
+        return Response.ok(response);
+    }
 }
