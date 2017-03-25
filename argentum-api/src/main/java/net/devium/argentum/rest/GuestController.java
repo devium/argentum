@@ -18,11 +18,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.invoke.MethodHandles;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static net.devium.argentum.ApplicationConstants.DECIMAL_PLACES;
 
 @RestController
 @RequestMapping("/guests")
@@ -116,5 +119,39 @@ public class GuestController {
                 .collect(Collectors.toList());
 
         return Response.ok(response);
+    }
+
+    @RequestMapping(path = "/{guestId}/balance", method = RequestMethod.PUT,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @Transactional
+    public ResponseEntity<?> addBalance(@PathVariable long guestId, @RequestBody BigDecimal value) {
+        GuestEntity guest = guestRepository.findOne(guestId);
+
+        if (guest == null) {
+            String message = String.format("Guest %s not found.", guestId);
+            LOGGER.info(message);
+            return Response.notFound(message);
+        }
+
+        guest.setBalance(guest.getBalance().add(value.setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+        guest = guestRepository.save(guest);
+        return Response.ok(guest.getBalance());
+    }
+
+    @RequestMapping(path = "/{guestId}/bonus", method = RequestMethod.PUT,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @Transactional
+    public ResponseEntity<?> addBonus(@PathVariable long guestId, @RequestBody BigDecimal value) {
+        GuestEntity guest = guestRepository.findOne(guestId);
+
+        if (guest == null) {
+            String message = String.format("Guest %s not found.", guestId);
+            LOGGER.info(message);
+            return Response.notFound(message);
+        }
+
+        guest.setBonus(guest.getBonus().add(value.setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+        guest = guestRepository.save(guest);
+        return Response.ok(guest.getBonus());
     }
 }
