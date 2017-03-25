@@ -3,8 +3,10 @@ package net.devium.argentum.jpa;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RepositoryRestResource(exported = false)
@@ -20,4 +22,14 @@ public interface GuestRepository extends JpaRepository<GuestEntity, Long> {
     List<GuestEntity> findByCodeIn(Iterable<String> codes);
 
     List<GuestEntity> findByCardIn(Iterable<String> cards);
+
+    long countByCheckedInNotNull();
+
+    long countByCardNotNull();
+
+    @Query(value = "SELECT SUM(balance) FROM GuestEntity g")
+    BigDecimal sumBalance();
+
+    @Query(value = "SELECT SUM(bonus) FROM GuestEntity g")
+    BigDecimal sumBonus();
 }
