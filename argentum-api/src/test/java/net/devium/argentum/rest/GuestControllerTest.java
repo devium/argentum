@@ -389,4 +389,48 @@ public class GuestControllerTest {
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    public void testSetCard() throws Exception {
+        GuestEntity guest = guestRepository.save(new GuestEntity(
+                "someCode", "someName", "someMail", "someStatus", null, null, new BigDecimal(0), new BigDecimal(0)
+        ));
+
+        mockMvc.perform(put("/guests/{guestId}/card", guest.getId())
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content("12341234"))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        guest = guestRepository.findOne(guest.getId());
+        assertThat(guest.getCard(), is("12341234"));
+    }
+
+    @Test
+    public void testSetCardGuestNotFound() throws Exception {
+        mockMvc.perform(put("/guests/1/card")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content("12341234"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testSetCardStealCard() throws Exception {
+        GuestEntity guest1 = guestRepository.save(new GuestEntity(
+                "someCode", "someName", "someMail", "someStatus", null, "12341234", new BigDecimal(0), new BigDecimal(0)
+        ));
+        GuestEntity guest2 = guestRepository.save(new GuestEntity(
+                "someCode", "someName", "someMail", "someStatus", null, null, new BigDecimal(0), new BigDecimal(0)
+        ));
+
+        mockMvc.perform(put("/guests/{guestId}/card", guest2.getId())
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content("12341234"))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        guest1 = guestRepository.findOne(guest1.getId());
+        assertThat(guest1.getCard(), nullValue());
+    }
 }
