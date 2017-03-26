@@ -87,6 +87,9 @@ public class OrderController {
                 orderItems.add(new OrderItemEntity(product, orderItem.getQuantity()));
             }
         }
+        if (order.getCustomTotal() != null) {
+            total = total.add(order.getCustomTotal());
+        }
         total = total.setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP);
 
         if (!unknownProducts.isEmpty()) {
