@@ -5,4 +5,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(exported = false)
 public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
+    long countByLegacyIsTrue();
 }

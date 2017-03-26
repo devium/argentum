@@ -44,9 +44,13 @@ public class StatisticsController {
         long guestsCheckedIn = guestRepository.countByCheckedInNotNull();
         long cardsTotal = guestRepository.countByCardNotNull();
         BigDecimal totalBalance = guestRepository.sumBalance();
+        totalBalance = totalBalance != null ? totalBalance : new BigDecimal(0);
         BigDecimal totalBonus = guestRepository.sumBonus();
+        totalBonus = totalBonus != null ? totalBonus : new BigDecimal(0);
         BigDecimal totalSpent = orderRepository.sumTotal();
+        totalSpent = totalSpent != null ? totalSpent : new BigDecimal(0);
         long numProducts = productRepository.count();
+        long numLegacyProducts = productRepository.countByLegacyIsTrue();
         long numRanges = productRangeRepository.count();
         long numCategories = categoryRepository.count();
 
@@ -58,6 +62,7 @@ public class StatisticsController {
                 totalBonus,
                 totalSpent,
                 numProducts,
+                numLegacyProducts,
                 numRanges,
                 numCategories
         ));

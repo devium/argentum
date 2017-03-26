@@ -8,10 +8,10 @@ public class ProductResponseMeta {
     private final long id;
     private final String name;
     private final BigDecimal price;
-    private final long category;
+    private final Long category;
     private final boolean legacy;
 
-    private ProductResponseMeta(long id, String name, BigDecimal price, long category, boolean legacy) {
+    private ProductResponseMeta(long id, String name, BigDecimal price, Long category, boolean legacy) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -24,7 +24,7 @@ public class ProductResponseMeta {
                 product.getId(),
                 product.getName(),
                 product.getPrice(),
-                product.getCategory().getId(),
+                product.getCategory() != null ? product.getCategory().getId() : null,
                 product.isLegacy()
         );
     }
@@ -41,7 +41,7 @@ public class ProductResponseMeta {
         return price;
     }
 
-    public long getCategory() {
+    public Long getCategory() {
         return category;
     }
 

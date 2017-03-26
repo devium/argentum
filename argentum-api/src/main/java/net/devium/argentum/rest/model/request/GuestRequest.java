@@ -57,7 +57,7 @@ public class GuestRequest {
     public GuestEntity toEntity() {
         return new GuestEntity(
                 id != null ? id : -1,
-                code,
+                code != null ? code : "",
                 name != null ? name : "",
                 mail != null ? mail : "",
                 status != null ? status : "",

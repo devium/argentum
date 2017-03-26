@@ -10,6 +10,7 @@ public class StatisticsResponse {
     private final BigDecimal totalBonus;
     private final BigDecimal totalSpent;
     private final long numProducts;
+    private final long numLegacyProducts;
     private final long numRanges;
     private final long numCategories;
 
@@ -21,6 +22,7 @@ public class StatisticsResponse {
             BigDecimal totalBonus,
             BigDecimal totalSpent,
             long numProducts,
+            long numLegacyProducts,
             long numRanges,
             long numCategories) {
         this.guestsTotal = guestsTotal;
@@ -30,6 +32,7 @@ public class StatisticsResponse {
         this.totalBonus = totalBonus;
         this.totalSpent = totalSpent;
         this.numProducts = numProducts;
+        this.numLegacyProducts = numLegacyProducts;
         this.numRanges = numRanges;
         this.numCategories = numCategories;
     }
@@ -60,6 +63,10 @@ public class StatisticsResponse {
 
     public long getNumProducts() {
         return numProducts;
+    }
+
+    public long getNumLegacyProducts() {
+        return numLegacyProducts;
     }
 
     public long getNumRanges() {
