@@ -33,7 +33,11 @@
     </tr>
     <tr>
       <td>Products</td>
-      <td>{{stats.numProducts}}</td>
+      <td>{{stats.numProducts - stats.numLegacyProducts}}</td>
+    </tr>
+    <tr>
+      <td>Legacy products</td>
+      <td>{{stats.numLegacyProducts}}</td>
     </tr>
     <tr>
       <td>Product ranges</td>

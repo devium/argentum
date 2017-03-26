@@ -7,7 +7,8 @@ import { isDarkBackground } from '../../common/util/is-dark-background';
 import { ProductRange } from '../../common/model/product-range';
 import { MessageComponent } from '../../common/message/message.component';
 import { CardBarComponent } from '../card-bar/card-bar.component';
-import { OrderConfirmation } from '../../common/model/order-confirmation';
+import { Order } from '../../common/model/order';
+import { OrderResponse } from '../../common/rest-service/response/order-response';
 
 @Component({
   selector: 'app-order',
@@ -64,15 +65,15 @@ export class OrderComponent implements OnInit {
   }
 
   refreshRanges() {
-    this.restService.getProductRangesMeta()
-      .then(ranges => this.productRanges = ranges)
+    this.restService.getProductRanges()
+      .then((ranges: ProductRange[]) => this.productRanges = ranges)
       .catch(reason => this.message.error(`Error: ${reason}`));
   }
 
   refreshProducts() {
     if (this.selectedRange) {
-      this.restService.getProductRangeEager(this.selectedRange)
-        .then(range => this.products = range.products)
+      this.restService.getProductRange(this.selectedRange)
+        .then((range: ProductRange) => this.products = range.products)
         .catch(reason => this.message.error(`Error: ${reason}`));
     }
   }
@@ -160,9 +161,13 @@ export class OrderComponent implements OnInit {
 
   placeOrder(): void {
     this.waitingForOrder = true;
-    this.restService.placeOrder(this.cardBar.guest, this.orderedProducts)
-      .then((confirmation: OrderConfirmation) => {
-        this.message.success(`Order placed for "${confirmation.guest.name}". Total: €${confirmation.total.toFixed(2)}. Remaining balance: €${confirmation.guest.balance.toFixed(2)} (+ €${confirmation.guest.bonus.toFixed(2)})`);
+    let order: Order = {
+      guest: this.cardBar.guest,
+      products: this.orderedProducts
+    };
+    this.restService.placeOrder(order)
+      .then((response: OrderResponse) => {
+        this.message.success(`Order placed for "${response.guest.name}". Total: €${response.total.toFixed(2)}. Remaining balance: €${response.guest.balance.toFixed(2)} (+ €${response.guest.bonus.toFixed(2)})`);
         this.orderedProducts.clear();
         this.updateTotal();
         this.waitingForOrder = false;

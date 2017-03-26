@@ -1,5 +1,5 @@
 import { animate, AnimationTransitionEvent, Component, OnInit, state, style, transition, trigger } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { RestService } from '../../common/rest-service/rest.service';
 import { Guest } from '../../common/model/guest';
 import { convertCard } from '../../common/util/convert-card';
@@ -32,6 +32,7 @@ export class CardBarComponent implements OnInit {
 
   cardStream: Observable<string>;
   card = '';
+  keyboardSub: Subscription;
   guest: Guest;
   countdownState = 'empty';
   countdownStream = new Subject();
@@ -50,11 +51,15 @@ export class CardBarComponent implements OnInit {
       .map(card => convertCard(card))
       .repeat();
 
-    this.cardStream.subscribe(result => this.newNumber(result));
+    this.keyboardSub = this.cardStream.subscribe(result => this.newNumber(result));
 
     this.countdownStream
       .debounceTime(10000)
       .subscribe(() => this.setState(ScanState.Waiting));
+  }
+
+  ngOnDestroy(): void {
+    this.keyboardSub.unsubscribe();
   }
 
   newNumber(card: string) {

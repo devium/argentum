@@ -1,8 +1,7 @@
 import { Product } from './product';
 import { Guest } from './guest';
 
-export class OrderConfirmation {
+export class Order {
   products: Map<Product, number>;
-  total: number;
   guest: Guest;
 }

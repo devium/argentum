@@ -30,7 +30,7 @@ export class SearchGuestModalComponent implements OnInit {
       .debounceTime(300)
       .distinctUntilChanged()
       .switchMap(code => code ? this.restService.getGuestsByCode(code) : Observable.of([]))
-      .subscribe(guests => this.results = guests);
+      .subscribe((guests: Guest[]) => this.results = guests);
 
     this.codeInput.nativeElement.focus();
   }

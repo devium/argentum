@@ -48,7 +48,7 @@ export class CategoryEditorComponent implements OnInit {
 
   loadCategories() {
     this.restService.getCategories()
-      .then(categories => this.categories = categories.map(category => new EditorCategory(category)))
+      .then((categories: Category[]) => this.categories = categories.map(category => new EditorCategory(category)))
       .catch(reason => this.message.error(`Error: ${reason}`));
   }
 
@@ -96,23 +96,19 @@ export class CategoryEditorComponent implements OnInit {
   }
 
   private save() {
-    let createdCategories = this.categories
-      .filter(category => category.changed && !category.original)
-      .map(category => category.edited);
-    let changedCategories = this.categories
-      .filter(category => category.changed && category.original)
+    let updatedCategories = this.categories
+      .filter(category => category.changed)
       .map(category => category.edited);
     let deletedCategories = this.categories
       .filter(category => !category.edited)
       .map(category => category.original);
 
-    let pCreate = this.restService.createCategories(createdCategories);
-    let pUpdate = this.restService.updateCategories(changedCategories);
+    let pCreate = this.restService.mergeCategories(updatedCategories);
     let pDelete = this.restService.deleteCategories(deletedCategories);
 
-    Promise.all([pCreate, pUpdate, pDelete])
+    Promise.all([pCreate, pDelete])
       .then(result => {
-        this.message.success(`Categories saved successfully. (${createdCategories.length} created, ${changedCategories.length} updated, ${deletedCategories.length} deleted)`);
+        this.message.success(`Categories saved successfully. (${updatedCategories.length} created/updated, ${deletedCategories.length} deleted)`);
         this.loadCategories();
       })
       .catch(reason => this.message.error(`Error: ${reason}`));

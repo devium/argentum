@@ -33,11 +33,11 @@ input:disabled {
 }
 
 .changed {
-  background-color: $state-info-bg;
+  background-color: $state-info-bg !important;
 }
 
 .removed {
-  background-color: $state-danger-bg;
+  background-color: $state-danger-bg !important;
 }
 
 .flex-grow-1 {

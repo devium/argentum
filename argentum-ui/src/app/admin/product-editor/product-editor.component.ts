@@ -76,28 +76,24 @@ export class ProductEditorComponent implements OnInit {
   }
 
   private loadProducts() {
-    let pProducts = this.restService.getProducts()
-      .then(products => this.products = products
-        .map(product => new EditorProduct(product))
-        .sort((a, b) => {
-          let nameA = a.original.name.toLowerCase();
-          let nameB = b.original.name.toLowerCase();
-          if (nameA < nameB) {
-            return -1;
-          } else if (nameA > nameB) {
-            return 1;
-          }
-          return 0;
-        }));
-
-    let pRanges = this.restService.getProductRangesMeta()
-      .then(ranges => this.productRanges = ranges);
-
-    let pCategories = this.restService.getCategories()
-      .then(categories => this.categories = categories);
-
-    Promise.all([pProducts, pRanges, pCategories])
-      .catch(reason => this.message.error(`Error: ${reason}`))
+    this.restService.getProductData()
+      .then((productData: { products: Product[], categories: Category[], ranges: ProductRange[] }) => {
+        this.categories = productData.categories;
+        this.productRanges = productData.ranges;
+        this.products = productData.products
+          .map(product => new EditorProduct(product))
+          .sort((a, b) => {
+            let nameA = a.original.name.toLowerCase();
+            let nameB = b.original.name.toLowerCase();
+            if (nameA < nameB) {
+              return -1;
+            } else if (nameA > nameB) {
+              return 1;
+            }
+            return 0;
+          });
+      })
+      .catch(reason => this.message.error(`Error: ${reason}`));
   }
 
   private setCategory(product: EditorProduct, category: Category) {
@@ -172,23 +168,19 @@ export class ProductEditorComponent implements OnInit {
 
   private save() {
     // Products with changed name or price will not be updated but instead recreated.
-    let createdProducts = this.products
-      .filter(product => product.edited && (product.hasChangedName() || product.hasChangedPrice()))
-      .map(product => product.edited);
-    let updatedProducts = this.products
-      .filter(product => product.original && product.changed && !product.hasChangedName() && !product.hasChangedPrice())
+    let mergedProducts = this.products
+      .filter(product => product.edited && product.changed)
       .map(product => product.edited);
     let deletedProducts = this.products
-      .filter(product => product.original && (!product.edited || product.hasChangedName() || product.hasChangedPrice()))
+      .filter(product => !product.edited)
       .map(product => product.original);
 
-    let pCreate = this.restService.createProducts(createdProducts);
-    let pUpdate = this.restService.updateProducts(updatedProducts);
+    let pCreate = this.restService.mergeProducts(mergedProducts);
     let pDelete = this.restService.deleteProducts(deletedProducts);
 
-    Promise.all([pCreate, pUpdate, pDelete])
+    Promise.all([pCreate, pDelete])
       .then(() => {
-        this.message.success(`Products saved successfully. ${createdProducts.length} created, ${updatedProducts.length} updated, ${deletedProducts.length} deleted)`);
+        this.message.success(`Products saved successfully. (${mergedProducts.length} created/updated, ${deletedProducts.length} deleted)`);
         this.loadProducts();
       })
       .catch(reason => this.message.error(`Error: ${reason}`))

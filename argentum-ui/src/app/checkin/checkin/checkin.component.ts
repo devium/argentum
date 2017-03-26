@@ -26,8 +26,8 @@ export class CheckinComponent implements OnInit {
   newGuest() {
     let modal = this.modalService.open(NewGuestModalComponent, { backdrop: 'static' });
     modal.result.then((guest: Guest) => {
-      this.restService.createGuests([guest])
-        .then(guests => this.message.success(`Created guest "${guest.name}".`))
+      this.restService.mergeGuests([guest])
+        .then(() => this.message.success(`Created guest "${guest.name}".`))
         .catch(reason => this.message.error(`Error: ${reason}`));
     }, result => void(0));
   }

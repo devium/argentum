@@ -8,13 +8,13 @@ import java.util.stream.Collectors;
 
 public class OrderResponse {
     private final long id;
-    private final long guestId;
+    private final GuestResponse guest;
     private final List<OrderItemResponse> items;
     private final BigDecimal total;
 
-    private OrderResponse(long id, long guestId, List<OrderItemResponse> items, BigDecimal total) {
+    private OrderResponse(long id, GuestResponse guest, List<OrderItemResponse> items, BigDecimal total) {
         this.id = id;
-        this.guestId = guestId;
+        this.guest = guest;
         this.items = items;
         this.total = total;
     }
@@ -22,7 +22,7 @@ public class OrderResponse {
     public static OrderResponse from(OrderEntity order) {
         return new OrderResponse(
                 order.getId(),
-                order.getGuest().getId(),
+                GuestResponse.from(order.getGuest()),
                 order.getOrderItems().stream().map(OrderItemResponse::from).collect(Collectors.toList()),
                 order.getTotal()
         );
@@ -32,8 +32,8 @@ public class OrderResponse {
         return id;
     }
 
-    public long getGuestId() {
-        return guestId;
+    public GuestResponse getGuest() {
+        return guest;
     }
 
     public List<OrderItemResponse> getItems() {

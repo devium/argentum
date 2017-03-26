@@ -66,10 +66,8 @@ export class GuestImportComponent implements OnInit {
           });
         });
 
-        this.restService.createGuests(guests)
-          .then(savedGuests => {
-            this.message.success(`Successfully imported ${guests.length} guests.`);
-          })
+        this.restService.mergeGuests(guests)
+          .then(() => this.message.success(`Successfully imported ${guests.length} guests.`))
           .catch(reason => this.message.error(`Error: ${reason}`));
       }
     });
