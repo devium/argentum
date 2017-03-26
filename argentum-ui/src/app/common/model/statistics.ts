@@ -6,6 +6,7 @@ export class Statistics {
   totalBonus: number;
   totalSpent: number;
   numProducts: number;
+  numLegacyProducts: number;
   numRanges: number;
   numCategories: number;
 }

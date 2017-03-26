@@ -56,37 +56,22 @@ public class GuestController {
         List<GuestEntity> mergedGuests = guests.stream()
                 .map(GuestRequest::toEntity)
                 .collect(Collectors.toList());
-
-        List<String> codes = mergedGuests.stream()
-                .map(GuestEntity::getCode)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
         List<String> cards = mergedGuests.stream()
                 .map(GuestEntity::getCard)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        // Check for code and card duplicates.
-        if (new HashSet<>(codes).size() < codes.size()) {
-            String message = "Duplicate codes found in request.";
-            LOGGER.info(message);
-            return Response.badRequest(message);
-        }
+        // Check for card duplicates.
         if (new HashSet<>(cards).size() < cards.size()) {
-            String message = "Duplicate cards found in request.";
+            String message = "Duplicate cards found in guest list.";
             LOGGER.info(message);
             return Response.badRequest(message);
         }
 
-        // Steal code and card if already in use.
-        List<GuestEntity> codeVictims = guestRepository.findByCodeIn(codes);
-        codeVictims.forEach(guest -> guest.setCode(null));
+        // Steal card if already in use.
         List<GuestEntity> cardVictims = guestRepository.findByCardIn(cards);
         cardVictims.forEach(guest -> guest.setCard(null));
-
-        List<GuestEntity> allVictims = new LinkedList<>(codeVictims);
-        allVictims.addAll(cardVictims);
-        guestRepository.save(allVictims);
+        guestRepository.save(cardVictims);
 
         List<GuestResponse> response = this.guestRepository.save(mergedGuests).stream()
                 .map(GuestResponse::from)
@@ -176,7 +161,8 @@ public class GuestController {
         return ResponseEntity.noContent().build();
     }
 
-    @RequestMapping(path = "/{guestId}/checkin", method = RequestMethod.PUT)
+    @RequestMapping(path = "/{guestId}/checkin", method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @Transactional
     public ResponseEntity<?> checkIn(@PathVariable long guestId) {
         GuestEntity guest = guestRepository.findOne(guestId);
@@ -190,6 +176,6 @@ public class GuestController {
         guest.setCheckedIn(new Date());
         guestRepository.save(guest);
 
-        return ResponseEntity.noContent().build();
+        return Response.ok(guest.getCheckedIn());
     }
 }

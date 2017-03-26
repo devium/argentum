@@ -68,7 +68,8 @@ export class GuestEditorComponent implements OnInit {
   }
 
   changePage(newPage: number) {
-    this.restService.getGuestsPaginatedAndFiltered(this.PAGE_SIZE, newPage - 1, this.codeLike, this.nameLike, this.mailLike, this.statusLike).then(result => {
+    this.restService.getGuestsPaginatedAndFiltered(this.PAGE_SIZE, newPage - 1, this.codeLike, this.nameLike, this.mailLike, this.statusLike)
+      .then((result: { guests: Guest[], guestsTotal: number }) => {
       this.guests = result.guests;
       this.guestsTotal = result.guestsTotal;
     });
@@ -80,7 +81,7 @@ export class GuestEditorComponent implements OnInit {
 
     modal.result.then(result => {
       this.restService.addBalance(guest, result)
-        .then(newBalance => {
+        .then((newBalance: number) => {
           guest.balance = newBalance;
           this.message.success(`Added €${result.toFixed(2)} to balance of "${guest.name}". New balance: €${newBalance.toFixed(2)}`);
         })
@@ -94,7 +95,7 @@ export class GuestEditorComponent implements OnInit {
 
     modal.result.then(result => {
       this.restService.addBalance(guest, -result)
-        .then(newBalance => {
+        .then((newBalance: number) => {
           guest.balance = newBalance;
           this.message.success(`Removed €${result.toFixed(2)} from balance of "${guest.name}". New balance: €${newBalance.toFixed(2)}`);
         })
@@ -108,7 +109,7 @@ export class GuestEditorComponent implements OnInit {
 
     modal.result.then(result => {
       this.restService.addBonus(guest, result)
-        .then(newBonus => {
+        .then((newBonus: number) => {
           guest.bonus = newBonus;
           this.message.success(`Added €${result.toFixed(2)} to bonus of "${guest.name}". New bonus: €${newBonus.toFixed(2)}`);
         })
@@ -122,7 +123,7 @@ export class GuestEditorComponent implements OnInit {
 
     modal.result.then(result => {
       this.restService.addBonus(guest, -result)
-        .then(newBonus => {
+        .then((newBonus: number) => {
           guest.bonus = newBonus;
           this.message.success(`Removed €${result.toFixed(2)} from bonus of "${guest.name}". New bonus: €${newBonus.toFixed(2)}`);
         })

@@ -1,188 +1,288 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { Headers, Http } from '@angular/http';
 import { Product } from '../model/product';
 import 'rxjs/add/operator/toPromise';
-import { CATEGORIES, PRODUCT_RANGES } from './mock-data';
+import 'rxjs/add/operator/map';
 import { ProductRange } from '../model/product-range';
 import { Category } from '../model/category';
 import { Guest } from '../model/guest';
-import { GUESTS } from './mock-guests';
-import { ALL_PRODUCTS } from './mock-products';
 import { Observable } from 'rxjs';
-import { OrderConfirmation } from '../model/order-confirmation';
+import { Order } from '../model/order';
 import { Statistics } from '../model/statistics';
+import { environment } from '../../../environments/environment';
+import { ProductResponse, toProductEager } from './response/product-response';
+import { fromProduct } from './request/product-request';
+import { ProductRangeResponseMeta, toProductRangeMeta } from './response/product-range-response-meta';
+import { ProductRangeResponseEager, toProductRangeEager } from './response/product-range-response-eager';
+import { fromProductRange } from './request/product-range-request';
+import { CategoryResponse, toCategory } from './response/category-response';
+import { fromCategory } from './request/category-request';
+import { GuestResponse, toGuest } from './response/guest-response';
+import { GuestResponsePaginated } from './response/guest-response-paginated';
+import { fromGuest } from './request/guest-request';
+import { StatisticsResponse, toStatistics } from './response/statistics-response';
+import { OrderResponse } from './response/order-response';
+import { fromOrder } from './request/order-request';
 
 @Injectable()
 export class RestService {
-  private productsUrl = 'api/products';
+  private readonly apiUrl = environment.apiUrl;
+  private readonly headers = new Headers({ 'Content-Type': 'application/json' });
 
   constructor(private http: Http) {
   }
 
-  getProducts(): Promise<Product[]> {
-    // TODO: GET on /products, returns only non-legacy products
-    return Promise.resolve(ALL_PRODUCTS);
+  // /products
+
+  private getProductsRaw(): Promise<ProductResponse[]> {
+    return this.http.get(`${this.apiUrl}/products`)
+      .toPromise()
+      .then(response => response.json().data as ProductResponse[])
+      .catch(this.handleError);
   }
 
-  getProductRangeEager(range: ProductRange): Promise<ProductRange> {
-    // TODO: GET on /ranges/{id}, returns only non-legacy products (eagerly)
-    return Promise.resolve(PRODUCT_RANGES.find(eagerRange => eagerRange.id == range.id));
-  }
-
-  getProductRangesMeta(): Promise<ProductRange[]> {
-    // TODO: GET on /ranges, returns product range meta data (no products)
-    return Promise.resolve(PRODUCT_RANGES);
-  }
-
-  getCategories(): Promise<Category[]> {
-    // TODO: GET on /categories, returns all categories
-    return Promise.resolve(CATEGORIES);
-  }
-
-  createProducts(products: Product[]): Promise<Product[]> {
-    // TODO: POST on /products, IDs will be assigned
-    return Promise.resolve([]);
-  }
-
-  updateProducts(products: Product[]): Promise<void> {
-    // TODO: PUT on /products
-    return Promise.resolve([]);
+  mergeProducts(products: Product[]): Promise<ProductResponse[]> {
+    let body = products.map(fromProduct);
+    return this.http.post(`${this.apiUrl}/products`, body, { headers: this.headers })
+      .toPromise()
+      .then(response => response.json().data as Product[])
+      .catch(this.handleError);
   }
 
   deleteProducts(products: Product[]): Promise<void> {
-    // TODO: DELETE on /products, array of IDs, flags products as legacy
-    products.forEach(product => product.legacy = true);
-    return Promise.resolve();
+    let body = products.map(product => product.id);
+
+    if (products.length == 0) {
+      return Promise.resolve();
+    }
+    return this.http.delete(`${this.apiUrl}/products`, { body, headers: this.headers })
+      .toPromise()
+      .then(() => void(0))
+      .catch(this.handleError);
   }
 
-  createCategories(categories: Category[]): Promise<Category[]> {
-    // TODO: POST on /categories, IDs will be assigned
-    return Promise.resolve([]);
+
+  // /ranges
+
+  private getProductRangesRaw(): Promise<ProductRangeResponseMeta[]> {
+    return this.http.get(`${this.apiUrl}/ranges`)
+      .toPromise()
+      .then(response => response.json().data as ProductRangeResponseMeta[])
+      .catch(this.handleError);
   }
 
-  updateCategories(categories: Category[]): Promise<void> {
-    // TODO: PUT on /categories
-    return Promise.resolve();
+  getProductRanges(): Promise<ProductRange[]> {
+    return this.getProductRangesRaw()
+      .then((ranges: ProductRangeResponseMeta[]) => Promise.resolve(ranges.map(toProductRangeMeta)));
   }
 
-  deleteCategories(categories: Category[]): Promise<void> {
-    // TODO: DELETE on /categories, cascade to null on products
-    return Promise.resolve();
+  private getProductRangeRaw(range: ProductRange): Promise<ProductRangeResponseEager> {
+    return this.http.get(`${this.apiUrl}/ranges/${range.id}`)
+      .toPromise()
+      .then(response => response.json().data as ProductRangeResponseEager)
+      .catch(this.handleError);
   }
 
-  createProductRanges(productRanges: ProductRange[]): Promise<ProductRange[]> {
-    // TODO POST on /ranges
-    return Promise.resolve([]);
+  getProductRange(range: ProductRange): Promise<ProductRange> {
+    let pCategories = this.getCategoriesRaw();
+    let pRanges = this.getProductRangeRaw(range);
+
+    return Promise.all([pCategories, pRanges])
+      .then((values: any[]) => {
+        let categoriesResponse: CategoryResponse[] = values[0];
+        let rangeResponse: ProductRangeResponseEager = values[1];
+
+        let categories = categoriesResponse.map(toCategory);
+
+        return Promise.resolve(toProductRangeEager(rangeResponse, categories));
+      });
   }
 
-  updateProductRanges(productRanges: ProductRange[]): Promise<void> {
-    // TODO: PUT on /ranges
-    return Promise.resolve([]);
+  mergeProductRanges(productRanges: ProductRange[]): Promise<ProductRangeResponseMeta[]> {
+    let body = productRanges.map(fromProductRange);
+
+    return this.http.post(`${this.apiUrl}/ranges`, body, { headers: this.headers })
+      .toPromise()
+      .then(response => response.json().data as ProductRangeResponseMeta[])
+      .catch(this.handleError);
   }
 
   deleteProductRanges(productRanges: ProductRange[]): Promise<void> {
-    // TODO: DELETE on /ranges, cascade to delete on product join table
-    return Promise.resolve();
+    let body = productRanges.map(range => range.id);
+
+    if (productRanges.length == 0) {
+      return Promise.resolve();
+    }
+    return this.http.delete(this.apiUrl + '/ranges', { body, headers: this.headers })
+      .toPromise()
+      .then(() => void(0))
+      .catch(this.handleError);
+  }
+
+
+  // /categories
+
+  private getCategoriesRaw(): Promise<CategoryResponse[]> {
+    return this.http.get(`${this.apiUrl}/categories`)
+      .toPromise()
+      .then(response => response.json().data as CategoryResponse[])
+      .catch(this.handleError);
+  }
+
+  getCategories(): Promise<Category[]> {
+    return this.getCategoriesRaw()
+      .then((categories: CategoryResponse[]) => Promise.resolve(categories.map(toCategory)));
+  }
+
+  mergeCategories(categories: Category[]): Promise<CategoryResponse[]> {
+    let body = categories.map(fromCategory);
+
+    return this.http.post(`${this.apiUrl}/categories`, body, { headers: this.headers })
+      .toPromise()
+      .then(response => response.json().data as CategoryResponse[])
+      .catch(this.handleError);
+  }
+
+  deleteCategories(categories: Category[]): Promise<void> {
+    let body = categories.map(category => category.id);
+
+    if (categories.length == 0) {
+      return Promise.resolve();
+    }
+    return this.http.delete(`${this.apiUrl}/categories`, { body, headers: this.headers })
+      .toPromise()
+      .then(() => void(0))
+      .catch(this.handleError);
+  }
+
+
+  getProductData(): Promise<{ products: Product[], categories: Category[], ranges: ProductRange[] }> {
+    let pProducts = this.getProductsRaw();
+    let pRanges = this.getProductRangesRaw();
+    let pCategories = this.getCategoriesRaw();
+
+    return Promise.all([pProducts, pRanges, pCategories])
+      .then((values: any[]) => {
+        let productsResponse: ProductResponse[] = values[0];
+        let rangesResponse: ProductRangeResponseMeta[] = values[1];
+        let categoriesResponse: CategoryResponse[] = values[2];
+
+        let categories = categoriesResponse.map(response => toCategory(response));
+        let ranges = rangesResponse.map(response => toProductRangeMeta(response));
+        let products = productsResponse.map(response => toProductEager(response, categories, ranges));
+
+        return Promise.resolve({ products, ranges, categories });
+      });
+  }
+
+
+  // /guests
+
+  private getGuestByCardRaw(card: string): Promise<GuestResponse> {
+    return this.http.get(`${this.apiUrl}/guests/card/${card}`)
+      .toPromise()
+      .then(response => response.json().data as GuestResponse)
+      .catch(this.handleError);
   }
 
   getGuestByCard(card: string): Promise<Guest> {
-    // TODO: GET on /guests/card/{card}
-    let cardGuest = GUESTS.find(guest => guest.card == card);
-    return cardGuest ? Promise.resolve(cardGuest) : Promise.reject(`Card ${card} not registered.`);
+    return this.getGuestByCardRaw(card)
+      .then((guest: GuestResponse) => Promise.resolve(toGuest(guest)))
+  }
+
+  private getGuestsPaginatedAndFilteredRaw(pageSize: number, page: number, codeLike: string, nameLike: string, mailLike: string, statusLike: string): Promise<GuestResponsePaginated> {
+    return this.http.get(`${this.apiUrl}/guests/?size=${pageSize}&page=${page}&code=${codeLike}&name=${nameLike}&mail=${mailLike}&status=${statusLike}`)
+      .toPromise()
+      .then(response => response.json().data as GuestResponsePaginated[])
+      .catch(this.handleError);
   }
 
   getGuestsPaginatedAndFiltered(pageSize: number, page: number, codeLike: string, nameLike: string, mailLike: string, statusLike: string): Promise<{ guests: Guest[], guestsTotal: number }> {
-    // TODO: GET on /guests, paginated & filtered
-    let filteredGuests = GUESTS
-      .filter(guest => guest.code.toLowerCase().indexOf(codeLike.toLowerCase()) > -1)
-      .filter(guest => guest.name.toLowerCase().indexOf(nameLike.toLowerCase()) > -1)
-      .filter(guest => guest.mail.toLowerCase().indexOf(mailLike.toLowerCase()) > -1)
-      .filter(guest => guest.status.toLowerCase().indexOf(statusLike.toLowerCase()) > -1);
-
-    return Promise.resolve({
-      guests: filteredGuests.slice(page * pageSize, page * pageSize + pageSize),
-      guestsTotal: filteredGuests.length
-    });
+    return this.getGuestsPaginatedAndFilteredRaw(pageSize, page, codeLike, nameLike, mailLike, statusLike)
+      .then((response: GuestResponsePaginated) => Promise.resolve({
+        guests: response.guests.map(toGuest),
+        guestsTotal: response.guestsTotal
+      }))
   }
 
-  getGuestsByCode(codeLike: string): Observable<Guest[]> {
-    // TODO: GET on /guests/code/{code}, partial match
-    let filteredGuests = GUESTS
-      .filter(guest => guest.code.toLowerCase().indexOf(codeLike.toLowerCase()) > -1);
-
-    return Observable.of(filteredGuests.length > 5 ? [] : filteredGuests);
+  private getGuestsByCodeRaw(codeLike: string): Observable<GuestResponse[]> {
+    return this.http.get(`${this.apiUrl}/guests/code/${codeLike}`)
+      .map(response => response.json().data as GuestResponse[])
+      .catch(this.handleError);
   }
 
-  createGuests(guests: Guest[]): Promise<Guest[]> {
-    // TODO: POST on /guests
-    console.log(guests);
-    return Promise.resolve([]);
+  getGuestsByCode(code: string): Observable<Guest[]> {
+    return this.getGuestsByCodeRaw(code).map((guests: GuestResponse[]) => guests.map(toGuest));
+  }
+
+  mergeGuests(guests: Guest[]): Promise<GuestResponse[]> {
+    let body = guests.map(fromGuest);
+
+    return this.http.post(`${this.apiUrl}/guests`, body, { headers: this.headers })
+      .toPromise()
+      .then(response => response.json().data as GuestResponse[])
+      .catch(this.handleError);
   }
 
   addBalance(guest: Guest, value: number): Promise<number> {
-    // TODO: PUT on /guests/{id}/balance
-    return Promise.resolve(guest.balance + value);
+    return this.http.put(`${this.apiUrl}/guests/${guest.id}/balance`, value, { headers: this.headers })
+      .toPromise()
+      .then(response => response.json().data as number)
+      .catch(this.handleError);
   }
 
   addBonus(guest: Guest, value: number): Promise<number> {
-    // TODO: PUT on /guests/{id}/bonus
-    return Promise.resolve(guest.bonus + value);
+    return this.http.put(`${this.apiUrl}/guests/${guest.id}/bonus`, value, { headers: this.headers })
+      .toPromise()
+      .then(response => response.json().data as number)
+      .catch(this.handleError);
   }
 
   registerCard(guest: Guest, card: string): Promise<void> {
-    // TODO: PUT on /guests/{id}/card, remove card from previous guest if exists
-    return Promise.resolve();
+    return this.http.put(`${this.apiUrl}/guests/${guest.id}/card`, card, { headers: this.headers })
+      .toPromise()
+      .then(() => void(0))
+      .catch(this.handleError);
   }
 
   checkIn(guest: Guest): Promise<Date> {
-    // TODO: POST on /guests/{id}/checkin
-    return Promise.resolve(new Date());
+    return this.http.put(`${this.apiUrl}/guests/${guest.id}/checkin`, null)
+      .toPromise()
+      .then(response => response.json().data as Date)
+      .catch(this.handleError);
   }
 
-  placeOrder(guest: Guest, products: Map<Product, number>): Promise<OrderConfirmation> {
-    // TODO: POST on /orders, check for sufficient funds
 
-    let total = 0;
-    products.forEach((quantity: number, product: Product) => total += product.price * quantity);
+  // /orders
 
-    if (guest.balance + guest.bonus >= total) {
-      if (total >= guest.bonus) {
-        guest.balance -= total - guest.bonus;
-        guest.bonus = 0;
-      } else {
-        guest.bonus -= total;
-      }
+  placeOrder(order: Order): Promise<OrderResponse> {
+    let body = fromOrder(order);
 
-      let confirmation: OrderConfirmation = {
-        products: products,
-        guest: guest,
-        total: total
-      };
-      return Promise.resolve(confirmation);
-    } else {
-      return Promise.reject(`"${guest.name}" has insufficient funds for order of total ${total.toFixed(2)}. Balance: €${guest.balance.toFixed(2)} (+ €${guest.bonus.toFixed(2)})`);
-    }
+    return this.http.post(`${this.apiUrl}/orders`, body, { headers: this.headers })
+      .toPromise()
+      .then(response => response.json().data as OrderResponse[])
+      .catch(this.handleError);
+  }
+
+
+  // /statistics
+
+  private getStatisticsRaw(): Promise<StatisticsResponse> {
+    return this.http.get(this.apiUrl + '/statistics')
+      .toPromise()
+      .then(response => response.json().data as StatisticsResponse)
+      .catch(this.handleError);
   }
 
   getStatistics(): Promise<Statistics> {
-    // TODO: GET on /statistics
-    return Promise.resolve({
-      guestsTotal: GUESTS.length,
-      guestsCheckedIn: GUESTS.filter(guest => guest.checkedIn).length,
-      cardsTotal: GUESTS.filter(guest => guest.card).length,
-      totalBalance: GUESTS.map(guest => guest.balance).reduce((a, b) => a + b, 0),
-      totalBonus: GUESTS.map(guest => guest.bonus).reduce((a, b) => a + b, 0),
-      totalSpent: 12345,
-      numProducts: ALL_PRODUCTS.length,
-      numRanges: PRODUCT_RANGES.length,
-      numCategories: CATEGORIES.length
-    });
+    return this.getStatisticsRaw()
+      .then((stats: StatisticsResponse) => Promise.resolve(toStatistics(stats)));
   }
+
 
   private handleError(error: any): Promise<any> {
-    // TODO: error handling
-    console.error('An error occurred', error);
-    return Promise.reject(error.message || error);
+    console.error('An API error occurred.', error);
+    let body = error.json();
+    return Promise.reject(`[${error.status}]${body.error ? ' ' + body.error : ''}${body.message ? ' (' + body.message + ')' : ''}`);
   }
-
 }

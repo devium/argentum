@@ -23,7 +23,7 @@ export class DashboardComponent implements OnInit {
 
   refresh(): void {
     this.restService.getStatistics()
-      .then(stats => this.stats = stats)
+      .then((stats: Statistics) => this.stats = stats)
       .catch(reason => this.message.error(`Error: ${reason}`));
   }
 
