@@ -143,20 +143,20 @@ export class OrderComponent implements OnInit {
     this.updateTotal();
   }
 
-  onRangeSwipe(event: any) {
-    if (event.direction == 2) {
-      this.rangePage = Math.min(Math.ceil(this.products.length / this.rangeProductsPerPage), this.rangePage + 1);
-    } else if (event.direction == 4) {
-      this.rangePage = Math.max(0, this.rangePage - 1);
-    }
+  onRangeSwipeLeft() {
+    this.rangePage = Math.min(Math.ceil(this.products.length / this.rangeProductsPerPage), this.rangePage + 1);
   }
 
-  onOrderSwipe(event: any) {
-    if (event.direction == 2) {
-      this.orderPage = Math.min(Math.ceil(this.orderedProducts.size / this.orderProductsPerPage), this.orderPage + 1);
-    } else if (event.direction == 4) {
-      this.orderPage = Math.max(0, this.rangePage - 1);
-    }
+  onRangeSwipeRight() {
+    this.rangePage = Math.max(0, this.rangePage - 1);
+  }
+
+  onOrderSwipeLeft() {
+    this.orderPage = Math.min(Math.ceil(this.orderedProducts.size / this.orderProductsPerPage), this.orderPage + 1);
+  }
+
+  onOrderSwipeRight() {
+    this.orderPage = Math.max(0, this.rangePage - 1);
   }
 
   placeOrder(): void {
