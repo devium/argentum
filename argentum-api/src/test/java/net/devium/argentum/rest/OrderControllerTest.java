@@ -172,7 +172,8 @@ public class OrderControllerTest {
                 "   'guestId': %s," +
                 "   'items': [" +
                 "       { 'productId': %s, 'quantity': 2 }" +
-                "   ]" +
+                "   ]," +
+                "   'customTotal': 3.20" +
                 "}";
         body = String.format(body, guest.getId(), product.getId());
         body = body.replace('\'', '"');
@@ -187,7 +188,7 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.data.items", hasSize(1)))
                 .andExpect(jsonPath("$.data.items[0].productId", is((int) product.getId())))
                 .andExpect(jsonPath("$.data.items[0].quantity", is(2)))
-                .andExpect(jsonPath("$.data.total", closeTo(7.00, 0.001)));
+                .andExpect(jsonPath("$.data.total", closeTo(10.20, 0.001)));
 
         assertThat(orderRepository.findAll(), hasSize(1));
     }
