@@ -248,7 +248,7 @@ export class RestService {
   checkIn(guest: Guest): Promise<Date> {
     return this.http.put(`${this.apiUrl}/guests/${guest.id}/checkin`, null)
       .toPromise()
-      .then(response => response.json().data as Date)
+      .then(response => new Date(response.json().data as number))
       .catch(this.handleError);
   }
 

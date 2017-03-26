@@ -19,7 +19,7 @@ export function toGuest(response: GuestResponse): Guest {
     name: response.name,
     mail: response.mail,
     status: response.status,
-    checkedIn: new Date(response.checkedIn),
+    checkedIn: response.checkedIn ? new Date(response.checkedIn) : null,
     card: response.card,
     balance: response.balance,
     bonus: response.bonus
