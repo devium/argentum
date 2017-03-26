@@ -89,11 +89,11 @@ public class StatisticsControllerTest {
         ProductEntity product3 = productRepository.save(new ProductEntity(
                 "someThirdProduct", new BigDecimal(2.50), null, Collections.emptySet()));
         ProductEntity product4 = productRepository.save(new ProductEntity(
-                "someFourthProduct", new BigDecimal(6.75), null, Collections.emptySet()));
+                "someFourthProduct", new BigDecimal(6.75), null, true, Collections.emptySet()));
         ProductEntity product5 = productRepository.save(new ProductEntity(
                 "someFifthProduct", new BigDecimal(2.50), null, Collections.emptySet()));
         ProductEntity product6 = productRepository.save(new ProductEntity(
-                "someSixthProduct", new BigDecimal(6.75), null, Collections.emptySet()));
+                "someSixthProduct", new BigDecimal(6.75), null, true, Collections.emptySet()));
 
         OrderEntity order1 = orderRepository.save(new OrderEntity(guest1, new BigDecimal(4.30)));
         OrderEntity order2 = orderRepository.save(new OrderEntity(guest2, new BigDecimal(1.20)));
@@ -109,6 +109,7 @@ public class StatisticsControllerTest {
                 .andExpect(jsonPath("$.data.totalBonus", closeTo(12.00, 0.001)))
                 .andExpect(jsonPath("$.data.totalSpent", closeTo(11.60, 0.001)))
                 .andExpect(jsonPath("$.data.numProducts", is(6)))
+                .andExpect(jsonPath("$.data.numLegacyProducts", is(2)))
                 .andExpect(jsonPath("$.data.numRanges", is(4)))
                 .andExpect(jsonPath("$.data.numCategories", is(5)));
     }

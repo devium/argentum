@@ -35,6 +35,16 @@ public class ProductEntity {
         this.productRanges = productRanges;
     }
 
+    // Mainly testing
+    public ProductEntity(String name, BigDecimal price, CategoryEntity category, boolean legacy,
+                         Set<ProductRangeEntity> productRanges) {
+        this.name = name;
+        this.price = price;
+        this.category = category;
+        this.legacy = legacy;
+        this.productRanges = productRanges;
+    }
+
     // Update
     public ProductEntity(long id, String name, BigDecimal price, CategoryEntity category,
                          Set<ProductRangeEntity> productRanges) {
