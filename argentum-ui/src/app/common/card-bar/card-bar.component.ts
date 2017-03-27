@@ -1,8 +1,8 @@
 import { animate, AnimationTransitionEvent, Component, OnInit, state, style, transition, trigger } from '@angular/core';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { RestService } from '../../common/rest-service/rest.service';
-import { Guest } from '../../common/model/guest';
-import { convertCard } from '../../common/util/convert-card';
+import { RestService } from '../rest-service/rest.service';
+import { Guest } from '../model/guest';
+import { convertCard } from '../util/convert-card';
 
 enum ScanState {
   Waiting,
@@ -37,6 +37,7 @@ export class CardBarComponent implements OnInit {
   countdownState = 'empty';
   countdownStream = new Subject();
   state: ScanState = ScanState.Waiting;
+  active = true;
 
   constructor(private restService: RestService) {
   }
@@ -62,7 +63,11 @@ export class CardBarComponent implements OnInit {
     this.keyboardSub.unsubscribe();
   }
 
-  newNumber(card: string) {
+  newNumber(card: string): void {
+    if (!this.active) {
+      return;
+    }
+
     this.card = card.slice(-10);
     this.restService.getGuestByCard(card)
       .then((guest: Guest) => {

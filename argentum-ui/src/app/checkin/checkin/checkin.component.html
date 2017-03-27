@@ -1,4 +1,5 @@
 <div class="container-fluid h-100 d-flex flex-column m-0 justify-content-center">
+  <app-card-bar></app-card-bar>
 
   <div class="row p-2 my-0 grid-max mx-auto">
     <div class="col-sm-6 p-1">
@@ -12,12 +13,16 @@
       </button>
     </div>
     <div class="col-sm-6 p-1">
-      <button (click)="recharge()" class="btn btn-primary btn-block btn-huge">
+      <button (click)="recharge()" class="btn btn-primary btn-block btn-huge"
+              [disabled]="!cardBar.guest"
+              [class.disabled]="!cardBar.guest">
         <i class="fa fa-credit-card-alt fa-lg pr-1"></i>Recharge
       </button>
     </div>
     <div class="col-sm-6 p-1">
-      <button (click)="refund()" class="btn btn-primary btn-block btn-huge">
+      <button (click)="refund()" class="btn btn-primary btn-block btn-huge"
+              [disabled]="!cardBar.guest"
+              [class.disabled]="!cardBar.guest">
         <i class="fa fa-money fa-lg pr-1"></i>Refund
       </button>
     </div>

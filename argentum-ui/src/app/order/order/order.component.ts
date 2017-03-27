@@ -6,7 +6,7 @@ import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.com
 import { isDarkBackground } from '../../common/util/is-dark-background';
 import { ProductRange } from '../../common/model/product-range';
 import { MessageComponent } from '../../common/message/message.component';
-import { CardBarComponent } from '../card-bar/card-bar.component';
+import { CardBarComponent } from '../../common/card-bar/card-bar.component';
 import { Order } from '../../common/model/order';
 import { OrderResponse } from '../../common/rest-service/response/order-response';
 
