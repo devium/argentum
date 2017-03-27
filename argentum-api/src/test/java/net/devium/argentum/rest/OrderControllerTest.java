@@ -82,16 +82,18 @@ public class OrderControllerTest {
         product1 = productRepository.save(product1);
         product2 = productRepository.save(product2);
 
-        OrderEntity order1 = orderRepository.save(new OrderEntity(guest, new BigDecimal(19.75)));
+        OrderEntity order1 = orderRepository.save(new OrderEntity(guest, new Date(), new BigDecimal(19.75)));
         orderItemRepository.save(new OrderItemEntity(product1, 2, order1));
         orderItemRepository.save(new OrderItemEntity(product2, 3, order1));
-        OrderEntity order2 = orderRepository.save(new OrderEntity(guest, new BigDecimal(4.25)));
+        OrderEntity order2 = orderRepository.save(new OrderEntity(guest, new Date(), new BigDecimal(4.25)));
         orderItemRepository.save(new OrderItemEntity(product1, 1, order2));
 
         mockMvc.perform(get("/orders"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data", hasSize(2)))
+                .andExpect(jsonPath("$.data[0].id", is((int) order1.getId())))
+                .andExpect(jsonPath("$.data[0].time", notNullValue()))
                 .andExpect(jsonPath("$.data[0].guest.id", is((int) guest.getId())))
                 .andExpect(jsonPath("$.data[0].items", hasSize(2)))
                 .andExpect(jsonPath("$.data[0].items[0].productId").isNumber())
@@ -99,6 +101,8 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.data[0].items[1].productId").isNumber())
                 .andExpect(jsonPath("$.data[0].items[1].quantity").isNumber())
                 .andExpect(jsonPath("$.data[0].total", closeTo(19.75, 0.001)))
+                .andExpect(jsonPath("$.data[1].id", is((int) order2.getId())))
+                .andExpect(jsonPath("$.data[1].time", notNullValue()))
                 .andExpect(jsonPath("$.data[1].guest.id", is((int) guest.getId())))
                 .andExpect(jsonPath("$.data[1].items", hasSize(1)))
                 .andExpect(jsonPath("$.data[1].items[0].productId").isNumber())
@@ -122,13 +126,14 @@ public class OrderControllerTest {
         ProductEntity product = new ProductEntity("someProduct", new BigDecimal(3.50), null, Collections.emptySet());
         product = productRepository.save(product);
 
-        OrderEntity order = orderRepository.save(new OrderEntity(guest, new BigDecimal(7.00)));
+        OrderEntity order = orderRepository.save(new OrderEntity(guest, new Date(), new BigDecimal(7.00)));
         orderItemRepository.save(new OrderItemEntity(product, 2, order));
 
         mockMvc.perform(get("/orders/{id}", order.getId()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id", is((int) order.getId())))
+                .andExpect(jsonPath("$.data.time", notNullValue()))
                 .andExpect(jsonPath("$.data.total", closeTo(7.00, 0.001)))
                 .andExpect(jsonPath("$.data.items", hasSize(1)))
                 .andExpect(jsonPath("$.data.items[0].productId", is((int) product.getId())))
@@ -184,6 +189,7 @@ public class OrderControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").isNumber())
+                .andExpect(jsonPath("$.data.time", notNullValue()))
                 .andExpect(jsonPath("$.data.guest.id", is((int) guest.getId())))
                 .andExpect(jsonPath("$.data.items", hasSize(1)))
                 .andExpect(jsonPath("$.data.items[0].productId", is((int) product.getId())))

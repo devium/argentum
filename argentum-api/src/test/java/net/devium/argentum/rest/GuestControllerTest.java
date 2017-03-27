@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -243,8 +244,8 @@ public class GuestControllerTest {
         GuestEntity guest = guestRepository.save(new GuestEntity(
                 "someCode", "someName", "someMail", "someStatus", null, "12341234", new BigDecimal(0), new BigDecimal(0)
         ));
-        orderRepository.save(new OrderEntity(guest, new BigDecimal(5.00)));
-        orderRepository.save(new OrderEntity(guest, new BigDecimal(3.20)));
+        orderRepository.save(new OrderEntity(guest, new Date(), new BigDecimal(5.00)));
+        orderRepository.save(new OrderEntity(guest, new Date(), new BigDecimal(3.20)));
 
         mockMvc.perform(delete("/guests/"))
                 .andDo(print())

@@ -16,10 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static net.devium.argentum.ApplicationConstants.DECIMAL_PLACES;
@@ -119,7 +116,7 @@ public class OrderController {
         }
         guestRepository.save(guest);
 
-        OrderEntity newOrder = orderRepository.save(new OrderEntity(guest, total));
+        OrderEntity newOrder = orderRepository.save(new OrderEntity(guest, new Date(), total));
         orderItems.forEach(orderItem -> orderItem.setOrder(newOrder));
         orderItems = orderItemRepository.save(orderItems);
         newOrder.setOrderItems(ImmutableSet.copyOf(orderItems));
