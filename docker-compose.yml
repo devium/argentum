@@ -6,7 +6,7 @@ services:
     image: argentum-api
     environment:
       - MYSQL_ROOT_PASSWORD
-      - MYSQL_HOSTNAME=mysql
+      - spring.datasource.url=jdbc:mysql://mysql/argentum
     ports:
       - '8080:8080'
     depends_on:
