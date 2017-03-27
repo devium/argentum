@@ -95,9 +95,9 @@ public class StatisticsControllerTest {
         ProductEntity product6 = productRepository.save(new ProductEntity(
                 "someSixthProduct", new BigDecimal(6.75), null, true, Collections.emptySet()));
 
-        OrderEntity order1 = orderRepository.save(new OrderEntity(guest1, new BigDecimal(4.30)));
-        OrderEntity order2 = orderRepository.save(new OrderEntity(guest2, new BigDecimal(1.20)));
-        OrderEntity order3 = orderRepository.save(new OrderEntity(guest3, new BigDecimal(6.10)));
+        OrderEntity order1 = orderRepository.save(new OrderEntity(guest1, new Date(), new BigDecimal(4.30)));
+        OrderEntity order2 = orderRepository.save(new OrderEntity(guest2, new Date(), new BigDecimal(1.20)));
+        OrderEntity order3 = orderRepository.save(new OrderEntity(guest3, new Date(), new BigDecimal(6.10)));
 
         mockMvc.perform(get("/statistics"))
                 .andDo(print())

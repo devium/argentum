@@ -2,6 +2,7 @@ package net.devium.argentum.jpa;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Set;
 
 @Entity
@@ -10,6 +11,8 @@ public class OrderEntity {
     @Id
     @GeneratedValue
     private long id;
+
+    private Date time;
 
     @ManyToOne
     @JoinColumn(name = "guest_id")
@@ -23,8 +26,9 @@ public class OrderEntity {
     public OrderEntity() {
     }
 
-    public OrderEntity(GuestEntity guest, BigDecimal total) {
+    public OrderEntity(GuestEntity guest, Date time, BigDecimal total) {
         this.guest = guest;
+        this.time = time;
         this.total = total;
     }
 
@@ -34,6 +38,14 @@ public class OrderEntity {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
     }
 
     public GuestEntity getGuest() {
