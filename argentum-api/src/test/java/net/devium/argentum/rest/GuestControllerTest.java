@@ -2,6 +2,8 @@ package net.devium.argentum.rest;
 
 import net.devium.argentum.jpa.GuestEntity;
 import net.devium.argentum.jpa.GuestRepository;
+import net.devium.argentum.jpa.OrderEntity;
+import net.devium.argentum.jpa.OrderRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class GuestControllerTest {
     @Autowired
     private GuestRepository guestRepository;
+    @Autowired
+    private OrderRepository orderRepository;
 
     private GuestController sut;
 
@@ -37,12 +41,13 @@ public class GuestControllerTest {
 
     @Before
     public void setUp() {
-        sut = new GuestController(guestRepository);
+        sut = new GuestController(guestRepository, orderRepository);
         mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
     }
 
     @After
     public void tearDown() throws Exception {
+        orderRepository.deleteAll();
         guestRepository.deleteAll();
     }
 
@@ -230,6 +235,22 @@ public class GuestControllerTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest());
 
+        assertThat(guestRepository.findAll(), empty());
+    }
+
+    @Test
+    public void testDeleteGuests() throws Exception {
+        GuestEntity guest = guestRepository.save(new GuestEntity(
+                "someCode", "someName", "someMail", "someStatus", null, "12341234", new BigDecimal(0), new BigDecimal(0)
+        ));
+        orderRepository.save(new OrderEntity(guest, new BigDecimal(5.00)));
+        orderRepository.save(new OrderEntity(guest, new BigDecimal(3.20)));
+
+        mockMvc.perform(delete("/guests/"))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        assertThat(orderRepository.findAll(), empty());
         assertThat(guestRepository.findAll(), empty());
     }
 
