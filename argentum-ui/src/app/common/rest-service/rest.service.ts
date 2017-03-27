@@ -252,6 +252,17 @@ export class RestService {
       .catch(this.handleError);
   }
 
+  private refundRaw(guest: Guest): Promise<GuestResponse> {
+    return this.http.put(`${this.apiUrl}/guests/${guest.id}/refund`, guest.balance, { headers: this.headers })
+      .toPromise()
+      .then(response => response.json().data as GuestResponse)
+      .catch(this.handleError);
+  }
+
+  refund(guest: Guest): Promise<Guest> {
+    return this.refundRaw(guest).then((guest: GuestResponse) => Promise.resolve(toGuest(guest)));
+  }
+
 
   // /orders
 

@@ -7,6 +7,7 @@ import { RestService } from '../../common/rest-service/rest.service';
 import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.component';
 import { CardModalComponent } from '../card-modal/card-modal.component';
 import { MessageComponent } from '../../common/message/message.component';
+import { RefundModalComponent } from '../refund-modal/refund-modal.component';
 
 @Component({
   selector: 'app-checkin',
@@ -56,6 +57,23 @@ export class CheckinComponent implements OnInit {
           .catch(reason => this.message.error(`Error: ${reason}`));
       }, () => void(0));
 
+    }, () => void(0));
+  }
+
+  refund() {
+    let cardModal = this.modalService.open(CardModalComponent, { backdrop: 'static' });
+    cardModal.result.then(card => {
+      this.restService.getGuestByCard(card)
+        .then((guest: Guest) => {
+          let refundModal = this.modalService.open(RefundModalComponent, { backdrop: 'static' });
+          (<RefundModalComponent>refundModal.componentInstance).guest = guest;
+          refundModal.result.then(() => {
+            this.restService.refund(guest)
+              .then((guestNew: Guest) => this.message.success(`Refunded "${guest.name}" for €${guest.balance}. Card unregistered.`))
+              .catch(reason => this.message.error(`Error: ${reason}`))
+          }, () => void(0));
+        })
+        .catch(reason => this.message.error(`Error: ${reason}`));
     }, () => void(0));
   }
 
