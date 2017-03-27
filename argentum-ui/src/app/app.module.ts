@@ -24,6 +24,7 @@ import { SearchGuestModalComponent } from './checkin/search-guest-modal/search-g
 import { CardModalComponent } from './checkin/card-modal/card-modal.component';
 import { MessageComponent } from './common/message/message.component';
 import { DashboardComponent } from './admin/dashboard/dashboard.component';
+import { RefundModalComponent } from './checkin/refund-modal/refund-modal.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { DashboardComponent } from './admin/dashboard/dashboard.component';
     SearchGuestModalComponent,
     CardModalComponent,
     MessageComponent,
-    DashboardComponent
+    DashboardComponent,
+    RefundModalComponent
   ],
   imports: [
     BrowserModule,
@@ -64,7 +66,8 @@ import { DashboardComponent } from './admin/dashboard/dashboard.component';
     KeypadModalComponent,
     NewGuestModalComponent,
     SearchGuestModalComponent,
-    CardModalComponent
+    CardModalComponent,
+    RefundModalComponent
   ]
 })
 export class AppModule {

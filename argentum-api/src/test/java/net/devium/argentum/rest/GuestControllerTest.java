@@ -433,8 +433,36 @@ public class GuestControllerTest {
 
     @Test
     public void testCheckInGuestNotFound() throws Exception {
-        mockMvc.perform(put("/guests/1/checkin")
-                .contentType(MediaType.APPLICATION_JSON_UTF8))
+        mockMvc.perform(put("/guests/1/checkin"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testRefund() throws Exception {
+        GuestEntity guest = guestRepository.save(new GuestEntity(
+                "someCode", "someName", "someMail", "someStatus", null, null, new BigDecimal(7), new BigDecimal(3)
+        ));
+
+        mockMvc.perform(put("/guests/{guestId}/refund", guest.getId())
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content("5.3"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.id", is((int) guest.getId())))
+                .andExpect(jsonPath("$.data.balance", closeTo(1.7, 0.001)))
+                .andExpect(jsonPath("$.data.card", nullValue()));
+
+        guest = guestRepository.findOne(guest.getId());
+        assertThat(guest.getBalance(), is(new BigDecimal(1.7).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+        assertThat(guest.getCard(), nullValue());
+    }
+
+    @Test
+    public void testRefundGuestNotFound() throws Exception {
+        mockMvc.perform(put("/guests/1/refund")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content("5.3"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }

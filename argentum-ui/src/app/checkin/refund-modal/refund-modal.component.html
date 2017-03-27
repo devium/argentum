@@ -1,0 +1,22 @@
+<div *ngIf="guest" class="modal-body mx-4 my-3 p-0 text-center">
+  Please make sure you returned the remaining balance of <br>
+  <b>€{{guest.balance | number:'1.2-2'}}</b><br>
+  to the guest<br>
+  <b>{{guest.name}}</b><br>
+  and they have returned their card to you.<br>
+  <br>
+  Balance will be reset on confirmation.
+  <div class="row mt-2">
+    <div class="col-6 p-1">
+      <button (click)="activeModal.dismiss('Cancel click')"
+              type="button" class="btn btn-secondary btn-block btn-lg">
+        <i class="fa fa-close fa-lg"></i>
+      </button>
+    </div>
+    <div class="col-6 p-1">
+      <button (click)="confirm()" type="button" class="btn btn-primary btn-block btn-lg">
+        <i class="fa fa-check fa-lg"></i>
+      </button>
+    </div>
+  </div>
+</div>
