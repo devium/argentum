@@ -41,11 +41,15 @@ input:disabled {
 }
 
 .flex-grow-1 {
-  flex-grow: 1;
+  flex-grow: 1 !important;
 }
 
 .flex-grow-2 {
-  flex-grow: 2;
+  flex-grow: 2 !important;
+}
+
+.flex-grow-3 {
+  flex-grow: 3 !important;
 }
 
 .btn:disabled,
@@ -76,4 +80,9 @@ input:disabled {
 .modal:nth-of-type(2),
 .modal-backdrop:nth-of-type(2) {
   z-index: 2100;
+}
+
+.overflow-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
