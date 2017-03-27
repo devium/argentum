@@ -35,33 +35,32 @@ export class OrderComponent implements OnInit {
   cardBar: CardBarComponent;
 
   constructor(private restService: RestService, private ngZone: NgZone, private modalService: NgbModal) {
-    window.onresize = () => {
-      this.ngZone.run(() => {
-        if (window.outerWidth < 576) {
-          this.rangeProductsPerPage = 14;
-          this.orderProductsPerPage = 6;
-          this.pagesShown = 5;
-        } else if (window.outerWidth < 768) {
-          this.rangeProductsPerPage = 23;
-          this.orderProductsPerPage = 12;
-          this.pagesShown = 10;
-        } else if (window.outerWidth < 992) {
-          this.rangeProductsPerPage = 17;
-          this.orderProductsPerPage = 9;
-          this.pagesShown = 10;
-        } else {
-          this.rangeProductsPerPage = 35;
-          this.orderProductsPerPage = 18;
-          this.pagesShown = 10;
-        }
-      });
-    };
-    window.onresize(null);
   }
 
   ngOnInit() {
+    this.onResize(window);
     this.refreshRanges();
     this.refreshProducts();
+  }
+
+  onResize(newWindow: Window): void {
+    if (newWindow.innerWidth < 576) {
+      this.rangeProductsPerPage = 14;
+      this.orderProductsPerPage = 6;
+      this.pagesShown = 5;
+    } else if (newWindow.innerWidth < 768) {
+      this.rangeProductsPerPage = 23;
+      this.orderProductsPerPage = 12;
+      this.pagesShown = 10;
+    } else if (newWindow.innerWidth < 992) {
+      this.rangeProductsPerPage = 17;
+      this.orderProductsPerPage = 9;
+      this.pagesShown = 10;
+    } else {
+      this.rangeProductsPerPage = 35;
+      this.orderProductsPerPage = 18;
+      this.pagesShown = 10;
+    }
   }
 
   refreshRanges() {
