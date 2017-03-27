@@ -13,6 +13,12 @@
     </div>
   </div>
 
+  <div *ngIf="guest" class="form-group">
+    <label for="statusInput">Status</label>
+    <input id="statusInput" disabled class="disabled form-control text-center flex-grow-1"
+           [value]="guest.status">
+  </div>
+
   <button (click)="checkIn()" type="button" [disabled]="!guest || guest.checkedIn"
           [class.disabled]="!guest || guest.checkedIn" class="btn btn-block btn-primary mb-3">
     {{ guest && guest.checkedIn ? 'Checked in at ' + guest.checkedIn.toLocaleTimeString() : 'Check in' }}
