@@ -1,4 +1,14 @@
-import { animate, AnimationTransitionEvent, Component, OnInit, state, style, transition, trigger } from '@angular/core';
+import {
+  animate,
+  AnimationTransitionEvent,
+  Component,
+  Input,
+  OnInit,
+  state,
+  style,
+  transition,
+  trigger
+} from '@angular/core';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { RestService } from '../rest-service/rest.service';
 import { Guest } from '../model/guest';
@@ -38,6 +48,9 @@ export class CardBarComponent implements OnInit {
   countdownStream = new Subject();
   state: ScanState = ScanState.Waiting;
   active = true;
+
+  @Input()
+  fullscreen: boolean;
 
   constructor(private restService: RestService) {
   }

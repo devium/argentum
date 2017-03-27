@@ -8,11 +8,13 @@ import { GuestImportComponent } from '../admin/guest-import/guest-import.compone
 import { CheckinComponent } from '../checkin/checkin/checkin.component';
 import { OrderComponent } from '../order/order/order.component';
 import { DashboardComponent } from '../admin/dashboard/dashboard.component';
+import { BalanceComponent } from '../balance/balance.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/order', pathMatch: 'full' },
   { path: 'order', component: OrderComponent },
   { path: 'checkin', component: CheckinComponent },
+  { path: 'balance', component: BalanceComponent },
   { path: 'admin', redirectTo: '/admin/dashboard', pathMatch: 'full' },
   { path: 'admin/dashboard', component: DashboardComponent },
   { path: 'admin/products', component: ProductEditorComponent },

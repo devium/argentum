@@ -1,12 +1,10 @@
 @import 'node_modules/bootstrap/scss/bootstrap';
 
-.overflow-ellipsis {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .progress span {
   position: absolute;
+}
+
+.root-size {
   font-size: 1rem;
 }
 
@@ -17,6 +15,11 @@
   min-height: 26px;
 }
 
+.progress-lg {
+  min-height: 40px;
+  max-width: 16rem;
+}
+
 .card-pad {
   height: 60px;
 }
@@ -25,4 +28,8 @@
   .card-pad {
     height: 34px;
   }
+}
+
+.div-reserve {
+  min-height: 100px;
 }

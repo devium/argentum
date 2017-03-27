@@ -26,6 +26,7 @@ import { MessageComponent } from './common/message/message.component';
 import { DashboardComponent } from './admin/dashboard/dashboard.component';
 import { RefundModalComponent } from './checkin/refund-modal/refund-modal.component';
 import { DeleteGuestsModalComponent } from './admin/delete-guests-modal/delete-guests-modal.component';
+import { BalanceComponent } from './balance/balance.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import { DeleteGuestsModalComponent } from './admin/delete-guests-modal/delete-g
     MessageComponent,
     DashboardComponent,
     RefundModalComponent,
-    DeleteGuestsModalComponent
+    DeleteGuestsModalComponent,
+    BalanceComponent
   ],
   imports: [
     BrowserModule,
