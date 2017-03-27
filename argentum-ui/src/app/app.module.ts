@@ -9,7 +9,7 @@ import { IterablePipe } from './common/pipes/iterable.pipe';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { KeypadModalComponent } from './common/keypad-modal/keypad-modal.component';
 import { RangePipe } from './common/pipes/range.pipe';
-import { CardBarComponent } from './order/card-bar/card-bar.component';
+import { CardBarComponent } from './common/card-bar/card-bar.component';
 import { AppRoutingModule } from './app-routing/app-routing.module';
 import { AdminNavComponent } from './admin/admin-nav/admin-nav.component';
 import { ProductEditorComponent } from './admin/product-editor/product-editor.component';
