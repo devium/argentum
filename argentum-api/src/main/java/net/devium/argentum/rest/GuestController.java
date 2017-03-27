@@ -2,6 +2,7 @@ package net.devium.argentum.rest;
 
 import net.devium.argentum.jpa.GuestEntity;
 import net.devium.argentum.jpa.GuestRepository;
+import net.devium.argentum.jpa.OrderRepository;
 import net.devium.argentum.rest.model.request.GuestRequest;
 import net.devium.argentum.rest.model.response.GuestResponse;
 import net.devium.argentum.rest.model.response.GuestResponsePaginated;
@@ -32,10 +33,12 @@ import static net.devium.argentum.ApplicationConstants.DECIMAL_PLACES;
 public class GuestController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private GuestRepository guestRepository;
+    private OrderRepository orderRepository;
 
     @Autowired
-    public GuestController(GuestRepository guestRepository) {
+    public GuestController(GuestRepository guestRepository, OrderRepository orderRepository) {
         this.guestRepository = guestRepository;
+        this.orderRepository = orderRepository;
     }
 
     @RequestMapping(method = RequestMethod.GET, params = {"page", "size", "code", "name", "mail", "status"},
@@ -81,6 +84,15 @@ public class GuestController {
                 .collect(Collectors.toList());
 
         return Response.ok(response);
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE)
+    @Transactional
+    public ResponseEntity<?> deleteGuests() {
+        orderRepository.deleteAll();
+        guestRepository.deleteAll();
+
+        return ResponseEntity.noContent().build();
     }
 
     @RequestMapping(path = "/card/{card}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
