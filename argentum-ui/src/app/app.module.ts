@@ -25,6 +25,7 @@ import { CardModalComponent } from './checkin/card-modal/card-modal.component';
 import { MessageComponent } from './common/message/message.component';
 import { DashboardComponent } from './admin/dashboard/dashboard.component';
 import { RefundModalComponent } from './checkin/refund-modal/refund-modal.component';
+import { DeleteGuestsModalComponent } from './admin/delete-guests-modal/delete-guests-modal.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import { RefundModalComponent } from './checkin/refund-modal/refund-modal.compon
     CardModalComponent,
     MessageComponent,
     DashboardComponent,
-    RefundModalComponent
+    RefundModalComponent,
+    DeleteGuestsModalComponent
   ],
   imports: [
     BrowserModule,
@@ -67,7 +69,8 @@ import { RefundModalComponent } from './checkin/refund-modal/refund-modal.compon
     NewGuestModalComponent,
     SearchGuestModalComponent,
     CardModalComponent,
-    RefundModalComponent
+    RefundModalComponent,
+    DeleteGuestsModalComponent
   ]
 })
 export class AppModule {

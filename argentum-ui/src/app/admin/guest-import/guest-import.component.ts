@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Guest } from '../../common/model/guest';
 import { RestService } from '../../common/rest-service/rest.service';
 import { MessageComponent } from '../../common/message/message.component';
+import { DeleteGuestsModalComponent } from '../delete-guests-modal/delete-guests-modal.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 declare let Papa: any;
 
@@ -19,7 +21,7 @@ export class GuestImportComponent implements OnInit {
   @ViewChild(MessageComponent)
   private message: MessageComponent;
 
-  constructor(private restService: RestService) {
+  constructor(private restService: RestService, private modalService: NgbModal) {
   }
 
   ngOnInit() {
@@ -71,5 +73,14 @@ export class GuestImportComponent implements OnInit {
           .catch(reason => this.message.error(`Error: ${reason}`));
       }
     });
+  }
+
+  deleteGuests() {
+    let modal = this.modalService.open(DeleteGuestsModalComponent, { backdrop: 'static' });
+    modal.result.then(() => {
+      this.restService.deleteGuests()
+        .then(() => this.message.success(`Deleted all guests and orders.`))
+        .catch(reason => this.message.error(`Error: ${reason}`));
+    }, () => void(0))
   }
 }

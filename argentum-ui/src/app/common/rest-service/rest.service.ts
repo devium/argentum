@@ -224,6 +224,13 @@ export class RestService {
       .catch(this.handleError);
   }
 
+  deleteGuests(): Promise<void> {
+    return this.http.delete(`${this.apiUrl}/guests`)
+      .toPromise()
+      .then(() => void(0))
+      .catch(this.handleError);
+  }
+
   addBalance(guest: Guest, value: number): Promise<number> {
     return this.http.put(`${this.apiUrl}/guests/${guest.id}/balance`, value, { headers: this.headers })
       .toPromise()

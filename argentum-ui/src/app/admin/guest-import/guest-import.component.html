@@ -1,8 +1,7 @@
 <app-admin-nav></app-admin-nav>
 
 <div class="container-fluid">
-
-  <div class="row my-2">
+  <div class="row mt-5">
     <div class="col-3 text-center">
       Code column
     </div>
@@ -16,7 +15,7 @@
       Status column
     </div>
   </div>
-  <div class="row my-2">
+  <div class="row mt-2 mb-5">
     <div class="col-3">
       <input class="form-control text-center" type="text" [(ngModel)]="codeCol">
     </div>
@@ -31,12 +30,20 @@
     </div>
   </div>
 
-  <div class="row">
-    <div class="col-4 offset-4 text-center my-2">
+  <div class="row my-5">
+    <div class="col-4 offset-4 text-center">
       <label class="custom-file btn btn-block btn-primary">
         <input type="file" class="custom-file-input" (change)="import($event.target)" hidden accept=".csv">
         <span class="custom-file-control text-white"><i class="fa fa-upload pr-1"></i>Upload file (.csv)</span>
       </label>
+    </div>
+  </div>
+
+  <div class="row my-5">
+    <div class="col-4 offset-4">
+      <button (click)="deleteGuests()" type="button" class="btn btn-sm btn-block btn-danger">
+        <i class="fa fa-exclamation-triangle fa-lg pr-1"></i>Delete all guests
+      </button>
     </div>
   </div>
 
