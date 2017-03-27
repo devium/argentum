@@ -5,7 +5,7 @@
 
   <div class="row">
     <div class="col-12 col-sm-4 col-md-5 p-0 text-center text-white overflow-ellipsis">
-      <span *ngIf="state == scanState.Waiting" class="align-middle text-nowrap">Waiting for scan...</span>
+      <span *ngIf="state == scanState.Waiting" class="align-middle text-nowrap">Ready for scan.</span>
       <span *ngIf="state == scanState.Valid" class="align-middle text-nowrap">
         {{guest.name | slice:0:MAX_NAME}}{{guest.name.length > MAX_NAME ? '...' : ''}}
       </span>
