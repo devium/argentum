@@ -100,7 +100,14 @@
       </div>
 
       <div class="row m-0">
-        <div class="col-12 px-1">
+        <div class="col-6 px-1">
+          <button (click)="clear()" type="button" class="btn-grid-bar"
+                  [disabled]="this.waitingForOrder || this.orderedProducts.size == 0"
+                  [class.disabled]="this.waitingForOrder || this.orderedProducts.size == 0">
+            <i class="fa fa-trash fa-lg"></i>
+          </button>
+        </div>
+        <div class="col-6 px-1">
           <button (click)="placeOrder()" type="button" class="btn-grid-bar"
                   [disabled]="this.waitingForOrder || this.orderedProducts.size == 0 || this.cardBar.state != this.cardBar.scanState.Valid"
                   [class.disabled]="this.waitingForOrder || this.orderedProducts.size == 0 || this.cardBar.state != this.cardBar.scanState.Valid">

@@ -159,6 +159,11 @@ export class OrderComponent implements OnInit {
     this.orderPage = Math.max(0, this.rangePage - 1);
   }
 
+  clear(): void {
+    this.orderedProducts.clear();
+    this.updateTotal();
+  }
+
   placeOrder(): void {
     this.waitingForOrder = true;
     let order: Order = {
