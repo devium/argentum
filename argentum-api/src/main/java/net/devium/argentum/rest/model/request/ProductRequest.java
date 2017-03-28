@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
-import static net.devium.argentum.ApplicationConstants.DECIMAL_PLACES;
+import static net.devium.argentum.constants.ApplicationConstants.DECIMAL_PLACES;
 
 public class ProductRequest {
     private Long id;

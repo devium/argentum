@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static net.devium.argentum.ApplicationConstants.DECIMAL_PLACES;
+import static net.devium.argentum.constants.ApplicationConstants.DECIMAL_PLACES;
 
 @RestController
 @RequestMapping("/orders")
