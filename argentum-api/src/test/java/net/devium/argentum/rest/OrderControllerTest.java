@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.Date;
 
 import static junit.framework.TestCase.assertTrue;
-import static net.devium.argentum.ApplicationConstants.DECIMAL_PLACES;
+import static net.devium.argentum.constants.ApplicationConstants.DECIMAL_PLACES;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import static net.devium.argentum.ApplicationConstants.DECIMAL_PLACES;
+import static net.devium.argentum.constants.ApplicationConstants.DECIMAL_PLACES;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
