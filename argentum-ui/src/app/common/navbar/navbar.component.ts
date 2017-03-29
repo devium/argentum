@@ -16,4 +16,10 @@ export class NavbarComponent implements OnInit {
     this.roles = roles ? roles.split(',') : [];
   }
 
+  hasRole(roles: string[]) {
+    return roles
+      .map(role => this.roles.indexOf(role) > -1)
+      .reduce((a, b) => a || b, false);
+  }
+
 }

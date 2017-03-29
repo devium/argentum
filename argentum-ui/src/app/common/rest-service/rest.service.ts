@@ -307,7 +307,7 @@ export class RestService {
 
 
   getUser(): Promise<UserResponse> {
-    return this.http.get(this.apiUrl + '/user', { headers: this.prepareHeaders() })
+    return this.http.get(this.apiUrl + '/users/me', { headers: this.prepareHeaders() })
       .toPromise()
       .then(response => response.json().data as UserResponse)
       .catch(this.handleError);
