@@ -48,10 +48,12 @@
   @extend .btn-block;
 }
 
+.message-wrap {
+  bottom: 15vh;
+  z-index: 10000;
+}
+
 app-message {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  max-width: 600px;
   z-index: 10000;
 }
