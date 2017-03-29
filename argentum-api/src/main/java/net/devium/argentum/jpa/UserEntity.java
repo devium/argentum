@@ -1,6 +1,7 @@
 package net.devium.argentum.jpa;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -12,7 +13,8 @@ public class UserEntity {
     private String username;
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles")
     private Set<RoleEntity> roles;
 
     public UserEntity() {
@@ -25,9 +27,10 @@ public class UserEntity {
         this.roles = roles;
     }
 
-    public UserEntity(String username, String password) {
+    public UserEntity(String username, String password, Set<RoleEntity> roles) {
         this.username = username;
         this.password = password;
+        this.roles = roles;
     }
 
     public long getId() {
@@ -56,6 +59,10 @@ public class UserEntity {
 
     public void setRoles(Set<RoleEntity> roles) {
         this.roles = roles;
+    }
+
+    public void removeRoles(List<RoleEntity> roles) {
+        this.roles.removeAll(roles);
     }
 
     @Override

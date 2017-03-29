@@ -45,7 +45,7 @@ export class RangeEditorComponent implements OnInit {
 
   loadRanges() {
     this.restService.getProductRanges()
-      .then((ranges: ProductRange[]) => this.productRanges = ranges.map(range => new EditorRange(toProductRangeMeta(range))))
+      .then((ranges: ProductRange[]) => this.productRanges = ranges.map(range => new EditorRange(range)))
       .catch(reason => this.message.error(`Error: ${reason}`));
   }
 

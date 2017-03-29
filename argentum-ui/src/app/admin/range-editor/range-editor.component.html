@@ -21,7 +21,9 @@
       </button>
     </td>
     <td class="text-center">
-      <button (click)="remove(range)" class="btn btn-danger btn-sm" [class.disabled]="!range.edited">
+      <button (click)="remove(range)" class="btn btn-danger btn-sm"
+              [class.disabled]="!range.edited"
+              [disabled]="!range.edited">
         <i class="fa fa-trash"></i>
       </button>
     </td>

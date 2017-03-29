@@ -28,7 +28,9 @@
       </button>
     </td>
     <td class="text-center">
-      <button (click)="remove(category)" class="btn btn-danger btn-sm" [class.disabled]="!category.edited">
+      <button (click)="remove(category)" class="btn btn-danger btn-sm"
+              [class.disabled]="!category.edited"
+              [disabled]="!category.edited">
         <i class="fa fa-trash"></i>
       </button>
     </td>

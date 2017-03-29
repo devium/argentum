@@ -1,4 +1,16 @@
+import { User } from '../../model/user';
+
 export class UserResponse {
-  name: string;
+  id: number;
+  username: string;
   roles: string[];
+}
+
+export function toUser(response: UserResponse): User {
+  return {
+    id: response.id,
+    username: response.username,
+    password: null,
+    roles: response.roles
+  }
 }

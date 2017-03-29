@@ -27,13 +27,15 @@ public class ProductRangeController {
     private final ProductRangeRepository productRangeRepository;
     private final ProductRepository productRepository;
     private final RoleRepository roleRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public ProductRangeController(ProductRangeRepository productRangeRepository, ProductRepository productRepository,
-                                  RoleRepository roleRepository) {
+                                  RoleRepository roleRepository, UserRepository userRepository) {
         this.productRangeRepository = productRangeRepository;
         this.productRepository = productRepository;
         this.roleRepository = roleRepository;
+        this.userRepository = userRepository;
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -119,6 +121,15 @@ public class ProductRangeController {
 
         List<RoleEntity> roles = roleRepository.findByNameIn(roleNames);
 
+        // Unlink users from roles.
+        Set<UserEntity> modifiedUsers = roles.stream()
+                .map(RoleEntity::getUsers)
+                .flatMap(Set::stream)
+                .collect(Collectors.toSet());
+
+        modifiedUsers.forEach(user -> user.removeRoles(roles));
+
+        userRepository.save(modifiedUsers);
         roleRepository.delete(roles);
         productRepository.save(modifiedProducts);
         productRangeRepository.delete(ranges);
