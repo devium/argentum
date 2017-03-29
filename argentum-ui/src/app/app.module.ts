@@ -30,6 +30,7 @@ import { BalanceComponent } from './scan/balance.component';
 import { RouteGuard } from './app-routing/route-guard';
 import { LoginComponent } from './login/login.component';
 import { DummyComponent } from './dummy/dummy.component';
+import { UserEditorComponent } from './admin/user-editor/user-editor.component';
 
 @NgModule({
   declarations: [
@@ -56,7 +57,8 @@ import { DummyComponent } from './dummy/dummy.component';
     DeleteGuestsModalComponent,
     BalanceComponent,
     LoginComponent,
-    DummyComponent
+    DummyComponent,
+    UserEditorComponent
   ],
   imports: [
     BrowserModule,

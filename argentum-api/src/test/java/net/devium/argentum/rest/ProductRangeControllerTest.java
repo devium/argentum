@@ -134,7 +134,7 @@ public class ProductRangeControllerTest {
         RoleEntity role1 = roleRepository.save(new RoleEntity(String.format("RANGE_%s", range1.getId())));
         RoleEntity role2 = roleRepository.save(new RoleEntity(String.format("RANGE_%s", range2.getId())));
         RoleEntity role3 = roleRepository.save(new RoleEntity(String.format("RANGE_%s", range3.getId())));
-        UserEntity user = userRepository.save(new UserEntity("someUser", "somePassword", ImmutableSet.of(role1)));
+        UserEntity user = userRepository.save(new UserEntity("someUser", "somePassword"));
 
         String body = String.format("[ %s, %s ]", range1.getId(), range2.getId());
 

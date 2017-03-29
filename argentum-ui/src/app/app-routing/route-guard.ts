@@ -41,6 +41,7 @@ export class RouteGuard implements CanActivate {
           case 'admin/ranges':
           case 'admin/guests':
           case 'admin/import':
+          case 'admin/users':
             return this.redirectIfNotAllowed(user.roles, ['ADMIN']);
         }
       })
@@ -71,15 +72,22 @@ export class RouteGuard implements CanActivate {
   }
 
   redirectHome(roles: string[]): Promise<boolean> {
+    console.log(roles);
+
     let redirect: string;
     if (roles.indexOf("ADMIN") > -1) {
       redirect = '/admin';
+    } else if (roles.indexOf("ORDER") > -1) {
+      redirect = '/order';
+    } else if (roles.indexOf("CHECKIN") > -1) {
+      redirect = '/checkin';
     } else if (roles.indexOf("SCAN") > -1) {
       redirect = '/scan';
     } else {
+      this.logout();
       redirect = '/login';
     }
-    console.log(`redirecting to ${redirect}`);
+    console.log(`Redirecting to ${redirect}`);
     this.router.navigate([redirect]);
 
     return Promise.resolve(false);
