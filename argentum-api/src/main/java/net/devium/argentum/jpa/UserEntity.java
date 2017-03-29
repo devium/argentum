@@ -25,10 +25,9 @@ public class UserEntity {
         this.roles = roles;
     }
 
-    public UserEntity(String username, String password, Set<RoleEntity> roles) {
+    public UserEntity(String username, String password) {
         this.username = username;
         this.password = password;
-        this.roles = roles;
     }
 
     public long getId() {

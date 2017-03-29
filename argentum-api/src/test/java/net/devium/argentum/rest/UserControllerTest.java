@@ -57,10 +57,10 @@ public class UserControllerTest {
         RoleEntity role1 = roleRepository.save(new RoleEntity("RANGE_SOMETHING"));
         RoleEntity role2 = roleRepository.findByNameContains("ADMIN").get(0);
         UserEntity user1 = userRepository.save(
-                new UserEntity("someName", "somePassword", ImmutableSet.of(role1, role2))
+                new UserEntity("someName", "somePassword")
         );
         UserEntity user2 = userRepository.save(
-                new UserEntity("someOtherName", "someOtherPassword", ImmutableSet.of(role1))
+                new UserEntity("someOtherName", "someOtherPassword")
         );
 
         String body = "[" +
@@ -170,7 +170,7 @@ public class UserControllerTest {
 
     @Test
     public void testMergeUsersExistingUsername() throws Exception {
-        UserEntity user1 = userRepository.save(new UserEntity("someName", "somePassword", Collections.emptySet()));
+        UserEntity user1 = userRepository.save(new UserEntity("someName", "somePassword"));
 
         String body = "[" +
                 "   {" +
@@ -195,9 +195,9 @@ public class UserControllerTest {
 
     @Test
     public void testDeleteUsers() throws Exception {
-        UserEntity user1 = userRepository.save(new UserEntity("someName", "somePassword", Collections.emptySet()));
+        UserEntity user1 = userRepository.save(new UserEntity("someName", "somePassword"));
         UserEntity user2 = userRepository.save(
-                new UserEntity("someOtherName", "someOtherPassword", Collections.emptySet())
+                new UserEntity("someOtherName", "someOtherPassword")
         );
 
         String body = "[ %s ]";

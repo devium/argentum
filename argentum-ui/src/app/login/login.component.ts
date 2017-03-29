@@ -32,6 +32,7 @@ export class LoginComponent implements OnInit {
       .then(((response: TokenResponse) => {
         this.restService.getUser()
           .then((user: UserResponse) => {
+            this.waitingForLogin = false;
             this.router.navigate(['/home']);
           })
           .catch(reason => {
