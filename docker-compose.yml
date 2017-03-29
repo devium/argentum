@@ -4,6 +4,7 @@ services:
   api:
     build: argentum-api
     image: argentum-api
+    image: 514036853215.dkr.ecr.eu-central-1.amazonaws.com/argentum-api:latest
     environment:
       - MYSQL_ROOT_PASSWORD
       - spring.datasource.url=jdbc:mysql://mysql/argentum
