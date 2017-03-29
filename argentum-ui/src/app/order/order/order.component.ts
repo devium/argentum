@@ -65,7 +65,12 @@ export class OrderComponent implements OnInit {
 
   refreshRanges() {
     this.restService.getProductRanges()
-      .then((ranges: ProductRange[]) => this.productRanges = ranges)
+      .then((ranges: ProductRange[]) => {
+        this.productRanges = ranges;
+        if (ranges.length == 1) {
+          this.setProductRange(ranges[0]);
+        }
+      })
       .catch(reason => this.message.error(`Error: ${reason}`));
   }
 

@@ -3,22 +3,22 @@
   <div class="row m-0">
     <div class="col-11 row p-0 m-0">
 
-      <div *ngIf="roles.indexOf('ORDER') > -1" class="col-3 text-center px-1">
+      <div *ngIf="hasRole(['ORDER', 'ADMIN'])" class="col-3 text-center px-1">
         <a routerLink="/order" routerLinkActive="active">
           <button type="button" class="btn btn-primary btn-block btn-sm">Order</button>
         </a>
       </div>
-      <div *ngIf="roles.indexOf('CHECKIN') > -1" class="col-3 text-center px-1">
+      <div *ngIf="hasRole(['CHECKIN', 'ADMIN'])" class="col-3 text-center px-1">
         <a routerLink="/checkin" routerLinkActive="active">
           <button type="button" class="btn btn-primary btn-block btn-sm">Check-in</button>
         </a>
       </div>
-      <div *ngIf="roles.indexOf('SCAN') > -1" class="col-3 text-center px-1">
+      <div *ngIf="hasRole(['SCAN', 'ADMIN'])" class="col-3 text-center px-1">
         <a routerLink="/scan" routerLinkActive="active">
           <button type="button" class="btn btn-primary btn-block btn-sm">Scan</button>
         </a>
       </div>
-      <div *ngIf="roles.indexOf('ADMIN') > -1" class="col-3 text-center px-1">
+      <div *ngIf="hasRole(['ADMIN'])" class="col-3 text-center px-1">
         <a routerLink="/admin" routerLinkActive="active">
           <button type="button" class="btn btn-primary btn-block btn-sm">Admin</button>
         </a>
