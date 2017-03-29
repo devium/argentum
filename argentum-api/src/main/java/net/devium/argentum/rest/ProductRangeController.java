@@ -1,5 +1,6 @@
 package net.devium.argentum.rest;
 
+import com.google.common.collect.ImmutableSet;
 import net.devium.argentum.jpa.*;
 import net.devium.argentum.rest.model.request.ProductRangeRequest;
 import net.devium.argentum.rest.model.response.ProductRangeResponseEager;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.invoke.MethodHandles;
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,8 +41,24 @@ public class ProductRangeController {
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<?> getProductRanges() {
+    public ResponseEntity<?> getProductRanges(Principal principal) {
+        Set<String> roles;
+
+        if (principal == null) {
+            // For testing purposes. Real requests are always authenticated.
+            roles = ImmutableSet.of("ALL_RANGES");
+        } else {
+            UserEntity user = userRepository.findByUsername(principal.getName());
+
+            roles = user.getRoles().stream()
+                    .map(RoleEntity::getName)
+                    .collect(Collectors.toSet());
+        }
+
         List<ProductRangeResponseMeta> response = productRangeRepository.findAll().stream()
+                .filter(range -> roles.contains("ALL_RANGES")
+                        || roles.contains("ADMIN")
+                        || roles.contains(String.format("RANGE_%s", range.getId())))
                 .map(ProductRangeResponseMeta::from)
                 .collect(Collectors.toList());
 

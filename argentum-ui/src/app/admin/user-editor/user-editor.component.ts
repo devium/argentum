@@ -112,7 +112,7 @@ export class UserEditorComponent implements OnInit {
   private newUser() {
     let newUser = new EditorUser({
       id: -1,
-      username: 'User',
+      username: 'user',
       password: '',
       roles: []
     });
