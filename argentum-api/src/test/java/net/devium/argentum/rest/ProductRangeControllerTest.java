@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -31,6 +32,10 @@ public class ProductRangeControllerTest {
     private CategoryRepository categoryRepository;
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private RoleRepository roleRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     private ProductRangeController sut;
 
@@ -38,7 +43,7 @@ public class ProductRangeControllerTest {
 
     @Before
     public void setUp() {
-        sut = new ProductRangeController(productRangeRepository, productRepository);
+        sut = new ProductRangeController(productRangeRepository, productRepository, roleRepository, userRepository);
         mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
     }
 
@@ -47,6 +52,8 @@ public class ProductRangeControllerTest {
         productRepository.deleteAll();
         categoryRepository.deleteAll();
         productRangeRepository.deleteAll();
+        List<RoleEntity> rangeRoles = roleRepository.findByNameContains("RANGE\\_");
+        roleRepository.delete(rangeRoles);
     }
 
     @Test
@@ -75,6 +82,7 @@ public class ProductRangeControllerTest {
     @Test
     public void testMergeProductRanges() throws Exception {
         ProductRangeEntity range1 = productRangeRepository.save(new ProductRangeEntity("someName"));
+        RoleEntity role1 = roleRepository.save(new RoleEntity(String.format("RANGE_%s", range1.getId())));
 
         String body = "[" +
                 "   { 'id': %s, 'name': 'someUpdatedName' }," +
@@ -100,9 +108,22 @@ public class ProductRangeControllerTest {
                 .andExpect(jsonPath("$.data[3].id").isNumber())
                 .andExpect(jsonPath("$.data[3].name", is("")));
 
-        assertThat(productRangeRepository.findAll(), hasSize(4));
+        List<ProductRangeEntity> ranges = productRangeRepository.findAll();
+        assertThat(ranges, hasSize(4));
         range1 = productRangeRepository.findOne(range1.getId());
         assertThat(range1.getName(), is("someUpdatedName"));
+
+        List<RoleEntity> roles = roleRepository.findAll();
+        assertThat(roles, hasSize(5 + 4));
+        assertThat(roles.get(0).getName(), is("ADMIN"));
+        assertThat(roles.get(1).getName(), is("ORDER"));
+        assertThat(roles.get(2).getName(), is("CHECKIN"));
+        assertThat(roles.get(3).getName(), is("SCAN"));
+        assertThat(roles.get(4).getName(), is("ALL_RANGES"));
+        assertThat(roles.get(5).getName(), is(String.format("RANGE_%s", range1.getId())));
+        assertThat(roles.get(6).getName(), is(String.format("RANGE_%s", ranges.get(1).getId())));
+        assertThat(roles.get(7).getName(), is(String.format("RANGE_%s", ranges.get(2).getId())));
+        assertThat(roles.get(8).getName(), is(String.format("RANGE_%s", ranges.get(3).getId())));
     }
 
     @Test
@@ -110,6 +131,12 @@ public class ProductRangeControllerTest {
         ProductRangeEntity range1 = productRangeRepository.save(new ProductRangeEntity("someName"));
         ProductRangeEntity range2 = productRangeRepository.save(new ProductRangeEntity("someOtherName"));
         ProductRangeEntity range3 = productRangeRepository.save(new ProductRangeEntity("someThirdName"));
+        RoleEntity role1 = roleRepository.save(new RoleEntity(String.format("RANGE_%s", range1.getId())));
+        RoleEntity role2 = roleRepository.save(new RoleEntity(String.format("RANGE_%s", range2.getId())));
+        RoleEntity role3 = roleRepository.save(new RoleEntity(String.format("RANGE_%s", range3.getId())));
+        UserEntity user = userRepository.save(
+                new UserEntity("someUser", "somePassword", ImmutableSet.of(role1, role2))
+        );
 
         String body = String.format("[ %s, %s ]", range1.getId(), range2.getId());
 
@@ -121,6 +148,17 @@ public class ProductRangeControllerTest {
 
         assertThat(productRangeRepository.findAll(), hasSize(1));
         assertThat(productRangeRepository.findOne(range3.getId()), notNullValue());
+
+        List<RoleEntity> roles = roleRepository.findAll();
+        assertThat(roles, hasSize(5 + 1));
+        assertThat(roles.get(0).getName(), is("ADMIN"));
+        assertThat(roles.get(1).getName(), is("ORDER"));
+        assertThat(roles.get(2).getName(), is("CHECKIN"));
+        assertThat(roles.get(3).getName(), is("SCAN"));
+        assertThat(roles.get(4).getName(), is("ALL_RANGES"));
+        assertThat(roles.get(5).getName(), is(String.format("RANGE_%s", range3.getId())));
+        assertThat(userRepository.findOne(user.getId()).getRoles(), empty());
+        userRepository.delete(user.getId());
     }
 
     @Test

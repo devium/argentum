@@ -5,23 +5,31 @@ import { RangeEditorComponent } from '../admin/range-editor/range-editor.compone
 import { CategoryEditorComponent } from '../admin/category-editor/category-editor.component';
 import { GuestEditorComponent } from '../admin/guest-editor/guest-editor.component';
 import { GuestImportComponent } from '../admin/guest-import/guest-import.component';
-import { CheckinComponent } from '../checkin/checkin/checkin.component';
+import { ScanComponent } from '../checkin/checkin/scan.component';
 import { OrderComponent } from '../order/order/order.component';
 import { DashboardComponent } from '../admin/dashboard/dashboard.component';
-import { BalanceComponent } from '../balance/balance.component';
+import { BalanceComponent } from '../scan/balance.component';
+import { RouteGuard } from './route-guard';
+import { LoginComponent } from '../login/login.component';
+import { DummyComponent } from '../dummy/dummy.component';
+import { UserEditorComponent } from '../admin/user-editor/user-editor.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/order', pathMatch: 'full' },
-  { path: 'order', component: OrderComponent },
-  { path: 'checkin', component: CheckinComponent },
-  { path: 'balance', component: BalanceComponent },
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: 'home', component: DummyComponent, canActivate: [RouteGuard] },
+  { path: 'login', component: LoginComponent, canActivate: [RouteGuard] },
+  { path: 'logout', component: DummyComponent, canActivate: [RouteGuard] },
+  { path: 'order', component: OrderComponent, canActivate: [RouteGuard] },
+  { path: 'checkin', component: ScanComponent, canActivate: [RouteGuard] },
+  { path: 'scan', component: BalanceComponent, canActivate: [RouteGuard] },
   { path: 'admin', redirectTo: '/admin/dashboard', pathMatch: 'full' },
-  { path: 'admin/dashboard', component: DashboardComponent },
-  { path: 'admin/products', component: ProductEditorComponent },
-  { path: 'admin/categories', component: CategoryEditorComponent },
-  { path: 'admin/ranges', component: RangeEditorComponent },
-  { path: 'admin/guests', component: GuestEditorComponent },
-  { path: 'admin/import', component: GuestImportComponent }
+  { path: 'admin/dashboard', component: DashboardComponent, canActivate: [RouteGuard] },
+  { path: 'admin/products', component: ProductEditorComponent, canActivate: [RouteGuard] },
+  { path: 'admin/categories', component: CategoryEditorComponent, canActivate: [RouteGuard] },
+  { path: 'admin/ranges', component: RangeEditorComponent, canActivate: [RouteGuard] },
+  { path: 'admin/guests', component: GuestEditorComponent, canActivate: [RouteGuard] },
+  { path: 'admin/import', component: GuestImportComponent, canActivate: [RouteGuard] },
+  { path: 'admin/users', component: UserEditorComponent, canActivate: [RouteGuard] }
 ];
 @NgModule({
   imports: [

@@ -1,0 +1,147 @@
+<app-admin-nav></app-admin-nav>
+
+<table class="table table-sm table-striped">
+<thead>
+<tr>
+  <th rowspan="3">Username</th>
+  <th rowspan="3">Password</th>
+  <th [colSpan]="ranges.length + 5">Permissions</th>
+</tr>
+<tr>
+  <th rowspan="2" class="rotate"><div>Admin</div></th>
+  <th rowspan="2" class="rotate"><div>Order</div></th>
+  <th rowspan="2" class="rotate"><div>Check-in</div></th>
+  <th rowspan="2" class="rotate"><div>Scan</div></th>
+  <th rowspan="2" class="rotate"><div>All ranges</div></th>
+  <th [colSpan]="ranges.length">Product ranges</th>
+</tr>
+<tr>
+  <th *ngFor="let range of ranges" class="rotate">
+    <div>{{range.name}}</div>
+  </th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr *ngFor="let user of users" [class.changed]="user.changed" [class.removed]="!user.edited">
+  <td>
+    <input [(ngModel)]="user.displayed.username" (input)="changeUsername(user, $event.target.value)"
+           class="form-control p-1"
+           [disabled]="!user.edited || (user.original && user.original.username == 'admin')"
+           [class.disabled]="!user.edited || (user.original && user.original.username == 'admin')">
+  </td>
+  <td>
+    <input [(ngModel)]="user.displayed.password" (input)="changePassword(user, $event.target.value)"
+           type="password"
+           class="form-control p-1" [class.disabled]="!user.edited" [disabled]="!user.edited">
+  </td>
+
+  <td>
+    <label class="custom-control custom-checkbox m-0 checkbox-sm">
+      <input type="checkbox" class="custom-control-input m-0"
+             [checked]="user.displayed.roles.indexOf('ADMIN') > -1"
+             (change)="toggleRole(user, 'ADMIN')"
+             [disabled]="!user.edited || (user.original && user.original.username == 'admin')"
+             [class.disabled]="!user.edited || (user.original && user.original.username == 'admin')">
+      <span class="custom-control-indicator"></span>
+    </label>
+  </td>
+  <td>
+    <label class="custom-control custom-checkbox m-0 checkbox-sm">
+      <input type="checkbox" class="custom-control-input m-0"
+             [checked]="user.displayed.roles.indexOf('ORDER') > -1"
+             (change)="toggleRole(user, 'ORDER')"
+             [class.disabled]="!user.edited"
+             [disabled]="!user.edited">
+      <span class="custom-control-indicator"></span>
+    </label>
+  </td>
+  <td>
+    <label class="custom-control custom-checkbox m-0 checkbox-sm">
+      <input type="checkbox" class="custom-control-input m-0"
+             [checked]="user.displayed.roles.indexOf('CHECKIN') > -1"
+             (change)="toggleRole(user, 'CHECKIN')"
+             [class.disabled]="!user.edited"
+             [disabled]="!user.edited">
+      <span class="custom-control-indicator"></span>
+    </label>
+  </td>
+  <td>
+    <label class="custom-control custom-checkbox m-0 checkbox-sm">
+      <input type="checkbox" class="custom-control-input m-0"
+             [checked]="user.displayed.roles.indexOf('SCAN') > -1"
+             (change)="toggleRole(user, 'SCAN')"
+             [class.disabled]="!user.edited"
+             [disabled]="!user.edited">
+      <span class="custom-control-indicator"></span>
+    </label>
+  </td>
+  <td>
+    <label class="custom-control custom-checkbox m-0 checkbox-sm">
+      <input type="checkbox" class="custom-control-input m-0"
+             [checked]="user.displayed.roles.indexOf('ALL_RANGES') > -1"
+             (change)="toggleRole(user, 'ALL_RANGES')"
+             [class.disabled]="!user.edited"
+             [disabled]="!user.edited">
+      <span class="custom-control-indicator"></span>
+    </label>
+  </td>
+
+  <td *ngFor="let range of ranges">
+    <label class="custom-control custom-checkbox m-0 checkbox-sm">
+      <input type="checkbox" class="custom-control-input m-0"
+             [checked]="user.displayed.roles.indexOf('RANGE_' + range.id) > -1"
+             (change)="toggleRole(user, 'RANGE_' + range.id)"
+             [class.disabled]="!user.edited"
+             [disabled]="!user.edited">
+      <span class="custom-control-indicator"></span>
+    </label>
+  </td>
+
+
+  <td class="text-center">
+    <button (click)="reset(user)" class="btn btn-primary btn-sm"
+            [class.disabled]="(!user.changed && user.edited) || !user.original"
+            [disabled]="!user.changed && user.edited || !user.original">
+      <i class="fa fa-undo"></i>
+    </button>
+  </td>
+  <td class="text-center">
+    <button (click)="remove(user)" class="btn btn-danger btn-sm"
+            [disabled]="!user.edited || (user.original && user.original.username == 'admin')"
+            [class.disabled]="!user.edited || (user.original && user.original.username == 'admin')">
+      <i class="fa fa-trash"></i>
+    </button>
+  </td>
+
+</tr>
+
+<tr>
+  <td [colSpan]="7 + ranges.length + 2">
+    <div class="row m-0">
+      <div class="col-4 px-1">
+        <button (click)="newUser()" class="btn btn-block btn-primary btn-sm">
+          <i class="fa fa-plus pr-1"></i><span>New user</span>
+        </button>
+      </div>
+      <div class="col-4 px-1">
+        <button (click)="resetAll()" class="btn btn-block btn-primary btn-sm">
+          <i class="fa fa-undo pr-1"></i><span>Reset all</span>
+        </button>
+      </div>
+      <div class="col-4 px-1">
+        <button (click)="save()" class="btn btn-block btn-primary btn-sm">
+          <i class="fa fa-save pr-1"></i>Save changes
+        </button>
+      </div>
+    </div>
+  </td>
+</tr>
+
+</tbody>
+</table>
+
+<app-message></app-message>
+
+<app-navbar></app-navbar>

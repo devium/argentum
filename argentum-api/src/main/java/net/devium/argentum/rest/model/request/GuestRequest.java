@@ -5,7 +5,7 @@ import net.devium.argentum.jpa.GuestEntity;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import static net.devium.argentum.ApplicationConstants.DECIMAL_PLACES;
+import static net.devium.argentum.constants.ApplicationConstants.DECIMAL_PLACES;
 
 public class GuestRequest {
     private Long id;

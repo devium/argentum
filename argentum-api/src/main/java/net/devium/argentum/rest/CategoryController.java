@@ -85,7 +85,7 @@ public class CategoryController {
         }
 
         if (!unknownCategories.isEmpty()) {
-            String message = String.format("Product range(s) %s not found.", unknownCategories);
+            String message = String.format("Category/ies %s not found.", unknownCategories);
             LOGGER.info(message);
             return Response.notFound(message);
         }

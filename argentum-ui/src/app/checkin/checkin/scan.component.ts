@@ -11,10 +11,10 @@ import { CardBarComponent } from '../../common/card-bar/card-bar.component';
 
 @Component({
   selector: 'app-checkin',
-  templateUrl: 'checkin.component.html',
-  styleUrls: ['checkin.component.scss']
+  templateUrl: 'scan.component.html',
+  styleUrls: ['scan.component.scss']
 })
-export class CheckinComponent implements OnInit {
+export class ScanComponent implements OnInit {
   @ViewChild(MessageComponent)
   private message: MessageComponent;
   @ViewChild(CardBarComponent)

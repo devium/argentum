@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Headers, Http } from '@angular/http';
+import { Headers, Http, URLSearchParams } from '@angular/http';
 import { Product } from '../model/product';
 import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/map';
@@ -23,19 +23,29 @@ import { fromGuest } from './request/guest-request';
 import { StatisticsResponse, toStatistics } from './response/statistics-response';
 import { OrderResponse } from './response/order-response';
 import { fromOrder } from './request/order-request';
+import { toUser, UserResponse } from './response/user-response';
+import { TokenResponse } from './response/token-response';
+import { User } from '../model/user';
+import { fromUser } from './request/user-request';
 
 @Injectable()
 export class RestService {
   private readonly apiUrl = environment.apiUrl;
-  private readonly headers = new Headers({ 'Content-Type': 'application/json' });
 
   constructor(private http: Http) {
+  }
+
+  private prepareHeaders(): Headers {
+    return new Headers({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    });
   }
 
   // /products
 
   private getProductsRaw(): Promise<ProductResponse[]> {
-    return this.http.get(`${this.apiUrl}/products`)
+    return this.http.get(`${this.apiUrl}/products`, { headers: this.prepareHeaders() })
       .toPromise()
       .then(response => response.json().data as ProductResponse[])
       .catch(this.handleError);
@@ -43,7 +53,7 @@ export class RestService {
 
   mergeProducts(products: Product[]): Promise<ProductResponse[]> {
     let body = products.map(fromProduct);
-    return this.http.post(`${this.apiUrl}/products`, body, { headers: this.headers })
+    return this.http.post(`${this.apiUrl}/products`, body, { headers: this.prepareHeaders() })
       .toPromise()
       .then(response => response.json().data as Product[])
       .catch(this.handleError);
@@ -55,7 +65,7 @@ export class RestService {
     if (products.length == 0) {
       return Promise.resolve();
     }
-    return this.http.delete(`${this.apiUrl}/products`, { body, headers: this.headers })
+    return this.http.delete(`${this.apiUrl}/products`, { body, headers: this.prepareHeaders() })
       .toPromise()
       .then(() => void(0))
       .catch(this.handleError);
@@ -65,7 +75,7 @@ export class RestService {
   // /ranges
 
   private getProductRangesRaw(): Promise<ProductRangeResponseMeta[]> {
-    return this.http.get(`${this.apiUrl}/ranges`)
+    return this.http.get(`${this.apiUrl}/ranges`, { headers: this.prepareHeaders() })
       .toPromise()
       .then(response => response.json().data as ProductRangeResponseMeta[])
       .catch(this.handleError);
@@ -77,7 +87,7 @@ export class RestService {
   }
 
   private getProductRangeRaw(range: ProductRange): Promise<ProductRangeResponseEager> {
-    return this.http.get(`${this.apiUrl}/ranges/${range.id}`)
+    return this.http.get(`${this.apiUrl}/ranges/${range.id}`, { headers: this.prepareHeaders() })
       .toPromise()
       .then(response => response.json().data as ProductRangeResponseEager)
       .catch(this.handleError);
@@ -101,7 +111,7 @@ export class RestService {
   mergeProductRanges(productRanges: ProductRange[]): Promise<ProductRangeResponseMeta[]> {
     let body = productRanges.map(fromProductRange);
 
-    return this.http.post(`${this.apiUrl}/ranges`, body, { headers: this.headers })
+    return this.http.post(`${this.apiUrl}/ranges`, body, { headers: this.prepareHeaders() })
       .toPromise()
       .then(response => response.json().data as ProductRangeResponseMeta[])
       .catch(this.handleError);
@@ -113,7 +123,7 @@ export class RestService {
     if (productRanges.length == 0) {
       return Promise.resolve();
     }
-    return this.http.delete(this.apiUrl + '/ranges', { body, headers: this.headers })
+    return this.http.delete(this.apiUrl + '/ranges', { body, headers: this.prepareHeaders() })
       .toPromise()
       .then(() => void(0))
       .catch(this.handleError);
@@ -123,7 +133,7 @@ export class RestService {
   // /categories
 
   private getCategoriesRaw(): Promise<CategoryResponse[]> {
-    return this.http.get(`${this.apiUrl}/categories`)
+    return this.http.get(`${this.apiUrl}/categories`, { headers: this.prepareHeaders() })
       .toPromise()
       .then(response => response.json().data as CategoryResponse[])
       .catch(this.handleError);
@@ -137,7 +147,7 @@ export class RestService {
   mergeCategories(categories: Category[]): Promise<CategoryResponse[]> {
     let body = categories.map(fromCategory);
 
-    return this.http.post(`${this.apiUrl}/categories`, body, { headers: this.headers })
+    return this.http.post(`${this.apiUrl}/categories`, body, { headers: this.prepareHeaders() })
       .toPromise()
       .then(response => response.json().data as CategoryResponse[])
       .catch(this.handleError);
@@ -149,7 +159,7 @@ export class RestService {
     if (categories.length == 0) {
       return Promise.resolve();
     }
-    return this.http.delete(`${this.apiUrl}/categories`, { body, headers: this.headers })
+    return this.http.delete(`${this.apiUrl}/categories`, { body, headers: this.prepareHeaders() })
       .toPromise()
       .then(() => void(0))
       .catch(this.handleError);
@@ -179,7 +189,7 @@ export class RestService {
   // /guests
 
   private getGuestByCardRaw(card: string): Promise<GuestResponse> {
-    return this.http.get(`${this.apiUrl}/guests/card/${card}`)
+    return this.http.get(`${this.apiUrl}/guests/card/${card}`, { headers: this.prepareHeaders() })
       .toPromise()
       .then(response => response.json().data as GuestResponse)
       .catch(this.handleError);
@@ -191,7 +201,7 @@ export class RestService {
   }
 
   private getGuestsPaginatedAndFilteredRaw(pageSize: number, page: number, codeLike: string, nameLike: string, mailLike: string, statusLike: string): Promise<GuestResponsePaginated> {
-    return this.http.get(`${this.apiUrl}/guests/?size=${pageSize}&page=${page}&code=${codeLike}&name=${nameLike}&mail=${mailLike}&status=${statusLike}`)
+    return this.http.get(`${this.apiUrl}/guests/?size=${pageSize}&page=${page}&code=${codeLike}&name=${nameLike}&mail=${mailLike}&status=${statusLike}`, { headers: this.prepareHeaders() })
       .toPromise()
       .then(response => response.json().data as GuestResponsePaginated[])
       .catch(this.handleError);
@@ -206,7 +216,7 @@ export class RestService {
   }
 
   private getGuestsByCodeRaw(codeLike: string): Observable<GuestResponse[]> {
-    return this.http.get(`${this.apiUrl}/guests/code/${codeLike}`)
+    return this.http.get(`${this.apiUrl}/guests/code/${codeLike}`, { headers: this.prepareHeaders() })
       .map(response => response.json().data as GuestResponse[])
       .catch(this.handleError);
   }
@@ -218,49 +228,49 @@ export class RestService {
   mergeGuests(guests: Guest[]): Promise<GuestResponse[]> {
     let body = guests.map(fromGuest);
 
-    return this.http.post(`${this.apiUrl}/guests`, body, { headers: this.headers })
+    return this.http.post(`${this.apiUrl}/guests`, body, { headers: this.prepareHeaders() })
       .toPromise()
       .then(response => response.json().data as GuestResponse[])
       .catch(this.handleError);
   }
 
   deleteGuests(): Promise<void> {
-    return this.http.delete(`${this.apiUrl}/guests`)
+    return this.http.delete(`${this.apiUrl}/guests`, { headers: this.prepareHeaders() })
       .toPromise()
       .then(() => void(0))
       .catch(this.handleError);
   }
 
   addBalance(guest: Guest, value: number): Promise<number> {
-    return this.http.put(`${this.apiUrl}/guests/${guest.id}/balance`, value, { headers: this.headers })
+    return this.http.put(`${this.apiUrl}/guests/${guest.id}/balance`, value, { headers: this.prepareHeaders() })
       .toPromise()
       .then(response => response.json().data as number)
       .catch(this.handleError);
   }
 
   addBonus(guest: Guest, value: number): Promise<number> {
-    return this.http.put(`${this.apiUrl}/guests/${guest.id}/bonus`, value, { headers: this.headers })
+    return this.http.put(`${this.apiUrl}/guests/${guest.id}/bonus`, value, { headers: this.prepareHeaders() })
       .toPromise()
       .then(response => response.json().data as number)
       .catch(this.handleError);
   }
 
   registerCard(guest: Guest, card: string): Promise<void> {
-    return this.http.put(`${this.apiUrl}/guests/${guest.id}/card`, card, { headers: this.headers })
+    return this.http.put(`${this.apiUrl}/guests/${guest.id}/card`, card, { headers: this.prepareHeaders() })
       .toPromise()
       .then(() => void(0))
       .catch(this.handleError);
   }
 
   checkIn(guest: Guest): Promise<Date> {
-    return this.http.put(`${this.apiUrl}/guests/${guest.id}/checkin`, null)
+    return this.http.put(`${this.apiUrl}/guests/${guest.id}/checkin`, null, { headers: this.prepareHeaders() })
       .toPromise()
       .then(response => new Date(response.json().data as number))
       .catch(this.handleError);
   }
 
   private refundRaw(guest: Guest): Promise<GuestResponse> {
-    return this.http.put(`${this.apiUrl}/guests/${guest.id}/refund`, guest.balance, { headers: this.headers })
+    return this.http.put(`${this.apiUrl}/guests/${guest.id}/refund`, guest.balance, { headers: this.prepareHeaders() })
       .toPromise()
       .then(response => response.json().data as GuestResponse)
       .catch(this.handleError);
@@ -276,7 +286,7 @@ export class RestService {
   placeOrder(order: Order): Promise<OrderResponse> {
     let body = fromOrder(order);
 
-    return this.http.post(`${this.apiUrl}/orders`, body, { headers: this.headers })
+    return this.http.post(`${this.apiUrl}/orders`, body, { headers: this.prepareHeaders() })
       .toPromise()
       .then(response => response.json().data as OrderResponse[])
       .catch(this.handleError);
@@ -286,7 +296,7 @@ export class RestService {
   // /statistics
 
   private getStatisticsRaw(): Promise<StatisticsResponse> {
-    return this.http.get(this.apiUrl + '/statistics')
+    return this.http.get(this.apiUrl + '/statistics', { headers: this.prepareHeaders() })
       .toPromise()
       .then(response => response.json().data as StatisticsResponse)
       .catch(this.handleError);
@@ -295,6 +305,71 @@ export class RestService {
   getStatistics(): Promise<Statistics> {
     return this.getStatisticsRaw()
       .then((stats: StatisticsResponse) => Promise.resolve(toStatistics(stats)));
+  }
+
+
+  // /users
+  private getUsersRaw(): Promise<UserResponse[]> {
+    return this.http.get(this.apiUrl + '/users', { headers: this.prepareHeaders() })
+      .toPromise()
+      .then(response => response.json().data as UserResponse[])
+      .catch(this.handleError);
+  }
+
+  getUsers(): Promise<User[]> {
+    return this.getUsersRaw()
+      .then((users: UserResponse[]) => Promise.resolve(users.map(toUser)));
+  }
+
+  mergeUsers(users: User[]): Promise<UserResponse[]> {
+    let body = users.map(fromUser);
+
+    return this.http.post(`${this.apiUrl}/users`, body, { headers: this.prepareHeaders() })
+      .toPromise()
+      .then(response => response.json().data as UserResponse[])
+      .catch(this.handleError);
+  }
+
+  deleteUsers(users: User[]): Promise<void> {
+    let body = users.map(user => user.id);
+
+    if (users.length == 0) {
+      return Promise.resolve();
+    }
+    return this.http.delete(`${this.apiUrl}/users`, { body, headers: this.prepareHeaders() })
+      .toPromise()
+      .then(() => void(0))
+      .catch(this.handleError);
+  }
+
+  getUser(): Promise<UserResponse> {
+    return this.http.get(this.apiUrl + '/users/me', { headers: this.prepareHeaders() })
+      .toPromise()
+      .then(response => response.json().data as UserResponse)
+      .catch(this.handleError);
+  }
+
+  authenticate(username: string, password: string): Promise<TokenResponse> {
+    let clientEncoded = btoa("argentum-client:secret");
+
+    let params = new URLSearchParams();
+    params.append('grant_type', 'password',);
+    params.append('username', username);
+    params.append('password', password);
+
+    return this.http.post(this.apiUrl + '/oauth/token', params.toString(), {
+      headers: new Headers({
+        'Authorization': `Basic ${clientEncoded}`,
+        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+      })
+    })
+      .toPromise()
+      .then(response => {
+        let token = response.json() as TokenResponse;
+        localStorage.setItem('token', token.access_token);
+        return token;
+      })
+      .catch(this.handleError);
   }
 
 
