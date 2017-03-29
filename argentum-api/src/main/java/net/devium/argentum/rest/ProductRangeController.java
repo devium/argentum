@@ -117,16 +117,8 @@ public class ProductRangeController {
                 .map(range -> String.format("RANGE_%s", range.getId()))
                 .collect(Collectors.toList());
 
-        // Remove roles from users.
-//        Set<UserEntity> modifiedUsers = roleNames.stream()
-//                .map(RoleEntity::getUsers)
-//                .flatMap(Set::stream)
-//                .collect(Collectors.toSet());
-
         List<RoleEntity> roles = roleRepository.findByNameIn(roleNames);
-//        modifiedUsers.forEach(user -> user.removeRoles(roles));
 
-//        userRepository.save(modifiedUsers);
         roleRepository.delete(roles);
         productRepository.save(modifiedProducts);
         productRangeRepository.delete(ranges);
