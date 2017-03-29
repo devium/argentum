@@ -1,9 +1,6 @@
 package net.devium.argentum.rest;
 
-import net.devium.argentum.jpa.ProductEntity;
-import net.devium.argentum.jpa.ProductRangeEntity;
-import net.devium.argentum.jpa.ProductRangeRepository;
-import net.devium.argentum.jpa.ProductRepository;
+import net.devium.argentum.jpa.*;
 import net.devium.argentum.rest.model.request.ProductRangeRequest;
 import net.devium.argentum.rest.model.response.ProductRangeResponseEager;
 import net.devium.argentum.rest.model.response.ProductRangeResponseMeta;
@@ -18,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.lang.invoke.MethodHandles;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -28,11 +26,14 @@ public class ProductRangeController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final ProductRangeRepository productRangeRepository;
     private final ProductRepository productRepository;
+    private final RoleRepository roleRepository;
 
     @Autowired
-    public ProductRangeController(ProductRangeRepository productRangeRepository, ProductRepository productRepository) {
+    public ProductRangeController(ProductRangeRepository productRangeRepository, ProductRepository productRepository,
+                                  RoleRepository roleRepository) {
         this.productRangeRepository = productRangeRepository;
         this.productRepository = productRepository;
+        this.roleRepository = roleRepository;
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -52,7 +53,22 @@ public class ProductRangeController {
                 .map(ProductRangeRequest::toEntity)
                 .collect(Collectors.toList());
 
-        List<ProductRangeResponseMeta> response = productRangeRepository.save(mergedRanges).stream()
+        Set<Long> existingRangeIds = mergedRanges.stream()
+                .filter(range -> range.getId() > 0)
+                .map(ProductRangeEntity::getId)
+                .collect(Collectors.toSet());
+
+        mergedRanges = productRangeRepository.save(mergedRanges);
+
+        List<RoleEntity> newRoles = new LinkedList<>();
+        mergedRanges.stream()
+                .map(ProductRangeEntity::getId)
+                .filter(rangeId -> !existingRangeIds.contains(rangeId))
+                .forEach(rangeId -> newRoles.add(new RoleEntity(String.format("RANGE_%s", rangeId))));
+
+        roleRepository.save(newRoles);
+
+        List<ProductRangeResponseMeta> response = mergedRanges.stream()
                 .map(ProductRangeResponseMeta::from)
                 .collect(Collectors.toList());
 
@@ -96,6 +112,22 @@ public class ProductRangeController {
 
         modifiedProducts.forEach(product -> product.removeProductRanges(ranges));
 
+        // Remove associated roles.
+        List<String> roleNames = ranges.stream()
+                .map(range -> String.format("RANGE_%s", range.getId()))
+                .collect(Collectors.toList());
+
+        // Remove roles from users.
+//        Set<UserEntity> modifiedUsers = roleNames.stream()
+//                .map(RoleEntity::getUsers)
+//                .flatMap(Set::stream)
+//                .collect(Collectors.toSet());
+
+        List<RoleEntity> roles = roleRepository.findByNameIn(roleNames);
+//        modifiedUsers.forEach(user -> user.removeRoles(roles));
+
+//        userRepository.save(modifiedUsers);
+        roleRepository.delete(roles);
         productRepository.save(modifiedProducts);
         productRangeRepository.delete(ranges);
 
