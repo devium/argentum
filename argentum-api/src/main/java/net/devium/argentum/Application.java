@@ -1,8 +1,10 @@
 package net.devium.argentum;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import net.devium.argentum.jpa.Role;
-import net.devium.argentum.jpa.User;
+import net.devium.argentum.jpa.RoleEntity;
+import net.devium.argentum.jpa.RoleRepository;
+import net.devium.argentum.jpa.UserEntity;
 import net.devium.argentum.jpa.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -18,11 +20,19 @@ public class Application {
     }
 
     @Autowired
-    public void authenticationManager(AuthenticationManagerBuilder builder, UserRepository repository) throws Exception {
-        if (repository.count() == 0) {
-            repository.save(new User("admin", "argentum", ImmutableSet.of(new Role("ADMIN"))));
+    public void authenticationManager(AuthenticationManagerBuilder builder, UserRepository userRepository,
+                                      RoleRepository roleRepository) throws Exception {
+        RoleEntity admin = new RoleEntity("ADMIN");
+        RoleEntity order = new RoleEntity("ORDER");
+        RoleEntity checkin = new RoleEntity("CHECKIN");
+        RoleEntity scan = new RoleEntity("SCAN");
+        RoleEntity rangeAll = new RoleEntity("ALL_RANGES");
+        admin = roleRepository.save(ImmutableList.of(admin, order, checkin, scan, rangeAll)).get(0);
+
+        if (userRepository.count() == 0) {
+            userRepository.save(new UserEntity("admin", "argentum", ImmutableSet.of(admin)));
         }
-        builder.userDetailsService(username -> new CustomUserDetails(repository.findByUsername(username)));
+        builder.userDetailsService(username -> new CustomUserDetails(userRepository.findByUsername(username)));
     }
 }
 

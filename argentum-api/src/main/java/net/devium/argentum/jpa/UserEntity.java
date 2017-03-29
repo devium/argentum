@@ -5,23 +5,34 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class UserEntity {
     @Id
     @GeneratedValue
     private long id;
     private String username;
     private String password;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<Role> roles;
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "users")
+    private Set<RoleEntity> roles;
 
-    public User() {
+    public UserEntity() {
     }
 
-    public User(String username, String password, Set<Role> roles) {
+    public UserEntity(long id, String username, String password, Set<RoleEntity> roles) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.roles = roles;
+    }
+
+    public UserEntity(String username, String password, Set<RoleEntity> roles) {
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String getUsername() {
@@ -40,11 +51,11 @@ public class User {
         this.password = password;
     }
 
-    public Set<Role> getRoles() {
+    public Set<RoleEntity> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(Set<RoleEntity> roles) {
         this.roles = roles;
     }
 
@@ -53,7 +64,7 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        User user = (User) o;
+        UserEntity user = (UserEntity) o;
 
         return id == user.id;
     }

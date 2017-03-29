@@ -1,6 +1,6 @@
 package net.devium.argentum;
 
-import net.devium.argentum.jpa.User;
+import net.devium.argentum.jpa.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +15,7 @@ class CustomUserDetails implements UserDetails {
     private String password;
     private String username;
 
-    public CustomUserDetails(User user) {
+    public CustomUserDetails(UserEntity user) {
         this.username = user.getUsername();
         this.password = user.getPassword();
         this.authorities = user.getRoles().stream()
