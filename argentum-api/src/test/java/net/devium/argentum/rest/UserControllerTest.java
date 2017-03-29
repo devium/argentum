@@ -22,6 +22,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -190,5 +191,55 @@ public class UserControllerTest {
                 .andExpect(status().isBadRequest());
 
         userRepository.delete(user1.getId());
+    }
+
+    @Test
+    public void testDeleteUsers() throws Exception {
+        UserEntity user1 = userRepository.save(new UserEntity("someName", "somePassword", Collections.emptySet()));
+        UserEntity user2 = userRepository.save(
+                new UserEntity("someOtherName", "someOtherPassword", Collections.emptySet())
+        );
+
+        String body = "[ %s ]";
+
+        body = String.format(body, user1.getId());
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(delete("/users")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        user1 = userRepository.findOne(user1.getId());
+        user2 = userRepository.findOne(user2.getId());
+        assertThat(userRepository.findAll(), hasSize(1 + 1));
+        assertThat(user1, nullValue());
+        assertThat(user2.getUsername(), is("someOtherName"));
+        assertThat(user2.getPassword(), is("someOtherPassword"));
+
+        userRepository.delete(user2.getId());
+    }
+
+    @Test
+    public void testDeleteUsersEmpty() throws Exception {
+        String body = "[]";
+
+        mockMvc.perform(delete("/users")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testDeleteUsersNotFound() throws Exception {
+        String body = "[ 42 ]"; // 1 might actually be admin.
+
+        mockMvc.perform(delete("/users")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 }

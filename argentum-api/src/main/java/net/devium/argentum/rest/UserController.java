@@ -121,6 +121,39 @@ public class UserController {
         return Response.ok(response);
     }
 
+    @RequestMapping(method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @Transactional
+    public ResponseEntity<?> deleteUsers(@RequestBody List<Long> userIds) {
+        if (userIds.isEmpty()) {
+            String message = "No users to delete.";
+            LOGGER.info(message);
+            return Response.badRequest(message);
+        }
+
+        Set<Long> unknownUsers = new HashSet<>();
+        Set<UserEntity> users = new HashSet<>();
+
+        for (long categoryId : userIds) {
+            UserEntity category = userRepository.findOne(categoryId);
+
+            if (category == null) {
+                unknownUsers.add(categoryId);
+            } else {
+                users.add(category);
+            }
+        }
+
+        if (!unknownUsers.isEmpty()) {
+            String message = String.format("User(s) %s not found.", unknownUsers);
+            LOGGER.info(message);
+            return Response.notFound(message);
+        }
+        userRepository.delete(users);
+
+        return ResponseEntity.noContent().build();
+    }
+
     @RequestMapping(path = "/me", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> getUser(Principal principal) {
         UserEntity user = userRepository.findByUsername(principal.getName());
