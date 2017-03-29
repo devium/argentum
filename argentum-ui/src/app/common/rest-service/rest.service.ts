@@ -23,8 +23,10 @@ import { fromGuest } from './request/guest-request';
 import { StatisticsResponse, toStatistics } from './response/statistics-response';
 import { OrderResponse } from './response/order-response';
 import { fromOrder } from './request/order-request';
-import { UserResponse } from './response/user-response';
+import { toUser, UserResponse } from './response/user-response';
 import { TokenResponse } from './response/token-response';
+import { User } from '../model/user';
+import { fromUser } from './request/user-request';
 
 @Injectable()
 export class RestService {
@@ -305,6 +307,40 @@ export class RestService {
       .then((stats: StatisticsResponse) => Promise.resolve(toStatistics(stats)));
   }
 
+
+  // /users
+  private getUsersRaw(): Promise<UserResponse[]> {
+    return this.http.get(this.apiUrl + '/users', { headers: this.prepareHeaders() })
+      .toPromise()
+      .then(response => response.json().data as UserResponse[])
+      .catch(this.handleError);
+  }
+
+  getUsers(): Promise<User[]> {
+    return this.getUsersRaw()
+      .then((users: UserResponse[]) => Promise.resolve(users.map(toUser)));
+  }
+
+  mergeUsers(users: User[]): Promise<UserResponse[]> {
+    let body = users.map(fromUser);
+
+    return this.http.post(`${this.apiUrl}/users`, body, { headers: this.prepareHeaders() })
+      .toPromise()
+      .then(response => response.json().data as UserResponse[])
+      .catch(this.handleError);
+  }
+
+  deleteUsers(users: User[]): Promise<void> {
+    let body = users.map(user => user.id);
+
+    if (users.length == 0) {
+      return Promise.resolve();
+    }
+    return this.http.delete(`${this.apiUrl}/users`, { body, headers: this.prepareHeaders() })
+      .toPromise()
+      .then(() => void(0))
+      .catch(this.handleError);
+  }
 
   getUser(): Promise<UserResponse> {
     return this.http.get(this.apiUrl + '/users/me', { headers: this.prepareHeaders() })

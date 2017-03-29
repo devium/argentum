@@ -48,7 +48,7 @@
       </div>
     </td>
     <td *ngFor="let range of productRanges">
-      <label class="custom-control custom-checkbox m-0 minh-1">
+      <label class="custom-control custom-checkbox m-0 checkbox-sm">
         <input type="checkbox" class="custom-control-input m-0"
                [checked]="product.displayed.ranges.has(range)"
                (change)="toggleRange(product, range)"
@@ -65,7 +65,9 @@
       </button>
     </td>
     <td class="text-center">
-      <button (click)="remove(product)" class="btn btn-danger btn-sm" [class.disabled]="!product.edited">
+      <button (click)="remove(product)" class="btn btn-danger btn-sm"
+              [class.disabled]="!product.edited"
+              [disabled]="!product.edited">
         <i class="fa fa-trash"></i>
       </button>
     </td>

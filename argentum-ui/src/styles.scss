@@ -90,3 +90,13 @@ input:disabled {
 .position-relative {
   position: relative;
 }
+
+.checkbox-sm {
+  width: 1.5rem;
+  height: 1.5rem;
+
+  span {
+    left: 4px;
+    top: 8px;
+  }
+}

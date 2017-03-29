@@ -19,7 +19,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static java.util.Collections.emptySet;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -57,10 +59,10 @@ public class UserControllerTest {
         RoleEntity role1 = roleRepository.save(new RoleEntity("RANGE_SOMETHING"));
         RoleEntity role2 = roleRepository.findByNameContains("ADMIN").get(0);
         UserEntity user1 = userRepository.save(
-                new UserEntity("someName", "somePassword")
+                new UserEntity("someName", "somePassword", ImmutableSet.of(role1, role2))
         );
         UserEntity user2 = userRepository.save(
-                new UserEntity("someOtherName", "someOtherPassword")
+                new UserEntity("someOtherName", "someOtherPassword", ImmutableSet.of(role1))
         );
 
         String body = "[" +
@@ -114,6 +116,12 @@ public class UserControllerTest {
         assertThat(user1.getUsername(), is("someUpdatedName"));
         assertThat(user2.getPassword(), is("someOtherPassword"));
         assertThat(user3.getPassword(), is("someThirdPassword"));
+
+        List<String> roles1 = user1.getRoles().stream()
+                .map(RoleEntity::getName)
+                .collect(Collectors.toList());
+
+        assertThat(roles1, containsInAnyOrder("RANGE_SOMETHING", "ORDER"));
 
         userRepository.delete(ImmutableList.of(user1, user2, user3));
     }
@@ -170,7 +178,7 @@ public class UserControllerTest {
 
     @Test
     public void testMergeUsersExistingUsername() throws Exception {
-        UserEntity user1 = userRepository.save(new UserEntity("someName", "somePassword"));
+        UserEntity user1 = userRepository.save(new UserEntity("someName", "somePassword", emptySet()));
 
         String body = "[" +
                 "   {" +
@@ -195,9 +203,10 @@ public class UserControllerTest {
 
     @Test
     public void testDeleteUsers() throws Exception {
-        UserEntity user1 = userRepository.save(new UserEntity("someName", "somePassword"));
+        RoleEntity role1 = roleRepository.save(new RoleEntity("RANGE_SOMETHING"));
+        UserEntity user1 = userRepository.save(new UserEntity("someName", "somePassword", ImmutableSet.of(role1)));
         UserEntity user2 = userRepository.save(
-                new UserEntity("someOtherName", "someOtherPassword")
+                new UserEntity("someOtherName", "someOtherPassword", emptySet())
         );
 
         String body = "[ %s ]";

@@ -72,8 +72,6 @@ export class RouteGuard implements CanActivate {
   }
 
   redirectHome(roles: string[]): Promise<boolean> {
-    console.log(roles);
-
     let redirect: string;
     if (roles.indexOf("ADMIN") > -1) {
       redirect = '/admin';

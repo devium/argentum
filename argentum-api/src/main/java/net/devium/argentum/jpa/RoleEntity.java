@@ -12,8 +12,7 @@ public class RoleEntity {
 
     private String name;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_roles")
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "roles")
     private Set<UserEntity> users;
 
     public RoleEntity() {
