@@ -10,6 +10,8 @@ export class MessageComponent implements OnInit {
   message: string;
   messageType: string;
   messageStream = new Subject<{ message: string, type: string }>();
+  autoClose = true;
+  timer = new Subject<string>();
 
   constructor() {
   }
@@ -18,7 +20,12 @@ export class MessageComponent implements OnInit {
     this.messageStream.subscribe(message => {
       this.message = message.message;
       this.messageType = message.type;
+      if (this.autoClose) {
+        this.timer.next(null);
+      }
     });
+
+    this.timer.debounceTime(5000).subscribe(() => this.message = null);
   }
 
   error(message: string) {
