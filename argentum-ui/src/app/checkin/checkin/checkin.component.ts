@@ -51,7 +51,6 @@ export class CheckinComponent implements OnInit {
   recharge() {
     let guest = this.cardBar.guest;
     let keypadModal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
-    (<KeypadModalComponent>keypadModal.componentInstance).captureKeyboard = true;
     this.cardBar.active = false;
 
     keypadModal.result.then((value: number) => {

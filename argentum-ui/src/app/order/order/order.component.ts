@@ -131,7 +131,6 @@ export class OrderComponent implements OnInit {
 
   addCustomProduct(): void {
     let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
-    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = false;
     modal.result.then(result => this.confirmKeypad(result), result => void(0));
   }
 

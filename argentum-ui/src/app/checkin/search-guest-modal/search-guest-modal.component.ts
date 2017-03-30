@@ -66,7 +66,6 @@ export class SearchGuestModalComponent implements OnInit {
 
   addBalance() {
     let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
-    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
     modal.result.then(value => {
       this.restService.addBalance(this.guest, value)
         .then(newBalance => {
@@ -79,7 +78,6 @@ export class SearchGuestModalComponent implements OnInit {
 
   subBalance() {
     let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
-    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
     modal.result.then(value => {
       this.restService.addBalance(this.guest, -value)
         .then(newBalance => {
@@ -92,7 +90,6 @@ export class SearchGuestModalComponent implements OnInit {
 
   addBonus() {
     let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
-    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
     modal.result.then(value => {
       this.restService.addBonus(this.guest, value)
         .then(newBonus => {
@@ -105,7 +102,6 @@ export class SearchGuestModalComponent implements OnInit {
 
   subBonus() {
     let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
-    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
     modal.result.then(value => {
       this.restService.addBonus(this.guest, -value)
         .then(newBonus => {
