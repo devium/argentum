@@ -11,10 +11,10 @@ import { CardBarComponent } from '../../common/card-bar/card-bar.component';
 
 @Component({
   selector: 'app-checkin',
-  templateUrl: 'scan.component.html',
-  styleUrls: ['scan.component.scss']
+  templateUrl: 'checkin.component.html',
+  styleUrls: ['checkin.component.scss']
 })
-export class ScanComponent implements OnInit {
+export class CheckinComponent implements OnInit {
   @ViewChild(MessageComponent)
   private message: MessageComponent;
   @ViewChild(CardBarComponent)
@@ -51,13 +51,19 @@ export class ScanComponent implements OnInit {
   recharge() {
     let guest = this.cardBar.guest;
     let keypadModal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    (<KeypadModalComponent>keypadModal.componentInstance).captureKeyboard = true;
+    this.cardBar.active = false;
 
     keypadModal.result.then((value: number) => {
       this.restService.addBalance(guest, value)
         .then((newBalance: number) => {
+          this.cardBar.active = true;
           this.message.success(`Recharged balance of "${guest.name}" with €${value.toFixed(2)}. New balance: €${newBalance.toFixed(2)}`);
         })
-        .catch(reason => this.message.error(`Error: ${reason}`));
+        .catch(reason => {
+          this.cardBar.active = false;
+          this.message.error(`Error: ${reason}`);
+        });
 
     }, () => void(0));
   }

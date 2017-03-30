@@ -5,29 +5,30 @@
 
       <div *ngIf="hasRole(['ORDER', 'ADMIN'])" class="col-3 text-center px-1">
         <a routerLink="/order" routerLinkActive="active">
-          <button type="button" class="btn btn-primary btn-block btn-sm">Order</button>
+          <button (focus)="$event.target.blur()" type="button" class="btn btn-primary btn-block btn-sm">Order</button>
         </a>
       </div>
       <div *ngIf="hasRole(['CHECKIN', 'ADMIN'])" class="col-3 text-center px-1">
         <a routerLink="/checkin" routerLinkActive="active">
-          <button type="button" class="btn btn-primary btn-block btn-sm">Check-in</button>
+          <button (focus)="$event.target.blur()" type="button" class="btn btn-primary btn-block btn-sm">Check-in
+          </button>
         </a>
       </div>
       <div *ngIf="hasRole(['SCAN', 'ADMIN'])" class="col-3 text-center px-1">
         <a routerLink="/scan" routerLinkActive="active">
-          <button type="button" class="btn btn-primary btn-block btn-sm">Scan</button>
+          <button (focus)="$event.target.blur()" type="button" class="btn btn-primary btn-block btn-sm">Scan</button>
         </a>
       </div>
       <div *ngIf="hasRole(['ADMIN'])" class="col-3 text-center px-1">
         <a routerLink="/admin" routerLinkActive="active">
-          <button type="button" class="btn btn-primary btn-block btn-sm">Admin</button>
+          <button (focus)="$event.target.blur()" type="button" class="btn btn-primary btn-block btn-sm">Admin</button>
         </a>
       </div>
     </div>
 
     <div class="col-1 p-0">
       <a routerLink="/logout">
-        <button type="button" class="btn btn-primary btn-block btn-sm">
+        <button (focus)="$event.target.blur()" type="button" class="btn btn-primary btn-block btn-sm">
           <i class="fa fa-sign-out"></i>
         </button>
       </a>

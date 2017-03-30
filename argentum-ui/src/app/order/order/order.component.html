@@ -8,11 +8,12 @@
       <div class="row mx-0 mb-1">
         <div class="col px-1">
           <div ngbDropdown>
-            <button class="btn-grid-bar" ngbDropdownToggle>
+            <button (focus)="$event.target.blur()" class="btn-grid-bar" ngbDropdownToggle>
               {{selectedRange ? selectedRange.name : 'Select product range'}}
             </button>
             <div class="dropdown-menu">
-              <button *ngFor="let range of productRanges" (click)="setProductRange(range)" class="dropdown-item">
+              <button *ngFor="let range of productRanges" (focus)="$event.target.blur()"
+                      (click)="setProductRange(range)" class="dropdown-item">
                 {{range.name}}
               </button>
             </div>
@@ -23,7 +24,8 @@
       <div class="col-sm row p-0 m-0">
         <div *ngFor="let product of getPaginated(products, rangeProductsPerPage, rangePage)"
              class="col-product-range">
-          <button (click)="rangeProductClicked(product)" type="button" class="btn-product"
+          <button (focus)="$event.target.blur()" (click)="rangeProductClicked(product)" type="button"
+                  class="btn-product"
                   [style.background-color]="product.category ? product.category.color : '#ffffff'"
                   [class.dark-bg]="product.category && isDarkBackground(product.category.color)">
             <div>{{product.name}}</div>
@@ -33,10 +35,10 @@
         <div
           *ngFor="let i of 1 | range : getNumPadItems(products.length, rangeProductsPerPage, rangePage)"
           class="col-product-range">
-          <button type="button" class="btn-product btn-dummy disabled" disabled></button>
+          <button (focus)="$event.target.blur()" type="button" class="btn-product btn-dummy disabled" disabled></button>
         </div>
         <div class="col-product-range">
-          <button (click)="addCustomProduct()" type="button"
+          <button (focus)="$event.target.blur()" (click)="addCustomProduct()" type="button"
                   class="btn-product btn-outline-primary btn-product-custom">Custom
           </button>
         </div>
@@ -49,7 +51,8 @@
 
       <div class="row m-0">
         <div class="col-12 px-1">
-          <button (click)="refreshProducts()" type="button" class="btn-grid-bar" [disabled]="!selectedRange"
+          <button (focus)="$event.target.blur()" (click)="refreshProducts()" type="button" class="btn-grid-bar"
+                  [disabled]="!selectedRange"
                   [class.disabled]="!selectedRange">
             <i class="fa fa-refresh fa-lg"></i></button>
         </div>
@@ -62,7 +65,8 @@
 
       <div class="row mx-0 mb-1">
         <div class="col px-1">
-          <button disabled class="btn-grid-bar disabled">Current order: €{{total | number:
+          <button (focus)="$event.target.blur()" disabled class="btn-grid-bar disabled">Current order: €{{total |
+            number:
             '1.2-2'}}
           </button>
         </div>
@@ -72,7 +76,8 @@
         <div
           *ngFor="let productEntry of orderedProducts | iterable | slice:(orderProductsPerPage * (orderPage - 1)):(orderProductsPerPage * orderPage)"
           class="col-product-order">
-          <button *ngIf="productEntry.key.id > -1" (click)="orderedProductClicked(productEntry.key)" type="button"
+          <button *ngIf="productEntry.key.id > -1" (focus)="$event.target.blur()"
+                  (click)="orderedProductClicked(productEntry.key)" type="button"
                   class="btn btn-block btn-product"
                   [style.background-color]="productEntry.key.category ? productEntry.key.category.color : '#ffffff'"
                   [class.dark-bg]="productEntry.key.category && isDarkBackground(productEntry.key.category.color)">
@@ -80,7 +85,8 @@
             <div>€{{productEntry.key.price | number: '1.2-2'}}</div>
             <div>x{{productEntry.value}}</div>
           </button>
-          <button *ngIf="productEntry.key.id == -1" (click)="orderedProductClicked(productEntry.key)" type="button"
+          <button *ngIf="productEntry.key.id == -1" (focus)="$event.target.blur()"
+                  (click)="orderedProductClicked(productEntry.key)" type="button"
                   class="btn-product btn-outline-primary btn-product-custom">
             <div>Custom</div>
             <div>€{{productEntry.key.price | number: '1.2-2'}}</div>
@@ -89,7 +95,7 @@
         <div
           *ngFor="let i of 1 | range : getNumPadItems(orderedProducts.size, orderProductsPerPage, orderPage)"
           class="col-product-order">
-          <button type="button" class="btn-product btn-dummy disabled" disabled></button>
+          <button (focus)="$event.target.blur()" type="button" class="btn-product btn-dummy disabled" disabled></button>
         </div>
       </div>
 
@@ -102,14 +108,14 @@
 
       <div class="row m-0">
         <div class="col-6 px-1">
-          <button (click)="clear()" type="button" class="btn-grid-bar"
+          <button (focus)="$event.target.blur()" (click)="clear()" type="button" class="btn-grid-bar"
                   [disabled]="this.waitingForOrder || this.orderedProducts.size == 0"
                   [class.disabled]="this.waitingForOrder || this.orderedProducts.size == 0">
             <i class="fa fa-trash fa-lg"></i>
           </button>
         </div>
         <div class="col-6 px-1">
-          <button (click)="placeOrder()" type="button" class="btn-grid-bar"
+          <button (focus)="$event.target.blur()" (click)="placeOrder()" type="button" class="btn-grid-bar"
                   [disabled]="this.waitingForOrder || this.orderedProducts.size == 0 || this.cardBar.state != this.cardBar.scanState.Valid"
                   [class.disabled]="this.waitingForOrder || this.orderedProducts.size == 0 || this.cardBar.state != this.cardBar.scanState.Valid">
             <i class="fa fa-shopping-cart fa-lg"></i>

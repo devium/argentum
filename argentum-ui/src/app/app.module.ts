@@ -18,7 +18,7 @@ import { CategoryEditorComponent } from './admin/category-editor/category-editor
 import { RangeEditorComponent } from './admin/range-editor/range-editor.component';
 import { GuestEditorComponent } from './admin/guest-editor/guest-editor.component';
 import { GuestImportComponent } from './admin/guest-import/guest-import.component';
-import { ScanComponent } from './checkin/checkin/scan.component';
+import { CheckinComponent } from './checkin/checkin/checkin.component';
 import { NewGuestModalComponent } from './checkin/new-guest-modal/new-guest-modal.component';
 import { SearchGuestModalComponent } from './checkin/search-guest-modal/search-guest-modal.component';
 import { CardModalComponent } from './checkin/card-modal/card-modal.component';
@@ -26,7 +26,7 @@ import { MessageComponent } from './common/message/message.component';
 import { DashboardComponent } from './admin/dashboard/dashboard.component';
 import { RefundModalComponent } from './checkin/refund-modal/refund-modal.component';
 import { DeleteGuestsModalComponent } from './admin/delete-guests-modal/delete-guests-modal.component';
-import { BalanceComponent } from './scan/balance.component';
+import { ScanComponent } from './scan/scan.component';
 import { RouteGuard } from './app-routing/route-guard';
 import { LoginComponent } from './login/login.component';
 import { DummyComponent } from './dummy/dummy.component';
@@ -47,7 +47,7 @@ import { UserEditorComponent } from './admin/user-editor/user-editor.component';
     RangeEditorComponent,
     GuestEditorComponent,
     GuestImportComponent,
-    ScanComponent,
+    CheckinComponent,
     NewGuestModalComponent,
     SearchGuestModalComponent,
     CardModalComponent,
@@ -55,7 +55,7 @@ import { UserEditorComponent } from './admin/user-editor/user-editor.component';
     DashboardComponent,
     RefundModalComponent,
     DeleteGuestsModalComponent,
-    BalanceComponent,
+    ScanComponent,
     LoginComponent,
     DummyComponent,
     UserEditorComponent

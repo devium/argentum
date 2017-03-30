@@ -1,4 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+
 import { ScanComponent } from './scan.component';
 
 describe('ScanComponent', () => {
