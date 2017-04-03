@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { RestService } from '../../common/rest-service/rest.service';
 import { ProductRange } from '../../common/model/product-range';
 import { MessageComponent } from '../../common/message/message.component';
-import { toProductRangeMeta } from '../../common/rest-service/response/product-range-response-meta';
 
 class EditorRange {
   original: ProductRange;
@@ -76,7 +75,7 @@ export class RangeEditorComponent implements OnInit {
     });
     newRange.original = null;
     newRange.updateChanged();
-    this.productRanges.unshift(newRange);
+    this.productRanges.push(newRange);
   }
 
   private resetAll() {

@@ -1,51 +1,34 @@
 <app-admin-nav></app-admin-nav>
 
-<div class="container-fluid">
-  <div class="row mt-5">
-    <div class="col-3 text-center">
-      Code column
-    </div>
-    <div class="col-3 text-center">
-      Name column
-    </div>
-    <div class="col-3 text-center">
-      E-Mail column
-    </div>
-    <div class="col-3 text-center">
-      Status column
-    </div>
-  </div>
-  <div class="row mt-2 mb-5">
-    <div class="col-3">
-      <input class="form-control text-center" type="text" [(ngModel)]="codeCol">
-    </div>
-    <div class="col-3">
-      <input class="form-control text-center" type="text" [(ngModel)]="nameCol">
-    </div>
-    <div class="col-3">
-      <input class="form-control text-center" type="text" [(ngModel)]="mailCol">
-    </div>
-    <div class="col-3">
-      <input class="form-control text-center" type="text" [(ngModel)]="statusCol">
-    </div>
+<div class="container mt-3">
+  <div class="form-group">
+    <label for="codeInput">Code column</label>
+    <input id="codeInput" class="form-control" type="text" [(ngModel)]="codeCol">
   </div>
 
-  <div class="row my-5">
-    <div class="col-4 offset-4 text-center">
-      <label class="custom-file btn btn-block btn-primary">
-        <input type="file" class="custom-file-input" (change)="import($event.target)" hidden accept=".csv">
-        <span class="custom-file-control text-white"><i class="fa fa-upload pr-1"></i>Upload file (.csv)</span>
-      </label>
-    </div>
+  <div class="form-group">
+    <label for="nameInput">Name column</label>
+    <input id="nameInput" class="form-control" type="text" [(ngModel)]="nameCol">
   </div>
 
-  <div class="row my-5">
-    <div class="col-4 offset-4">
-      <button (click)="deleteGuests()" type="button" class="btn btn-sm btn-block btn-danger">
-        <i class="fa fa-exclamation-triangle fa-lg pr-1"></i>Delete all guests
-      </button>
-    </div>
+  <div class="form-group">
+    <label for="mailInput">E-Mail column</label>
+    <input id="mailInput" class="form-control" type="text" [(ngModel)]="mailCol">
   </div>
+
+  <div class="form-group">
+    <label for="statusInput">Status column</label>
+    <input id="statusInput" class="form-control" type="text" [(ngModel)]="statusCol">
+  </div>
+
+  <label class="custom-file btn btn-block btn-primary mt-5">
+    <input type="file" class="custom-file-input" (change)="import($event.target)" hidden accept=".csv">
+    <span class="custom-file-control text-white"><i class="fa fa-upload pr-1"></i>Upload file (.csv)</span>
+  </label>
+
+  <button (click)="deleteGuests()" type="button" class="btn btn-sm btn-block btn-danger mt-5">
+    <i class="fa fa-exclamation-triangle fa-lg pr-1"></i>Delete all guests
+  </button>
 
   <app-message></app-message>
 </div>

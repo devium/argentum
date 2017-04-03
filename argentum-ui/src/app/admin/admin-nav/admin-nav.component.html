@@ -1,25 +1,34 @@
-<div class="container-fluid">
-  <ul class="nav nav-tabs">
-    <li class="nav-item">
-      <a class="nav-link" routerLink="/admin/dashboard" routerLinkActive="active">Dashboard</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" routerLink="/admin/products" routerLinkActive="active">Products</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" routerLink="/admin/categories" routerLinkActive="active">Categories</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" routerLink="/admin/ranges" routerLinkActive="active">Product ranges</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" routerLink="/admin/guests" routerLinkActive="active">Guest list</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" routerLink="/admin/import" routerLinkActive="active">Guest import</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" routerLink="/admin/users" routerLinkActive="active">Users</a>
-    </li>
-  </ul>
-</div>
+<nav class="navbar navbar-toggleable-sm navbar-inverse bg-warning py-0">
+
+  <button (focus)="$event.target.blur()" class="navbar-toggler mx-auto my-1 w-100 border-0" type="button"
+          data-toggle="collapse" data-target="#adminNavMarkup">
+    <span class="fa fa-bars"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="adminNavMarkup">
+    <ul class="navbar-nav justify-content-center mx-auto">
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/admin/dashboard" routerLinkActive="active">Dashboard</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/admin/products" routerLinkActive="active">Products</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/admin/categories" routerLinkActive="active">Categories</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/admin/ranges" routerLinkActive="active">Product ranges</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/admin/guests" routerLinkActive="active">Guest list</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/admin/import" routerLinkActive="active">Guest import</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/admin/users" routerLinkActive="active">Users</a>
+      </li>
+    </ul>
+  </div>
+
+</nav>

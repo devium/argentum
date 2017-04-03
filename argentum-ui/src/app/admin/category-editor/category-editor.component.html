@@ -1,66 +1,63 @@
 <app-admin-nav></app-admin-nav>
 
-<table class="table table-sm table-striped">
-  <thead>
-  <tr>
-    <th>Name</th>
-    <th>Color</th>
-  </tr>
-  </thead>
+<div class="container mt-3">
 
-  <tbody>
-  <tr *ngFor="let category of categories" [class.changed]="category.changed" [class.removed]="!category.edited">
-    <td>
-      <input [(ngModel)]="category.displayed.name" (input)="changeName(category, $event.target.value)"
-             class="form-control p-1" [class.disabled]="!category.edited" [disabled]="!category.edited">
-    </td>
-    <td>
-      <input [(ngModel)]="category.displayed.color" (input)="changeColor(category, $event.target.value)"
-             class="form-control h-100 color-picker" type="color"
-             [style.background-color]="category.displayed.color" [class.disabled]="!category.edited"
-             [disabled]="!category.edited">
-    </td>
-    <td class="text-center">
-      <button (click)="reset(category)" class="btn btn-primary btn-sm"
-              [class.disabled]="(!category.changed && category.edited) || !category.original"
-              [disabled]="!category.changed && category.edited || !category.original">
-        <i class="fa fa-undo"></i>
-      </button>
-    </td>
-    <td class="text-center">
-      <button (click)="remove(category)" class="btn btn-danger btn-sm"
-              [class.disabled]="!category.edited"
-              [disabled]="!category.edited">
-        <i class="fa fa-trash"></i>
-      </button>
-    </td>
-  </tr>
+  <table *ngIf="categories.length > 0" class="table table-sm table-responsive table-striped">
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Color</th>
+    </tr>
+    </thead>
 
-  <tr>
-    <td [colSpan]="4">
-      <div class="row m-0">
-        <div class="col-4 px-1">
-          <button (click)="newCategory()" class="btn btn-block btn-primary btn-sm">
-            <i class="fa fa-plus pr-1"></i><span>New category</span>
-          </button>
-        </div>
-        <div class="col-4 px-1">
-          <button (click)="resetAll()" class="btn btn-block btn-primary btn-sm">
-            <i class="fa fa-undo pr-1"></i><span>Reset all</span>
-          </button>
-        </div>
-        <div class="col-4 px-1">
-          <button (click)="save()" class="btn btn-block btn-primary btn-sm">
-            <i class="fa fa-save pr-1"></i>Save changes
-          </button>
-        </div>
-      </div>
-    </td>
-  </tr>
+    <tbody>
+    <tr *ngFor="let category of categories" [class.changed]="category.changed" [class.removed]="!category.edited">
+      <td>
+        <input [(ngModel)]="category.displayed.name" (input)="changeName(category, $event.target.value)"
+               (focus)="$event.target.select()"
+               class="form-control p-1" [class.disabled]="!category.edited" [disabled]="!category.edited">
+      </td>
+      <td>
+        <input [(ngModel)]="category.displayed.color" (input)="changeColor(category, $event.target.value)"
+               class="form-control h-100 color-picker" type="color"
+               [style.background-color]="category.displayed.color" [class.disabled]="!category.edited"
+               [disabled]="!category.edited">
+      </td>
+      <td class="text-center">
+        <button (click)="reset(category)" class="btn btn-primary btn-sm"
+                [class.disabled]="(!category.changed && category.edited) || !category.original"
+                [disabled]="!category.changed && category.edited || !category.original">
+          <i class="fa fa-undo"></i>
+        </button>
+      </td>
+      <td class="text-center">
+        <button (click)="remove(category)" class="btn btn-danger btn-sm"
+                [class.disabled]="!category.edited"
+                [disabled]="!category.edited">
+          <i class="fa fa-trash"></i>
+        </button>
+      </td>
+    </tr>
 
-  </tbody>
-</table>
+    </tbody>
+  </table>
 
-<app-message></app-message>
+  <div class="mt-3 container-buttons">
+    <button (click)="newCategory()" class="btn btn-primary btn-sm">
+      <i class="fa fa-plus pr-1"></i><span>New category</span>
+    </button>
+    <button (click)="resetAll()" class="btn btn-primary btn-sm">
+      <i class="fa fa-undo pr-1"></i><span>Reset all</span>
+    </button>
+    <button (click)="save()" class="btn btn-primary btn-sm">
+      <i class="fa fa-save pr-1"></i><span>Save changes</span>
+    </button>
+  </div>
+
+  <div class="mt-3">
+    <app-message></app-message>
+  </div>
+
+</div>
 
 <app-navbar></app-navbar>

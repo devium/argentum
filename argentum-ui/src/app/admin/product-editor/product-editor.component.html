@@ -1,107 +1,104 @@
 <app-admin-nav></app-admin-nav>
 
-<table class="table table-sm table-striped">
-  <thead>
-  <tr>
-    <th rowspan="2">Name</th>
-    <th rowspan="2" class="text-right">Price</th>
-    <th rowspan="2">Category</th>
-    <th [colSpan]="productRanges.length">Product ranges</th>
-    <th rowspan="2"></th>
-  </tr>
-  <tr>
-    <th *ngFor="let range of productRanges" class="rotate">
-      <div>
-        {{range.name}}
-      </div>
-    </th>
-  </tr>
-  </thead>
+<div class="container mt-3">
 
-  <tbody>
-  <tr *ngFor="let product of products.slice((page - 1) * PAGE_SIZE, (page - 1) * PAGE_SIZE + PAGE_SIZE)"
-      [class.changed]="product.changed" [class.removed]="!product.edited">
-    <td>
-      <input [(ngModel)]="product.displayed.name" (input)="changeName(product, $event.target.value)"
-             class="form-control p-1" [class.disabled]="!product.edited" [disabled]="!product.edited">
-    </td>
-    <td class="text-right">
-      <button (click)="setProductPrice(product)" type="button" class="btn btn-primary btn-sm">
-        {{product.displayed.price | number: '1.2-2'}}
-      </button>
-    <td>
-      <div ngbDropdown>
-        <button class="btn btn-sm text-black" ngbDropdownToggle
-                [style.background-color]="product.displayed.category ? product.displayed.category.color : '#ffffff'"
-                [disabled]="!product.edited" [class.disabled]="!product.edited"
-                [class.dark-bg]="product.displayed.category && isDarkBackground(product.displayed.category.color)">
-          {{product.displayed.category ? product.displayed.category.name : 'No category'}}
+  <table *ngIf="products.length > 0" class="table table-sm table-responsive table-striped">
+    <thead>
+    <tr>
+      <th rowspan="2">Name</th>
+      <th rowspan="2" class="text-right">Price</th>
+      <th rowspan="2">Category</th>
+      <th [colSpan]="productRanges.length">Product ranges</th>
+      <th rowspan="2"></th>
+    </tr>
+    <tr>
+      <th *ngFor="let range of productRanges" class="rotate">
+        <div>
+          {{range.name}}
+        </div>
+      </th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr *ngFor="let product of products.slice((page - 1) * PAGE_SIZE, (page - 1) * PAGE_SIZE + PAGE_SIZE)"
+        [class.changed]="product.changed" [class.removed]="!product.edited">
+      <td>
+        <input [(ngModel)]="product.displayed.name" (input)="changeName(product, $event.target.value)"
+               (focus)="$event.target.select()"
+               class="form-control p-1" [class.disabled]="!product.edited" [disabled]="!product.edited">
+      </td>
+      <td class="text-right">
+        <button (click)="setProductPrice(product)" type="button" class="btn btn-primary btn-sm">
+          {{product.displayed.price | number: '1.2-2'}}
         </button>
-        <div *ngIf="product.edited" class="dropdown-menu">
-          <button (click)="setCategory(product, null)" class="dropdown-item">No category</button>
-          <button *ngFor="let category of categories" (click)="setCategory(product, category)" class="dropdown-item"
-                  [style.background-color]="category.color"
-                  [class.dark-bg]="isDarkBackground(category.color)">
-            {{category.name}}
+      <td>
+        <div ngbDropdown [up]="true">
+          <button class="btn btn-sm text-black" ngbDropdownToggle
+                  [style.background-color]="product.displayed.category ? product.displayed.category.color : '#ffffff'"
+                  [disabled]="!product.edited" [class.disabled]="!product.edited"
+                  [class.dark-bg]="product.displayed.category && isDarkBackground(product.displayed.category.color)">
+            {{product.displayed.category ? product.displayed.category.name : 'No category'}}
           </button>
+          <div *ngIf="product.edited" class="dropdown-menu">
+            <button (click)="setCategory(product, null)" class="dropdown-item">No category</button>
+            <button *ngFor="let category of categories" (click)="setCategory(product, category)" class="dropdown-item"
+                    [style.background-color]="category.color"
+                    [class.dark-bg]="isDarkBackground(category.color)">
+              {{category.name}}
+            </button>
+          </div>
         </div>
-      </div>
-    </td>
-    <td *ngFor="let range of productRanges">
-      <label class="custom-control custom-checkbox m-0 checkbox-sm">
-        <input type="checkbox" class="custom-control-input m-0"
-               [checked]="product.displayed.ranges.has(range)"
-               (change)="toggleRange(product, range)"
-               [class.disabled]="!product.edited"
-               [disabled]="!product.edited">
-        <span class="custom-control-indicator"></span>
-      </label>
-    </td>
-    <td class="text-center">
-      <button (click)="reset(product)" class="btn btn-primary btn-sm"
-              [class.disabled]="(!product.changed && product.edited) || !product.original"
-              [disabled]="!product.changed && product.edited || !product.original">
-        <i class="fa fa-undo"></i>
-      </button>
-    </td>
-    <td class="text-center">
-      <button (click)="remove(product)" class="btn btn-danger btn-sm"
-              [class.disabled]="!product.edited"
-              [disabled]="!product.edited">
-        <i class="fa fa-trash"></i>
-      </button>
-    </td>
-  </tr>
+      </td>
+      <td *ngFor="let range of productRanges">
+        <label class="custom-control custom-checkbox m-0 checkbox-sm">
+          <input type="checkbox" class="custom-control-input m-0"
+                 [checked]="product.displayed.ranges.has(range)"
+                 (change)="toggleRange(product, range)"
+                 [class.disabled]="!product.edited"
+                 [disabled]="!product.edited">
+          <span class="custom-control-indicator"></span>
+        </label>
+      </td>
+      <td class="text-center">
+        <button (click)="reset(product)" class="btn btn-primary btn-sm"
+                [class.disabled]="(!product.changed && product.edited) || !product.original"
+                [disabled]="!product.changed && product.edited || !product.original">
+          <i class="fa fa-undo"></i>
+        </button>
+      </td>
+      <td class="text-center">
+        <button (click)="remove(product)" class="btn btn-danger btn-sm"
+                [class.disabled]="!product.edited"
+                [disabled]="!product.edited">
+          <i class="fa fa-trash"></i>
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
 
-  <tr>
-    <td [colSpan]="productRanges.length + 5">
-      <div class="row m-0">
-        <div class="col-4 px-1">
-          <button (click)="newProduct()" class="btn btn-block btn-primary btn-sm">
-            <i class="fa fa-plus pr-1"></i><span>New product</span>
-          </button>
-        </div>
-        <div class="col-4 px-1">
-          <button (click)="resetAll()" class="btn btn-block btn-primary btn-sm">
-            <i class="fa fa-undo pr-1"></i><span>Reset all</span>
-          </button>
-        </div>
-        <div class="col-4 px-1">
-          <button (click)="save()" class="btn btn-block btn-primary btn-sm">
-            <i class="fa fa-save pr-1"></i>Save changes
-          </button>
-        </div>
-      </div>
-    </td>
-  </tr>
-  </tbody>
-</table>
+  <div *ngIf="products.length > 0" class="row mx-0 mb-1">
+    <ngb-pagination [collectionSize]="products.length" [(page)]="page" [pageSize]="PAGE_SIZE"
+                    maxSize="10" rotate="true"></ngb-pagination>
+  </div>
 
-<div class="row justify-content-center mx-0 mb-1">
-  <ngb-pagination [collectionSize]="products.length" [(page)]="page" [pageSize]="PAGE_SIZE"
-                  maxSize="10" rotate="true"></ngb-pagination>
+  <div class="mt-3 container-buttons">
+    <button (click)="newProduct()" class="btn btn-primary btn-sm">
+      <i class="fa fa-plus pr-1"></i><span>New product</span>
+    </button>
+    <button (click)="resetAll()" class="btn btn-primary btn-sm">
+      <i class="fa fa-undo pr-1"></i><span>Reset all</span>
+    </button>
+    <button (click)="save()" class="btn btn-primary btn-sm">
+      <i class="fa fa-save pr-1"></i><span>Save changes</span>
+    </button>
+  </div>
+
+  <div class="mt-3">
+    <app-message></app-message>
+  </div>
+
 </div>
-
-<app-message></app-message>
 
 <app-navbar></app-navbar>

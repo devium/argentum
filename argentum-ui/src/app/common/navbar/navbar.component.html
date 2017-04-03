@@ -10,31 +10,27 @@
   <div class="collapse navbar-collapse" id="navbarMarkup">
     <ul class="navbar-nav justify-content-center mx-auto">
 
-      <li>
-        <a *ngIf="hasRole(['ADMIN', 'ADMIN'])" routerLink="/order" routerLinkActive="active"
-           class="nav-item nav-link">
+      <li class="nav-item">
+        <a *ngIf="hasRole(['ADMIN', 'ADMIN'])" routerLink="/order" routerLinkActive="active" class="nav-link">
           Order
         </a>
       </li>
-      <li>
-        <a *ngIf="hasRole(['ADMIN', 'CHECKIN'])" routerLink="/checkin" routerLinkActive="active"
-           class="nav-item nav-link">
-          Check-in
-        </a>
+      <li class="nav-item">
+        <a *ngIf="hasRole(['ADMIN', 'CHECKIN'])" routerLink="/checkin" routerLinkActive="active" class="nav-link">
+          Check-in</a>
       </li>
-      <li>
-        <a *ngIf="hasRole(['ADMIN', 'SCAN'])" routerLink="/scan" routerLinkActive="active"
-           class="nav-item nav-link">
+      <li class="nav-item">
+        <a *ngIf="hasRole(['ADMIN', 'SCAN'])" routerLink="/scan" routerLinkActive="active" class="nav-link">
           Scan
         </a>
       </li>
-      <li>
-        <a *ngIf="hasRole(['ADMIN'])" routerLink="/admin" routerLinkActive="active" class="nav-item nav-link">
+      <li class="nav-item">
+        <a *ngIf="hasRole(['ADMIN'])" routerLink="/admin" routerLinkActive="active" class="nav-link">
           Admin
         </a>
       </li>
-      <li>
-        <a routerLink="/logout" class="nav-item nav-link">
+      <li class="nav-item">
+        <a routerLink="/logout" class="nav-link">
           Logout
           <i class="fa fa-sign-out pl-1"></i>
         </a>

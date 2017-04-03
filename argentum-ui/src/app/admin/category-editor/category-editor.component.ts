@@ -83,7 +83,7 @@ export class CategoryEditorComponent implements OnInit {
     });
     newCategory.original = null;
     newCategory.updateChanged();
-    this.categories.unshift(newCategory);
+    this.categories.push(newCategory);
   }
 
   private resetAll() {

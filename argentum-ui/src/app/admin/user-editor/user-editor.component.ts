@@ -145,7 +145,7 @@ export class UserEditorComponent implements OnInit {
 
     Promise.all([pCreate, pDelete])
       .then(() => {
-        this.message.success(`Guests saved successfully. (${mergedUsers.length} created/updated, ${deletedUsers.length} deleted)`);
+        this.message.success(`Users saved successfully. (${mergedUsers.length} created/updated, ${deletedUsers.length} deleted)`);
         this.loadUsers();
       })
       .catch(reason => this.message.error(`Error: ${reason}`))
