@@ -77,7 +77,7 @@ export class OrderComponent implements OnInit {
   refreshProducts() {
     if (this.selectedRange) {
       this.restService.getProductRange(this.selectedRange)
-        .then((range: ProductRange) => this.products = range.products)
+        .then((range: ProductRange) => this.products = range.products.filter(product => !product.legacy))
         .catch(reason => this.message.error(`Error: ${reason}`));
     }
   }
