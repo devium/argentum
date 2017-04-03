@@ -1,38 +1,46 @@
 <div class="container-fluid navbar-pad"></div>
-<div class="container-fluid bg-primary fixed-bottom py-1 px-1">
-  <div class="row m-0">
-    <div class="col-11 row p-0 m-0">
 
-      <div *ngIf="hasRole(['ORDER', 'ADMIN'])" class="col-3 text-center px-1">
-        <a routerLink="/order" routerLinkActive="active">
-          <button (focus)="$event.target.blur()" type="button" class="btn btn-primary btn-block btn-sm">Order</button>
-        </a>
-      </div>
-      <div *ngIf="hasRole(['CHECKIN', 'ADMIN'])" class="col-3 text-center px-1">
-        <a routerLink="/checkin" routerLinkActive="active">
-          <button (focus)="$event.target.blur()" type="button" class="btn btn-primary btn-block btn-sm">Check-in
-          </button>
-        </a>
-      </div>
-      <div *ngIf="hasRole(['SCAN', 'ADMIN'])" class="col-3 text-center px-1">
-        <a routerLink="/scan" routerLinkActive="active">
-          <button (focus)="$event.target.blur()" type="button" class="btn btn-primary btn-block btn-sm">Scan</button>
-        </a>
-      </div>
-      <div *ngIf="hasRole(['ADMIN'])" class="col-3 text-center px-1">
-        <a routerLink="/admin" routerLinkActive="active">
-          <button (focus)="$event.target.blur()" type="button" class="btn btn-primary btn-block btn-sm">Admin</button>
-        </a>
-      </div>
-    </div>
+<nav class="navbar navbar-toggleable-sm navbar-inverse bg-primary fixed-bottom py-0">
 
-    <div class="col-1 p-0">
-      <a routerLink="/logout">
-        <button (focus)="$event.target.blur()" type="button" class="btn btn-primary btn-block btn-sm">
-          <i class="fa fa-sign-out"></i>
-        </button>
-      </a>
-    </div>
+  <button (focus)="$event.target.blur()" class="navbar-toggler mx-auto my-1 w-100 border-0" type="button"
+          data-toggle="collapse" data-target="#navbarMarkup">
+    <span class="fa fa-bars"></span>
+  </button>
 
+  <div class="collapse navbar-collapse" id="navbarMarkup">
+    <ul class="navbar-nav justify-content-center mx-auto">
+
+      <li>
+        <a *ngIf="hasRole(['ADMIN', 'ADMIN'])" routerLink="/order" routerLinkActive="active"
+           class="nav-item nav-link">
+          Order
+        </a>
+      </li>
+      <li>
+        <a *ngIf="hasRole(['ADMIN', 'CHECKIN'])" routerLink="/checkin" routerLinkActive="active"
+           class="nav-item nav-link">
+          Check-in
+        </a>
+      </li>
+      <li>
+        <a *ngIf="hasRole(['ADMIN', 'SCAN'])" routerLink="/scan" routerLinkActive="active"
+           class="nav-item nav-link">
+          Scan
+        </a>
+      </li>
+      <li>
+        <a *ngIf="hasRole(['ADMIN'])" routerLink="/admin" routerLinkActive="active" class="nav-item nav-link">
+          Admin
+        </a>
+      </li>
+      <li>
+        <a routerLink="/logout" class="nav-item nav-link">
+          Logout
+          <i class="fa fa-sign-out pl-1"></i>
+        </a>
+      </li>
+
+    </ul>
   </div>
-</div>
+
+</nav>

@@ -4,10 +4,10 @@
   height: 35px;
 }
 
-.active .btn-primary {
-  @extend .btn-primary.active
-}
+nav {
+  min-height: 35px;
 
-app-navbar {
-  width: 100%;
+  a {
+    @extend .py-1;
+  }
 }
