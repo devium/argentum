@@ -200,6 +200,78 @@ public class OrderControllerTest {
     }
 
     @Test
+    public void testCreateOrderEqual() throws Exception {
+        GuestEntity guest = new GuestEntity(
+                "someCode",
+                "someName",
+                "someMail",
+                "someStatus",
+                new Date(),
+                "someCard",
+                new BigDecimal(5.00),
+                new BigDecimal(0.00)
+        );
+        guest = guestRepository.save(guest);
+
+        String body = "{" +
+                "   'guestId': %s," +
+                "   'items': []," +
+                "   'customTotal': 5.00" +
+                "}";
+        body = String.format(body, guest.getId());
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(post("/orders")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.id").isNumber())
+                .andExpect(jsonPath("$.data.time", notNullValue()))
+                .andExpect(jsonPath("$.data.guest.id", is((int) guest.getId())))
+                .andExpect(jsonPath("$.data.items", empty()))
+                .andExpect(jsonPath("$.data.total", closeTo(5.00, 0.001)));
+
+        assertThat(orderRepository.findAll(), hasSize(1));
+    }
+
+    @Test
+    public void testCreateOrderClose() throws Exception {
+        GuestEntity guest = new GuestEntity(
+                "someCode",
+                "someName",
+                "someMail",
+                "someStatus",
+                new Date(),
+                "someCard",
+                new BigDecimal(5.00),
+                new BigDecimal(0.00)
+        );
+        guest = guestRepository.save(guest);
+
+        String body = "{" +
+                "   'guestId': %s," +
+                "   'items': []," +
+                "   'customTotal': 5.001" +
+                "}";
+        body = String.format(body, guest.getId());
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(post("/orders")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.id").isNumber())
+                .andExpect(jsonPath("$.data.time", notNullValue()))
+                .andExpect(jsonPath("$.data.guest.id", is((int) guest.getId())))
+                .andExpect(jsonPath("$.data.items", empty()))
+                .andExpect(jsonPath("$.data.total", closeTo(5.00, 0.001)));
+
+        assertThat(orderRepository.findAll(), hasSize(1));
+    }
+
+    @Test
     public void testCreateOrderProductNotFound() throws Exception {
         GuestEntity guest = new GuestEntity(
                 "someCode",
@@ -384,8 +456,8 @@ public class OrderControllerTest {
                 "someStatus",
                 new Date(),
                 "someCard",
-                new BigDecimal(2.50),
-                new BigDecimal(2.20)
+                new BigDecimal(4.50),
+                new BigDecimal(2.49)
         );
         guest = guestRepository.save(guest);
 
