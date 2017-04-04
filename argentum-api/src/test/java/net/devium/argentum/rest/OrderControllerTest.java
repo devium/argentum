@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.Date;
 
@@ -42,6 +43,8 @@ public class OrderControllerTest {
     private OrderItemRepository orderItemRepository;
     @Autowired
     private GuestRepository guestRepository;
+    @Autowired
+    private ConfigRepository configRepository;
 
     private OrderController sut;
 
@@ -50,12 +53,13 @@ public class OrderControllerTest {
     @Before
     public void setUp() {
         sut = new OrderController(orderRepository, productRepository, productRangeRepository, orderItemRepository,
-                guestRepository);
+                guestRepository, configRepository);
         mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
     }
 
     @After
     public void tearDown() throws Exception {
+        configRepository.deleteAll();
         orderRepository.deleteAll();
         orderItemRepository.deleteAll();
         guestRepository.deleteAll();
@@ -269,6 +273,47 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.data.total", closeTo(5.00, 0.001)));
 
         assertThat(orderRepository.findAll(), hasSize(1));
+    }
+
+    @Test
+    public void testCreateOrderPostpaid() throws Exception {
+        configRepository.save(new ConfigEntity("prepaid", "false"));
+
+        GuestEntity guest = new GuestEntity(
+                "someCode",
+                "someName",
+                "someMail",
+                "someStatus",
+                new Date(),
+                "someCard",
+                new BigDecimal(3.00),
+                new BigDecimal(1.00)
+        );
+        guest = guestRepository.save(guest);
+
+        String body = "{" +
+                "   'guestId': %s," +
+                "   'items': []," +
+                "   'customTotal': 6.20" +
+                "}";
+        body = String.format(body, guest.getId());
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(post("/orders")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.id").isNumber())
+                .andExpect(jsonPath("$.data.time", notNullValue()))
+                .andExpect(jsonPath("$.data.guest.id", is((int) guest.getId())))
+                .andExpect(jsonPath("$.data.items", empty()))
+                .andExpect(jsonPath("$.data.total", closeTo(6.20, 0.001)));
+
+        guest = guestRepository.findOne(guest.getId());
+        assertThat(orderRepository.findAll(), hasSize(1));
+        assertThat(guest.getBalance(), is(new BigDecimal(-2.20).setScale(DECIMAL_PLACES, RoundingMode.HALF_UP)));
+        assertThat(guest.getBonus(), is(new BigDecimal(0.00).setScale(DECIMAL_PLACES, RoundingMode.HALF_UP)));
     }
 
     @Test

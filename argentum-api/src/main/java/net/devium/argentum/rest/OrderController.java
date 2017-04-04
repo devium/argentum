@@ -30,18 +30,21 @@ public class OrderController {
     private ProductRangeRepository productRangeRepository;
     private OrderItemRepository orderItemRepository;
     private GuestRepository guestRepository;
+    private ConfigRepository configRepository;
 
     @Autowired
     public OrderController(OrderRepository orderRepository,
                            ProductRepository productRepository,
                            ProductRangeRepository productRangeRepository,
                            OrderItemRepository orderItemRepository,
-                           GuestRepository guestRepository) {
+                           GuestRepository guestRepository,
+                           ConfigRepository configRepository) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.productRangeRepository = productRangeRepository;
         this.orderItemRepository = orderItemRepository;
         this.guestRepository = guestRepository;
+        this.configRepository = configRepository;
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -103,10 +106,13 @@ public class OrderController {
             return Response.notFound(message);
         }
 
+        ConfigEntity prepaidEntry = configRepository.findOne("prepaid");
+        boolean prepaid = prepaidEntry == null || prepaidEntry.getValue().equals("true");
+
         // Check balance.
         if (guest.getBonus().compareTo(total) >= 0) {
             guest.setBonus(guest.getBonus().subtract(total));
-        } else if (guest.getBalance().compareTo(total.subtract(guest.getBonus())) >= 0) {
+        } else if (!prepaid || guest.getBalance().compareTo(total.subtract(guest.getBonus())) >= 0) {
             guest.setBalance(guest.getBalance().subtract(total.subtract(guest.getBonus())));
             guest.setBonus(new BigDecimal(0).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP));
         } else {
