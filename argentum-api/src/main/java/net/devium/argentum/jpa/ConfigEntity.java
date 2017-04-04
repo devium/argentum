@@ -1,5 +1,6 @@
 package net.devium.argentum.jpa;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -8,6 +9,7 @@ import javax.persistence.Table;
 @Table(name = "config")
 public class ConfigEntity {
     @Id
+    @Column(name = "config_key")
     private String key;
 
     private String value;
