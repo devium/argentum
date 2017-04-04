@@ -20,12 +20,13 @@
            [value]="guest.status">
   </div>
 
-  <button (focus)="$event.target.blur()" (click)="checkIn()" type="button" [disabled]="!guest || guest.checkedIn"
-          [class.disabled]="!guest || guest.checkedIn" class="btn btn-block btn-primary mb-3">
-    {{ guest && guest.checkedIn ? 'Checked in at ' + guest.checkedIn.toLocaleTimeString() : 'Check in' }}
+  <button (focus)="$event.target.blur()" (click)="checkIn()" type="button"
+          [disabled]="!guest || guest.checkedIn != null"
+          [class.disabled]="!guest || guest.checkedIn != null" class="btn btn-block btn-primary mb-3">
+    {{ guest && guest.checkedIn != null ? 'Checked in at ' + guest.checkedIn.toLocaleTimeString() : 'Check in' }}
   </button>
 
-  <div *ngIf="guest && guest.checkedIn">
+  <div *ngIf="guest && guest.checkedIn != null">
 
     <div class="form-group">
       <label for="cardButton">Card (optional)</label>

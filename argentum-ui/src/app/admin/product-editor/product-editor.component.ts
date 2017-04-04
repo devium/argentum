@@ -59,14 +59,14 @@ class EditorProduct {
   styleUrls: ['product-editor.component.scss']
 })
 export class ProductEditorComponent implements OnInit {
-  private readonly PAGE_SIZE = 15;
-  private page = 1;
-  private products: EditorProduct[] = [];
-  private productRanges: ProductRange[] = [];
-  private categories: Category[] = [];
+  readonly PAGE_SIZE = 15;
+  page = 1;
+  products: EditorProduct[] = [];
+  productRanges: ProductRange[] = [];
+  categories: Category[] = [];
 
   @ViewChild(MessageComponent)
-  private message: MessageComponent;
+  message: MessageComponent;
 
   constructor(private restService: RestService, private modalService: NgbModal) {
   }
@@ -75,7 +75,7 @@ export class ProductEditorComponent implements OnInit {
     this.loadProducts();
   }
 
-  private loadProducts() {
+  loadProducts() {
     this.restService.getProductData()
       .then((productData: { products: Product[], categories: Category[], ranges: ProductRange[] }) => {
         this.categories = productData.categories;
@@ -96,12 +96,12 @@ export class ProductEditorComponent implements OnInit {
       .catch(reason => this.message.error(`Error: ${reason}`));
   }
 
-  private setCategory(product: EditorProduct, category: Category) {
+  setCategory(product: EditorProduct, category: Category) {
     product.edited.category = category;
     product.updateChanged();
   }
 
-  private toggleRange(product: EditorProduct, range: ProductRange) {
+  toggleRange(product: EditorProduct, range: ProductRange) {
     if (product.edited.ranges.has(range)) {
       product.edited.ranges.delete(range);
     } else {
@@ -110,18 +110,18 @@ export class ProductEditorComponent implements OnInit {
     product.updateChanged();
   }
 
-  private isDarkBackground(color: string): boolean {
+  isDarkBackground(color: string): boolean {
     return isDarkBackground(color);
   }
 
-  private reset(product: EditorProduct) {
+  reset(product: EditorProduct) {
     product.edited = Object.assign({}, product.original);
     product.edited.ranges = new Set(product.original.ranges);
     product.displayed = product.edited;
     product.updateChanged();
   }
 
-  private remove(product: EditorProduct) {
+  remove(product: EditorProduct) {
     if (product.original) {
       product.edited = null;
       product.displayed = product.original;
@@ -130,11 +130,11 @@ export class ProductEditorComponent implements OnInit {
     }
   }
 
-  private changeName(product: EditorProduct, value: string) {
+  changeName(product: EditorProduct, value: string) {
     product.updateChanged();
   }
 
-  private setProductPrice(product: EditorProduct) {
+  setProductPrice(product: EditorProduct) {
     let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
     modal.result.then((result: number) => {
@@ -143,7 +143,7 @@ export class ProductEditorComponent implements OnInit {
     }, result => void(0));
   }
 
-  private newProduct() {
+  newProduct() {
     let newProduct = new EditorProduct({
       id: -1,
       name: "New Product",
@@ -157,7 +157,7 @@ export class ProductEditorComponent implements OnInit {
     this.products.unshift(newProduct);
   }
 
-  private resetAll() {
+  resetAll() {
     this.products.forEach(product => {
       if (product.original) {
         this.reset(product);
@@ -166,7 +166,7 @@ export class ProductEditorComponent implements OnInit {
     this.products = this.products.filter(product => product.original);
   }
 
-  private save() {
+  save() {
     // Products with changed name or price will not be updated but instead recreated.
     let mergedProducts = this.products
       .filter(product => product.edited && product.changed)

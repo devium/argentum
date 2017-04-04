@@ -12,21 +12,21 @@ import { MessageComponent } from '../../common/message/message.component';
   styleUrls: ['./guest-editor.component.scss']
 })
 export class GuestEditorComponent implements OnInit {
-  private readonly PAGE_SIZE = 15;
-  private page = 1;
-  private guests: Guest[] = [];
-  private guestsTotal = 0;
-  private codeLike = '';
-  private nameLike = '';
-  private mailLike = '';
-  private statusLike = '';
-  private codeStream = new Subject<string>();
-  private nameStream = new Subject<string>();
-  private mailStream = new Subject<string>();
-  private statusStream = new Subject<string>();
+  readonly PAGE_SIZE = 15;
+  page = 1;
+  guests: Guest[] = [];
+  guestsTotal = 0;
+  codeLike = '';
+  nameLike = '';
+  mailLike = '';
+  statusLike = '';
+  codeStream = new Subject<string>();
+  nameStream = new Subject<string>();
+  mailStream = new Subject<string>();
+  statusStream = new Subject<string>();
 
   @ViewChild(MessageComponent)
-  private message: MessageComponent;
+  message: MessageComponent;
 
   constructor(private restService: RestService, private modalService: NgbModal) {
   }

@@ -55,7 +55,7 @@ export class RestService {
     let body = products.map(fromProduct);
     return this.http.post(`${this.apiUrl}/products`, body, { headers: this.prepareHeaders() })
       .toPromise()
-      .then(response => response.json().data as Product[])
+      .then(response => response.json().data as ProductResponse[])
       .catch(this.handleError);
   }
 
@@ -203,7 +203,7 @@ export class RestService {
   private getGuestsPaginatedAndFilteredRaw(pageSize: number, page: number, codeLike: string, nameLike: string, mailLike: string, statusLike: string): Promise<GuestResponsePaginated> {
     return this.http.get(`${this.apiUrl}/guests/?size=${pageSize}&page=${page}&code=${codeLike}&name=${nameLike}&mail=${mailLike}&status=${statusLike}`, { headers: this.prepareHeaders() })
       .toPromise()
-      .then(response => response.json().data as GuestResponsePaginated[])
+      .then(response => response.json().data as GuestResponsePaginated)
       .catch(this.handleError);
   }
 
@@ -288,7 +288,7 @@ export class RestService {
 
     return this.http.post(`${this.apiUrl}/orders`, body, { headers: this.prepareHeaders() })
       .toPromise()
-      .then(response => response.json().data as OrderResponse[])
+      .then(response => response.json().data as OrderResponse)
       .catch(this.handleError);
   }
 

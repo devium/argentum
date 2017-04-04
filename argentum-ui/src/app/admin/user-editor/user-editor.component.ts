@@ -81,7 +81,7 @@ export class UserEditorComponent implements OnInit {
     user.updateChanged();
   }
 
-  private toggleRole(user: EditorUser, role: string) {
+  toggleRole(user: EditorUser, role: string) {
     let index = user.edited.roles.indexOf(role);
     if (index > -1) {
       user.edited.roles.splice(index, 1);
@@ -92,7 +92,7 @@ export class UserEditorComponent implements OnInit {
     user.updateChanged();
   }
 
-  private reset(user: EditorUser) {
+  reset(user: EditorUser) {
     user.edited = Object.assign({}, user.original);
     user.edited.password = '';
     user.edited.roles = user.original.roles.slice();
@@ -100,7 +100,7 @@ export class UserEditorComponent implements OnInit {
     user.updateChanged();
   }
 
-  private remove(user: EditorUser) {
+  remove(user: EditorUser) {
     if (user.original) {
       user.edited = null;
       user.displayed = user.original;
@@ -109,7 +109,7 @@ export class UserEditorComponent implements OnInit {
     }
   }
 
-  private newUser() {
+  newUser() {
     let newUser = new EditorUser({
       id: -1,
       username: 'user',
@@ -122,7 +122,7 @@ export class UserEditorComponent implements OnInit {
     this.users.unshift(newUser);
   }
 
-  private resetAll() {
+  resetAll() {
     this.users.forEach(product => {
       if (product.original) {
         this.reset(product);
@@ -131,7 +131,7 @@ export class UserEditorComponent implements OnInit {
     this.users = this.users.filter(product => product.original);
   }
 
-  private save() {
+  save() {
     // Products with changed name or price will not be updated but instead recreated.
     let mergedUsers = this.users
       .filter(user => user.edited && user.changed)

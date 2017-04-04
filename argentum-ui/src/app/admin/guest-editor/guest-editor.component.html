@@ -1,105 +1,105 @@
 <app-admin-nav></app-admin-nav>
 
-<table class="table table-sm table-responsive table-striped mt-3">
-  <thead>
-  <tr>
-    <th>
-      <div>Code</div>
-      <div><input (input)="filterCode($event.target.value)" (focus)="$event.target.select()" type="text"
-                  class="form-control form-control-sm"></div>
-    </th>
-    <th>
-      <div>Name</div>
-      <div><input (input)="filterName($event.target.value)" (focus)="$event.target.select()" type="text"
-                  class="form-control form-control-sm"></div>
-    </th>
-    <th>
-      <div>E-Mail</div>
-      <div><input (input)="filterMail($event.target.value)" (focus)="$event.target.select()" type="text"
-                  class="form-control form-control-sm"></div>
-    </th>
-    <th>
-      <div>Status</div>
-      <div><input (input)="filterStatus($event.target.value)" (focus)="$event.target.select()" type="text"
-                  class="form-control form-control-sm"></div>
-    </th>
-    <th>Checked in</th>
-    <th class="text-right">Card</th>
-    <th class="text-right">Balance</th>
-    <th class="text-right">Bonus</th>
-  </tr>
-  </thead>
+<div class="container-fluid mt-3">
 
-  <tbody>
-  <tr *ngFor="let guest of guests">
-    <td>
-      {{guest.code}}
-    </td>
-    <td>
-      {{guest.name}}
-    </td>
-    <td>
-      {{guest.mail}}
-    </td>
-    <td>
-      {{guest.status}}
-    </td>
-    <td>
-      {{guest.checkedIn ? guest.checkedIn.toLocaleTimeString() : ''}}
-    </td>
-    <td class="text-right">
-      {{guest.card}}
-    </td>
+  <table *ngIf="guests.length > 0" class="table table-sm table-responsive table-striped mt-3">
+    <thead>
+    <tr>
+      <th>
+        <div>Code</div>
+        <div><input (input)="filterCode($event.target.value)" (focus)="$event.target.select()" type="text"
+                    class="form-control form-control-sm"></div>
+      </th>
+      <th>
+        <div>Name</div>
+        <div><input (input)="filterName($event.target.value)" (focus)="$event.target.select()" type="text"
+                    class="form-control form-control-sm"></div>
+      </th>
+      <th>
+        <div>E-Mail</div>
+        <div><input (input)="filterMail($event.target.value)" (focus)="$event.target.select()" type="text"
+                    class="form-control form-control-sm"></div>
+      </th>
+      <th>
+        <div>Status</div>
+        <div><input (input)="filterStatus($event.target.value)" (focus)="$event.target.select()" type="text"
+                    class="form-control form-control-sm"></div>
+      </th>
+      <th>Checked in</th>
+      <th class="text-right">Card</th>
+      <th class="text-right">Balance</th>
+      <th class="text-right">Bonus</th>
+    </tr>
+    </thead>
 
-    <td>
+    <tbody>
+    <tr *ngFor="let guest of guests">
+      <td>
+        {{guest.code}}
+      </td>
+      <td>
+        {{guest.name}}
+      </td>
+      <td>
+        {{guest.mail}}
+      </td>
+      <td>
+        {{guest.status}}
+      </td>
+      <td>
+        {{guest.checkedIn ? guest.checkedIn.toLocaleTimeString() : ''}}
+      </td>
+      <td class="text-right">
+        {{guest.card}}
+      </td>
 
-      <div class="d-flex value-control ml-auto">
-        <button (click)="subBalance(guest)" type="button" class="btn btn-sm btn-primary">
-          <i class="fa fa-minus"></i>
-        </button>
+      <td>
 
-        <input id="balanceInput" disabled
-               class="disabled form-control form-control-sm d-inline-block flex-grow-1 text-center"
-               [value]="guest.balance | number:'1.2-2'">
+        <div class="d-flex value-control ml-auto">
+          <button (click)="subBalance(guest)" type="button" class="btn btn-sm btn-primary">
+            <i class="fa fa-minus"></i>
+          </button>
 
-        <button (click)="addBalance(guest)" type="button" class="btn btn-sm btn-primary">
-          <i class="fa fa-plus"></i>
-        </button>
-      </div>
+          <input id="balanceInput" disabled
+                 class="disabled form-control form-control-sm d-inline-block flex-grow-1 text-center"
+                 [value]="guest.balance | number:'1.2-2'">
 
-    </td>
+          <button (click)="addBalance(guest)" type="button" class="btn btn-sm btn-primary">
+            <i class="fa fa-plus"></i>
+          </button>
+        </div>
 
-    <td>
+      </td>
 
-      <div class="d-flex value-control ml-auto">
-        <button (click)="subBonus(guest)" type="button" class="btn btn-sm btn-primary">
-          <i class="fa fa-minus"></i>
-      </button>
+      <td>
 
-        <input id="bonusInput" disabled
-               class="disabled form-control form-control-sm d-inline-block flex-grow-1 text-center"
-               [value]="guest.bonus | number:'1.2-2'">
+        <div class="d-flex value-control ml-auto">
+          <button (click)="subBonus(guest)" type="button" class="btn btn-sm btn-primary">
+            <i class="fa fa-minus"></i>
+          </button>
 
-        <button (click)="addBonus(guest)" type="button" class="btn btn-sm btn-primary">
-          <i class="fa fa-plus"></i>
-        </button>
-      </div>
+          <input id="bonusInput" disabled
+                 class="disabled form-control form-control-sm d-inline-block flex-grow-1 text-center"
+                 [value]="guest.bonus | number:'1.2-2'">
 
-    </td>
-  </tr>
+          <button (click)="addBonus(guest)" type="button" class="btn btn-sm btn-primary">
+            <i class="fa fa-plus"></i>
+          </button>
+        </div>
 
-  </tbody>
-</table>
+      </td>
+    </tr>
 
-<div class="row justify-content-center mx-0 mb-1">
+    </tbody>
+  </table>
+
   <ngb-pagination (pageChange)="changePage($event)" [collectionSize]="guestsTotal" [(page)]="page"
                   [pageSize]="PAGE_SIZE"
                   maxSize="10" rotate="true"></ngb-pagination>
-</div>
-<div class="container-fluid text-center">
   {{guestsTotal}} guests found.
-</div>
 
-<app-message></app-message>
+  <app-message class="message-800 mx-auto"></app-message>
+
+</div>
 
 <app-navbar></app-navbar>

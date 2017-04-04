@@ -16,9 +16,9 @@ import { CardBarComponent } from '../../common/card-bar/card-bar.component';
 })
 export class CheckinComponent implements OnInit {
   @ViewChild(MessageComponent)
-  private message: MessageComponent;
+  message: MessageComponent;
   @ViewChild(CardBarComponent)
-  private cardBar: CardBarComponent;
+  cardBar: CardBarComponent;
 
   constructor(private restService: RestService, private modalService: NgbModal) {
   }

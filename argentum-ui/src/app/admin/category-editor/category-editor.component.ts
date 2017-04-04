@@ -60,13 +60,13 @@ export class CategoryEditorComponent implements OnInit {
     category.updateChanged();
   }
 
-  private reset(category: EditorCategory) {
+  reset(category: EditorCategory) {
     category.edited = Object.assign({}, category.original);
     category.displayed = category.edited;
     category.updateChanged();
   }
 
-  private remove(category: EditorCategory) {
+  remove(category: EditorCategory) {
     if (category.original) {
       category.edited = null;
       category.displayed = category.original;
@@ -75,7 +75,7 @@ export class CategoryEditorComponent implements OnInit {
     }
   }
 
-  private newCategory() {
+  newCategory() {
     let newCategory = new EditorCategory({
       id: -1,
       name: 'New Category',
@@ -86,7 +86,7 @@ export class CategoryEditorComponent implements OnInit {
     this.categories.push(newCategory);
   }
 
-  private resetAll() {
+  resetAll() {
     this.categories.forEach(category => {
       if (category.original) {
         this.reset(category);
@@ -95,7 +95,7 @@ export class CategoryEditorComponent implements OnInit {
     this.categories = this.categories.filter(category => category.original);
   }
 
-  private save() {
+  save() {
     let updatedCategories = this.categories
       .filter(category => category.changed)
       .map(category => category.edited);

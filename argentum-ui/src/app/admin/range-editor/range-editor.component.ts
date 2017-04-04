@@ -52,13 +52,13 @@ export class RangeEditorComponent implements OnInit {
     range.updateChanged();
   }
 
-  private reset(range: EditorRange) {
+  reset(range: EditorRange) {
     range.edited = Object.assign({}, range.original);
     range.displayed = range.edited;
     range.updateChanged();
   }
 
-  private remove(range: EditorRange) {
+  remove(range: EditorRange) {
     if (range.original) {
       range.edited = null;
       range.displayed = range.original;
@@ -67,7 +67,7 @@ export class RangeEditorComponent implements OnInit {
     }
   }
 
-  private newRange() {
+  newRange() {
     let newRange = new EditorRange({
       id: -1,
       name: 'New Product Range',
@@ -78,7 +78,7 @@ export class RangeEditorComponent implements OnInit {
     this.productRanges.push(newRange);
   }
 
-  private resetAll() {
+  resetAll() {
     this.productRanges.forEach(product => {
       if (product.original) {
         this.reset(product);
@@ -87,7 +87,7 @@ export class RangeEditorComponent implements OnInit {
     this.productRanges = this.productRanges.filter(range => range.original);
   }
 
-  private save() {
+  save() {
     let mergedRanges = this.productRanges
       .filter(range => range.changed)
       .map(range => range.edited);
