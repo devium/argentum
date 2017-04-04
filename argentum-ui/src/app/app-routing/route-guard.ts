@@ -42,6 +42,7 @@ export class RouteGuard implements CanActivate {
           case 'admin/guests':
           case 'admin/import':
           case 'admin/users':
+          case 'admin/config':
             return this.redirectIfNotAllowed(user.roles, ['ADMIN']);
         }
       })

@@ -27,6 +27,9 @@ import { toUser, UserResponse } from './response/user-response';
 import { TokenResponse } from './response/token-response';
 import { User } from '../model/user';
 import { fromUser } from './request/user-request';
+import { ConfigResponse, toConfig } from './response/config-response';
+import { Config } from '../model/config';
+import { fromConfig } from './request/config-request';
 
 @Injectable()
 export class RestService {
@@ -348,6 +351,28 @@ export class RestService {
       .then(response => response.json().data as UserResponse)
       .catch(this.handleError);
   }
+
+
+  // /config
+  private getConfigRaw(): Promise<ConfigResponse> {
+    return this.http.get(this.apiUrl + '/config', { headers: this.prepareHeaders() })
+      .toPromise()
+      .then(response => response.json().data as ConfigResponse)
+      .catch(this.handleError);
+  }
+
+  getConfig(): Promise<Config> {
+    return this.getConfigRaw()
+      .then((config: ConfigResponse) => toConfig(config));
+  }
+
+  setConfig(config: Config): Promise<ConfigResponse> {
+    return this.http.put(this.apiUrl + '/config', fromConfig(config), { headers: this.prepareHeaders() })
+      .toPromise()
+      .then(response => response.json().data as ConfigResponse)
+      .catch(this.handleError);
+  }
+
 
   authenticate(username: string, password: string): Promise<TokenResponse> {
     let clientEncoded = btoa("argentum-client:secret");

@@ -13,6 +13,7 @@ import { RouteGuard } from './route-guard';
 import { LoginComponent } from '../login/login.component';
 import { DummyComponent } from '../dummy/dummy.component';
 import { UserEditorComponent } from '../admin/user-editor/user-editor.component';
+import { ConfigComponent } from '../admin/config/config.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -29,7 +30,8 @@ const routes: Routes = [
   { path: 'admin/ranges', component: RangeEditorComponent, canActivate: [RouteGuard] },
   { path: 'admin/guests', component: GuestEditorComponent, canActivate: [RouteGuard] },
   { path: 'admin/import', component: GuestImportComponent, canActivate: [RouteGuard] },
-  { path: 'admin/users', component: UserEditorComponent, canActivate: [RouteGuard] }
+  { path: 'admin/users', component: UserEditorComponent, canActivate: [RouteGuard] },
+  { path: 'admin/config', component: ConfigComponent, canActivate: [RouteGuard] }
 ];
 @NgModule({
   imports: [

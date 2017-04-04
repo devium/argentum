@@ -32,6 +32,7 @@ import { RouteGuard } from './app-routing/route-guard';
 import { LoginComponent } from './login/login.component';
 import { DummyComponent } from './dummy/dummy.component';
 import { UserEditorComponent } from './admin/user-editor/user-editor.component';
+import { ConfigComponent } from './admin/config/config.component';
 
 @NgModule({
   declarations: [
@@ -59,7 +60,8 @@ import { UserEditorComponent } from './admin/user-editor/user-editor.component';
     ScanComponent,
     LoginComponent,
     DummyComponent,
-    UserEditorComponent
+    UserEditorComponent,
+    ConfigComponent
   ],
   imports: [
     BrowserModule,

@@ -17,6 +17,7 @@ public class ApplicationResourceProcessor implements ResourceProcessor<Repositor
         resource.add(ControllerLinkBuilder.linkTo(GuestController.class).withRel("guests"));
         resource.add(ControllerLinkBuilder.linkTo(StatisticsController.class).withRel("statistics"));
         resource.add(ControllerLinkBuilder.linkTo(UserController.class).withRel("user"));
+        resource.add(ControllerLinkBuilder.linkTo(ConfigController.class).withRel("config"));
         return resource;
     }
 }
