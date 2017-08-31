@@ -53,6 +53,15 @@ class EditorUser {
 export class UserEditorComponent implements OnInit {
   users: EditorUser[] = [];
   ranges: ProductRange[] = [];
+  ROLES: { [id: string]: string } = {
+    'ADMIN': 'Admin',
+    'ORDER': 'Order',
+    'CHECKIN': 'Check-in',
+    'RECHARGE': 'Recharge',
+    'REFUND': 'Refund',
+    'SCAN': 'Scan',
+    'ALL_RANGES': 'All ranges'
+  };
 
   @ViewChild(MessageComponent)
   private message: MessageComponent;
@@ -119,7 +128,7 @@ export class UserEditorComponent implements OnInit {
 
     newUser.original = null;
     newUser.updateChanged();
-    this.users.unshift(newUser);
+    this.users.push(newUser);
   }
 
   resetAll() {
@@ -132,7 +141,6 @@ export class UserEditorComponent implements OnInit {
   }
 
   save() {
-    // Products with changed name or price will not be updated but instead recreated.
     let mergedUsers = this.users
       .filter(user => user.edited && user.changed)
       .map(user => user.edited);

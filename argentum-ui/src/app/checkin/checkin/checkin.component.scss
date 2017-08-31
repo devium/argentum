@@ -2,6 +2,7 @@
 
 .btn-huge {
   height: 200px;
+  min-width: 200px;
 }
 
 @include media-breakpoint-down(xs) {

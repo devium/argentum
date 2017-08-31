@@ -9,6 +9,13 @@ export class RouteGuard implements CanActivate {
   constructor(private restService: RestService, private router: Router) {
   }
 
+  readonly ROUTE_MAPPING: { [home: string]: [string] } = {
+    '/admin': ['ADMIN'],
+    '/order': ['ORDER'],
+    '/scan': ['SCAN'],
+    '/checkin': ['CHECKIN', 'RECHARGE', 'REFUND']
+  };
+
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | Promise<boolean> {
     let path = route.url[0].path;
 
@@ -31,7 +38,7 @@ export class RouteGuard implements CanActivate {
           case 'order':
             return this.redirectIfNotAllowed(user.roles, ['ORDER', 'ADMIN']);
           case 'checkin':
-            return this.redirectIfNotAllowed(user.roles, ['CHECKIN', 'ADMIN']);
+            return this.redirectIfNotAllowed(user.roles, ['CHECKIN', 'RECHARGE', 'ADMIN']);
           case 'scan':
             return this.redirectIfNotAllowed(user.roles, ['SCAN', 'ADMIN']);
           case 'admin':
@@ -74,17 +81,14 @@ export class RouteGuard implements CanActivate {
 
   redirectHome(roles: string[]): Promise<boolean> {
     let redirect: string;
-    if (roles.indexOf("ADMIN") > -1) {
-      redirect = '/admin';
-    } else if (roles.indexOf("ORDER") > -1) {
-      redirect = '/order';
-    } else if (roles.indexOf("CHECKIN") > -1) {
-      redirect = '/checkin';
-    } else if (roles.indexOf("SCAN") > -1) {
-      redirect = '/scan';
-    } else {
-      this.logout();
-      redirect = '/login';
+    for (let route in this.ROUTE_MAPPING) {
+      if (roles.filter(role => this.ROUTE_MAPPING[route].includes(role)).length) {
+        redirect = route;
+        break;
+      }
+    }
+    if (!redirect) {
+      redirect = '/login'
     }
     console.log(`Redirecting to ${redirect}`);
     this.router.navigate([redirect]);

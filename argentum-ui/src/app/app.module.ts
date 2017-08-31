@@ -33,6 +33,7 @@ import { LoginComponent } from './login/login.component';
 import { DummyComponent } from './dummy/dummy.component';
 import { UserEditorComponent } from './admin/user-editor/user-editor.component';
 import { ConfigComponent } from './admin/config/config.component';
+import { RoleBasedComponent } from './common/role-based/role-based.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import { ConfigComponent } from './admin/config/config.component';
     LoginComponent,
     DummyComponent,
     UserEditorComponent,
-    ConfigComponent
+    ConfigComponent,
+    RoleBasedComponent
   ],
   imports: [
     BrowserModule,

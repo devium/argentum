@@ -8,22 +8,21 @@ import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.com
 import { MessageComponent } from '../../common/message/message.component';
 import { RefundModalComponent } from '../refund-modal/refund-modal.component';
 import { CardBarComponent } from '../../common/card-bar/card-bar.component';
+import { RoleBasedComponent } from '../../common/role-based/role-based.component';
 
 @Component({
   selector: 'app-checkin',
   templateUrl: 'checkin.component.html',
   styleUrls: ['checkin.component.scss']
 })
-export class CheckinComponent implements OnInit {
+export class CheckinComponent extends RoleBasedComponent implements OnInit {
   @ViewChild(MessageComponent)
   message: MessageComponent;
   @ViewChild(CardBarComponent)
   cardBar: CardBarComponent;
 
   constructor(private restService: RestService, private modalService: NgbModal) {
-  }
-
-  ngOnInit() {
+    super()
   }
 
   newGuest() {

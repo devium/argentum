@@ -326,6 +326,8 @@ export class RestService {
 
   mergeUsers(users: User[]): Promise<UserResponse[]> {
     let body = users.map(fromUser);
+    // TODO
+    console.log(body);
 
     return this.http.post(`${this.apiUrl}/users`, body, { headers: this.prepareHeaders() })
       .toPromise()

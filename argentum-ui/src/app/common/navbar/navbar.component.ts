@@ -1,25 +1,15 @@
 import { Component, OnInit } from '@angular/core';
+import { RoleBasedComponent } from '../role-based/role-based.component';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: 'navbar.component.html',
   styleUrls: ['navbar.component.scss']
 })
-export class NavbarComponent implements OnInit {
-  roles: string[] = [];
+export class NavbarComponent extends RoleBasedComponent implements OnInit {
 
   constructor() {
-  }
-
-  ngOnInit() {
-    let roles = localStorage.getItem('roles');
-    this.roles = roles ? roles.split(',') : [];
-  }
-
-  hasRole(roles: string[]) {
-    return roles
-      .map(role => this.roles.indexOf(role) > -1)
-      .reduce((a, b) => a || b, false);
+    super()
   }
 
 }

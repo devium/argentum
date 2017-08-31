@@ -16,7 +16,8 @@
         </a>
       </li>
       <li class="nav-item">
-        <a *ngIf="hasRole(['ADMIN', 'CHECKIN'])" routerLink="/checkin" routerLinkActive="active" class="nav-link">
+        <a *ngIf="hasRole(['ADMIN', 'CHECKIN', 'TOPUP'])"
+           routerLink="/checkin" routerLinkActive="active" class="nav-link">
           Check-in</a>
       </li>
       <li class="nav-item">
