@@ -3,13 +3,14 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.component';
 import { Guest } from '../../common/model/guest';
 import { CardModalComponent } from '../card-modal/card-modal.component';
+import { RoleBasedComponent } from '../../common/role-based/role-based.component';
 
 @Component({
   selector: 'app-new-guest',
   templateUrl: 'new-guest-modal.component.html',
   styleUrls: ['new-guest-modal.component.scss']
 })
-export class NewGuestModalComponent implements OnInit {
+export class NewGuestModalComponent extends RoleBasedComponent implements OnInit {
   name = '';
   mail = '';
   status = '';
@@ -21,9 +22,11 @@ export class NewGuestModalComponent implements OnInit {
   nameInput: ElementRef;
 
   constructor(private modalService: NgbModal, public activeModal: NgbActiveModal) {
+    super();
   }
 
   ngOnInit() {
+    super.ngOnInit();
     this.nameInput.nativeElement.focus();
   }
 

@@ -4,8 +4,7 @@ import { RestService } from '../../common/rest-service/rest.service';
 import { MessageComponent } from '../../common/message/message.component';
 import { DeleteGuestsModalComponent } from '../delete-guests-modal/delete-guests-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-
-declare let Papa: any;
+import * as Papa from 'papaparse/papaparse.min.js';
 
 @Component({
   selector: 'app-guest-import',
@@ -46,7 +45,7 @@ export class GuestImportComponent implements OnInit {
       complete: results => {
         const requiredFields = [this.codeCol, this.nameCol, this.mailCol, this.statusCol];
         for (const field of requiredFields) {
-          if (results.meta.fields.includes(field)) {
+          if (!results.meta.fields.includes(field)) {
             this.message.error(`Column "${field}" not found in imported file.`);
             return;
           }

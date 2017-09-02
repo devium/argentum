@@ -2,10 +2,11 @@
 
   <div class="form-group">
     <label for="codeInput">Code</label>
-    <input #codeInput (input)="search($event.target.value)" id="codeInput" type="text" class="form-control">
+    <input #codeInput (input)="search($event.target.value)"
+           id="codeInput" type="text" class="form-control">
 
-    <div *ngIf="results.length > 0 && !guest" class="dropdown show">
-      <div class="dropdown-menu">
+    <div ngbDropdown open="true" autoClose="false">
+      <div ngbDropdownMenu *ngIf="results.length > 0 && !guest" class="dropdown-menu">
         <button *ngFor="let guest of results" (focus)="$event.target.blur()" (click)="lockGuest(guest)" type="button"
                 class="dropdown-item">
           {{guest.code}} {{guest.name}}
@@ -37,7 +38,7 @@
     </div>
 
 
-    <div class="form-group">
+    <div *ngIf="hasRole(['ADMIN', 'RECHARGE'])" class="form-group">
 
       <label for="balanceInput">Balance (requires card)</label>
 
@@ -59,7 +60,7 @@
 
     </div>
 
-    <div class="form-group">
+    <div *ngIf="hasRole(['ADMIN', 'RECHARGE'])" class="form-group">
 
       <label for="bonusInput">Bonus (requires card)</label>
 

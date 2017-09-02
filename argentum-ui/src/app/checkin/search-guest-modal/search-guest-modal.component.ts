@@ -9,13 +9,14 @@ import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.com
 import { MessageComponent } from '../../common/message/message.component';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/observable/of';
+import { RoleBasedComponent } from '../../common/role-based/role-based.component';
 
 @Component({
   selector: 'app-search-guest',
   templateUrl: 'search-guest-modal.component.html',
   styleUrls: ['search-guest-modal.component.scss']
 })
-export class SearchGuestModalComponent implements OnInit {
+export class SearchGuestModalComponent extends RoleBasedComponent implements OnInit {
   private codeStream = new Subject<string>();
   results: Guest[] = [];
   guest: Guest;
@@ -26,9 +27,11 @@ export class SearchGuestModalComponent implements OnInit {
   message: MessageComponent;
 
   constructor(private restService: RestService, private modalService: NgbModal, public activeModal: NgbActiveModal) {
+    super();
   }
 
   ngOnInit() {
+    super.ngOnInit();
     this.codeStream
       .debounceTime(300)
       .distinctUntilChanged()
