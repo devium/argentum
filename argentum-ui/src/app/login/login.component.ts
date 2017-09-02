@@ -4,6 +4,7 @@ import { TokenResponse } from '../common/rest-service/response/token-response';
 import { MessageComponent } from '../common/message/message.component';
 import { UserResponse } from '../common/rest-service/response/user-response';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'app-login',
@@ -11,8 +12,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
-  username = "";
-  password = "";
+  username = '';
+  password = '';
 
   @ViewChild(MessageComponent)
   message: MessageComponent;
@@ -23,6 +24,11 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    Observable.fromEvent(document, 'keydown').subscribe((event: KeyboardEvent) => {
+      if (event.keyCode === 13 /* Enter */) {
+        this.onSubmit();
+      }
+    });
   }
 
   onSubmit() {
@@ -40,7 +46,7 @@ export class LoginComponent implements OnInit {
             this.message.error(`Error: ${reason}`);
           });
       }))
-      .catch(reason => {
+      .catch((reason: string) => {
         this.waitingForLogin = false;
         this.message.error(`Error: ${reason}`);
       });

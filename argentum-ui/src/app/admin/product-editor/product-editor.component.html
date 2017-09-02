@@ -33,7 +33,7 @@
           {{product.displayed.price | number: '1.2-2'}}
         </button>
       <td>
-        <div ngbDropdown [up]="true">
+        <div ngbDropdown placement="top-left">
           <button class="btn btn-sm text-black" ngbDropdownToggle
                   [style.background-color]="product.displayed.category ? product.displayed.category.color : '#ffffff'"
                   [disabled]="!product.edited" [class.disabled]="!product.edited"

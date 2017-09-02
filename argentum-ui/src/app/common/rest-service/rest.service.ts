@@ -403,6 +403,9 @@ export class RestService {
   private handleError(error: any): Promise<any> {
     console.error('An API error occurred.', error);
     let body = error.json();
+    if (error.status === 0) {
+      return Promise.reject('No response from backend.');
+    }
     return Promise.reject(`[${error.status}]${body.error ? ' ' + body.error : ''}${body.message ? ' (' + body.message + ')' : ''}`);
   }
 }

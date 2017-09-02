@@ -6,93 +6,72 @@ import { UserResponse } from '../common/rest-service/response/user-response';
 @Injectable()
 export class RouteGuard implements CanActivate {
 
+  readonly ADMIN_SUBPATHS: string[] = [
+    'admin/dashboard',
+    'admin/products',
+    'admin/categories',
+    'admin/ranges',
+    'admin/guests',
+    'admin/import',
+    'admin/users',
+    'admin/config'
+  ];
+
+  // Allowed sites per role.
+  // Note: the first path in the array will be considered the respective role's home page.
+  readonly ROLES_TO_PATH: { [role: string]: string[] } = {
+    'ADMIN': ['admin', 'order', 'checkin', 'scan'].concat(this.ADMIN_SUBPATHS),
+    'ORDER': ['order'],
+    'CHECKIN': ['checkin'],
+    'RECHARGE': ['checkin'],
+    'REFUND': ['checkin'],
+    'SCAN': ['scan']
+  };
+
+  static logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('roles');
+  }
+
   constructor(private restService: RestService, private router: Router) {
   }
 
-  readonly ROUTE_MAPPING: { [home: string]: [string] } = {
-    '/admin': ['ADMIN'],
-    '/order': ['ORDER'],
-    '/scan': ['SCAN'],
-    '/checkin': ['CHECKIN', 'RECHARGE', 'REFUND']
-  };
-
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | Promise<boolean> {
-    let path = route.url[0].path;
+    const path = route.url[0].path;
 
-    if (!localStorage.getItem('token')) {
-      return path == 'login' || this.redirectHome([]);
+    if (path === 'login') {
+      RouteGuard.logout();
+      return true;
     }
 
-    if (path == 'logout') {
-      this.logout();
-      return this.redirectHome([]);
+    if (path === 'logout' || !localStorage.getItem('token')) {
+      this.router.navigate(['/login']);
+      return false;
     }
 
     return this.restService.getUser()
       .then((user: UserResponse) => {
         localStorage.setItem('roles', user.roles.join(','));
-        switch (path) {
-          case 'login':
-          case 'home':
-            return this.redirectHome(user.roles);
-          case 'order':
-            return this.redirectIfNotAllowed(user.roles, ['ORDER', 'ADMIN']);
-          case 'checkin':
-            return this.redirectIfNotAllowed(user.roles, ['CHECKIN', 'RECHARGE', 'ADMIN']);
-          case 'scan':
-            return this.redirectIfNotAllowed(user.roles, ['SCAN', 'ADMIN']);
-          case 'admin':
-          case 'admin/dashboard':
-          case 'admin/products':
-          case 'admin/categories':
-          case 'admin/ranges':
-          case 'admin/guests':
-          case 'admin/import':
-          case 'admin/users':
-          case 'admin/config':
-            return this.redirectIfNotAllowed(user.roles, ['ADMIN']);
+
+        // If role is allowed to access, return true.
+        for (const role in this.ROLES_TO_PATH) {
+          if (user.roles.includes(role)) {
+            if (this.ROLES_TO_PATH[role].includes(path)) {
+              return Promise.resolve(true);
+            }
+          }
         }
+
+        // Not allowed, redirect to home.
+        const home: string = this.ROLES_TO_PATH[user.roles[0]][0];
+        this.router.navigate([home]);
+        return Promise.resolve(false);
       })
-      .catch(error => {
-        this.logout();
-
-        if (path != 'login') {
-          return this.redirectHome([]);
-        }
-        return Promise.resolve(true);
+      .catch(() => {
+        // TODO
+        console.log('no user/token or backend offline');
+        this.router.navigate(['/login']);
+        return Promise.resolve(false);
       });
-  }
-
-  logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('roles');
-  }
-
-  redirectIfNotAllowed(userRoles: string[], requiredRoles: string[]): Promise<boolean> {
-    let allowed = requiredRoles
-      .map(role => userRoles.indexOf(role) > -1)
-      .reduce((a, b) => a || b, false);
-
-    if (!allowed) {
-      return this.redirectHome(userRoles);
-    }
-    return Promise.resolve(true);
-  }
-
-  redirectHome(roles: string[]): Promise<boolean> {
-    let redirect: string;
-    for (let route in this.ROUTE_MAPPING) {
-      if (roles.filter(role => this.ROUTE_MAPPING[route].includes(role)).length) {
-        redirect = route;
-        break;
-      }
-    }
-    if (!redirect) {
-      redirect = '/login'
-    }
-    console.log(`Redirecting to ${redirect}`);
-    this.router.navigate([redirect]);
-
-    return Promise.resolve(false);
   }
 }
