@@ -12,5 +12,5 @@ export function fromUser(user: User): UserRequest {
     username: user.username,
     password: user.password.length > 0 ? user.password : null,
     roles: user.roles
-  }
+  };
 }

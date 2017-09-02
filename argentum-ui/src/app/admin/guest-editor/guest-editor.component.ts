@@ -3,8 +3,9 @@ import { RestService } from '../../common/rest-service/rest.service';
 import { Guest } from '../../common/model/guest';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.component';
-import { Subject } from 'rxjs';
+import { Subject } from 'rxjs/Subject';
 import { MessageComponent } from '../../common/message/message.component';
+import 'rxjs/add/operator/distinctUntilChanged';
 
 @Component({
   selector: 'app-guest-editor',
@@ -68,7 +69,9 @@ export class GuestEditorComponent implements OnInit {
   }
 
   changePage(newPage: number) {
-    this.restService.getGuestsPaginatedAndFiltered(this.PAGE_SIZE, newPage - 1, this.codeLike, this.nameLike, this.mailLike, this.statusLike)
+    this.restService.getGuestsPaginatedAndFiltered(
+      this.PAGE_SIZE, newPage - 1, this.codeLike, this.nameLike, this.mailLike, this.statusLike
+    )
       .then((result: { guests: Guest[], guestsTotal: number }) => {
       this.guests = result.guests;
       this.guestsTotal = result.guestsTotal;
@@ -76,58 +79,66 @@ export class GuestEditorComponent implements OnInit {
   }
 
   addBalance(guest: Guest) {
-    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    const modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
 
     modal.result.then(result => {
       this.restService.addBalance(guest, result)
         .then((newBalance: number) => {
           guest.balance = newBalance;
-          this.message.success(`Added €${result.toFixed(2)} to balance of "${guest.name}". New balance: €${newBalance.toFixed(2)}`);
+          this.message.success(
+            `Added €${result.toFixed(2)} to balance of "${guest.name}". New balance: €${newBalance.toFixed(2)}`
+          );
         })
-        .catch(reason => this.message.error(`Error: ${reason}`));
+        .catch(reason => this.message.error(reason));
     }, result => void(0));
   }
 
   subBalance(guest: Guest) {
-    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    const modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
 
     modal.result.then(result => {
       this.restService.addBalance(guest, -result)
         .then((newBalance: number) => {
           guest.balance = newBalance;
-          this.message.success(`Removed €${result.toFixed(2)} from balance of "${guest.name}". New balance: €${newBalance.toFixed(2)}`);
+          this.message.success(
+            `Removed €${result.toFixed(2)} from balance of "${guest.name}". New balance: €${newBalance.toFixed(2)}`
+          );
         })
-        .catch(reason => this.message.error(`Error: ${reason}`));
+        .catch(reason => this.message.error(reason));
     }, result => void(0));
   }
 
   addBonus(guest: Guest) {
-    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    const modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
 
     modal.result.then(result => {
       this.restService.addBonus(guest, result)
         .then((newBonus: number) => {
           guest.bonus = newBonus;
-          this.message.success(`Added €${result.toFixed(2)} to bonus of "${guest.name}". New bonus: €${newBonus.toFixed(2)}`);
+          this.message.success(
+            `Added €${result.toFixed(2)} to bonus of "${guest.name}". New bonus: €${newBonus.toFixed(2)}`
+          );
         })
-        .catch(reason => this.message.error(`Error: ${reason}`));
+        .catch(reason => this.message.error(reason));
     }, result => void(0));
   }
 
   subBonus(guest: Guest) {
-    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    const modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
 
     modal.result.then(result => {
       this.restService.addBonus(guest, -result)
         .then((newBonus: number) => {
           guest.bonus = newBonus;
-          this.message.success(`Removed €${result.toFixed(2)} from bonus of "${guest.name}". New bonus: €${newBonus.toFixed(2)}`);
+          this.message.success(
+            `Removed €${result.toFixed(2)} from bonus of "${guest.name}". New bonus: €${newBonus.toFixed(2)}`
+          );
         })
-        .catch(reason => this.message.error(`Error: ${reason}`));
+        .catch(reason => this.message.error(reason));
     }, result => void(0));
   }
 

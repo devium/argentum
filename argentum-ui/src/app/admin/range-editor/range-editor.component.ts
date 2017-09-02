@@ -7,16 +7,16 @@ class EditorRange {
   original: ProductRange;
   edited: ProductRange;
   displayed: ProductRange;
-  changed: boolean = false;
+  changed = false;
 
   constructor(original: ProductRange) {
     this.original = Object.assign({}, original);
     this.edited = Object.assign({}, original);
     this.displayed = this.edited;
-  };
+  }
 
   hasChangedName(): boolean {
-    return this.original.name != this.edited.name;
+    return this.original.name !== this.edited.name;
   }
 
   updateChanged() {
@@ -45,7 +45,7 @@ export class RangeEditorComponent implements OnInit {
   loadRanges() {
     this.restService.getProductRanges()
       .then((ranges: ProductRange[]) => this.productRanges = ranges.map(range => new EditorRange(range)))
-      .catch(reason => this.message.error(`Error: ${reason}`));
+      .catch(reason => this.message.error(reason));
   }
 
   changeName(range: EditorRange, value: string) {
@@ -68,7 +68,7 @@ export class RangeEditorComponent implements OnInit {
   }
 
   newRange() {
-    let newRange = new EditorRange({
+    const newRange = new EditorRange({
       id: -1,
       name: 'New Product Range',
       products: []
@@ -88,21 +88,23 @@ export class RangeEditorComponent implements OnInit {
   }
 
   save() {
-    let mergedRanges = this.productRanges
+    const mergedRanges = this.productRanges
       .filter(range => range.changed)
       .map(range => range.edited);
-    let deletedRanges = this.productRanges
+    const deletedRanges = this.productRanges
       .filter(range => !range.edited)
       .map(range => range.original);
 
-    let pCreate = this.restService.mergeProductRanges(mergedRanges);
-    let pDelete = this.restService.deleteProductRanges(deletedRanges);
+    const pCreate = this.restService.mergeProductRanges(mergedRanges);
+    const pDelete = this.restService.deleteProductRanges(deletedRanges);
 
     Promise.all([pCreate, pDelete])
       .then(() => {
-        this.message.success(`Product ranges saved successfully. (${mergedRanges.length} created/updated, ${deletedRanges.length} deleted)`);
+        this.message.success(
+          `Product ranges saved successfully. (${mergedRanges.length} created/updated, ${deletedRanges.length} deleted)`
+        );
         this.loadRanges();
       })
-      .catch(reason => this.message.error(`Error: ${reason}`));
+      .catch(reason => this.message.error(reason));
   }
 }

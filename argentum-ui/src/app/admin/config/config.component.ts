@@ -25,7 +25,7 @@ export class ConfigComponent implements OnInit {
   loadConfig(): void {
     this.restService.getConfig()
       .then((config: Config) => this.config = config)
-      .catch(reason => this.message.error(`Error: ${reason}`));
+      .catch(reason => this.message.error(reason));
   }
 
   resetAll() {
@@ -35,7 +35,7 @@ export class ConfigComponent implements OnInit {
   save() {
     this.restService.setConfig(this.config)
       .then((response: ConfigResponse) => this.message.success('Config saved successfully.'))
-      .catch(reason => this.message.error(`Error: ${reason}`));
+      .catch(reason => this.message.error(reason));
   }
 
 }

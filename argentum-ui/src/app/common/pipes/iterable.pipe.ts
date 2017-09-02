@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from "@angular/core";
+import { Pipe, PipeTransform } from '@angular/core';
 
 /**
  * Iterable Pipe
@@ -19,14 +19,14 @@ import { Pipe, PipeTransform } from "@angular/core";
 export class IterablePipe implements PipeTransform {
 
   transform(iterable: any, args: any[]): any {
-    let result = [];
+    const result = [];
 
     if (iterable.entries) {
       iterable.forEach((key, value) => {
         result.push({ value: key, key: value });
       });
     } else {
-      for (let key in iterable) {
+      for (const key in iterable) {
         if (iterable.hasOwnProperty(key)) {
           result.push({ key, value: iterable[key] });
         }

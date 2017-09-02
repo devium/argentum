@@ -43,12 +43,12 @@ export class LoginComponent implements OnInit {
           })
           .catch(reason => {
             this.waitingForLogin = false;
-            this.message.error(`Error: ${reason}`);
+            this.message.error(reason);
           });
       }))
       .catch((reason: string) => {
         this.waitingForLogin = false;
-        this.message.error(`Error: ${reason}`);
+        this.message.error(reason);
       });
   }
 

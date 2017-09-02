@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
-import { OrderComponent } from "./order.component";
-import { IterablePipe } from "../../common/pipes/iterable.pipe";
-import { RangePipe } from "../../common/pipes/range.pipe";
-import { PRODUCT_RANGES } from "../../common/rest-service/mock-data";
-import { ProductRange } from "../../common/model/product-range";
-import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
-import { RestService } from "../../common/rest-service/rest.service";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { OrderComponent } from './order.component';
+import { IterablePipe } from '../../common/pipes/iterable.pipe';
+import { RangePipe } from '../../common/pipes/range.pipe';
+import { PRODUCT_RANGES } from '../../common/rest-service/mock-data';
+import { ProductRange } from '../../common/model/product-range';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { RestService } from '../../common/rest-service/rest.service';
 
 class RestServiceStub {
   getProductRangesMeta(): Promise<ProductRange[]> {
@@ -13,7 +13,7 @@ class RestServiceStub {
   }
 
   getProductRangeEager(id: number): Promise<ProductRange> {
-    return Promise.resolve(PRODUCT_RANGES.find(range => range.id == id));
+    return Promise.resolve(PRODUCT_RANGES.find(range => range.id === id));
   }
 }
 

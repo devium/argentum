@@ -1,18 +1,23 @@
 import {
-  animate,
   AnimationTransitionEvent,
   Component,
-  Input,
-  OnInit,
-  state,
-  style,
-  transition,
-  trigger
+  Input, OnDestroy,
+  OnInit
 } from '@angular/core';
-import { Observable, Subject, Subscription } from 'rxjs';
 import { RestService } from '../rest-service/rest.service';
 import { Guest } from '../model/guest';
 import { convertCard } from '../util/convert-card';
+import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
+import { Subject } from 'rxjs/Subject';
+import 'rxjs/add/observable/fromEvent';
+import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/mergeMap';
+import 'rxjs/add/operator/scan';
+import 'rxjs/add/operator/first';
+import 'rxjs/add/operator/repeat';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 enum ScanState {
   Waiting,
@@ -36,9 +41,8 @@ enum ScanState {
     ])
   ]
 })
-export class CardBarComponent implements OnInit {
+export class CardBarComponent implements OnInit, OnDestroy {
   scanState = ScanState;
-  readonly MAX_NAME = 28;
 
   cardStream: Observable<string>;
   card = '';
@@ -57,7 +61,7 @@ export class CardBarComponent implements OnInit {
 
   ngOnInit(): void {
     this.cardStream = Observable.fromEvent(document, 'keydown')
-      .filter((event: KeyboardEvent) => '0123456789'.indexOf(event.key) > -1)
+      .filter((event: KeyboardEvent) => '0123456789'.includes(event.key))
       .flatMap((event: KeyboardEvent) => event.key)
       .scan((acc, char) => acc + char)
       .debounceTime(500)
@@ -100,17 +104,17 @@ export class CardBarComponent implements OnInit {
   }
 
   countdownAnimationDone(event: AnimationTransitionEvent) {
-    if (event.toState == 'full') {
+    if (event.toState === 'full') {
       this.countdownState = 'empty';
     }
   }
 
   setState(state: ScanState) {
     this.state = state;
-    if (state == ScanState.Waiting) {
+    if (state === ScanState.Waiting) {
       this.guest = null;
       this.card = '';
-    } else if (state == ScanState.NotFound) {
+    } else if (state === ScanState.NotFound) {
       this.guest = null;
     }
   }

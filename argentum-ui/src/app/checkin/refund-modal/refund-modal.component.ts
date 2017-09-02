@@ -17,7 +17,7 @@ export class RefundModalComponent implements OnInit {
   }
 
   confirm() {
-    this.activeModal.close()
+    this.activeModal.close();
   }
 
 }

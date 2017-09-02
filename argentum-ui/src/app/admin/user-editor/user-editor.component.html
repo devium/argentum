@@ -40,7 +40,7 @@
       <td *ngFor="let role of ROLES | iterable">
         <label class="custom-control custom-checkbox m-0 checkbox-sm">
           <input type="checkbox" class="custom-control-input m-0"
-                 [checked]="user.displayed.roles.indexOf(role.key) > -1"
+                 [checked]="user.displayed.roles.includes(role.key)"
                  (change)="toggleRole(user, role.key)"
                  [disabled]="!user.edited || (user.original && user.original.username == 'admin' && role.key == 'ADMIN')"
                  [class.disabled]="!user.edited || (user.original && user.original.username == 'admin' && role.key == 'ADMIN')">
@@ -51,7 +51,7 @@
       <td *ngFor="let range of ranges">
         <label class="custom-control custom-checkbox m-0 checkbox-sm">
           <input type="checkbox" class="custom-control-input m-0"
-                 [checked]="user.displayed.roles.indexOf('RANGE_' + range.id) > -1"
+                 [checked]="user.displayed.roles.includes('RANGE_' + range.id)"
                  (change)="toggleRole(user, 'RANGE_' + range.id)"
                  [class.disabled]="!user.edited"
                  [disabled]="!user.edited">

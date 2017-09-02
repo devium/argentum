@@ -19,7 +19,7 @@ export const CATEGORIES: Category[] = [
 // Products.
 export const WATER: Product = {
   id: 1,
-  name: "Water",
+  name: 'Water',
   price: 1.50,
   category: BEV_NONALC,
   ranges: new Set(),
@@ -27,7 +27,7 @@ export const WATER: Product = {
 };
 export const BEER: Product = {
   id: 2,
-  name: "Beer",
+  name: 'Beer',
   price: 3.50,
   category: BEV_ALC,
   ranges: new Set(),
@@ -35,7 +35,7 @@ export const BEER: Product = {
 };
 export const LONG_DRINK: Product = {
   id: 3,
-  name: "Long Drink",
+  name: 'Long Drink',
   price: 6.00,
   category: BEV_ALC,
   ranges: new Set(),
@@ -43,7 +43,7 @@ export const LONG_DRINK: Product = {
 };
 export const TAP_WATER: Product = {
   id: 4,
-  name: "Tap Water",
+  name: 'Tap Water',
   price: 0.50,
   category: BEV_NONALC,
   ranges: new Set(),
@@ -51,7 +51,7 @@ export const TAP_WATER: Product = {
 };
 export const COCKTAIL: Product = {
   id: 5,
-  name: "Cocktail",
+  name: 'Cocktail',
   price: 7.00,
   category: BEV_ALC,
   ranges: new Set(),
@@ -59,7 +59,7 @@ export const COCKTAIL: Product = {
 };
 export const SPRITE: Product = {
   id: 6,
-  name: "Sprite",
+  name: 'Sprite',
   price: 3.20,
   category: BEV_NONALC,
   ranges: new Set(),
@@ -67,7 +67,7 @@ export const SPRITE: Product = {
 };
 export const COKE: Product = {
   id: 7,
-  name: "Coke",
+  name: 'Coke',
   price: 3.20,
   category: BEV_NONALC,
   ranges: new Set(),
@@ -75,7 +75,7 @@ export const COKE: Product = {
 };
 export const PEPSI: Product = {
   id: 8,
-  name: "Pepsi",
+  name: 'Pepsi',
   price: 3.20,
   category: BEV_NONALC,
   ranges: new Set(),
@@ -83,7 +83,7 @@ export const PEPSI: Product = {
 };
 export const TEA: Product = {
   id: 9,
-  name: "Tea",
+  name: 'Tea',
   price: 4.50,
   category: BEV_NONALC,
   ranges: new Set(),
@@ -91,7 +91,7 @@ export const TEA: Product = {
 };
 export const CHAI_LATTE: Product = {
   id: 10,
-  name: "Chai Latte",
+  name: 'Chai Latte',
   price: 4.50,
   category: BEV_NONALC,
   ranges: new Set(),
@@ -99,7 +99,7 @@ export const CHAI_LATTE: Product = {
 };
 export const COFFEE: Product = {
   id: 11,
-  name: "Coffee",
+  name: 'Coffee',
   price: 4.50,
   category: CAFFEINE,
   ranges: new Set(),
@@ -107,7 +107,7 @@ export const COFFEE: Product = {
 };
 export const RED_BULL: Product = {
   id: 12,
-  name: "Red Bull",
+  name: 'Red Bull',
   price: 2.70,
   category: CAFFEINE,
   ranges: new Set(),
@@ -115,7 +115,7 @@ export const RED_BULL: Product = {
 };
 export const SHOT: Product = {
   id: 13,
-  name: "Shot",
+  name: 'Shot',
   price: 4.00,
   category: BEV_ALC,
   ranges: new Set(),
@@ -123,7 +123,7 @@ export const SHOT: Product = {
 };
 export const CAKE: Product = {
   id: 14,
-  name: "Cake",
+  name: 'Cake',
   price: 10.00,
   category: FOOD_SWEET,
   ranges: new Set(),
@@ -131,7 +131,7 @@ export const CAKE: Product = {
 };
 export const TABLE: Product = {
   id: 15,
-  name: "Table",
+  name: 'Table',
   price: 30.00,
   category: null,
   ranges: new Set(),
@@ -139,7 +139,7 @@ export const TABLE: Product = {
 };
 export const TABLE2: Product = {
   id: 16,
-  name: "Table",
+  name: 'Table',
   price: 25.00,
   category: null,
   ranges: new Set(),

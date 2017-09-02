@@ -22,19 +22,19 @@ export class CheckinComponent extends RoleBasedComponent implements OnInit {
   cardBar: CardBarComponent;
 
   constructor(private restService: RestService, private modalService: NgbModal) {
-    super()
+    super();
   }
 
   newGuest() {
     this.enableCardBar(false);
-    let modal = this.modalService.open(NewGuestModalComponent, { backdrop: 'static' });
+    const modal = this.modalService.open(NewGuestModalComponent, { backdrop: 'static' });
     modal.result.then((guest: Guest) => {
       this.restService.mergeGuests([guest])
         .then(() => {
           this.message.success(`Created guest "${guest.name}".`);
         })
         .catch(reason => {
-          this.message.error(`Error: ${reason}`);
+          this.message.error(reason);
         });
       this.enableCardBar(true);
     }, result => this.enableCardBar(true));
@@ -42,14 +42,14 @@ export class CheckinComponent extends RoleBasedComponent implements OnInit {
 
   searchGuest() {
     this.enableCardBar(false);
-    let modal = this.modalService.open(SearchGuestModalComponent, { backdrop: 'static' });
+    const modal = this.modalService.open(SearchGuestModalComponent, { backdrop: 'static' });
     (<SearchGuestModalComponent>modal.componentInstance).message = this.message;
     modal.result.then(() => this.enableCardBar(true), () => this.enableCardBar(true));
   }
 
   recharge() {
-    let guest = this.cardBar.guest;
-    let keypadModal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    const guest = this.cardBar.guest;
+    const keypadModal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
     this.cardBar.active = false;
 
     keypadModal.result.then((value: number) => {
@@ -60,21 +60,21 @@ export class CheckinComponent extends RoleBasedComponent implements OnInit {
         })
         .catch(reason => {
           this.cardBar.active = false;
-          this.message.error(`Error: ${reason}`);
+          this.message.error(reason);
         });
 
     }, () => void(0));
   }
 
   refund() {
-    let guest = this.cardBar.guest;
-    let refundModal = this.modalService.open(RefundModalComponent, { backdrop: 'static' });
+    const guest = this.cardBar.guest;
+    const refundModal = this.modalService.open(RefundModalComponent, { backdrop: 'static' });
     (<RefundModalComponent>refundModal.componentInstance).guest = guest;
 
     refundModal.result.then(() => {
       this.restService.refund(guest)
         .then((guestNew: Guest) => this.message.success(`Refunded "${guest.name}" for €${guest.balance.toFixed(2)}. Card unregistered.`))
-        .catch(reason => this.message.error(`Error: ${reason}`))
+        .catch(reason => this.message.error(reason));
     }, () => void(0));
   }
 

@@ -8,5 +8,5 @@ export function fromProductRange(range: ProductRange): ProductRangeRequest {
   return {
     id: range.id,
     name: range.name
-  }
+  };
 }

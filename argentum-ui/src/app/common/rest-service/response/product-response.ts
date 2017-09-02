@@ -16,8 +16,8 @@ export function toProductEager(response: ProductResponse, categories: Category[]
     id: response.id,
     name: response.name,
     price: response.price,
-    category: response.category ? categories.find(category => category.id == response.category) : null,
+    category: response.category ? categories.find(category => category.id === response.category) : null,
     legacy: response.legacy,
-    ranges: new Set(response.ranges.map(rangeId => ranges.find(range => range.id == rangeId)))
+    ranges: new Set(response.ranges.map(rangeId => ranges.find(range => range.id === rangeId)))
   };
 }

@@ -11,7 +11,7 @@
             <button (focus)="$event.target.blur()" class="btn-grid-bar" ngbDropdownToggle>
               {{selectedRange ? selectedRange.name : 'Select product range'}}
             </button>
-            <div class="dropdown-menu">
+            <div ngbDropdownMenu>
               <button *ngFor="let range of productRanges" (focus)="$event.target.blur()"
                       (click)="setProductRange(range)" class="dropdown-item">
                 {{range.name}}

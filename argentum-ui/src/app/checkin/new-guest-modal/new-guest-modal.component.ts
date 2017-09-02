@@ -28,32 +28,32 @@ export class NewGuestModalComponent implements OnInit {
   }
 
   setCard() {
-    let modal = this.modalService.open(CardModalComponent, { backdrop: 'static', size: 'sm' });
+    const modal = this.modalService.open(CardModalComponent, { backdrop: 'static', size: 'sm' });
     modal.result.then(result => this.card = result, result => void(0));
   }
 
   addBalance() {
-    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    const modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
     modal.result.then(result => this.balance += result, result => void(0));
   }
 
   subBalance() {
-    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    const modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
     modal.result.then(result => this.balance -= result, result => void(0));
   }
 
   addBonus() {
-    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    const modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
     modal.result.then(result => this.bonus += result, result => void(0));
   }
 
   subBonus() {
-    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    const modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
     modal.result.then(result => this.bonus -= result, result => void(0));
   }
 
   confirm(): void {
-    let guest: Guest = {
+    const guest: Guest = {
       id: -1,
       code: null,
       name: this.name,

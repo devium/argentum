@@ -1,3 +1,7 @@
 .custom-file-control {
   background-color: transparent;
 }
+
+.custom-file-control::before {
+  display: none;
+}

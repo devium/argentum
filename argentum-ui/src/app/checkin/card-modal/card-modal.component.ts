@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 import { convertCard } from '../../common/util/convert-card';
 
 @Component({
@@ -17,7 +17,7 @@ export class CardModalComponent implements OnInit {
 
   ngOnInit() {
     this.cardStream = Observable.fromEvent(document, 'keydown')
-      .filter((event: KeyboardEvent) => '0123456789'.indexOf(event.key) > -1)
+      .filter((event: KeyboardEvent) => '0123456789'.includes(event.key))
       .flatMap((event: KeyboardEvent) => event.key)
       .scan((acc, char) => acc + char)
       .debounceTime(500)

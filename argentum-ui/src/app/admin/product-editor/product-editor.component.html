@@ -40,7 +40,7 @@
                   [class.dark-bg]="product.displayed.category && isDarkBackground(product.displayed.category.color)">
             {{product.displayed.category ? product.displayed.category.name : 'No category'}}
           </button>
-          <div *ngIf="product.edited" class="dropdown-menu">
+          <div *ngIf="product.edited" ngbDropdownMenu>
             <button (click)="setCategory(product, null)" class="dropdown-item">No category</button>
             <button *ngFor="let category of categories" (click)="setCategory(product, category)" class="dropdown-item"
                     [style.background-color]="category.color"

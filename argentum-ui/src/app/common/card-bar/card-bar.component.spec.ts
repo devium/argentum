@@ -6,7 +6,7 @@ import { GUESTS } from '../rest-service/mock-guests';
 
 class RestServiceStub {
   getGuestByCard(card: string): Promise<Guest> {
-    return Promise.resolve(GUESTS.find(guest => guest.card == card));
+    return Promise.resolve(GUESTS.find(guest => guest.card === card));
   }
 }
 

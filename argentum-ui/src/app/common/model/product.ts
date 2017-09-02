@@ -1,5 +1,5 @@
-import { Category } from "./category";
-import { ProductRange } from "./product-range";
+import { Category } from './category';
+import { ProductRange } from './product-range';
 
 export class Product {
   id: number;

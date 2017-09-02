@@ -8,7 +8,7 @@ class EditorUser {
   original: User;
   edited: User;
   displayed: User;
-  changed: boolean = false;
+  changed = false;
 
   constructor(original: User) {
     this.original = Object.assign({}, original);
@@ -20,11 +20,11 @@ class EditorUser {
   }
 
   hasChangedUsername(): boolean {
-    return !this.original || this.original.username != this.edited.username;
+    return !this.original || this.original.username !== this.edited.username;
   }
 
   hasChangedPassword(): boolean {
-    return !this.original || this.edited.password != '';
+    return !this.original || this.edited.password !== '';
   }
 
   hasChangedRoles(): boolean {
@@ -32,8 +32,12 @@ class EditorUser {
       return true;
     }
 
-    let allInOrig = this.original.roles.map(role => this.edited.roles.indexOf(role) > -1).reduce((a, b) => a && b, true);
-    let allInEdit = this.edited.roles.map(role => this.original.roles.indexOf(role) > -1).reduce((a, b) => a && b, true);
+    const allInOrig = this.original.roles
+      .map(role => this.edited.roles.includes(role))
+      .reduce((a, b) => a && b, true);
+    const allInEdit = this.edited.roles
+      .map(role => this.original.roles.includes(role))
+      .reduce((a, b) => a && b, true);
     return !(allInOrig && allInEdit);
   }
 
@@ -76,10 +80,10 @@ export class UserEditorComponent implements OnInit {
   loadUsers() {
     this.restService.getUsers()
       .then((users: User[]) => this.users = users.map(user => new EditorUser(user)))
-      .catch(reason => this.message.error(`Error: ${reason}`));
+      .catch(reason => this.message.error(reason));
     this.restService.getProductRanges()
       .then((ranges: ProductRange[]) => this.ranges = ranges)
-      .catch(reason => this.message.error(`Error: ${reason}`));
+      .catch(reason => this.message.error(reason));
   }
 
   changeUsername(user: EditorUser, value: string) {
@@ -91,7 +95,7 @@ export class UserEditorComponent implements OnInit {
   }
 
   toggleRole(user: EditorUser, role: string) {
-    let index = user.edited.roles.indexOf(role);
+    const index = user.edited.roles.indexOf(role);
     if (index > -1) {
       user.edited.roles.splice(index, 1);
     } else {
@@ -119,7 +123,7 @@ export class UserEditorComponent implements OnInit {
   }
 
   newUser() {
-    let newUser = new EditorUser({
+    const newUser = new EditorUser({
       id: -1,
       username: 'user',
       password: '',
@@ -141,21 +145,21 @@ export class UserEditorComponent implements OnInit {
   }
 
   save() {
-    let mergedUsers = this.users
+    const mergedUsers = this.users
       .filter(user => user.edited && user.changed)
       .map(user => user.edited);
-    let deletedUsers = this.users
+    const deletedUsers = this.users
       .filter(user => !user.edited)
       .map(user => user.original);
 
-    let pCreate = this.restService.mergeUsers(mergedUsers);
-    let pDelete = this.restService.deleteUsers(deletedUsers);
+    const pCreate = this.restService.mergeUsers(mergedUsers);
+    const pDelete = this.restService.deleteUsers(deletedUsers);
 
     Promise.all([pCreate, pDelete])
       .then(() => {
         this.message.success(`Users saved successfully. (${mergedUsers.length} created/updated, ${deletedUsers.length} deleted)`);
         this.loadUsers();
       })
-      .catch(reason => this.message.error(`Error: ${reason}`))
+      .catch(reason => this.message.error(reason));
   }
 }

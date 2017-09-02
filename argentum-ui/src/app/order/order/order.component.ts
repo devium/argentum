@@ -67,18 +67,18 @@ export class OrderComponent implements OnInit {
     this.restService.getProductRanges()
       .then((ranges: ProductRange[]) => {
         this.productRanges = ranges;
-        if (ranges.length == 1) {
+        if (ranges.length === 1) {
           this.setProductRange(ranges[0]);
         }
       })
-      .catch(reason => this.message.error(`Error: ${reason}`));
+      .catch(reason => this.message.error(reason));
   }
 
   refreshProducts() {
     if (this.selectedRange) {
       this.restService.getProductRange(this.selectedRange)
         .then((range: ProductRange) => this.products = range.products.filter(product => !product.legacy))
-        .catch(reason => this.message.error(`Error: ${reason}`));
+        .catch(reason => this.message.error(reason));
     }
   }
 
@@ -102,8 +102,8 @@ export class OrderComponent implements OnInit {
   }
 
   orderedProductClicked(product: Product) {
-    let count = this.orderedProducts.get(product);
-    if (count == 1) {
+    const count = this.orderedProducts.get(product);
+    if (count === 1) {
       this.orderedProducts.delete(product);
     } else {
       this.orderedProducts.set(product, count - 1);
@@ -116,7 +116,7 @@ export class OrderComponent implements OnInit {
   }
 
   getNumPadItems(count: number, pageSize: number, page: number): number {
-    if (count == 0) {
+    if (count === 0) {
       return pageSize;
     }
     if (count - pageSize * (page - 1) < pageSize) {
@@ -130,7 +130,7 @@ export class OrderComponent implements OnInit {
   }
 
   addCustomProduct(): void {
-    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    const modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
     modal.result.then(result => this.confirmKeypad(result), result => void(0));
   }
 
@@ -169,19 +169,22 @@ export class OrderComponent implements OnInit {
 
   placeOrder(): void {
     this.waitingForOrder = true;
-    let order: Order = {
+    const order: Order = {
       guest: this.cardBar.guest,
       products: this.orderedProducts
     };
     this.restService.placeOrder(order)
       .then((response: OrderResponse) => {
-        this.message.success(`Order placed for "${response.guest.name}". Total: €${response.total.toFixed(2)}. Remaining balance: €${response.guest.balance.toFixed(2)} (+ €${response.guest.bonus.toFixed(2)})`);
+        this.message.success(
+          `Order placed for "${response.guest.name}". Total: €${response.total.toFixed(2)}.
+          Remaining balance: €${response.guest.balance.toFixed(2)} (+ €${response.guest.bonus.toFixed(2)})`
+        );
         this.orderedProducts.clear();
         this.updateTotal();
         this.waitingForOrder = false;
       })
       .catch(reason => {
-        this.message.error(`Error: ${reason}`);
+        this.message.error(reason);
         this.waitingForOrder = false;
       });
   }

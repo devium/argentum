@@ -18,13 +18,13 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.refresh()
+    this.refresh();
   }
 
   refresh(): void {
     this.restService.getStatistics()
       .then((stats: Statistics) => this.stats = stats)
-      .catch(reason => this.message.error(`Error: ${reason}`));
+      .catch(reason => this.message.error(reason));
   }
 
 }

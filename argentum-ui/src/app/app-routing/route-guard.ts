@@ -68,8 +68,6 @@ export class RouteGuard implements CanActivate {
         return Promise.resolve(false);
       })
       .catch(() => {
-        // TODO
-        console.log('no user/token or backend offline');
         this.router.navigate(['/login']);
         return Promise.resolve(false);
       });

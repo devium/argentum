@@ -9,7 +9,7 @@ import { RoleBasedComponent } from '../role-based/role-based.component';
 export class NavbarComponent extends RoleBasedComponent implements OnInit {
 
   constructor() {
-    super()
+    super();
   }
 
 }

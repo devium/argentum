@@ -12,7 +12,7 @@ class EditorProduct {
   original: Product;
   edited: Product;
   displayed: Product;
-  changed: boolean = false;
+  changed = false;
 
   constructor(original: Product) {
     this.original = Object.assign({}, original);
@@ -23,15 +23,15 @@ class EditorProduct {
   }
 
   hasChangedName(): boolean {
-    return !this.original || this.original.name != this.edited.name;
+    return !this.original || this.original.name !== this.edited.name;
   }
 
   hasChangedPrice(): boolean {
-    return !this.original || this.original.price != this.edited.price;
+    return !this.original || this.original.price !== this.edited.price;
   }
 
   hasChangedCategory(): boolean {
-    return !this.original || this.original.category != this.edited.category;
+    return !this.original || this.original.category !== this.edited.category;
   }
 
   hasChangedRanges(): boolean {
@@ -39,7 +39,7 @@ class EditorProduct {
       return true;
     }
 
-    let equal: boolean = true;
+    let equal = true;
     this.original.ranges.forEach(range => equal = equal && this.edited.ranges.has(range));
     this.edited.ranges.forEach(range => equal = equal && this.original.ranges.has(range));
     return !equal;
@@ -83,8 +83,8 @@ export class ProductEditorComponent implements OnInit {
         this.products = productData.products
           .map(product => new EditorProduct(product))
           .sort((a, b) => {
-            let nameA = a.original.name.toLowerCase();
-            let nameB = b.original.name.toLowerCase();
+            const nameA = a.original.name.toLowerCase();
+            const nameB = b.original.name.toLowerCase();
             if (nameA < nameB) {
               return -1;
             } else if (nameA > nameB) {
@@ -93,7 +93,7 @@ export class ProductEditorComponent implements OnInit {
             return 0;
           });
       })
-      .catch(reason => this.message.error(`Error: ${reason}`));
+      .catch(reason => this.message.error(reason));
   }
 
   setCategory(product: EditorProduct, category: Category) {
@@ -135,7 +135,7 @@ export class ProductEditorComponent implements OnInit {
   }
 
   setProductPrice(product: EditorProduct) {
-    let modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    const modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
     modal.result.then((result: number) => {
       product.displayed.price = result;
@@ -144,9 +144,9 @@ export class ProductEditorComponent implements OnInit {
   }
 
   newProduct() {
-    let newProduct = new EditorProduct({
+    const newProduct = new EditorProduct({
       id: -1,
-      name: "New Product",
+      name: 'New Product',
       price: 0.00,
       category: null,
       ranges: new Set(),
@@ -168,21 +168,21 @@ export class ProductEditorComponent implements OnInit {
 
   save() {
     // Products with changed name or price will not be updated but instead recreated.
-    let mergedProducts = this.products
+    const mergedProducts = this.products
       .filter(product => product.edited && product.changed)
       .map(product => product.edited);
-    let deletedProducts = this.products
+    const deletedProducts = this.products
       .filter(product => !product.edited)
       .map(product => product.original);
 
-    let pCreate = this.restService.mergeProducts(mergedProducts);
-    let pDelete = this.restService.deleteProducts(deletedProducts);
+    const pCreate = this.restService.mergeProducts(mergedProducts);
+    const pDelete = this.restService.deleteProducts(deletedProducts);
 
     Promise.all([pCreate, pDelete])
       .then(() => {
         this.message.success(`Products saved successfully. (${mergedProducts.length} created/updated, ${deletedProducts.length} deleted)`);
         this.loadProducts();
       })
-      .catch(reason => this.message.error(`Error: ${reason}`))
+      .catch(reason => this.message.error(reason));
   }
 }

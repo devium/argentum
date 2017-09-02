@@ -12,5 +12,5 @@ export function toUser(response: UserResponse): User {
     username: response.username,
     password: null,
     roles: response.roles
-  }
+  };
 }

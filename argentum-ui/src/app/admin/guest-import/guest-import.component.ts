@@ -27,12 +27,12 @@ export class GuestImportComponent implements OnInit {
   ngOnInit() {
   }
 
-  import(target: any) {
-    let file = target.files[0];
+  import_csv(target: any) {
+    const file = target.files[0];
     if (!file) {
       return;
     }
-    let reader = new FileReader();
+    const reader = new FileReader();
     reader.onload = (event: ProgressEvent) => this.parse((<FileReader>event.target).result);
     reader.readAsText(file);
 
@@ -44,15 +44,15 @@ export class GuestImportComponent implements OnInit {
     Papa.parse(content, {
       header: true,
       complete: results => {
-        let requiredFields = [this.codeCol, this.nameCol, this.mailCol, this.statusCol];
-        for (let field of requiredFields) {
-          if (results.meta.fields.indexOf(field) == -1) {
+        const requiredFields = [this.codeCol, this.nameCol, this.mailCol, this.statusCol];
+        for (const field of requiredFields) {
+          if (results.meta.fields.includes(field)) {
             this.message.error(`Column "${field}" not found in imported file.`);
             return;
           }
         }
 
-        let guests: Guest[] = [];
+        const guests: Guest[] = [];
 
         results.data.forEach(row => {
           guests.push({
@@ -70,17 +70,17 @@ export class GuestImportComponent implements OnInit {
 
         this.restService.mergeGuests(guests)
           .then(() => this.message.success(`Successfully imported ${guests.length} guests.`))
-          .catch(reason => this.message.error(`Error: ${reason}`));
+          .catch(reason => this.message.error(reason));
       }
     });
   }
 
   deleteGuests() {
-    let modal = this.modalService.open(DeleteGuestsModalComponent, { backdrop: 'static' });
+    const modal = this.modalService.open(DeleteGuestsModalComponent, { backdrop: 'static' });
     modal.result.then(() => {
       this.restService.deleteGuests()
         .then(() => this.message.success(`Deleted all guests and orders.`))
-        .catch(reason => this.message.error(`Error: ${reason}`));
-    }, () => void(0))
+        .catch(reason => this.message.error(reason));
+    }, () => void(0));
   }
 }

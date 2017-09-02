@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'app-keypad',
@@ -17,33 +17,33 @@ export class KeypadModalComponent implements OnInit {
   ngOnInit(): void {
     Observable.fromEvent(document, 'keydown').subscribe((event: KeyboardEvent) => {
       if (this.captureKeyboard) {
-        if (event.keyCode == 8 /* Backspace */) {
+        if (event.keyCode === 8 /* Backspace */) {
           this.deleteChar();
-        } else if (event.keyCode == 13 /* Enter */) {
+        } else if (event.keyCode === 13 /* Enter */) {
           this.confirm();
           // Prevent click-through to possibly focused buttons.
           event.preventDefault();
         } else {
-          this.entry(event.key)
+          this.entry(event.key);
         }
       }
     });
   }
 
   entry(char: string): void {
-    let decimalPos = this.display.indexOf('.');
-    let ignore = ('.0123456789'.indexOf(char) <= -1)
+    const decimalPos = this.display.indexOf('.');
+    const ignore = (!'.0123456789'.includes(char))
       || (this.display.length >= 8)
-      || (char == '.' && decimalPos > -1)
-      || (char == '0' && this.display == '0')
-      || (decimalPos > -1 && this.display.length - decimalPos == 3);
+      || (char === '.' && decimalPos > -1)
+      || (char === '0' && this.display === '0')
+      || (decimalPos > -1 && this.display.length - decimalPos === 3);
 
     if (ignore) {
       return;
     }
 
     this.display += char;
-    if (this.display == '.') {
+    if (this.display === '.') {
       this.display = '0.';
     }
   }

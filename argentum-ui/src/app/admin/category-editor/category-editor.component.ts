@@ -7,7 +7,7 @@ class EditorCategory {
   original: Category;
   edited: Category;
   displayed: Category;
-  changed: boolean = false;
+  changed = false;
 
   constructor(original: Category) {
     this.original = Object.assign({}, original);
@@ -16,11 +16,11 @@ class EditorCategory {
   }
 
   hasChangedName(): boolean {
-    return this.original.name != this.edited.name;
+    return this.original.name !== this.edited.name;
   }
 
   hasChangedColor(): boolean {
-    return this.original.color != this.edited.color;
+    return this.original.color !== this.edited.color;
   }
 
   updateChanged() {
@@ -49,7 +49,7 @@ export class CategoryEditorComponent implements OnInit {
   loadCategories() {
     this.restService.getCategories()
       .then((categories: Category[]) => this.categories = categories.map(category => new EditorCategory(category)))
-      .catch(reason => this.message.error(`Error: ${reason}`));
+      .catch(reason => this.message.error(reason));
   }
 
   changeName(category: EditorCategory, value: string) {
@@ -76,7 +76,7 @@ export class CategoryEditorComponent implements OnInit {
   }
 
   newCategory() {
-    let newCategory = new EditorCategory({
+    const newCategory = new EditorCategory({
       id: -1,
       name: 'New Category',
       color: '#aaaaaa'
@@ -96,21 +96,24 @@ export class CategoryEditorComponent implements OnInit {
   }
 
   save() {
-    let updatedCategories = this.categories
+    const updatedCategories = this.categories
       .filter(category => category.changed)
       .map(category => category.edited);
-    let deletedCategories = this.categories
+    const deletedCategories = this.categories
       .filter(category => !category.edited)
       .map(category => category.original);
 
-    let pCreate = this.restService.mergeCategories(updatedCategories);
-    let pDelete = this.restService.deleteCategories(deletedCategories);
+    const pCreate = this.restService.mergeCategories(updatedCategories);
+    const pDelete = this.restService.deleteCategories(deletedCategories);
 
     Promise.all([pCreate, pDelete])
       .then(result => {
-        this.message.success(`Categories saved successfully. (${updatedCategories.length} created/updated, ${deletedCategories.length} deleted)`);
+        this.message.success(
+          `Categories saved successfully.
+          (${updatedCategories.length} created/updated, ${deletedCategories.length} deleted)`
+         );
         this.loadCategories();
       })
-      .catch(reason => this.message.error(`Error: ${reason}`));
+      .catch(reason => this.message.error(reason));
   }
 }
