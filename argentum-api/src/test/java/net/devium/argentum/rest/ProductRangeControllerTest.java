@@ -114,16 +114,11 @@ public class ProductRangeControllerTest {
         assertThat(range1.getName(), is("someUpdatedName"));
 
         List<RoleEntity> roles = roleRepository.findAll();
-        assertThat(roles, hasSize(5 + 4));
-        assertThat(roles.get(0).getName(), is("ADMIN"));
-        assertThat(roles.get(1).getName(), is("ORDER"));
-        assertThat(roles.get(2).getName(), is("CHECKIN"));
-        assertThat(roles.get(3).getName(), is("SCAN"));
-        assertThat(roles.get(4).getName(), is("ALL_RANGES"));
-        assertThat(roles.get(5).getName(), is(String.format("RANGE_%s", range1.getId())));
-        assertThat(roles.get(6).getName(), is(String.format("RANGE_%s", ranges.get(1).getId())));
-        assertThat(roles.get(7).getName(), is(String.format("RANGE_%s", ranges.get(2).getId())));
-        assertThat(roles.get(8).getName(), is(String.format("RANGE_%s", ranges.get(3).getId())));
+        assertThat(roles, hasSize(7 + 4));
+        assertThat(roles.get(7).getName(), is(String.format("RANGE_%s", range1.getId())));
+        assertThat(roles.get(8).getName(), is(String.format("RANGE_%s", ranges.get(1).getId())));
+        assertThat(roles.get(9).getName(), is(String.format("RANGE_%s", ranges.get(2).getId())));
+        assertThat(roles.get(10).getName(), is(String.format("RANGE_%s", ranges.get(3).getId())));
     }
 
     @Test
@@ -150,13 +145,8 @@ public class ProductRangeControllerTest {
         assertThat(productRangeRepository.findOne(range3.getId()), notNullValue());
 
         List<RoleEntity> roles = roleRepository.findAll();
-        assertThat(roles, hasSize(5 + 1));
-        assertThat(roles.get(0).getName(), is("ADMIN"));
-        assertThat(roles.get(1).getName(), is("ORDER"));
-        assertThat(roles.get(2).getName(), is("CHECKIN"));
-        assertThat(roles.get(3).getName(), is("SCAN"));
-        assertThat(roles.get(4).getName(), is("ALL_RANGES"));
-        assertThat(roles.get(5).getName(), is(String.format("RANGE_%s", range3.getId())));
+        assertThat(roles, hasSize(7 + 1));
+        assertThat(roles.get(7).getName(), is(String.format("RANGE_%s", range3.getId())));
         assertThat(userRepository.findOne(user.getId()).getRoles(), empty());
         userRepository.delete(user.getId());
     }

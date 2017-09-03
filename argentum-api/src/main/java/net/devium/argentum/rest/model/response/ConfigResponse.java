@@ -1,13 +1,15 @@
 package net.devium.argentum.rest.model.response;
 
-public class ConfigResponse {
-    private final boolean prepaid;
+import java.math.BigDecimal;
 
-    public ConfigResponse(boolean prepaid) {
-        this.prepaid = prepaid;
+public class ConfigResponse {
+    private final BigDecimal postpaidLimit;
+
+    public ConfigResponse(BigDecimal postpaidLimit) {
+        this.postpaidLimit = postpaidLimit;
     }
 
-    public boolean isPrepaid() {
-        return prepaid;
+    public BigDecimal getPostpaidLimit() {
+        return postpaidLimit;
     }
 }

@@ -1,10 +1,10 @@
 import { Config } from '../../model/config';
 export class ConfigRequest {
-  prepaid: boolean;
+  postpaidLimit: number;
 }
 
 export function fromConfig(config: Config): ConfigRequest {
   return {
-    prepaid: config.prepaid
+    postpaidLimit: config.postpaidLimit
   };
 }

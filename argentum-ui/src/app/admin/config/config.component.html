@@ -12,14 +12,12 @@
     </thead>
 
     <tbody>
-    <tr>
-      <td>Use prepaid</td>
+    <tr [class.changed]="config.hasChangedPostpaidLimit()">
+      <td>Postpaid Limit</td>
       <td>
-        <label class="custom-control custom-checkbox m-0">
-          <input type="checkbox" class="custom-control-input m-0"
-                 [(ngModel)]="config.prepaid">
-          <span class="custom-control-indicator"></span>
-        </label>
+        <button (click)="setPostpaidLimit()" type="button" class="btn btn-primary btn-sm">
+          {{config.edited.postpaidLimit | number: '1.2-2'}}
+        </button>
       </td>
     </tr>
     </tbody>

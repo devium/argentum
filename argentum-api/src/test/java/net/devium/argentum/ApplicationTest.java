@@ -35,14 +35,16 @@ public class ApplicationTest {
         assertThat(admin.getPassword(), is("argentum"));
 
         List<RoleEntity> roles = roleRepository.findAll();
-        assertThat(roles, hasSize(5));
+        assertThat(roles, hasSize(7));
         assertThat(admin.getRoles(), hasSize(1));
 
         assertThat(admin.getRoles().iterator().next().getName(), is("ADMIN"));
         assertThat(roles.get(0).getName(), is("ADMIN"));
         assertThat(roles.get(1).getName(), is("ORDER"));
         assertThat(roles.get(2).getName(), is("CHECKIN"));
-        assertThat(roles.get(3).getName(), is("SCAN"));
-        assertThat(roles.get(4).getName(), is("ALL_RANGES"));
+        assertThat(roles.get(3).getName(), is("RECHARGE"));
+        assertThat(roles.get(4).getName(), is("REFUND"));
+        assertThat(roles.get(5).getName(), is("SCAN"));
+        assertThat(roles.get(6).getName(), is("ALL_RANGES"));
     }
 }

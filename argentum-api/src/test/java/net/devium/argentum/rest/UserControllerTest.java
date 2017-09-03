@@ -222,6 +222,7 @@ public class UserControllerTest {
 
         user1 = userRepository.findOne(user1.getId());
         user2 = userRepository.findOne(user2.getId());
+        // admin + user2 (someOtherName) are left.
         assertThat(userRepository.findAll(), hasSize(1 + 1));
         assertThat(user1, nullValue());
         assertThat(user2.getUsername(), is("someOtherName"));

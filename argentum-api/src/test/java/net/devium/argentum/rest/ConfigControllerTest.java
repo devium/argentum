@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -47,23 +48,23 @@ public class ConfigControllerTest {
         mockMvc.perform(get("/config"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.prepaid", is(true)));
+                .andExpect(jsonPath("$.data.postpaidLimit", is(0)));
     }
 
     @Test
     public void testGetConfigSet() throws Exception {
-        configRepository.save(new ConfigEntity("prepaid", "false"));
+        configRepository.save(new ConfigEntity("postpaidLimit", "50.50"));
 
         mockMvc.perform(get("/config"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.prepaid", is(false)));
+                .andExpect(jsonPath("$.data.postpaidLimit", closeTo(50.50, 0.001)));
     }
 
     @Test
     public void testSetConfig() throws Exception {
         String body = "{" +
-                "   'prepaid': false" +
+                "   'postpaidLimit': 30.50" +
                 "}";
 
         body = body.replace('\'', '"');
@@ -73,8 +74,8 @@ public class ConfigControllerTest {
                 .content(body))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.prepaid", is(false)));
+                .andExpect(jsonPath("$.data.postpaidLimit", closeTo(30.50, 0.001)));
 
-        assertThat(configRepository.findOne("prepaid").getValue(), is("false"));
+        assertThat(configRepository.findOne("postpaidLimit").getValue(), is("30.50"));
     }
 }

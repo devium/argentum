@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.invoke.MethodHandles;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,10 +35,10 @@ public class ConfigController {
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> getConfig() {
-        ConfigEntity prepaid = configRepository.findOne("prepaid");
+        ConfigEntity prepaid = configRepository.findOne("postpaidLimit");
 
         ConfigResponse response = new ConfigResponse(
-                prepaid == null || prepaid.getValue().equals("true")
+                prepaid == null ? new BigDecimal(0) : new BigDecimal(prepaid.getValue())
         );
 
         return Response.ok(response);
@@ -47,7 +48,7 @@ public class ConfigController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> setConfig(@RequestBody Map<String, String> body) {
         final Set<String> CONFIG_WHITELIST = ImmutableSet.of(
-                "prepaid"
+                "postpaidLimit"
         );
 
         List<ConfigEntity> newConfig = body.entrySet().stream()
