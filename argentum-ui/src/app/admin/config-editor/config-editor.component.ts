@@ -22,10 +22,10 @@ class EditorConfig {
 
 @Component({
   selector: 'app-config',
-  templateUrl: './config.component.html',
-  styleUrls: ['./config.component.scss']
+  templateUrl: './config-editor.component.html',
+  styleUrls: ['./config-editor.component.scss']
 })
-export class ConfigComponent implements OnInit {
+export class ConfigEditorComponent implements OnInit {
   config: EditorConfig = null;
 
   @ViewChild(MessageComponent)

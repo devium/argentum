@@ -31,8 +31,9 @@ import { RouteGuard } from './app-routing/route-guard';
 import { LoginComponent } from './login/login.component';
 import { DummyComponent } from './dummy/dummy.component';
 import { UserEditorComponent } from './admin/user-editor/user-editor.component';
-import { ConfigComponent } from './admin/config/config.component';
+import { ConfigEditorComponent } from './admin/config-editor/config-editor.component';
 import { RoleBasedComponent } from './common/role-based/role-based.component';
+import { StatusEditorComponent } from './admin/status-editor/status-editor.component';
 
 @NgModule({
   declarations: [
@@ -60,8 +61,9 @@ import { RoleBasedComponent } from './common/role-based/role-based.component';
     LoginComponent,
     DummyComponent,
     UserEditorComponent,
-    ConfigComponent,
-    RoleBasedComponent
+    ConfigEditorComponent,
+    RoleBasedComponent,
+    StatusEditorComponent
   ],
   imports: [
     BrowserModule,

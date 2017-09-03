@@ -31,6 +31,9 @@ import { Config } from '../model/config';
 import { fromConfig } from './request/config-request';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
+import { fromStatus } from './request/status-request';
+import { Status } from '../model/status';
+import { StatusResponse, toStatus } from './response/status-response';
 
 @Injectable()
 export class RestService {
@@ -310,6 +313,41 @@ export class RestService {
   settle(guest: Guest): Promise<Guest> {
     return this.settleRaw(guest)
       .then((guestResponse: GuestResponse) => Promise.resolve(toGuest(guestResponse)));
+  }
+
+  // /statuses
+
+  private getStatusesRaw(): Promise<StatusResponse[]> {
+    return this.http.get(`${this.apiUrl}/statuses`, { headers: RestService.prepareHeaders() })
+      .toPromise()
+      .then(response => response.json().data as StatusResponse[])
+      .catch(RestService.handleError);
+  }
+
+  getStatuses(): Promise<Status[]> {
+    return this.getStatusesRaw()
+      .then((statuses: StatusResponse[]) => Promise.resolve(statuses.map(toStatus)));
+  }
+
+  mergeStatuses(statuses: Status[]): Promise<StatusResponse[]> {
+    const body = statuses.map(fromStatus);
+
+    return this.http.post(`${this.apiUrl}/statuses`, body, { headers: RestService.prepareHeaders() })
+      .toPromise()
+      .then(response => response.json().data as StatusResponse[])
+      .catch(RestService.handleError);
+  }
+
+  deleteStatuses(statuses: Status[]): Promise<void> {
+    const body = statuses.map(status => status.id);
+
+    if (statuses.length === 0) {
+      return Promise.resolve();
+    }
+    return this.http.delete(`${this.apiUrl}/statuses`, { body, headers: RestService.prepareHeaders() })
+      .toPromise()
+      .then(() => void(0))
+      .catch(RestService.handleError);
   }
 
 
