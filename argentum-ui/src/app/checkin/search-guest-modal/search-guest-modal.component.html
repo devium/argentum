@@ -1,15 +1,35 @@
 <div class="modal-body mx-4 my-3 p-0">
 
   <div class="form-group">
-    <label for="codeInput">Code</label>
-    <input #codeInput (input)="search($event.target.value)"
-           id="codeInput" type="text" class="form-control">
+    <label *ngIf="!guest" for="searchInput">Search by</label>
+    <label *ngIf="guest" for="searchInput">Guest</label>
 
-    <div ngbDropdown open="true" autoClose="false">
+    <div *ngIf="!guest" ngbRadioGroup [(ngModel)]="searchField" (change)="search(searchInput.value)">
+      <label ngbButtonLabel class="btn-primary">
+        <input ngbButton type="radio" value="code"
+               (focus)="searchInput.focus()">
+        Code
+      </label>
+      <label ngbButtonLabel class="btn-primary">
+        <input ngbButton type="radio" value="name"
+               (focus)="searchInput.focus()">
+        Name
+      </label>
+      <label ngbButtonLabel class="btn-primary">
+        <input ngbButton type="radio" value="mail"
+               (focus)="searchInput.focus()">
+        Mail
+      </label>
+    </div>
+
+    <input #searchInput (input)="search($event.target.value)"
+           id="searchInput" type="text" class="form-control">
+
+    <div ngbDropdown [open]="true" [autoClose]="false">
       <div ngbDropdownMenu *ngIf="results.length > 0 && !guest" class="dropdown-menu">
         <button *ngFor="let guest of results" (focus)="$event.target.blur()" (click)="lockGuest(guest)" type="button"
                 class="dropdown-item">
-          {{guest.code}} {{guest.name}}
+          {{guest.code}} {{guest.name}} &lt;{{guest.mail}}&gt;
         </button>
       </div>
     </div>

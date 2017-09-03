@@ -244,14 +244,14 @@ export class RestService {
       }));
   }
 
-  private getGuestsByCodeRaw(codeLike: string): Observable<GuestResponse[]> {
-    return this.http.get(`${this.apiUrl}/guests/code/${codeLike}`, { headers: RestService.prepareHeaders() })
+  private getGuestsBySearchRaw(field: string, search: string): Observable<GuestResponse[]> {
+    return this.http.get(`${this.apiUrl}/guests/search/${field}/${search}`, { headers: RestService.prepareHeaders() })
       .map(response => response.json().data as GuestResponse[])
       .catch(RestService.handleError);
   }
 
-  getGuestsByCode(code: string): Observable<Guest[]> {
-    return this.getGuestsByCodeRaw(code).map((guests: GuestResponse[]) => guests.map(toGuest));
+  getGuestsBySearch(field: string, search: string): Observable<Guest[]> {
+    return this.getGuestsBySearchRaw(field, search).map((guests: GuestResponse[]) => guests.map(toGuest));
   }
 
   mergeGuests(guests: Guest[]): Promise<GuestResponse[]> {

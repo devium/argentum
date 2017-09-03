@@ -280,27 +280,55 @@ public class GuestControllerTest {
     }
 
     @Test
-    public void testGetByCode() throws Exception {
+    public void testGetBySearch() throws Exception {
         GuestEntity guest1 = guestRepository.save(new GuestEntity(
                 "CODE10", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
         GuestEntity guest2 = guestRepository.save(new GuestEntity(
-                "CODE11", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
+                "CODE11", "someOtherName", "someOtherMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
         GuestEntity guest3 = guestRepository.save(new GuestEntity(
-                "CODE00", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
+                "CODE00", "someThirdName", "someThirdMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
 
-        mockMvc.perform(get("/guests/code/CODE1"))
+        mockMvc.perform(get("/guests/search/code/CODE1"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data", hasSize(2)))
                 .andExpect(jsonPath("$.data[0].id", is((int) guest1.getId())))
                 .andExpect(jsonPath("$.data[1].id", is((int) guest2.getId())));
+
+        mockMvc.perform(get("/guests/search/name/some"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data", hasSize(3)))
+                .andExpect(jsonPath("$.data[0].id", is((int) guest1.getId())))
+                .andExpect(jsonPath("$.data[1].id", is((int) guest2.getId())))
+                .andExpect(jsonPath("$.data[2].id", is((int) guest3.getId())));
+
+        mockMvc.perform(get("/guests/search/name/othername"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data", hasSize(1)))
+                .andExpect(jsonPath("$.data[0].id", is((int) guest2.getId())));
+
+        mockMvc.perform(get("/guests/search/mail/some"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data", hasSize(3)))
+                .andExpect(jsonPath("$.data[0].id", is((int) guest1.getId())))
+                .andExpect(jsonPath("$.data[1].id", is((int) guest2.getId())))
+                .andExpect(jsonPath("$.data[2].id", is((int) guest3.getId())));
+
+        mockMvc.perform(get("/guests/search/mail/thirdmail"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data", hasSize(1)))
+                .andExpect(jsonPath("$.data[0].id", is((int) guest3.getId())));
     }
 
     @Test
-    public void testGetByCodeMax3() throws Exception {
+    public void testGetBySearchMax3() throws Exception {
         GuestEntity guest1 = guestRepository.save(new GuestEntity(
                 "CODE10", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
@@ -327,7 +355,7 @@ public class GuestControllerTest {
     }
 
     @Test
-    public void testGetByCodeNotFound() throws Exception {
+    public void testGetBySearchNotFound() throws Exception {
         GuestEntity guest1 = guestRepository.save(new GuestEntity(
                 "CODE10", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));

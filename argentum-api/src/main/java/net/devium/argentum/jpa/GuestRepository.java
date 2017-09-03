@@ -19,6 +19,10 @@ public interface GuestRepository extends JpaRepository<GuestEntity, Long> {
 
     List<GuestEntity> findFirst3ByCodeContainsIgnoreCase(String code);
 
+    List<GuestEntity> findFirst3ByNameContainsIgnoreCase(String code);
+
+    List<GuestEntity> findFirst3ByMailContainsIgnoreCase(String code);
+
     List<GuestEntity> findByCodeIn(Iterable<String> codes);
 
     List<GuestEntity> findByCardIn(Iterable<String> cards);

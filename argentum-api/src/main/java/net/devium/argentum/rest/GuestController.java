@@ -18,10 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static net.devium.argentum.constants.ApplicationConstants.DECIMAL_PLACES;
@@ -113,9 +110,19 @@ public class GuestController {
         return Response.ok(GuestResponse.from(guest));
     }
 
-    @RequestMapping(path = "/code/{code}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<?> getByCode(@PathVariable String code) {
-        List<GuestEntity> guests = guestRepository.findFirst3ByCodeContainsIgnoreCase(code);
+    @RequestMapping(path = "/search/{field}/{search}", method = RequestMethod.GET, produces = MediaType
+            .APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<?> getBySearch(@PathVariable String field, @PathVariable String search) {
+        List <GuestEntity> guests;
+        if (field.equalsIgnoreCase("code")) {
+            guests = guestRepository.findFirst3ByCodeContainsIgnoreCase(search);
+        } else if (field.equalsIgnoreCase("name")) {
+            guests = guestRepository.findFirst3ByNameContainsIgnoreCase(search);
+        } else if (field.equalsIgnoreCase("mail")) {
+            guests = guestRepository.findFirst3ByMailContainsIgnoreCase(search);
+        } else {
+            return Response.badRequest("Can only search by code, name, or mail.");
+        }
 
         List<GuestResponse> response = guests.stream()
                 .map(GuestResponse::from)

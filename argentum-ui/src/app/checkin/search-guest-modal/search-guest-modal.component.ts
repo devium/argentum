@@ -17,12 +17,14 @@ import { RoleBasedComponent } from '../../common/role-based/role-based.component
   styleUrls: ['search-guest-modal.component.scss']
 })
 export class SearchGuestModalComponent extends RoleBasedComponent implements OnInit {
-  private codeStream = new Subject<string>();
+  private inputSearchStream = new Subject<string>();
+  private searchStream = new Subject<string>();
   results: Guest[] = [];
   guest: Guest;
 
-  @ViewChild('codeInput')
-  codeInput: ElementRef;
+  @ViewChild('searchInput')
+  searchInput: ElementRef;
+  searchField = 'code';
 
   message: MessageComponent;
 
@@ -32,23 +34,33 @@ export class SearchGuestModalComponent extends RoleBasedComponent implements OnI
 
   ngOnInit() {
     super.ngOnInit();
-    this.codeStream
+    this.inputSearchStream
       .debounceTime(300)
       .distinctUntilChanged()
-      .switchMap(code => code ? this.restService.getGuestsByCode(code) : Observable.of([]))
+      .subscribe(search => this.searchStream.next(search));
+    this.searchStream
+      .switchMap(search => this.requestSearch(search))
       .subscribe((guests: Guest[]) => this.results = guests);
 
-    this.codeInput.nativeElement.focus();
+    this.searchInput.nativeElement.focus();
   }
 
-  search(code: string): void {
-    this.codeStream.next(code);
+  requestSearch(search: string) {
+    if (search) {
+      return this.restService.getGuestsBySearch(this.searchField, search);
+    } else {
+      return Observable.of([]);
+    }
+  }
+
+  search(search: string): void {
+    this.searchStream.next(search);
   }
 
   lockGuest(guest: Guest) {
     this.guest = guest;
-    this.codeInput.nativeElement.value = `${guest.code} ${guest.name}`;
-    this.codeInput.nativeElement.disabled = true;
+    this.searchInput.nativeElement.value = `${guest.code} ${guest.name} <${guest.mail}>`;
+    this.searchInput.nativeElement.disabled = true;
   }
 
   checkIn() {
