@@ -2,28 +2,28 @@
   <app-card-bar [fullscreen]="false"></app-card-bar>
 
   <div class="row p-2 my-0 grid-max mx-auto">
-    <div *ngIf="hasRole(['ADMIN', 'CHECKIN'])" class="col-sm-6 p-1">
+    <div *ngIf="hasRole(['CHECKIN'])" class="col-sm-6 p-1">
       <button (focus)="$event.target.blur()" (click)="newGuest()" class="btn btn-primary btn-block btn-huge">
         <i class="fa fa-plus fa-lg pr-1"></i>New guest
       </button>
     </div>
-    <div *ngIf="hasRole(['ADMIN', 'CHECKIN'])" class="col-sm-6 p-1">
+    <div *ngIf="hasRole(['CHECKIN'])" class="col-sm-6 p-1">
       <button (focus)="$event.target.blur()" (click)="searchGuest()" class="btn btn-primary btn-block btn-huge">
         <i class="fa fa-search fa-lg pr-1"></i>Search guest
       </button>
     </div>
-    <div *ngIf="hasRole(['ADMIN', 'RECHARGE'])" class="col-sm-6 p-1">
+    <div *ngIf="hasRole(['RECHARGE'])" class="col-sm-6 p-1">
       <button (focus)="$event.target.blur()" (click)="recharge()" class="btn btn-primary btn-block btn-huge"
               [disabled]="!cardBar.guest"
               [class.disabled]="!cardBar.guest">
         <i class="fa fa-credit-card-alt fa-lg pr-1"></i>Recharge
       </button>
     </div>
-    <div *ngIf="hasRole(['ADMIN', 'REFUND'])" class="col-sm-6 p-1">
-      <button (focus)="$event.target.blur()" (click)="refund()" class="btn btn-primary btn-block btn-huge"
+    <div *ngIf="hasRole(['SETTLE'])" class="col-sm-6 p-1">
+      <button (focus)="$event.target.blur()" (click)="settle()" class="btn btn-primary btn-block btn-huge"
               [disabled]="!cardBar.guest"
               [class.disabled]="!cardBar.guest">
-        <i class="fa fa-money fa-lg pr-1"></i>Refund
+        <i class="fa fa-money fa-lg pr-1"></i>Settle
       </button>
     </div>
   </div>

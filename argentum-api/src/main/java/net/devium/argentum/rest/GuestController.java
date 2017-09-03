@@ -194,9 +194,9 @@ public class GuestController {
         return Response.ok(guest.getCheckedIn());
     }
 
-    @RequestMapping(path = "/{guestId}/refund", method = RequestMethod.PUT,
+    @RequestMapping(path = "/{guestId}/settle", method = RequestMethod.PUT,
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<?> refund(@PathVariable long guestId, @RequestBody BigDecimal value) {
+    public ResponseEntity<?> settle(@PathVariable long guestId, @RequestBody BigDecimal value) {
         GuestEntity guest = guestRepository.findOne(guestId);
 
         if (guest == null) {
@@ -206,7 +206,6 @@ public class GuestController {
         }
 
         guest.setBalance(guest.getBalance().subtract(value).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP));
-        guest.setCard(null);
         guestRepository.save(guest);
 
         return Response.ok(guest);

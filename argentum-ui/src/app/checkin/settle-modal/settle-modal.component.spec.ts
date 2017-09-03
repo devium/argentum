@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RefundModalComponent } from './refund-modal.component';
+import { SettleModalComponent } from './settle-modal.component';
 
-describe('RefundModalComponent', () => {
-  let component: RefundModalComponent;
-  let fixture: ComponentFixture<RefundModalComponent>;
+describe('SettleModalComponent', () => {
+  let component: SettleModalComponent;
+  let fixture: ComponentFixture<SettleModalComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RefundModalComponent ]
+      declarations: [ SettleModalComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RefundModalComponent);
+    fixture = TestBed.createComponent(SettleModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

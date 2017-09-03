@@ -1,9 +1,6 @@
 package net.devium.argentum.rest;
 
-import net.devium.argentum.jpa.GuestEntity;
-import net.devium.argentum.jpa.GuestRepository;
-import net.devium.argentum.jpa.OrderEntity;
-import net.devium.argentum.jpa.OrderRepository;
+import net.devium.argentum.jpa.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +32,8 @@ public class GuestControllerTest {
     private GuestRepository guestRepository;
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private ConfigRepository configRepository;
 
     private GuestController sut;
 
@@ -50,6 +49,7 @@ public class GuestControllerTest {
     public void tearDown() throws Exception {
         orderRepository.deleteAll();
         guestRepository.deleteAll();
+        configRepository.deleteAll();
     }
 
     @Test
@@ -461,12 +461,12 @@ public class GuestControllerTest {
     }
 
     @Test
-    public void testRefund() throws Exception {
+    public void testSettle() throws Exception {
         GuestEntity guest = guestRepository.save(new GuestEntity(
                 "someCode", "someName", "someMail", "someStatus", null, null, new BigDecimal(7), new BigDecimal(3)
         ));
 
-        mockMvc.perform(put("/guests/{guestId}/refund", guest.getId())
+        mockMvc.perform(put("/guests/{guestId}/settle", guest.getId())
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content("5.3"))
                 .andDo(print())
@@ -477,6 +477,28 @@ public class GuestControllerTest {
 
         guest = guestRepository.findOne(guest.getId());
         assertThat(guest.getBalance(), is(new BigDecimal(1.7).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+        assertThat(guest.getCard(), nullValue());
+    }
+
+    @Test
+    public void testSettlePostpaid() throws Exception {
+        configRepository.save(new ConfigEntity("postpaidLimit", "2"));
+
+        GuestEntity guest = guestRepository.save(new GuestEntity(
+                "someCode", "someName", "someMail", "someStatus", null, null, new BigDecimal(-1.80), new BigDecimal(0)
+        ));
+
+        mockMvc.perform(put("/guests/{guestId}/settle", guest.getId())
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content("-1.50"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.id", is((int) guest.getId())))
+                .andExpect(jsonPath("$.data.balance", closeTo(-0.30, 0.001)))
+                .andExpect(jsonPath("$.data.card", nullValue()));
+
+        guest = guestRepository.findOne(guest.getId());
+        assertThat(guest.getBalance(), is(new BigDecimal(-0.30).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
         assertThat(guest.getCard(), nullValue());
     }
 

@@ -38,7 +38,7 @@
     </div>
 
 
-    <div *ngIf="hasRole(['ADMIN', 'RECHARGE'])" class="form-group">
+    <div *ngIf="hasRole(['RECHARGE'])" class="form-group">
 
       <label for="balanceInput">Balance (requires card)</label>
 
@@ -60,7 +60,7 @@
 
     </div>
 
-    <div *ngIf="hasRole(['ADMIN', 'RECHARGE'])" class="form-group">
+    <div *ngIf="hasRole(['RECHARGE'])" class="form-group">
 
       <label for="bonusInput">Bonus (requires card)</label>
 

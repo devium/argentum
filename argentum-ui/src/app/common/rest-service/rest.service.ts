@@ -298,15 +298,17 @@ export class RestService {
       .catch(RestService.handleError);
   }
 
-  private refundRaw(guest: Guest): Promise<GuestResponse> {
-    return this.http.put(`${this.apiUrl}/guests/${guest.id}/refund`, guest.balance, { headers: RestService.prepareHeaders() })
+  private settleRaw(guest: Guest): Promise<GuestResponse> {
+    return this.http.put(
+      `${this.apiUrl}/guests/${guest.id}/settle`, guest.balance, { headers: RestService.prepareHeaders() }
+      )
       .toPromise()
       .then(response => response.json().data as GuestResponse)
       .catch(RestService.handleError);
   }
 
-  refund(guest: Guest): Promise<Guest> {
-    return this.refundRaw(guest)
+  settle(guest: Guest): Promise<Guest> {
+    return this.settleRaw(guest)
       .then((guestResponse: GuestResponse) => Promise.resolve(toGuest(guestResponse)));
   }
 

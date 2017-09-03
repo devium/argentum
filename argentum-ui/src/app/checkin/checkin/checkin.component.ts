@@ -6,7 +6,7 @@ import { Guest } from '../../common/model/guest';
 import { RestService } from '../../common/rest-service/rest.service';
 import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.component';
 import { MessageComponent } from '../../common/message/message.component';
-import { RefundModalComponent } from '../refund-modal/refund-modal.component';
+import { SettleModalComponent } from '../settle-modal/settle-modal.component';
 import { CardBarComponent } from '../../common/card-bar/card-bar.component';
 import { RoleBasedComponent } from '../../common/role-based/role-based.component';
 
@@ -56,7 +56,9 @@ export class CheckinComponent extends RoleBasedComponent implements OnInit {
       this.restService.addBalance(guest, value)
         .then((newBalance: number) => {
           this.cardBar.active = true;
-          this.message.success(`Recharged balance of "${guest.name}" with €${value.toFixed(2)}. New balance: €${newBalance.toFixed(2)}`);
+          this.message.success(
+            `Recharged balance of "${guest.name}" with €${value.toFixed(2)}. New balance: €${newBalance.toFixed(2)}`
+          );
         })
         .catch(reason => {
           this.cardBar.active = false;
@@ -66,14 +68,14 @@ export class CheckinComponent extends RoleBasedComponent implements OnInit {
     }, () => void(0));
   }
 
-  refund() {
+  settle() {
     const guest = this.cardBar.guest;
-    const refundModal = this.modalService.open(RefundModalComponent, { backdrop: 'static' });
-    (<RefundModalComponent>refundModal.componentInstance).guest = guest;
+    const settleModal = this.modalService.open(SettleModalComponent, { backdrop: 'static' });
+    (<SettleModalComponent>settleModal.componentInstance).guest = guest;
 
-    refundModal.result.then(() => {
-      this.restService.refund(guest)
-        .then((guestNew: Guest) => this.message.success(`Refunded "${guest.name}" for €${guest.balance.toFixed(2)}. Card unregistered.`))
+    settleModal.result.then(() => {
+      this.restService.settle(guest)
+        .then((guestNew: Guest) => this.message.success(`Settled "${guest.name}" for €${guest.balance.toFixed(2)}.`))
         .catch(reason => this.message.error(reason));
     }, () => void(0));
   }

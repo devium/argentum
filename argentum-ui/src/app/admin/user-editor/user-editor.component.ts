@@ -62,7 +62,7 @@ export class UserEditorComponent implements OnInit {
     'ORDER': 'Order',
     'CHECKIN': 'Check-in',
     'RECHARGE': 'Recharge',
-    'REFUND': 'Refund',
+    'SETTLE': 'Settle',
     'SCAN': 'Scan',
     'ALL_RANGES': 'All ranges'
   };

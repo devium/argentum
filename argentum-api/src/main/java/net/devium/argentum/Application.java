@@ -27,11 +27,11 @@ public class Application {
             RoleEntity order = new RoleEntity("ORDER");
             RoleEntity checkin = new RoleEntity("CHECKIN");
             RoleEntity recharge = new RoleEntity("RECHARGE");
-            RoleEntity refund = new RoleEntity("REFUND");
+            RoleEntity settle = new RoleEntity("SETTLE");
             RoleEntity scan = new RoleEntity("SCAN");
             RoleEntity rangeAll = new RoleEntity("ALL_RANGES");
             admin = roleRepository.save(
-                    ImmutableList.of(admin, order, checkin, recharge, refund, scan, rangeAll)
+                    ImmutableList.of(admin, order, checkin, recharge, settle, scan, rangeAll)
             ).get(0);
 
             UserEntity adminUser = userRepository.save(new UserEntity("admin", "argentum", ImmutableSet.of(admin)));
