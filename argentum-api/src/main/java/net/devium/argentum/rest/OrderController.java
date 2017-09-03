@@ -106,15 +106,20 @@ public class OrderController {
             return Response.notFound(message);
         }
 
-        ConfigEntity prepaidEntry = configRepository.findOne("prepaid");
-        boolean prepaid = prepaidEntry == null || prepaidEntry.getValue().equals("true");
+        // Get postpaid limit if set.
+        BigDecimal postpaidLimit = BigDecimal.ZERO;
+        ConfigEntity postpaidLimitEntry = configRepository.findOne("postpaidLimit");
+        if (postpaidLimitEntry != null) {
+            postpaidLimit = new BigDecimal(postpaidLimitEntry.getValue());
+        }
 
         // Check balance.
-        if (guest.getBonus().compareTo(total) >= 0) {
+        BigDecimal totalPostBonus = total.subtract(guest.getBonus());
+        if (totalPostBonus.compareTo(BigDecimal.ZERO) <= 0) {
             guest.setBonus(guest.getBonus().subtract(total));
-        } else if (!prepaid || guest.getBalance().compareTo(total.subtract(guest.getBonus())) >= 0) {
-            guest.setBalance(guest.getBalance().subtract(total.subtract(guest.getBonus())));
-            guest.setBonus(new BigDecimal(0).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP));
+        } else if (guest.getBalance().subtract(totalPostBonus).compareTo(postpaidLimit.negate()) >= 0) {
+            guest.setBonus(BigDecimal.ZERO);
+            guest.setBalance(guest.getBalance().subtract(totalPostBonus));
         } else {
             String message = "Insufficient funds.";
             LOGGER.info(message);

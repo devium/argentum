@@ -277,7 +277,7 @@ public class OrderControllerTest {
 
     @Test
     public void testCreateOrderPostpaid() throws Exception {
-        configRepository.save(new ConfigEntity("prepaid", "false"));
+        configRepository.save(new ConfigEntity("postpaidLimit", "10"));
 
         GuestEntity guest = new GuestEntity(
                 "someCode",
@@ -314,6 +314,42 @@ public class OrderControllerTest {
         assertThat(orderRepository.findAll(), hasSize(1));
         assertThat(guest.getBalance(), is(new BigDecimal(-2.20).setScale(DECIMAL_PLACES, RoundingMode.HALF_UP)));
         assertThat(guest.getBonus(), is(new BigDecimal(0.00).setScale(DECIMAL_PLACES, RoundingMode.HALF_UP)));
+    }
+
+    @Test
+    public void testCreateOrderPostpaidExceeded() throws Exception {
+        configRepository.save(new ConfigEntity("postpaidLimit", "2"));
+
+        GuestEntity guest = new GuestEntity(
+                "someCode",
+                "someName",
+                "someMail",
+                "someStatus",
+                new Date(),
+                "someCard",
+                new BigDecimal(3.00),
+                new BigDecimal(1.00)
+        );
+        guest = guestRepository.save(guest);
+
+        String body = "{" +
+                "   'guestId': %s," +
+                "   'items': []," +
+                "   'customTotal': 6.20" +
+                "}";
+        body = String.format(body, guest.getId());
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(post("/orders")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+        guest = guestRepository.findOne(guest.getId());
+        assertThat(orderRepository.findAll(), hasSize(0));
+        assertThat(guest.getBalance(), is(new BigDecimal(3.00).setScale(DECIMAL_PLACES, RoundingMode.HALF_UP)));
+        assertThat(guest.getBonus(), is(new BigDecimal(1.00).setScale(DECIMAL_PLACES, RoundingMode.HALF_UP)));
     }
 
     @Test
