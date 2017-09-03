@@ -3,15 +3,22 @@
 
   <div class="row mt-2">
     <div class="col-6 p-1">
-      <button (click)="activeModal.dismiss('Cancel click')"
-              type="button" class="btn btn-secondary btn-block btn-lg">
+      <button
+        (click)="activeModal.dismiss('Cancel click')"
+        type="button"
+        class="btn btn-secondary btn-block btn-lg"
+      >
         <i class="fa fa-close fa-lg"></i>
       </button>
     </div>
     <div class="col-6 p-1">
-      <button (click)="activeModal.close()" type="button" class="btn btn-primary btn-block btn-lg"
-              [disabled]="countdown > 0"
-              [class.disabled]="countdown > 0">
+      <button
+        (click)="activeModal.close()"
+        type="button"
+        class="btn btn-primary btn-block btn-lg"
+        [disabled]="countdown > 0"
+        [class.disabled]="countdown > 0"
+      >
         <i class="fa fa-check fa-lg"></i>{{countdown > 0 ? '(' + countdown + ')' : ''}}
       </button>
     </div>

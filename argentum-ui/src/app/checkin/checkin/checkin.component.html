@@ -13,16 +13,24 @@
       </button>
     </div>
     <div *ngIf="hasRole(['RECHARGE'])" class="col-sm-6 p-1">
-      <button (focus)="$event.target.blur()" (click)="recharge()" class="btn btn-primary btn-block btn-huge"
-              [disabled]="!cardBar.guest"
-              [class.disabled]="!cardBar.guest">
+      <button
+        (focus)="$event.target.blur()"
+        (click)="recharge()"
+        class="btn btn-primary btn-block btn-huge"
+        [disabled]="!cardBar.guest"
+        [class.disabled]="!cardBar.guest"
+      >
         <i class="fa fa-credit-card-alt fa-lg pr-1"></i>Recharge
       </button>
     </div>
     <div *ngIf="hasRole(['SETTLE'])" class="col-sm-6 p-1">
-      <button (focus)="$event.target.blur()" (click)="settle()" class="btn btn-primary btn-block btn-huge"
-              [disabled]="!cardBar.guest"
-              [class.disabled]="!cardBar.guest">
+      <button
+        (focus)="$event.target.blur()"
+        (click)="settle()"
+        class="btn btn-primary btn-block btn-huge"
+        [disabled]="!cardBar.guest"
+        [class.disabled]="!cardBar.guest"
+      >
         <i class="fa fa-money fa-lg pr-1"></i>Settle
       </button>
     </div>

@@ -6,62 +6,53 @@
 
   <div class="row">
 
-    <div class="col-12 p-0 text-center text-white"
-         [class.overflow-ellipsis]="!fullscreen"
-         [class.col-sm-4]="!fullscreen"
-         [class.col-md-5]="!fullscreen"
-         [class.div-reserve]="fullscreen"
-         [class.mt-5]="fullscreen"
-         [class.mb-3]="fullscreen">
-      <span *ngIf="state == scanState.Waiting"
-            [class.h3]="fullscreen">Ready for scan.</span>
-      <span *ngIf="state == scanState.Valid"
-            [class.text-nowrap]="!fullscreen"
-            [class.h3]="fullscreen">
+    <div
+      class="col-12 p-0 text-center text-white"
+      [class.overflow-ellipsis]="!fullscreen"
+      [class.col-sm-4]="!fullscreen"
+      [class.col-md-5]="!fullscreen"
+      [class.div-reserve]="fullscreen"
+      [class.mt-5]="fullscreen"
+      [class.mb-3]="fullscreen"
+    >
+      <span *ngIf="state == scanState.Waiting" [class.h3]="fullscreen">Ready for scan.</span>
+      <span *ngIf="state == scanState.Valid" [class.text-nowrap]="!fullscreen" [class.h3]="fullscreen">
         {{guest.name}}
       </span>
-      <span *ngIf="state == scanState.NotFound"
-            [class.h3]="fullscreen">Card number not found.</span>
+      <span *ngIf="state == scanState.NotFound" [class.h3]="fullscreen">Card number not found.</span>
     </div>
 
-    <div class="col-12 p-0"
-         [class.col-sm-8]="!fullscreen"
-         [class.col-md-7]="!fullscreen">
+    <div class="col-12 p-0" [class.col-sm-8]="!fullscreen" [class.col-md-7]="!fullscreen">
 
       <div class="row">
 
-        <div class="p-0 text-center"
-             [class.col-4]="!fullscreen"
-             [class.col-12]="fullscreen"
-             [class.my-3]="fullscreen">
-          <span *ngIf="state == scanState.Valid" class="align-middle text-white"
-                [class.h1]="fullscreen">
+        <div class="p-0 text-center" [class.col-4]="!fullscreen" [class.col-12]="fullscreen" [class.my-3]="fullscreen">
+          <span *ngIf="state == scanState.Valid" class="align-middle text-white" [class.h1]="fullscreen">
             €{{guest.balance | number:'1.2-2'}}
           </span>
         </div>
 
-        <div class="p-0 text-center"
-             [class.col-4]="!fullscreen"
-             [class.col-12]="fullscreen"
-             [class.flex-first]="fullscreen"
-             [class.my-3]="fullscreen">
-          <div class="progress mx-auto h-100 align-items-center"
-               [class.progress-lg]="fullscreen">
-            <span class="w-100 m-auto text-white"
-                  [class.root-size]="!fullscreen"
-                  [class.h3]="fullscreen">
+        <div
+          class="p-0 text-center"
+          [class.col-4]="!fullscreen"
+          [class.col-12]="fullscreen"
+          [class.flex-first]="fullscreen"
+          [class.my-3]="fullscreen"
+        >
+          <div class="progress mx-auto h-100 align-items-center" [class.progress-lg]="fullscreen">
+            <span class="w-100 m-auto text-white" [class.root-size]="!fullscreen" [class.h3]="fullscreen">
               {{card}}
             </span>
-            <div [@startCountdown]="countdownState" (@startCountdown.done)="countdownAnimationDone($event)"
-                 class="progress-bar h-100" role="progressbar">
+            <div
+              [@startCountdown]="countdownState"
+              (@startCountdown.done)="countdownAnimationDone($event)"
+              class="progress-bar h-100" role="progressbar"
+            >
             </div>
           </div>
         </div>
 
-        <div class="p-0 text-center"
-             [class.col-4]="!fullscreen"
-             [class.col-12]="fullscreen"
-             [class.my-3]="fullscreen">
+        <div class="p-0 text-center" [class.col-4]="!fullscreen" [class.col-12]="fullscreen" [class.my-3]="fullscreen">
           <span *ngIf="state == scanState.Valid && !fullscreen" class="align-middle text-white">
             + €{{guest.bonus | number:'1.2-2'}}
           </span>

@@ -5,15 +5,24 @@
 
   <div class="row mt-2">
     <div class="col-6 p-1">
-      <button (focus)="$event.target.blur()" (click)="activeModal.dismiss('Cancel click')"
-              type="button" class="btn btn-secondary btn-block btn-lg">
+      <button
+        (focus)="$event.target.blur()"
+        (click)="activeModal.dismiss('Cancel click')"
+        type="button"
+        class="btn btn-secondary btn-block btn-lg"
+      >
         <i class="fa fa-close fa-lg"></i>
       </button>
     </div>
     <div class="col-6 p-1">
-      <button (focus)="$event.target.blur()" (click)="confirm()" type="button" class="btn btn-primary btn-block btn-lg"
-              [disabled]="!card"
-              [class.disabled]="!card">
+      <button
+        (focus)="$event.target.blur()"
+        (click)="confirm()"
+        type="button"
+        class="btn btn-primary btn-block btn-lg"
+        [disabled]="!card"
+        [class.disabled]="!card"
+      >
         <i class="fa fa-check fa-lg"></i>
       </button>
     </div>

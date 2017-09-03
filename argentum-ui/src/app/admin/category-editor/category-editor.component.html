@@ -13,27 +13,43 @@
     <tbody>
     <tr *ngFor="let category of categories" [class.changed]="category.changed" [class.removed]="!category.edited">
       <td>
-        <input [(ngModel)]="category.displayed.name" (input)="changeName(category, $event.target.value)"
-               (focus)="$event.target.select()"
-               class="form-control p-1" [class.disabled]="!category.edited" [disabled]="!category.edited">
+        <input
+          [(ngModel)]="category.displayed.name"
+          (input)="changeName(category, $event.target.value)"
+          (focus)="$event.target.select()"
+          class="form-control p-1"
+          [class.disabled]="!category.edited"
+          [disabled]="!category.edited"
+        >
       </td>
       <td>
-        <input [(ngModel)]="category.displayed.color" (input)="changeColor(category, $event.target.value)"
-               class="form-control h-100 color-picker" type="color"
-               [style.background-color]="category.displayed.color" [class.disabled]="!category.edited"
-               [disabled]="!category.edited">
+        <input
+          [(ngModel)]="category.displayed.color"
+          (input)="changeColor(category, $event.target.value)"
+          class="form-control h-100 color-picker"
+          type="color"
+          [style.background-color]="category.displayed.color"
+          [class.disabled]="!category.edited"
+          [disabled]="!category.edited"
+        >
       </td>
       <td class="text-center">
-        <button (click)="reset(category)" class="btn btn-primary btn-sm"
-                [class.disabled]="(!category.changed && category.edited) || !category.original"
-                [disabled]="!category.changed && category.edited || !category.original">
+        <button
+          (click)="reset(category)"
+          class="btn btn-primary btn-sm"
+          [class.disabled]="(!category.changed && category.edited) || !category.original"
+          [disabled]="!category.changed && category.edited || !category.original"
+        >
           <i class="fa fa-undo"></i>
         </button>
       </td>
       <td class="text-center">
-        <button (click)="remove(category)" class="btn btn-danger btn-sm"
-                [class.disabled]="!category.edited"
-                [disabled]="!category.edited">
+        <button
+          (click)="remove(category)"
+          class="btn btn-danger btn-sm"
+          [class.disabled]="!category.edited"
+          [disabled]="!category.edited"
+        >
           <i class="fa fa-trash"></i>
         </button>
       </td>

@@ -14,32 +14,53 @@
     <tbody>
     <tr *ngFor="let status of statuses" [class.changed]="status.changed" [class.removed]="!status.edited">
       <td>
-        <input [(ngModel)]="status.displayed.internalName" (change)="status.updateChanged()"
-               (focus)="$event.target.select()"
-               class="form-control p-1" [class.disabled]="!status.edited" [disabled]="!status.edited">
+        <input
+          [(ngModel)]="status.displayed.internalName"
+          (input)="status.updateChanged()"
+          (focus)="$event.target.select()"
+          class="form-control p-1"
+          [class.disabled]="!status.edited"
+          [disabled]="!status.edited"
+        >
       </td>
       <td>
-        <input [(ngModel)]="status.displayed.displayName" (change)="status.updateChanged()"
-               (focus)="$event.target.select()"
-               class="form-control p-1" [class.disabled]="!status.edited" [disabled]="!status.edited">
+        <input
+          [(ngModel)]="status.displayed.displayName"
+          (input)="status.updateChanged()"
+          (focus)="$event.target.select()"
+          class="form-control p-1"
+          [class.disabled]="!status.edited"
+          [disabled]="!status.edited"
+        >
       </td>
       <td>
-        <input [(ngModel)]="status.displayed.color" (change)="status.updateChanged()"
-               class="form-control h-100 color-picker" type="color"
-               [style.background-color]="status.displayed.color" [class.disabled]="!status.edited"
-               [disabled]="!status.edited">
+        <input
+          [(ngModel)]="status.displayed.color"
+          (input)="status.updateChanged()"
+          class="form-control h-100 color-picker"
+          type="color"
+          [style.background-color]="status.displayed.color"
+          [class.disabled]="!status.edited"
+          [disabled]="!status.edited"
+        >
       </td>
       <td class="text-center">
-        <button (click)="reset(status)" class="btn btn-primary btn-sm"
-                [class.disabled]="(!status.changed && status.edited) || !status.original"
-                [disabled]="!status.changed && status.edited || !status.original">
+        <button
+          (click)="status.reset()"
+          class="btn btn-primary btn-sm"
+          [class.disabled]="(!status.changed && status.edited) || !status.original"
+          [disabled]="!status.changed && status.edited || !status.original"
+        >
           <i class="fa fa-undo"></i>
         </button>
       </td>
       <td class="text-center">
-        <button (click)="remove(status)" class="btn btn-danger btn-sm"
-                [class.disabled]="!status.edited"
-                [disabled]="!status.edited">
+        <button
+          (click)="remove(status)"
+          class="btn btn-danger btn-sm"
+          [class.disabled]="!status.edited"
+          [disabled]="!status.edited"
+        >
           <i class="fa fa-trash"></i>
         </button>
       </td>

@@ -7,6 +7,7 @@ import { RoleBasedComponent } from '../role-based/role-based.component';
   styleUrls: ['navbar.component.scss']
 })
 export class NavbarComponent extends RoleBasedComponent implements OnInit {
+  navbarCollapsed = true;
 
   constructor() {
     super();

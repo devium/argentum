@@ -6,6 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['admin-nav.component.scss']
 })
 export class AdminNavComponent implements OnInit {
+  navbarCollapsed = true;
 
   constructor() {
   }

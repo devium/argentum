@@ -12,21 +12,31 @@
     <tbody>
     <tr *ngFor="let range of productRanges" [class.changed]="range.changed" [class.removed]="!range.edited">
       <td>
-        <input [(ngModel)]="range.displayed.name" (input)="changeName(range, $event.target.value)"
-               (focus)="$event.target.select()"
-               class="form-control p-1" [class.disabled]="!range.edited" [disabled]="!range.edited">
+        <input
+          [(ngModel)]="range.displayed.name"
+          (input)="changeName(range, $event.target.value)"
+          (focus)="$event.target.select()"
+          class="form-control p-1"
+          [class.disabled]="!range.edited"
+          [disabled]="!range.edited"
+        >
       </td>
       <td class="text-center">
-        <button (click)="reset(range)" class="btn btn-primary btn-sm"
-                [class.disabled]="(!range.changed && range.edited) || !range.original"
-                [disabled]="!range.changed && range.edited || !range.original">
+        <button
+          (click)="reset(range)"
+          class="btn btn-primary btn-sm"
+          [class.disabled]="(!range.changed && range.edited) || !range.original"
+          [disabled]="!range.changed && range.edited || !range.original"
+        >
           <i class="fa fa-undo"></i>
         </button>
       </td>
       <td class="text-center">
-        <button (click)="remove(range)" class="btn btn-danger btn-sm"
-                [class.disabled]="!range.edited"
-                [disabled]="!range.edited">
+        <button
+          (click)="remove(range)" class="btn btn-danger btn-sm"
+          [class.disabled]="!range.edited"
+          [disabled]="!range.edited"
+        >
           <i class="fa fa-trash"></i>
         </button>
       </td>

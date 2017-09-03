@@ -17,8 +17,13 @@
 
   <div class="form-group">
     <label for="cardButton">Card (optional)</label>
-    <button (focus)="$event.target.blur()" (click)="setCard()" id="cardButton" type="button"
-            class="btn btn-block btn-primary">
+    <button
+      (focus)="$event.target.blur()"
+      (click)="setCard()"
+      id="cardButton"
+      type="button"
+      class="btn btn-block btn-primary"
+    >
       {{card ? card : '-'}}
     </button>
   </div>
@@ -28,18 +33,31 @@
     <label for="balanceInput">Balance (requires card)</label>
 
     <div class="d-flex">
-      <button (focus)="$event.target.blur()" (click)="subBalance()" type="button" class="btn btn-primary"
-              [disabled]="!card"
-              [class.disabled]="!card">
+      <button
+        (focus)="$event.target.blur()"
+        (click)="subBalance()"
+        type="button"
+        class="btn btn-primary"
+        [disabled]="!card"
+        [class.disabled]="!card"
+      >
           <i class="fa fa-minus"></i>
         </button>
 
-      <input id="balanceInput" disabled class="disabled form-control text-center flex-grow-1"
-             [value]="balance | number:'1.2-2'">
+      <input
+        id="balanceInput"
+        disabled class="disabled form-control text-center flex-grow-1"
+        [value]="balance | number:'1.2-2'"
+      >
 
-      <button (focus)="$event.target.blur()" (click)="addBalance()" type="button" class="btn btn-primary"
-              [disabled]="!card"
-              [class.disabled]="!card">
+      <button
+        (focus)="$event.target.blur()"
+        (click)="addBalance()"
+        type="button"
+        class="btn btn-primary"
+        [disabled]="!card"
+        [class.disabled]="!card"
+      >
           <i class="fa fa-plus"></i>
         </button>
     </div>
@@ -51,18 +69,32 @@
     <label for="bonusInput">Bonus (requires card)</label>
 
     <div class="d-flex">
-      <button (focus)="$event.target.blur()" (click)="subBonus()" type="button" class="btn btn-primary"
-              [disabled]="!card"
-              [class.disabled]="!card">
+      <button
+        (focus)="$event.target.blur()"
+        (click)="subBonus()"
+        type="button"
+        class="btn btn-primary"
+        [disabled]="!card"
+        [class.disabled]="!card"
+      >
         <i class="fa fa-minus"></i>
       </button>
 
-      <input id="bonusInput" disabled class="disabled form-control text-center d-inline-block flex-grow-1"
-             [value]="bonus | number:'1.2-2'">
+      <input
+        id="bonusInput"
+        disabled
+        class="disabled form-control text-center d-inline-block flex-grow-1"
+        [value]="bonus | number:'1.2-2'"
+      >
 
-      <button (focus)="$event.target.blur()" (click)="addBonus()" type="button" class="btn btn-primary"
-              [disabled]="!card"
-              [class.disabled]="!card">
+      <button
+        (focus)="$event.target.blur()"
+        (click)="addBonus()"
+        type="button"
+        class="btn btn-primary"
+        [disabled]="!card"
+        [class.disabled]="!card"
+      >
         <i class="fa fa-plus"></i>
       </button>
     </div>
@@ -71,13 +103,22 @@
 
   <div class="row mt-2">
     <div class="col-6 p-1">
-      <button (focus)="$event.target.blur()" (click)="activeModal.dismiss('Cancel click')"
-              type="button" class="btn btn-secondary btn-block btn-lg">
+      <button
+        (focus)="$event.target.blur()"
+        (click)="activeModal.dismiss('Cancel click')"
+        type="button"
+        class="btn btn-secondary btn-block btn-lg"
+      >
         <i class="fa fa-close fa-lg"></i>
       </button>
     </div>
     <div class="col-6 p-1">
-      <button (focus)="$event.target.blur()" (click)="confirm()" type="button" class="btn btn-primary btn-block btn-lg">
+      <button
+        (focus)="$event.target.blur()"
+        (click)="confirm()"
+        type="button"
+        class="btn btn-primary btn-block btn-lg"
+      >
         <i class="fa fa-check fa-lg"></i>
       </button>
     </div>

@@ -1,11 +1,13 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark py-0">
 
-  <button (focus)="$event.target.blur()" class="navbar-toggler mx-auto my-1 w-100 border-0" type="button"
-          data-toggle="collapse" data-target="#adminNavMarkup">
+  <button (focus)="$event.target.blur()"
+          (click)="navbarCollapsed = !navbarCollapsed"
+          class="navbar-toggler mx-auto my-1 w-100 border-0" type="button"
+          data-toggle="collapse">
     <span class="fa fa-bars"></span>
   </button>
 
-  <div class="collapse navbar-collapse" id="adminNavMarkup">
+  <div class="collapse navbar-collapse" [ngbCollapse]="navbarCollapsed">
     <ul class="navbar-nav justify-content-center mx-auto">
       <li class="nav-item">
         <a class="nav-link" routerLink="/admin/dashboard" routerLinkActive="active">Dashboard</a>

@@ -26,51 +26,70 @@
 
     <tr *ngFor="let user of users" [class.changed]="user.changed" [class.removed]="!user.edited">
       <td>
-        <input [(ngModel)]="user.displayed.username" (input)="changeUsername(user, $event.target.value)"
-               class="form-control p-1"
-               [disabled]="!user.edited || (user.original && user.original.username == 'admin')"
-               [class.disabled]="!user.edited || (user.original && user.original.username == 'admin')">
+        <input
+          [(ngModel)]="user.displayed.username"
+          (input)="changeUsername(user, $event.target.value)"
+          class="form-control p-1"
+          [disabled]="!user.edited || (user.original && user.original.username == 'admin')"
+          [class.disabled]="!user.edited || (user.original && user.original.username == 'admin')"
+        >
       </td>
       <td>
-        <input [(ngModel)]="user.displayed.password" (input)="changePassword(user, $event.target.value)"
-               type="password"
-               class="form-control p-1" [class.disabled]="!user.edited" [disabled]="!user.edited">
+        <input
+          [(ngModel)]="user.displayed.password"
+          (input)="changePassword(user, $event.target.value)"
+          type="password"
+          class="form-control p-1"
+          [class.disabled]="!user.edited"
+          [disabled]="!user.edited"
+        >
       </td>
 
       <td *ngFor="let role of ROLES | iterable">
         <label class="custom-control custom-checkbox m-0 checkbox-sm">
-          <input type="checkbox" class="custom-control-input m-0"
-                 [checked]="user.displayed.roles.includes(role.key)"
-                 (change)="toggleRole(user, role.key)"
-                 [disabled]="!user.edited || (user.original && user.original.username == 'admin' && role.key == 'ADMIN')"
-                 [class.disabled]="!user.edited || (user.original && user.original.username == 'admin' && role.key == 'ADMIN')">
+          <input
+            type="checkbox"
+            class="custom-control-input m-0"
+            [checked]="user.displayed.roles.includes(role.key)"
+            (change)="toggleRole(user, role.key)"
+            [disabled]="!user.edited || (user.original && user.original.username == 'admin' && role.key == 'ADMIN')"
+            [class.disabled]="!user.edited || (user.original && user.original.username == 'admin' && role.key == 'ADMIN')"
+          >
           <span class="custom-control-indicator"></span>
         </label>
       </td>
 
       <td *ngFor="let range of ranges">
         <label class="custom-control custom-checkbox m-0 checkbox-sm">
-          <input type="checkbox" class="custom-control-input m-0"
-                 [checked]="user.displayed.roles.includes('RANGE_' + range.id)"
-                 (change)="toggleRole(user, 'RANGE_' + range.id)"
-                 [class.disabled]="!user.edited"
-                 [disabled]="!user.edited">
+          <input
+            type="checkbox" class="custom-control-input m-0"
+            [checked]="user.displayed.roles.includes('RANGE_' + range.id)"
+            (change)="toggleRole(user, 'RANGE_' + range.id)"
+            [class.disabled]="!user.edited"
+            [disabled]="!user.edited"
+          >
           <span class="custom-control-indicator"></span>
         </label>
       </td>
 
 
       <td class="text-center">
-        <button (click)="reset(user)" class="btn btn-primary btn-sm"
-                [class.disabled]="(!user.changed && user.edited) || !user.original"
-                [disabled]="!user.changed && user.edited || !user.original">
+        <button
+          (click)="reset(user)"
+          class="btn btn-primary btn-sm"
+          [class.disabled]="(!user.changed && user.edited) || !user.original"
+          [disabled]="!user.changed && user.edited || !user.original"
+        >
           <i class="fa fa-undo"></i>
         </button>
       </td>
       <td class="text-center">
-        <button (click)="remove(user)" class="btn btn-danger btn-sm"
-                [disabled]="!user.edited || (user.original && user.original.username == 'admin')"
-                [class.disabled]="!user.edited || (user.original && user.original.username == 'admin')">
+        <button
+          (click)="remove(user)"
+          class="btn btn-danger btn-sm"
+          [disabled]="!user.edited || (user.original && user.original.username == 'admin')"
+          [class.disabled]="!user.edited || (user.original && user.original.username == 'admin')"
+        >
           <i class="fa fa-trash"></i>
         </button>
       </td>

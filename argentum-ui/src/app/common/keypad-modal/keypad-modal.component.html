@@ -8,9 +8,13 @@
       </div>
     </div>
     <div class="col-4 p-05">
-      <button (focus)="$event.target.blur()" (click)="deleteChar()" type="button"
-              class="btn btn-primary btn-block btn-lg"><i
-        class="fa fa-caret-square-o-left fa-lg"></i>
+      <button
+        (focus)="$event.target.blur()"
+        (click)="deleteChar()"
+        type="button"
+        class="btn btn-primary btn-block btn-lg"
+      >
+        <i class="fa fa-caret-square-o-left fa-lg"></i>
       </button>
     </div>
   </div>
@@ -24,13 +28,21 @@
 
 
     <div class="col-4 p-05">
-      <button (focus)="$event.target.blur()" (click)="entry('.')" type="button"
-              class="btn btn-primary btn-block btn-lg">.
+      <button
+        (focus)="$event.target.blur()"
+        (click)="entry('.')"
+        type="button"
+        class="btn btn-primary btn-block btn-lg"
+      >.
       </button>
     </div>
     <div class="col-4 p-05">
-      <button (focus)="$event.target.blur()" (click)="entry('0')" type="button"
-              class="btn btn-primary btn-block btn-lg">
+      <button
+        (focus)="$event.target.blur()"
+        (click)="entry('0')"
+        type="button"
+        class="btn btn-primary btn-block btn-lg"
+      >
         0
       </button>
     </div>
@@ -38,8 +50,12 @@
 
   <div class="row mt-2">
     <div class="col-6 p-05">
-      <button (focus)="$event.target.blur()" (click)="activeModal.dismiss('Cancel click')"
-              type="button" class="btn btn-secondary btn-block btn-lg">
+      <button
+        (focus)="$event.target.blur()"
+        (click)="activeModal.dismiss('Cancel click')"
+        type="button"
+        class="btn btn-secondary btn-block btn-lg"
+      >
         <i class="fa fa-close fa-lg"></i>
       </button>
     </div>

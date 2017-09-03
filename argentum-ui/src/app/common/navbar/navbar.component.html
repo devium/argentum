@@ -2,38 +2,39 @@
 
 <nav class="navbar navbar-expand-md navbar-dark bg-primary fixed-bottom py-0">
 
-  <button (focus)="$event.target.blur()" class="navbar-toggler mx-auto my-1 w-100 border-0" type="button"
-          data-toggle="collapse" data-target="#navbarMarkup">
+  <button
+    (focus)="$event.target.blur()"
+    (click)="navbarCollapsed = !navbarCollapsed"
+    class="navbar-toggler mx-auto my-1 w-100 border-0"
+    type="button"
+    data-toggle="collapse"
+  >
     <span class="fa fa-bars"></span>
   </button>
 
-  <div class="collapse navbar-collapse" id="navbarMarkup">
+  <div class="collapse navbar-collapse" [ngbCollapse]="navbarCollapsed">
     <ul class="navbar-nav justify-content-center mx-auto">
 
       <li class="nav-item">
-        <a *ngIf="hasRole(['ORDER'])" routerLink="/order" routerLinkActive="active" class="nav-link">
-          Order
+        <a *ngIf="hasRole(['ORDER'])" routerLink="/order" routerLinkActive="active" class="nav-link">Order</a>
+      </li>
+      <li class="nav-item">
+        <a
+          *ngIf="hasRole(['CHECKIN', 'RECHARGE', 'SETTLE'])"
+          routerLink="/checkin"
+          routerLinkActive="active" class="nav-link"
+        >
+          Check-in
         </a>
       </li>
       <li class="nav-item">
-        <a *ngIf="hasRole(['CHECKIN', 'RECHARGE', 'SETTLE'])"
-           routerLink="/checkin" routerLinkActive="active" class="nav-link">
-          Check-in</a>
+        <a *ngIf="hasRole(['SCAN'])" routerLink="/scan" routerLinkActive="active" class="nav-link">Scan</a>
       </li>
       <li class="nav-item">
-        <a *ngIf="hasRole(['SCAN'])" routerLink="/scan" routerLinkActive="active" class="nav-link">
-          Scan
-        </a>
+        <a *ngIf="hasRole(['ADMIN'])" routerLink="/admin" routerLinkActive="active" class="nav-link">Admin</a>
       </li>
       <li class="nav-item">
-        <a *ngIf="hasRole(['ADMIN'])" routerLink="/admin" routerLinkActive="active" class="nav-link">
-          Admin
-        </a>
-      </li>
-      <li class="nav-item">
-        <a routerLink="/logout" class="nav-link">
-          Logout
-          <i class="fa fa-sign-out pl-1"></i>
+        <a routerLink="/logout" class="nav-link">Logout<i class="fa fa-sign-out pl-1"></i>
         </a>
       </li>
 
