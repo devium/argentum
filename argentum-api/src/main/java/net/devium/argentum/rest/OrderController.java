@@ -33,12 +33,14 @@ public class OrderController {
     private ConfigRepository configRepository;
 
     @Autowired
-    public OrderController(OrderRepository orderRepository,
-                           ProductRepository productRepository,
-                           ProductRangeRepository productRangeRepository,
-                           OrderItemRepository orderItemRepository,
-                           GuestRepository guestRepository,
-                           ConfigRepository configRepository) {
+    public OrderController(
+            OrderRepository orderRepository,
+            ProductRepository productRepository,
+            ProductRangeRepository productRangeRepository,
+            OrderItemRepository orderItemRepository,
+            GuestRepository guestRepository,
+            ConfigRepository configRepository
+    ) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.productRangeRepository = productRangeRepository;
@@ -75,7 +77,7 @@ public class OrderController {
     public ResponseEntity<?> createOrder(@RequestBody OrderRequest order) {
         Set<Long> unknownProducts = new HashSet<>();
         List<OrderItemEntity> orderItems = new LinkedList<>();
-        BigDecimal total = new BigDecimal(0.00);
+        BigDecimal total = BigDecimal.ZERO;
 
         // Enumerate products and check for existence.
         for (OrderItemRequest orderItem : order.getItems()) {

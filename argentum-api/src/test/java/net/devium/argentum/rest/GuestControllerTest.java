@@ -34,6 +34,8 @@ public class GuestControllerTest {
     private OrderRepository orderRepository;
     @Autowired
     private ConfigRepository configRepository;
+    @Autowired
+    private BalanceEventRepository balanceEventRepository;
 
     private GuestController sut;
 
@@ -41,12 +43,13 @@ public class GuestControllerTest {
 
     @Before
     public void setUp() {
-        sut = new GuestController(guestRepository, orderRepository);
+        sut = new GuestController(guestRepository, orderRepository, balanceEventRepository);
         mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
     }
 
     @After
     public void tearDown() throws Exception {
+        balanceEventRepository.deleteAll();
         orderRepository.deleteAll();
         guestRepository.deleteAll();
         configRepository.deleteAll();
@@ -61,7 +64,7 @@ public class GuestControllerTest {
                     String.format("name%s", i),
                     String.format("mail%s", i),
                     String.format("status%s", i),
-                    null, null, new BigDecimal(0), new BigDecimal(0)
+                    null, null, BigDecimal.ZERO, BigDecimal.ZERO
             ));
         }
         guests = guestRepository.save(guests);
@@ -88,19 +91,19 @@ public class GuestControllerTest {
     public void testGetGuestsPaginatedAndFiltered() throws Exception {
         List<GuestEntity> guests = new LinkedList<>();
         guests.add(new GuestEntity(
-                "CODE11", "name11", "mail11", "status11", null, null, new BigDecimal(0), new BigDecimal(0)
+                "CODE11", "name11", "mail11", "status11", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
         guests.add(new GuestEntity(
-                "CODE10", "name11", "mail11", "status11", null, null, new BigDecimal(0), new BigDecimal(0)
+                "CODE10", "name11", "mail11", "status11", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
         guests.add(new GuestEntity(
-                "CODE11", "name10", "mail11", "status11", null, null, new BigDecimal(0), new BigDecimal(0)
+                "CODE11", "name10", "mail11", "status11", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
         guests.add(new GuestEntity(
-                "CODE11", "name11", "mail10", "status11", null, null, new BigDecimal(0), new BigDecimal(0)
+                "CODE11", "name11", "mail10", "status11", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
         guests.add(new GuestEntity(
-                "CODE11", "name11", "mail11", "status10", null, null, new BigDecimal(0), new BigDecimal(0)
+                "CODE11", "name11", "mail11", "status10", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
         guests = guestRepository.save(guests);
 
@@ -180,7 +183,7 @@ public class GuestControllerTest {
         assertThat(guest1.getStatus(), is("someUpdatedStatus"));
         assertThat(guest1.getCheckedIn().getTime(), is(1490357316000L));
         assertThat(guest1.getCard(), is("someCard"));
-        assertThat(guest1.getBalance(), is(new BigDecimal(0.0).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+        assertThat(guest1.getBalance(), is(BigDecimal.ZERO.setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
         assertThat(guest1.getBonus(), is(new BigDecimal(3.70).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
     }
 
@@ -242,7 +245,7 @@ public class GuestControllerTest {
     @Test
     public void testDeleteGuests() throws Exception {
         GuestEntity guest = guestRepository.save(new GuestEntity(
-                "someCode", "someName", "someMail", "someStatus", null, "12341234", new BigDecimal(0), new BigDecimal(0)
+                "someCode", "someName", "someMail", "someStatus", null, "12341234", BigDecimal.ZERO, BigDecimal.ZERO
         ));
         orderRepository.save(new OrderEntity(guest, new Date(), new BigDecimal(5.00)));
         orderRepository.save(new OrderEntity(guest, new Date(), new BigDecimal(3.20)));
@@ -258,7 +261,7 @@ public class GuestControllerTest {
     @Test
     public void testGetByCard() throws Exception {
         GuestEntity guest = guestRepository.save(new GuestEntity(
-                "someCode", "someName", "someMail", "someStatus", null, "12341234", new BigDecimal(0), new BigDecimal(0)
+                "someCode", "someName", "someMail", "someStatus", null, "12341234", BigDecimal.ZERO, BigDecimal.ZERO
         ));
         mockMvc.perform(get("/guests/card/12341234"))
                 .andDo(print())
@@ -269,7 +272,7 @@ public class GuestControllerTest {
     @Test
     public void testGetByCardNotFound() throws Exception {
         GuestEntity guest = guestRepository.save(new GuestEntity(
-                "someCode", "someName", "someMail", "someStatus", null, null, new BigDecimal(0), new BigDecimal(0)
+                "someCode", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
         mockMvc.perform(get("/guests/card/12341234"))
                 .andDo(print())
@@ -279,13 +282,13 @@ public class GuestControllerTest {
     @Test
     public void testGetByCode() throws Exception {
         GuestEntity guest1 = guestRepository.save(new GuestEntity(
-                "CODE10", "someName", "someMail", "someStatus", null, null, new BigDecimal(0), new BigDecimal(0)
+                "CODE10", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
         GuestEntity guest2 = guestRepository.save(new GuestEntity(
-                "CODE11", "someName", "someMail", "someStatus", null, null, new BigDecimal(0), new BigDecimal(0)
+                "CODE11", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
         GuestEntity guest3 = guestRepository.save(new GuestEntity(
-                "CODE00", "someName", "someMail", "someStatus", null, null, new BigDecimal(0), new BigDecimal(0)
+                "CODE00", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
 
         mockMvc.perform(get("/guests/code/CODE1"))
@@ -299,19 +302,19 @@ public class GuestControllerTest {
     @Test
     public void testGetByCodeMax3() throws Exception {
         GuestEntity guest1 = guestRepository.save(new GuestEntity(
-                "CODE10", "someName", "someMail", "someStatus", null, null, new BigDecimal(0), new BigDecimal(0)
+                "CODE10", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
         GuestEntity guest2 = guestRepository.save(new GuestEntity(
-                "CODE11", "someName", "someMail", "someStatus", null, null, new BigDecimal(0), new BigDecimal(0)
+                "CODE11", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
         GuestEntity guest3 = guestRepository.save(new GuestEntity(
-                "CODE12", "someName", "someMail", "someStatus", null, null, new BigDecimal(0), new BigDecimal(0)
+                "CODE12", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
         GuestEntity guest4 = guestRepository.save(new GuestEntity(
-                "CODE13", "someName", "someMail", "someStatus", null, null, new BigDecimal(0), new BigDecimal(0)
+                "CODE13", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
         GuestEntity guest5 = guestRepository.save(new GuestEntity(
-                "CODE14", "someName", "someMail", "someStatus", null, null, new BigDecimal(0), new BigDecimal(0)
+                "CODE14", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
 
         mockMvc.perform(get("/guests/code/CODE1"))
@@ -326,13 +329,13 @@ public class GuestControllerTest {
     @Test
     public void testGetByCodeNotFound() throws Exception {
         GuestEntity guest1 = guestRepository.save(new GuestEntity(
-                "CODE10", "someName", "someMail", "someStatus", null, null, new BigDecimal(0), new BigDecimal(0)
+                "CODE10", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
         GuestEntity guest2 = guestRepository.save(new GuestEntity(
-                "CODE11", "someName", "someMail", "someStatus", null, null, new BigDecimal(0), new BigDecimal(0)
+                "CODE11", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
         GuestEntity guest3 = guestRepository.save(new GuestEntity(
-                "CODE00", "someName", "someMail", "someStatus", null, null, new BigDecimal(0), new BigDecimal(0)
+                "CODE00", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
 
         mockMvc.perform(get("/guests/code/CODE2"))
@@ -344,7 +347,7 @@ public class GuestControllerTest {
     @Test
     public void testAddBalance() throws Exception {
         GuestEntity guest = guestRepository.save(new GuestEntity(
-                "someCode", "someName", "someMail", "someStatus", null, null, new BigDecimal(3.00), new BigDecimal(0)
+                "someCode", "someName", "someMail", "someStatus", null, null, new BigDecimal(3.00), BigDecimal.ZERO
         ));
 
         mockMvc.perform(put("/guests/{guestId}/balance", guest.getId())
@@ -356,6 +359,12 @@ public class GuestControllerTest {
 
         guest = guestRepository.findOne(guest.getId());
         assertThat(guest.getBalance(), is(new BigDecimal(5.20).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+        List<BalanceEventEntity> balanceEvents = balanceEventRepository.findAll();
+        assertThat(balanceEvents, hasSize(1));
+        BalanceEventEntity balanceEvent = balanceEvents.get(0);
+        assertThat(balanceEvent.getGuest(), is(guest));
+        assertThat(balanceEvent.getTime(), notNullValue());
+        assertThat(balanceEvent.getValue(), is(new BigDecimal(2.20).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
     }
 
     @Test
@@ -370,7 +379,7 @@ public class GuestControllerTest {
     @Test
     public void testAddBonus() throws Exception {
         GuestEntity guest = guestRepository.save(new GuestEntity(
-                "someCode", "someName", "someMail", "someStatus", null, null, new BigDecimal(0), new BigDecimal(2.30)
+                "someCode", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, new BigDecimal(2.30)
         ));
 
         mockMvc.perform(put("/guests/{guestId}/bonus", guest.getId())
@@ -396,7 +405,7 @@ public class GuestControllerTest {
     @Test
     public void testSetCard() throws Exception {
         GuestEntity guest = guestRepository.save(new GuestEntity(
-                "someCode", "someName", "someMail", "someStatus", null, null, new BigDecimal(0), new BigDecimal(0)
+                "someCode", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
 
         mockMvc.perform(put("/guests/{guestId}/card", guest.getId())
@@ -421,10 +430,10 @@ public class GuestControllerTest {
     @Test
     public void testSetCardStealCard() throws Exception {
         GuestEntity guest1 = guestRepository.save(new GuestEntity(
-                "someCode", "someName", "someMail", "someStatus", null, "12341234", new BigDecimal(0), new BigDecimal(0)
+                "someCode", "someName", "someMail", "someStatus", null, "12341234", BigDecimal.ZERO, BigDecimal.ZERO
         ));
         GuestEntity guest2 = guestRepository.save(new GuestEntity(
-                "someCode", "someName", "someMail", "someStatus", null, null, new BigDecimal(0), new BigDecimal(0)
+                "someCode", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
 
         mockMvc.perform(put("/guests/{guestId}/card", guest2.getId())
@@ -440,7 +449,7 @@ public class GuestControllerTest {
     @Test
     public void testCheckIn() throws Exception {
         GuestEntity guest = guestRepository.save(new GuestEntity(
-                "someCode", "someName", "someMail", "someStatus", null, null, new BigDecimal(0), new BigDecimal(0)
+                "someCode", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
 
         mockMvc.perform(put("/guests/{guestId}/checkin", guest.getId())

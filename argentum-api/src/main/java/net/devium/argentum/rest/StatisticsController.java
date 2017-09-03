@@ -26,11 +26,13 @@ public class StatisticsController {
     private GuestRepository guestRepository;
 
     @Autowired
-    public StatisticsController(OrderRepository orderRepository,
-                                ProductRepository productRepository,
-                                ProductRangeRepository productRangeRepository,
-                                CategoryRepository categoryRepository,
-                                GuestRepository guestRepository) {
+    public StatisticsController(
+            OrderRepository orderRepository,
+            ProductRepository productRepository,
+            ProductRangeRepository productRangeRepository,
+            CategoryRepository categoryRepository,
+            GuestRepository guestRepository
+    ) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.productRangeRepository = productRangeRepository;
@@ -44,11 +46,11 @@ public class StatisticsController {
         long guestsCheckedIn = guestRepository.countByCheckedInNotNull();
         long cardsTotal = guestRepository.countByCardNotNull();
         BigDecimal totalBalance = guestRepository.sumBalance();
-        totalBalance = totalBalance != null ? totalBalance : new BigDecimal(0);
+        totalBalance = totalBalance != null ? totalBalance : BigDecimal.ZERO;
         BigDecimal totalBonus = guestRepository.sumBonus();
-        totalBonus = totalBonus != null ? totalBonus : new BigDecimal(0);
+        totalBonus = totalBonus != null ? totalBonus : BigDecimal.ZERO;
         BigDecimal totalSpent = orderRepository.sumTotal();
-        totalSpent = totalSpent != null ? totalSpent : new BigDecimal(0);
+        totalSpent = totalSpent != null ? totalSpent : BigDecimal.ZERO;
         long numProducts = productRepository.count();
         long numLegacyProducts = productRepository.countByLegacyIsTrue();
         long numRanges = productRangeRepository.count();

@@ -23,11 +23,16 @@ public class GuestEntity {
     @OneToMany(mappedBy = "guest")
     private Set<OrderEntity> orders;
 
+    @OneToMany(mappedBy = "guest")
+    private Set<BalanceEventEntity> balanceEvents;
+
     public GuestEntity() {
     }
 
-    public GuestEntity(long id, String code, String name, String mail, String status, Date checkedIn, String card,
-                       BigDecimal balance, BigDecimal bonus) {
+    public GuestEntity(
+            long id, String code, String name, String mail, String status, Date checkedIn, String card,
+            BigDecimal balance, BigDecimal bonus
+    ) {
         this.id = id;
         this.code = code;
         this.name = name;
@@ -39,8 +44,10 @@ public class GuestEntity {
         this.bonus = bonus;
     }
 
-    public GuestEntity(String code, String name, String mail, String status, Date checkedIn, String card,
-                       BigDecimal balance, BigDecimal bonus) {
+    public GuestEntity(
+            String code, String name, String mail, String status, Date checkedIn, String card,
+            BigDecimal balance, BigDecimal bonus
+    ) {
         this.code = code;
         this.name = name;
         this.mail = mail;

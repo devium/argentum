@@ -213,7 +213,7 @@ public class OrderControllerTest {
                 new Date(),
                 "someCard",
                 new BigDecimal(5.00),
-                new BigDecimal(0.00)
+                BigDecimal.ZERO
         );
         guest = guestRepository.save(guest);
 
@@ -249,7 +249,7 @@ public class OrderControllerTest {
                 new Date(),
                 "someCard",
                 new BigDecimal(5.00),
-                new BigDecimal(0.00)
+                BigDecimal.ZERO
         );
         guest = guestRepository.save(guest);
 
@@ -313,7 +313,7 @@ public class OrderControllerTest {
         guest = guestRepository.findOne(guest.getId());
         assertThat(orderRepository.findAll(), hasSize(1));
         assertThat(guest.getBalance(), is(new BigDecimal(-2.20).setScale(DECIMAL_PLACES, RoundingMode.HALF_UP)));
-        assertThat(guest.getBonus(), is(new BigDecimal(0.00).setScale(DECIMAL_PLACES, RoundingMode.HALF_UP)));
+        assertThat(guest.getBonus(), is(BigDecimal.ZERO.setScale(DECIMAL_PLACES, RoundingMode.HALF_UP)));
     }
 
     @Test
@@ -455,7 +455,7 @@ public class OrderControllerTest {
                 "someStatus",
                 new Date(),
                 "someCard",
-                new BigDecimal(0.00),
+                BigDecimal.ZERO,
                 new BigDecimal(7.20)
         );
         guest = guestRepository.save(guest);
@@ -476,7 +476,7 @@ public class OrderControllerTest {
                 .andExpect(status().isOk());
 
         guest = guestRepository.findOne(guest.getId());
-        assertThat(guest.getBalance(), is(new BigDecimal(0.00).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+        assertThat(guest.getBalance(), is(BigDecimal.ZERO.setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
         assertThat(guest.getBonus(), is(new BigDecimal(0.20).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
     }
 
@@ -518,7 +518,7 @@ public class OrderControllerTest {
 
         guest = guestRepository.findOne(guest.getId());
         assertThat(guest.getBalance(), is(new BigDecimal(0.70).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
-        assertThat(guest.getBonus(), is(new BigDecimal(0.00).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+        assertThat(guest.getBonus(), is(BigDecimal.ZERO.setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
     }
 
     @Test

@@ -20,8 +20,10 @@ public class Application {
     }
 
     @Autowired
-    public void authenticationManager(AuthenticationManagerBuilder builder, UserRepository userRepository,
-                                      RoleRepository roleRepository) throws Exception {
+    public void authenticationManager(
+            AuthenticationManagerBuilder builder, UserRepository userRepository,
+            RoleRepository roleRepository
+    ) throws Exception {
         if (userRepository.count() == 0) {
             RoleEntity admin = new RoleEntity("ADMIN");
             RoleEntity order = new RoleEntity("ORDER");

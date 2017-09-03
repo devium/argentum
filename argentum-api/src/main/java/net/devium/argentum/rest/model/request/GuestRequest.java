@@ -63,8 +63,8 @@ public class GuestRequest {
                 status != null ? status : "",
                 checkedIn,
                 card,
-                balance != null ? balance : new BigDecimal(0).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP),
-                bonus != null ? bonus : new BigDecimal(0).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)
+                balance != null ? balance : BigDecimal.ZERO.setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP),
+                bonus != null ? bonus : BigDecimal.ZERO.setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)
         );
     }
 }

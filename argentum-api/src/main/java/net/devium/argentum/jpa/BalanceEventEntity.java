@@ -3,11 +3,10 @@ package net.devium.argentum.jpa;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Set;
 
 @Entity
-@Table(name = "orders")
-public class OrderEntity {
+@Table(name = "balance_log")
+public class BalanceEventEntity {
     @Id
     @GeneratedValue
     private long id;
@@ -18,18 +17,15 @@ public class OrderEntity {
     @JoinColumn(name = "guest_id")
     private GuestEntity guest;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "order")
-    private Set<OrderItemEntity> orderItems;
+    private BigDecimal value = BigDecimal.ZERO;
 
-    private BigDecimal total = BigDecimal.ZERO;
-
-    public OrderEntity() {
+    public BalanceEventEntity() {
     }
 
-    public OrderEntity(GuestEntity guest, Date time, BigDecimal total) {
+    public BalanceEventEntity(GuestEntity guest, Date time, BigDecimal value) {
         this.guest = guest;
         this.time = time;
-        this.total = total;
+        this.value = value;
     }
 
     public long getId() {
@@ -56,20 +52,12 @@ public class OrderEntity {
         this.guest = guest;
     }
 
-    public Set<OrderItemEntity> getOrderItems() {
-        return orderItems;
+    public BigDecimal getValue() {
+        return value;
     }
 
-    public void setOrderItems(Set<OrderItemEntity> orderItems) {
-        this.orderItems = orderItems;
-    }
-
-    public BigDecimal getTotal() {
-        return total;
-    }
-
-    public void setTotal(BigDecimal total) {
-        this.total = total;
+    public void setValue(BigDecimal value) {
+        this.value = value;
     }
 
     @Override
@@ -77,7 +65,7 @@ public class OrderEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        OrderEntity that = (OrderEntity) o;
+        BalanceEventEntity that = (BalanceEventEntity) o;
 
         return id == that.id;
     }

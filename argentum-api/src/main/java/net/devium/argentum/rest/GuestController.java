@@ -1,8 +1,6 @@
 package net.devium.argentum.rest;
 
-import net.devium.argentum.jpa.GuestEntity;
-import net.devium.argentum.jpa.GuestRepository;
-import net.devium.argentum.jpa.OrderRepository;
+import net.devium.argentum.jpa.*;
 import net.devium.argentum.rest.model.request.GuestRequest;
 import net.devium.argentum.rest.model.response.GuestResponse;
 import net.devium.argentum.rest.model.response.GuestResponsePaginated;
@@ -34,18 +32,26 @@ public class GuestController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private GuestRepository guestRepository;
     private OrderRepository orderRepository;
+    private BalanceEventRepository balanceEventRepository;
 
     @Autowired
-    public GuestController(GuestRepository guestRepository, OrderRepository orderRepository) {
+    public GuestController(
+            GuestRepository guestRepository,
+            OrderRepository orderRepository,
+            BalanceEventRepository balanceEventRepository
+    ) {
         this.guestRepository = guestRepository;
         this.orderRepository = orderRepository;
+        this.balanceEventRepository = balanceEventRepository;
     }
 
     @RequestMapping(method = RequestMethod.GET, params = {"page", "size", "code", "name", "mail", "status"},
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<?> getGuests(@RequestParam int page, @RequestParam int size, @RequestParam String code,
-                                       @RequestParam String name, @RequestParam String mail,
-                                       @RequestParam String status) {
+    public ResponseEntity<?> getGuests(
+            @RequestParam int page, @RequestParam int size, @RequestParam String code,
+            @RequestParam String name, @RequestParam String mail,
+            @RequestParam String status
+    ) {
         Pageable pageRequest = new PageRequest(page, size);
         Page<GuestEntity> guests = guestRepository
                 .findByCodeContainsAndNameContainsAndMailContainsAndStatusContainsAllIgnoreCase(
@@ -129,6 +135,9 @@ public class GuestController {
             LOGGER.info(message);
             return Response.notFound(message);
         }
+
+        BalanceEventEntity event = new BalanceEventEntity(guest, new Date(), value);
+        this.balanceEventRepository.save(event);
 
         guest.setBalance(guest.getBalance().add(value.setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
         guest = guestRepository.save(guest);

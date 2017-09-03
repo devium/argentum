@@ -32,8 +32,10 @@ public class ProductRangeController {
     private final UserRepository userRepository;
 
     @Autowired
-    public ProductRangeController(ProductRangeRepository productRangeRepository, ProductRepository productRepository,
-                                  RoleRepository roleRepository, UserRepository userRepository) {
+    public ProductRangeController(
+            ProductRangeRepository productRangeRepository, ProductRepository productRepository,
+            RoleRepository roleRepository, UserRepository userRepository
+    ) {
         this.productRangeRepository = productRangeRepository;
         this.productRepository = productRepository;
         this.roleRepository = roleRepository;

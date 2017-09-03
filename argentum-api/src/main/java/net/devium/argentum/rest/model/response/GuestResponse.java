@@ -16,8 +16,10 @@ public class GuestResponse {
     private final BigDecimal balance;
     private final BigDecimal bonus;
 
-    private GuestResponse(long id, String code, String name, String mail, String status, Date checkedIn, String card,
-                          BigDecimal balance, BigDecimal bonus) {
+    private GuestResponse(
+            long id, String code, String name, String mail, String status, Date checkedIn, String card,
+            BigDecimal balance, BigDecimal bonus
+    ) {
         this.id = id;
         this.code = code;
         this.name = name;

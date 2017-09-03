@@ -42,7 +42,7 @@ public class ProductRequest {
                 id != null ? id : -1,
                 name != null ? name : "",
                 price != null ? price.setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)
-                        : new BigDecimal(0).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP),
+                        : BigDecimal.ZERO.setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP),
                 category,
                 ranges
         );

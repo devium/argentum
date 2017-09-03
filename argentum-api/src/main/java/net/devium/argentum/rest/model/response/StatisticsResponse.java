@@ -24,7 +24,8 @@ public class StatisticsResponse {
             long numProducts,
             long numLegacyProducts,
             long numRanges,
-            long numCategories) {
+            long numCategories
+    ) {
         this.guestsTotal = guestsTotal;
         this.guestsCheckedIn = guestsCheckedIn;
         this.cardsTotal = cardsTotal;

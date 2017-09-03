@@ -38,7 +38,7 @@ public class ConfigController {
         ConfigEntity prepaid = configRepository.findOne("postpaidLimit");
 
         ConfigResponse response = new ConfigResponse(
-                prepaid == null ? new BigDecimal(0) : new BigDecimal(prepaid.getValue())
+                prepaid == null ? BigDecimal.ZERO : new BigDecimal(prepaid.getValue())
         );
 
         return Response.ok(response);
