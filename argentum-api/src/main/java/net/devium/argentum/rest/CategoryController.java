@@ -66,7 +66,7 @@ public class CategoryController {
     @Transactional
     public ResponseEntity<?> deleteCategories(@RequestBody List<Long> categoryIds) {
         if (categoryIds.isEmpty()) {
-            String message = "No ranges to delete.";
+            String message = "No categories to delete.";
             LOGGER.info(message);
             return Response.badRequest(message);
         }

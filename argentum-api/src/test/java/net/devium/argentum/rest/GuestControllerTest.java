@@ -345,7 +345,7 @@ public class GuestControllerTest {
                 "CODE14", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
 
-        mockMvc.perform(get("/guests/code/CODE1"))
+        mockMvc.perform(get("/guests/search/code/CODE1"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data", hasSize(3)))
@@ -366,7 +366,7 @@ public class GuestControllerTest {
                 "CODE00", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
         ));
 
-        mockMvc.perform(get("/guests/code/CODE2"))
+        mockMvc.perform(get("/guests/search/code/CODE2"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data", empty()));
