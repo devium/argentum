@@ -12,4 +12,7 @@ export class NavbarComponent extends RoleBasedComponent implements OnInit {
     super();
   }
 
+  ngOnInit(): any {
+    super.ngOnInit();
+  }
 }

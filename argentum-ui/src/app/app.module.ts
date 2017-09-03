@@ -25,7 +25,6 @@ import { SearchGuestModalComponent } from './checkin/search-guest-modal/search-g
 import { CardModalComponent } from './checkin/card-modal/card-modal.component';
 import { MessageComponent } from './common/message/message.component';
 import { DashboardComponent } from './admin/dashboard/dashboard.component';
-import { SettleModalComponent } from './checkin/settle-modal/settle-modal.component';
 import { DeleteGuestsModalComponent } from './admin/delete-guests-modal/delete-guests-modal.component';
 import { ScanComponent } from './scan/scan.component';
 import { RouteGuard } from './app-routing/route-guard';
@@ -56,7 +55,6 @@ import { RoleBasedComponent } from './common/role-based/role-based.component';
     CardModalComponent,
     MessageComponent,
     DashboardComponent,
-    SettleModalComponent,
     DeleteGuestsModalComponent,
     ScanComponent,
     LoginComponent,
@@ -85,7 +83,6 @@ import { RoleBasedComponent } from './common/role-based/role-based.component';
     NewGuestModalComponent,
     SearchGuestModalComponent,
     CardModalComponent,
-    SettleModalComponent,
     DeleteGuestsModalComponent
   ]
 })

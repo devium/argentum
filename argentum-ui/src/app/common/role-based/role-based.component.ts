@@ -11,6 +11,10 @@ export class RoleBasedComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    this.getRoles();
+  }
+
+  getRoles() {
     const roles = localStorage.getItem('roles');
     this.roles = roles ? roles.split(',') : [];
   }

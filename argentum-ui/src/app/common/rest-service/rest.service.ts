@@ -300,7 +300,7 @@ export class RestService {
 
   private settleRaw(guest: Guest): Promise<GuestResponse> {
     return this.http.put(
-      `${this.apiUrl}/guests/${guest.id}/settle`, guest.balance, { headers: RestService.prepareHeaders() }
+        `${this.apiUrl}/guests/${guest.id}/settle`, guest.balance, { headers: RestService.prepareHeaders() }
       )
       .toPromise()
       .then(response => response.json().data as GuestResponse)

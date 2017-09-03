@@ -193,21 +193,4 @@ public class GuestController {
 
         return Response.ok(guest.getCheckedIn());
     }
-
-    @RequestMapping(path = "/{guestId}/settle", method = RequestMethod.PUT,
-            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<?> settle(@PathVariable long guestId, @RequestBody BigDecimal value) {
-        GuestEntity guest = guestRepository.findOne(guestId);
-
-        if (guest == null) {
-            String message = String.format("Guest %s not found.", guestId);
-            LOGGER.info(message);
-            return Response.notFound(message);
-        }
-
-        guest.setBalance(guest.getBalance().subtract(value).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP));
-        guestRepository.save(guest);
-
-        return Response.ok(guest);
-    }
 }

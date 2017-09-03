@@ -1,5 +1,4 @@
 import {
-  AnimationTransitionEvent,
   Component,
   Input, OnDestroy,
   OnInit
@@ -17,7 +16,7 @@ import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/scan';
 import 'rxjs/add/operator/first';
 import 'rxjs/add/operator/repeat';
-import { animate, state, style, transition, trigger } from '@angular/animations';
+import { AnimationEvent, animate, state, style, transition, trigger } from '@angular/animations';
 
 enum ScanState {
   Waiting,
@@ -37,7 +36,10 @@ enum ScanState {
       state('empty', style({
         width: '0%'
       })),
-      transition('full => empty', animate(`10s linear`))
+      state('reset', style({
+        width: '0%'
+      })),
+      transition('full => empty', animate('10s linear'))
     ])
   ]
 })
@@ -103,7 +105,7 @@ export class CardBarComponent implements OnInit, OnDestroy {
     this.countdownStream.next();
   }
 
-  countdownAnimationDone(event: AnimationTransitionEvent) {
+  countdownAnimationDone(event: AnimationEvent) {
     if (event.toState === 'full') {
       this.countdownState = 'empty';
     }
@@ -117,5 +119,10 @@ export class CardBarComponent implements OnInit, OnDestroy {
     } else if (state === ScanState.NotFound) {
       this.guest = null;
     }
+  }
+
+  reset() {
+    this.setState(ScanState.Waiting);
+    this.countdownState = 'reset';
   }
 }

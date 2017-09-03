@@ -169,8 +169,10 @@ export class OrderComponent implements OnInit {
 
   placeOrder(): void {
     this.waitingForOrder = true;
+    this.cardBar.active = false;
+    const guest = this.cardBar.guest;
     const order: Order = {
-      guest: this.cardBar.guest,
+      guest: guest,
       products: this.orderedProducts
     };
     this.restService.placeOrder(order)
@@ -179,13 +181,17 @@ export class OrderComponent implements OnInit {
           `Order placed for "${response.guest.name}". Total: €${response.total.toFixed(2)}.
           Remaining balance: €${response.guest.balance.toFixed(2)} (+ €${response.guest.bonus.toFixed(2)})`
         );
+        guest.balance = response.guest.balance;
         this.orderedProducts.clear();
         this.updateTotal();
         this.waitingForOrder = false;
+        this.cardBar.active = true;
+        this.cardBar.reset();
       })
       .catch(reason => {
         this.message.error(reason);
         this.waitingForOrder = false;
+        this.cardBar.active = true;
       });
   }
 }

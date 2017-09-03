@@ -3,6 +3,8 @@ import { User } from '../../common/model/user';
 import { MessageComponent } from '../../common/message/message.component';
 import { ProductRange } from '../../common/model/product-range';
 import { RestService } from '../../common/rest-service/rest.service';
+import { NavbarComponent } from '../../common/navbar/navbar.component';
+import { UserResponse } from '../../common/rest-service/response/user-response';
 
 class EditorUser {
   original: User;
@@ -69,6 +71,9 @@ export class UserEditorComponent implements OnInit {
 
   @ViewChild(MessageComponent)
   private message: MessageComponent;
+
+  @ViewChild(NavbarComponent)
+  navbar: NavbarComponent;
 
   constructor(private restService: RestService) {
   }
@@ -157,8 +162,15 @@ export class UserEditorComponent implements OnInit {
 
     Promise.all([pCreate, pDelete])
       .then(() => {
-        this.message.success(`Users saved successfully. (${mergedUsers.length} created/updated, ${deletedUsers.length} deleted)`);
+        this.message.success(
+          `Users saved successfully. (${mergedUsers.length} created/updated, ${deletedUsers.length} deleted)`
+        );
         this.loadUsers();
+        this.restService.getUser()
+          .then((user: UserResponse) => {
+            localStorage.setItem('roles', user.roles.join(','));
+            this.navbar.getRoles();
+          });
       })
       .catch(reason => this.message.error(reason));
   }

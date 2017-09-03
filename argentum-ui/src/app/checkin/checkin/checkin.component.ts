@@ -6,7 +6,6 @@ import { Guest } from '../../common/model/guest';
 import { RestService } from '../../common/rest-service/rest.service';
 import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.component';
 import { MessageComponent } from '../../common/message/message.component';
-import { SettleModalComponent } from '../settle-modal/settle-modal.component';
 import { CardBarComponent } from '../../common/card-bar/card-bar.component';
 import { RoleBasedComponent } from '../../common/role-based/role-based.component';
 
@@ -59,9 +58,10 @@ export class CheckinComponent extends RoleBasedComponent implements OnInit {
           this.message.success(
             `Recharged balance of "${guest.name}" with €${value.toFixed(2)}. New balance: €${newBalance.toFixed(2)}`
           );
+          guest.balance = newBalance;
         })
         .catch(reason => {
-          this.cardBar.active = false;
+          this.cardBar.active = true;
           this.message.error(reason);
         });
 
@@ -70,13 +70,33 @@ export class CheckinComponent extends RoleBasedComponent implements OnInit {
 
   settle() {
     const guest = this.cardBar.guest;
-    const settleModal = this.modalService.open(SettleModalComponent, { backdrop: 'static' });
-    (<SettleModalComponent>settleModal.componentInstance).guest = guest;
 
-    settleModal.result.then(() => {
-      this.restService.settle(guest)
-        .then((guestNew: Guest) => this.message.success(`Settled "${guest.name}" for €${guest.balance.toFixed(2)}.`))
-        .catch(reason => this.message.error(reason));
+    if (guest.balance === 0) {
+      this.message.success('Nothing to settle.');
+      return;
+    }
+
+    const keypadModal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    this.cardBar.active = false;
+    keypadModal.result.then((value: number) => {
+      // If balance > 0, reinterpret as refund.
+      // If balance < 0, reinterpret as settlement.
+      let balanceAdded = value;
+      if (guest.balance > 0) {
+        balanceAdded = -balanceAdded;
+      }
+
+      this.restService.addBalance(guest, balanceAdded).then((newBalance: number) => {
+        this.cardBar.active = true;
+        this.message.success(
+          `Settled balance of "${guest.name}" by €${value.toFixed(2)}. New balance: €${newBalance.toFixed(2)}`
+        );
+        guest.balance = newBalance;
+      })
+      .catch(reason => {
+        this.cardBar.active = true;
+        this.message.error(reason);
+      });
     }, () => void(0));
   }
 
