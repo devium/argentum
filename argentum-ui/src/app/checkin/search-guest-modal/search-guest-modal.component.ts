@@ -10,6 +10,8 @@ import { MessageComponent } from '../../common/message/message.component';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/observable/of';
 import { RoleBasedComponent } from '../../common/role-based/role-based.component';
+import { Status } from '../../common/model/status';
+import { isDarkBackground } from '../../common/util/is-dark-background';
 
 @Component({
   selector: 'app-search-guest',
@@ -19,8 +21,10 @@ import { RoleBasedComponent } from '../../common/role-based/role-based.component
 export class SearchGuestModalComponent extends RoleBasedComponent implements OnInit {
   private inputSearchStream = new Subject<string>();
   private searchStream = new Subject<string>();
+  statuses: Status[] = [];
   results: Guest[] = [];
   guest: Guest;
+  status: Status;
 
   @ViewChild('searchInput')
   searchInput: ElementRef;
@@ -43,6 +47,10 @@ export class SearchGuestModalComponent extends RoleBasedComponent implements OnI
       .subscribe((guests: Guest[]) => this.results = guests);
 
     this.searchInput.nativeElement.focus();
+
+    this.restService.getStatuses()
+      .then((statuses: Status[]) => this.statuses = statuses)
+      .catch(reason => this.message.error(reason));
   }
 
   requestSearch(search: string) {
@@ -59,8 +67,35 @@ export class SearchGuestModalComponent extends RoleBasedComponent implements OnI
 
   lockGuest(guest: Guest) {
     this.guest = guest;
+    this.status = this.resolveStatus(guest);
     this.searchInput.nativeElement.value = `${guest.code} ${guest.name} <${guest.mail}>`;
     this.searchInput.nativeElement.disabled = true;
+  }
+
+  clearGuest() {
+    this.guest = null;
+    this.status = null;
+    this.searchInput.nativeElement.value = '';
+    this.searchInput.nativeElement.disabled = false;
+    this.searchInput.nativeElement.focus();
+  }
+
+  resolveStatus(guest: Guest): Status {
+    const statusMapping = this.statuses.find((status: Status) => status.internalName === guest.status);
+    if (statusMapping) {
+      return statusMapping;
+    } else {
+      return {
+        id: -1,
+        internalName: guest.status,
+        displayName: guest.status,
+        color: '#ffffff'
+      };
+    }
+  }
+
+  isDarkBackground(color: string): boolean {
+    return isDarkBackground(color);
   }
 
   checkIn() {

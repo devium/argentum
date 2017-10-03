@@ -19,8 +19,20 @@
       </label>
     </div>
 
-    <input #searchInput (input)="search($event.target.value)"
-           id="searchInput" type="text" class="form-control">
+    <div class="btn-group w-100">
+      <input
+        #searchInput
+        (input)="search($event.target.value)"
+        id="searchInput"
+        type="text"
+        class="form-control"
+      >
+      <span
+        *ngIf="searchInput.value"
+        (click)="clearGuest(guest)"
+        class="fa fa-close fa-lg clear-input p-2 m-auto"
+      ></span>
+    </div>
 
     <div ngbDropdown [open]="true" [autoClose]="false">
       <div ngbDropdownMenu *ngIf="results.length > 0 && !guest" class="dropdown-menu">
@@ -39,7 +51,14 @@
 
   <div *ngIf="guest" class="form-group">
     <label for="statusInput">Status</label>
-    <input id="statusInput" disabled class="disabled form-control text-center flex-grow-1" [value]="guest.status">
+    <input
+      id="statusInput"
+      disabled
+      class="disabled form-control text-center flex-grow-1"
+      [style.background-color]="status.color"
+      [class.dark-bg]="isDarkBackground(status.color)"
+      [value]="status.displayName"
+    >
   </div>
 
   <button
