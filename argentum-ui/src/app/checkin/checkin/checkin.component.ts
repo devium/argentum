@@ -27,6 +27,7 @@ export class CheckinComponent extends RoleBasedComponent implements OnInit {
   newGuest() {
     this.enableCardBar(false);
     const modal = this.modalService.open(NewGuestModalComponent, { backdrop: 'static' });
+    (<SearchGuestModalComponent>modal.componentInstance).message = this.message;
     modal.result.then((guest: Guest) => {
       this.restService.mergeGuests([guest])
         .then(() => {

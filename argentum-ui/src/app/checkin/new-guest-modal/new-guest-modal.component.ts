@@ -4,6 +4,10 @@ import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.com
 import { Guest } from '../../common/model/guest';
 import { CardModalComponent } from '../card-modal/card-modal.component';
 import { RoleBasedComponent } from '../../common/role-based/role-based.component';
+import { RestService } from '../../common/rest-service/rest.service';
+import { Status } from '../../common/model/status';
+import { MessageComponent } from '../../common/message/message.component';
+import { isDarkBackground } from '../../common/util/is-dark-background';
 
 @Component({
   selector: 'app-new-guest',
@@ -13,21 +17,32 @@ import { RoleBasedComponent } from '../../common/role-based/role-based.component
 export class NewGuestModalComponent extends RoleBasedComponent implements OnInit {
   name = '';
   mail = '';
-  status = '';
+  status: Status = null;
   card: string;
   balance = 0;
   bonus = 0;
+  statuses: Status[] = [];
 
   @ViewChild('nameInput')
   nameInput: ElementRef;
 
-  constructor(private modalService: NgbModal, public activeModal: NgbActiveModal) {
+  message: MessageComponent;
+
+  constructor(private restService: RestService, private modalService: NgbModal, public activeModal: NgbActiveModal) {
     super();
   }
 
   ngOnInit() {
     super.ngOnInit();
     this.nameInput.nativeElement.focus();
+
+    this.restService.getStatuses()
+      .then((statuses: Status[]) => this.statuses = statuses)
+      .catch(reason => this.message.error(reason));
+  }
+
+  isDarkBackground(color: string): boolean {
+    return isDarkBackground(color);
   }
 
   setCard() {
@@ -61,7 +76,7 @@ export class NewGuestModalComponent extends RoleBasedComponent implements OnInit
       code: null,
       name: this.name,
       mail: this.mail,
-      status: this.status,
+      status: this.status ? this.status.internalName : '',
       checkedIn: new Date(),
       card: this.card,
       balance: this.balance,

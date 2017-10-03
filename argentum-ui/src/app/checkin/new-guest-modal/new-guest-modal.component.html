@@ -11,8 +11,34 @@
   </div>
 
   <div class="form-group">
-    <label for="statusInput">Status (optional)</label>
-    <input id="statusInput" type="text" class="form-control" [(ngModel)]="status">
+    <label for="mailInput">Status (optional)</label>
+    <div ngbDropdown>
+      <button
+        class="btn btn-primary"
+        ngbDropdownToggle
+        [style.background-color]="status ? status.color : ''"
+        [class.dark-bg]="status && isDarkBackground(status.color)"
+      >
+        {{status ? status.displayName : 'No status'}}
+      </button>
+      <div ngbDropdownMenu>
+        <button
+          (click)="status = null"
+          class="dropdown-item"
+        >
+          No status
+        </button>
+        <button
+          *ngFor="let istatus of statuses"
+          (click)="status = istatus"
+          class="dropdown-item"
+          [style.background-color]="istatus.color"
+          [class.dark-bg]="isDarkBackground(istatus.color)"
+        >
+          {{istatus.displayName}}
+        </button>
+      </div>
+    </div>
   </div>
 
   <div class="form-group">
