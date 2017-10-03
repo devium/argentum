@@ -14,12 +14,23 @@
       [class.div-reserve]="fullscreen"
       [class.mt-5]="fullscreen"
       [class.mb-3]="fullscreen"
+      [class.mb-1]="!fullscreen"
     >
       <span *ngIf="state == scanState.Waiting" [class.h3]="fullscreen">Ready for scan.</span>
       <span *ngIf="state == scanState.Valid" [class.text-nowrap]="!fullscreen" [class.h3]="fullscreen">
-        {{guest.name}}
-      </span>
+          {{guest.name}}
+        </span>
       <span *ngIf="state == scanState.NotFound" [class.h3]="fullscreen">Card number not found.</span>
+      <div [class.d-inline-block]="!fullscreen" [class.mt-3]="fullscreen">
+        <span
+          *ngIf="state == scanState.Valid"
+          class="text-center badge badge-light root-size font-weight-normal"
+          [style.background-color]="status.color"
+          [class.badge-dark]="isDarkBackground(status.color)"
+        >
+          {{status.displayName}}
+        </span>
+      </div>
     </div>
 
     <div class="col-12 p-0" [class.col-sm-8]="!fullscreen" [class.col-md-7]="!fullscreen">
@@ -30,6 +41,7 @@
           <span *ngIf="state == scanState.Valid" class="align-middle text-white" [class.h1]="fullscreen">
             €{{guest.balance | number:'1.2-2'}}
           </span>
+          <span *ngIf="state != scanState.Valid && fullscreen" class="m-0 h1 d-block">&#x200b;</span>
         </div>
 
         <div

@@ -17,6 +17,8 @@ import 'rxjs/add/operator/scan';
 import 'rxjs/add/operator/first';
 import 'rxjs/add/operator/repeat';
 import { AnimationEvent, animate, state, style, transition, trigger } from '@angular/animations';
+import { Status } from '../model/status';
+import { isDarkBackground } from '../util/is-dark-background';
 
 enum ScanState {
   Waiting,
@@ -50,10 +52,12 @@ export class CardBarComponent implements OnInit, OnDestroy {
   card = '';
   keyboardSub: Subscription;
   guest: Guest;
+  status: Status;
   countdownState = 'empty';
   countdownStream = new Subject();
   state: ScanState = ScanState.Waiting;
   active = true;
+  statuses: Status[] = [];
 
   @Input()
   fullscreen: boolean;
@@ -76,6 +80,10 @@ export class CardBarComponent implements OnInit, OnDestroy {
     this.countdownStream
       .debounceTime(10000)
       .subscribe(() => this.setState(ScanState.Waiting));
+
+    this.restService.getStatuses()
+      .then((statuses: Status[]) => this.statuses = statuses)
+      .catch(error => void(0));
   }
 
   ngOnDestroy(): void {
@@ -91,6 +99,7 @@ export class CardBarComponent implements OnInit, OnDestroy {
     this.restService.getGuestByCard(card)
       .then((guest: Guest) => {
         this.guest = guest;
+        this.status = this.resolveStatus(guest);
         this.setState(ScanState.Valid);
         this.startCountdown();
       })
@@ -98,6 +107,24 @@ export class CardBarComponent implements OnInit, OnDestroy {
         this.setState(ScanState.NotFound);
         this.startCountdown();
       });
+  }
+
+  resolveStatus(guest: Guest): Status {
+    const statusMapping = this.statuses.find((status: Status) => status.internalName === guest.status);
+    if (statusMapping) {
+      return statusMapping;
+    } else {
+      return {
+        id: -1,
+        internalName: guest.status,
+        displayName: guest.status,
+        color: '#ffffff'
+      };
+    }
+  }
+
+  isDarkBackground(color: string): boolean {
+    return isDarkBackground(color);
   }
 
   startCountdown() {
