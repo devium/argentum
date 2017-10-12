@@ -17,13 +17,13 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 import static net.devium.argentum.constants.ApplicationConstants.DECIMAL_PLACES;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -45,6 +45,8 @@ public class OrderControllerTest {
     private GuestRepository guestRepository;
     @Autowired
     private ConfigRepository configRepository;
+    @Autowired
+    private BalanceEventRepository balanceEventRepository;
 
     private OrderController sut;
 
@@ -52,8 +54,15 @@ public class OrderControllerTest {
 
     @Before
     public void setUp() {
-        sut = new OrderController(orderRepository, productRepository, productRangeRepository, orderItemRepository,
-                guestRepository, configRepository);
+        sut = new OrderController(
+                orderRepository,
+                productRepository,
+                productRangeRepository,
+                orderItemRepository,
+                balanceEventRepository,
+                guestRepository,
+                configRepository
+        );
         mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
     }
 
@@ -62,6 +71,7 @@ public class OrderControllerTest {
         configRepository.deleteAll();
         orderRepository.deleteAll();
         orderItemRepository.deleteAll();
+        balanceEventRepository.deleteAll();
         guestRepository.deleteAll();
         productRepository.deleteAll();
         categoryRepository.deleteAll();
@@ -173,7 +183,8 @@ public class OrderControllerTest {
                 "someProduct",
                 new BigDecimal(3.50),
                 category,
-                ImmutableSet.of(range));
+                ImmutableSet.of(range)
+        );
 
         product = productRepository.save(product);
 
@@ -188,8 +199,8 @@ public class OrderControllerTest {
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/orders")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(body))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").isNumber())
@@ -226,8 +237,8 @@ public class OrderControllerTest {
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/orders")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(body))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").isNumber())
@@ -262,8 +273,8 @@ public class OrderControllerTest {
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/orders")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(body))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").isNumber())
@@ -300,8 +311,8 @@ public class OrderControllerTest {
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/orders")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(body))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.id").isNumber())
@@ -341,8 +352,8 @@ public class OrderControllerTest {
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/orders")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(body))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
 
@@ -377,8 +388,8 @@ public class OrderControllerTest {
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/orders")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(body))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
                 .andDo(print())
                 .andExpect(status().isNotFound());
 
@@ -391,7 +402,8 @@ public class OrderControllerTest {
                 "someProduct",
                 new BigDecimal(3.50),
                 null,
-                Collections.emptySet());
+                Collections.emptySet()
+        );
 
         product = productRepository.save(product);
 
@@ -404,8 +416,8 @@ public class OrderControllerTest {
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/orders")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(body))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
                 .andDo(print())
                 .andExpect(status().isNotFound());
 
@@ -418,7 +430,8 @@ public class OrderControllerTest {
                 "someProduct",
                 new BigDecimal(3.50),
                 null,
-                Collections.emptySet());
+                Collections.emptySet()
+        );
         product = productRepository.save(product);
 
         String body = "{" +
@@ -431,8 +444,8 @@ public class OrderControllerTest {
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/orders")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(body))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
                 .andDo(print())
                 .andExpect(status().isNotFound());
 
@@ -445,7 +458,8 @@ public class OrderControllerTest {
                 "someProduct",
                 new BigDecimal(3.50),
                 null,
-                Collections.emptySet());
+                Collections.emptySet()
+        );
         product = productRepository.save(product);
 
         GuestEntity guest = new GuestEntity(
@@ -470,8 +484,8 @@ public class OrderControllerTest {
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/orders")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(body))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
                 .andDo(print())
                 .andExpect(status().isOk());
 
@@ -486,7 +500,8 @@ public class OrderControllerTest {
                 "someProduct",
                 new BigDecimal(3.50),
                 null,
-                Collections.emptySet());
+                Collections.emptySet()
+        );
         product = productRepository.save(product);
 
         GuestEntity guest = new GuestEntity(
@@ -511,8 +526,8 @@ public class OrderControllerTest {
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/orders")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(body))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
                 .andDo(print())
                 .andExpect(status().isOk());
 
@@ -527,7 +542,8 @@ public class OrderControllerTest {
                 "someProduct",
                 new BigDecimal(3.50),
                 null,
-                Collections.emptySet());
+                Collections.emptySet()
+        );
         product = productRepository.save(product);
 
         GuestEntity guest = new GuestEntity(
@@ -552,9 +568,217 @@ public class OrderControllerTest {
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/orders")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(body))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testCancelOrderItems() throws Exception {
+        ProductEntity product = new ProductEntity(
+                "someProduct",
+                new BigDecimal(3.50),
+                null,
+                Collections.emptySet()
+        );
+        product = productRepository.save(product);
+
+        GuestEntity guest = new GuestEntity(
+                "someCode",
+                "someName",
+                "someMail",
+                "someStatus",
+                new Date(),
+                "someCard",
+                new BigDecimal(4.50),
+                new BigDecimal(2.49)
+        );
+        guest = guestRepository.save(guest);
+
+        OrderEntity order = new OrderEntity(guest, new Date(), new BigDecimal(7.50));
+        order = orderRepository.save(order);
+
+        OrderItemEntity orderItem = new OrderItemEntity(product, 2, order);
+        orderItem = orderItemRepository.save(orderItem);
+
+        String body = "[" +
+                "   {" +
+                "       'orderItemId': %s," +
+                "       'cancelled': 1" +
+                "   }," +
+                "   {" +
+                "       'orderItemId': %s," +
+                "       'customTotal': 0.20" +
+                "   }" +
+                "]";
+        body = String.format(body, guest.getId(), product.getId());
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(
+                delete("/orders")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(body)
+        )
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        guest = guestRepository.findOne(guest.getId());
+        assertThat(guest.getBalance(), is(new BigDecimal(8.20).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+        assertThat(guest.getBonus(), is(new BigDecimal(2.49).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+
+        orderItem = orderItemRepository.findOne(orderItem.getId());
+        assertThat(orderItem.getCancelled(), is(1));
+
+        order = orderRepository.findOne(order.getId());
+        assertThat(
+                order.getCustomCancelled(), is(new BigDecimal(0.20).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP))
+        );
+
+        List<BalanceEventEntity> balanceEvents = balanceEventRepository.findAll();
+        assertThat(balanceEvents, hasSize(2));
+
+        // Order: custom refunds are performed first.
+        BalanceEventEntity balanceEvent1 = balanceEvents.get(0);
+        assertThat(balanceEvent1.getGuest(), is(guest));
+        assertThat(balanceEvent1.getTime(), notNullValue());
+        assertThat(
+                balanceEvent1.getValue(), is(new BigDecimal(0.20).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP))
+        );
+        assertThat(balanceEvent1.getDescription(), is("refund"));
+
+        BalanceEventEntity balanceEvent2 = balanceEvents.get(1);
+        assertThat(balanceEvent2.getGuest(), is(guest));
+        assertThat(balanceEvent2.getTime(), notNullValue());
+        assertThat(
+                balanceEvent2.getValue(), is(new BigDecimal(3.50).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP))
+        );
+        assertThat(balanceEvent2.getDescription(), is("refund"));
+    }
+
+    @Test
+    public void testCancelOrderItemsCapped() throws Exception {
+        ProductEntity product = new ProductEntity(
+                "someProduct",
+                new BigDecimal(3.50),
+                null,
+                Collections.emptySet()
+        );
+        product = productRepository.save(product);
+
+        GuestEntity guest = new GuestEntity(
+                "someCode",
+                "someName",
+                "someMail",
+                "someStatus",
+                new Date(),
+                "someCard",
+                new BigDecimal(4.50),
+                new BigDecimal(2.49)
+        );
+        guest = guestRepository.save(guest);
+
+        OrderEntity order = new OrderEntity(guest, new Date(), new BigDecimal(7.50));
+        order = orderRepository.save(order);
+
+        OrderItemEntity orderItem = new OrderItemEntity(product, 2, order);
+        orderItem = orderItemRepository.save(orderItem);
+
+        String body = "[" +
+                "   {" +
+                "       'orderItemId': %s," +
+                "       'cancelled': 3" +
+                "   }," +
+                "   {" +
+                "       'orderItemId': %s," +
+                "       'customTotal': 0.70" +
+                "   }" +
+                "]";
+        body = String.format(body, guest.getId(), product.getId());
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(
+                delete("/orders")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(body)
+        )
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        guest = guestRepository.findOne(guest.getId());
+        assertThat(guest.getBalance(), is(new BigDecimal(12.00).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+        assertThat(guest.getBonus(), is(new BigDecimal(2.49).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+
+        orderItem = orderItemRepository.findOne(orderItem.getId());
+        assertThat(orderItem.getCancelled(), is(2));
+
+        order = orderRepository.findOne(order.getId());
+        assertThat(
+                order.getCustomCancelled(), is(new BigDecimal(0.50).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP))
+        );
+    }
+
+    @Test
+    public void testCancelOrderItemsAlreadyPartial() throws Exception {
+        ProductEntity product = new ProductEntity(
+                "someProduct",
+                new BigDecimal(3.50),
+                null,
+                Collections.emptySet()
+        );
+        product = productRepository.save(product);
+
+        GuestEntity guest = new GuestEntity(
+                "someCode",
+                "someName",
+                "someMail",
+                "someStatus",
+                new Date(),
+                "someCard",
+                new BigDecimal(4.50),
+                new BigDecimal(2.49)
+        );
+        guest = guestRepository.save(guest);
+
+        OrderEntity order = new OrderEntity(guest, new Date(), new BigDecimal(7.50));
+        order.setCustomCancelled(new BigDecimal(0.10));
+        order = orderRepository.save(order);
+
+        OrderItemEntity orderItem = new OrderItemEntity(product, 2, order);
+        orderItem.setCancelled(1);
+        orderItem = orderItemRepository.save(orderItem);
+
+        String body = "[" +
+                "   {" +
+                "       'orderItemId': %s," +
+                "       'cancelled': 2" +
+                "   }," +
+                "   {" +
+                "       'orderItemId': %s," +
+                "       'customTotal': 0.40" +
+                "   }" +
+                "]";
+        body = String.format(body, guest.getId(), product.getId());
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(
+                delete("/orders")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(body)
+        )
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        guest = guestRepository.findOne(guest.getId());
+        assertThat(guest.getBalance(), is(new BigDecimal(8.30).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+        assertThat(guest.getBonus(), is(new BigDecimal(2.49).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+
+        orderItem = orderItemRepository.findOne(orderItem.getId());
+        assertThat(orderItem.getCancelled(), is(2));
+
+        order = orderRepository.findOne(order.getId());
+        assertThat(
+                order.getCustomCancelled(), is(new BigDecimal(0.40).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP))
+        );
     }
 }

@@ -35,10 +35,10 @@ public class ConfigController {
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<?> getConfig() {
-        ConfigEntity prepaid = configRepository.findOne("postpaidLimit");
+        ConfigEntity postpaidLimit = configRepository.findOne("postpaidLimit");
 
         ConfigResponse response = new ConfigResponse(
-                prepaid == null ? BigDecimal.ZERO : new BigDecimal(prepaid.getValue())
+                postpaidLimit == null ? BigDecimal.ZERO : new BigDecimal(postpaidLimit.getValue())
         );
 
         return Response.ok(response);

@@ -22,6 +22,7 @@ public class OrderEntity {
     private Set<OrderItemEntity> orderItems;
 
     private BigDecimal total = BigDecimal.ZERO;
+    private BigDecimal customCancelled = BigDecimal.ZERO;
 
     public OrderEntity() {
     }
@@ -70,6 +71,14 @@ public class OrderEntity {
 
     public void setTotal(BigDecimal total) {
         this.total = total;
+    }
+
+    public BigDecimal getCustomCancelled() {
+        return customCancelled;
+    }
+
+    public void setCustomCancelled(BigDecimal customCancelled) {
+        this.customCancelled = customCancelled;
     }
 
     @Override

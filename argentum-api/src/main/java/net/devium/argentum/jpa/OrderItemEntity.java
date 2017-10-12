@@ -14,6 +14,7 @@ public class OrderItemEntity {
     private ProductEntity product;
 
     private int quantity;
+    private int cancelled = 0;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id")
@@ -55,6 +56,14 @@ public class OrderItemEntity {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public int getCancelled() {
+        return cancelled;
+    }
+
+    public void setCancelled(int cancelled) {
+        this.cancelled = cancelled;
     }
 
     public OrderEntity getOrder() {

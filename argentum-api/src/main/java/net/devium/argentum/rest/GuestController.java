@@ -143,7 +143,7 @@ public class GuestController {
             return Response.notFound(message);
         }
 
-        BalanceEventEntity event = new BalanceEventEntity(guest, new Date(), value);
+        BalanceEventEntity event = new BalanceEventEntity(guest, new Date(), value, "balance");
         this.balanceEventRepository.save(event);
 
         guest.setBalance(guest.getBalance().add(value.setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));

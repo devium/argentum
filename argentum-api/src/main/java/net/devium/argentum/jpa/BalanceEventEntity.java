@@ -19,13 +19,16 @@ public class BalanceEventEntity {
 
     private BigDecimal value = BigDecimal.ZERO;
 
+    private String description;
+
     public BalanceEventEntity() {
     }
 
-    public BalanceEventEntity(GuestEntity guest, Date time, BigDecimal value) {
+    public BalanceEventEntity(GuestEntity guest, Date time, BigDecimal value, String description) {
         this.guest = guest;
         this.time = time;
         this.value = value;
+        this.description = description;
     }
 
     public long getId() {
@@ -58,6 +61,14 @@ public class BalanceEventEntity {
 
     public void setValue(BigDecimal value) {
         this.value = value;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

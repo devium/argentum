@@ -393,6 +393,7 @@ public class GuestControllerTest {
         assertThat(balanceEvent.getGuest(), is(guest));
         assertThat(balanceEvent.getTime(), notNullValue());
         assertThat(balanceEvent.getValue(), is(new BigDecimal(2.20).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+        assertThat(balanceEvent.getDescription(), is("balance"));
     }
 
     @Test
