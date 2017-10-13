@@ -24,7 +24,7 @@ export class OrderHistoryComponent implements OnInit {
 
   getOrderHistory(guest: Guest) {
     this.restService.getOrders(guest)
-      .then((orders: Order[]) => { this.orders = orders; console.log(orders.length); })
+      .then((orders: Order[]) => this.orders = orders)
       .catch(reason => this.message.error(reason));
   }
 

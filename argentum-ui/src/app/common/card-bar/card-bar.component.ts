@@ -111,7 +111,7 @@ export class CardBarComponent implements OnInit, OnDestroy {
         this.setState(ScanState.Valid);
         this.startCountdown();
 
-        if (this.fullscreen && this.orderHistory) {
+        if (this.orderHistory) {
           this.orderHistory.getOrderHistory(guest);
         }
       })
@@ -157,6 +157,13 @@ export class CardBarComponent implements OnInit, OnDestroy {
       this.card = '';
     } else if (state === ScanState.NotFound) {
       this.guest = null;
+    }
+    if (this.orderHistory) {
+      if (state === ScanState.Valid) {
+        this.orderHistory.getOrderHistory(this.guest);
+      } else {
+        this.orderHistory.orders = [];
+      }
     }
   }
 
