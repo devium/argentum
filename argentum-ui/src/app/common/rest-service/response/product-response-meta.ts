@@ -14,7 +14,7 @@ export function toProductMeta(response: ProductResponseMeta, categories: Categor
     id: response.id,
     name: response.name,
     price: response.price,
-    category: categories.find(category => category.id === response.category),
+    category: categories ? categories.find(category => category.id === response.category) : null,
     legacy: response.legacy,
     ranges: null
   };

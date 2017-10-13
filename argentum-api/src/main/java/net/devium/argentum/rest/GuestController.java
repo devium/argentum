@@ -4,6 +4,7 @@ import net.devium.argentum.jpa.*;
 import net.devium.argentum.rest.model.request.GuestRequest;
 import net.devium.argentum.rest.model.response.GuestResponse;
 import net.devium.argentum.rest.model.response.GuestResponsePaginated;
+import net.devium.argentum.rest.model.response.OrderResponse;
 import net.devium.argentum.rest.model.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -208,5 +209,27 @@ public class GuestController {
         guestRepository.save(guest);
 
         return Response.ok(guest.getCheckedIn());
+    }
+
+    @RequestMapping(
+            path = "/{guestId}/orders",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+    )
+    @Transactional
+    public ResponseEntity<?> getOrders(@PathVariable long guestId) {
+        GuestEntity guest = guestRepository.findOne(guestId);
+
+        if (guest == null) {
+            String message = String.format("Guest %s not found.", guestId);
+            LOGGER.info(message);
+            return Response.notFound(message);
+        }
+
+        List<OrderResponse> response = orderRepository.findByGuest(guest).stream()
+                .map(OrderResponse::from)
+                .collect(Collectors.toList());
+
+        return Response.ok(response);
     }
 }

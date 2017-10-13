@@ -1,0 +1,48 @@
+<div class="container-fluid flex-grow-1 pre-scrollable">
+  <table *ngIf="orders.length > 0" class="table table-sm text-white w-100 mb-0 text-right">
+    <thead>
+    <tr>
+      <th class="text-left">Product</th>
+      <th>Price</th>
+      <th>Qty</th>
+      <th>Total</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <ng-container *ngFor="let order of orders">
+      <tr class="text-center bg-transparent order-row">
+        <td colspan="4">
+          <div class="row mx-0">
+            <div class="col-6 mx-0 px-0">{{order.time.toLocaleTimeString()}}</div>
+            <div class="col-6 mx-0 px-0">
+              Total: <s *ngIf="order.total !== order.totalEffective">€{{order.total | number:'1.2-2'}}</s>
+              €{{order.totalEffective | number:'1.2-2'}}
+            </div>
+          </div>
+        </td>
+      </tr>
+      <tr *ngFor="let orderItem of order.orderItems">
+        <td class="text-left">{{orderItem.product.name}}</td>
+        <td>€{{orderItem.product.price | number:'1.2-2'}}</td>
+        <td>
+          <s *ngIf="orderItem.cancelled !== 0">{{orderItem.quantity}}</s>
+          {{orderItem.quantity - orderItem.cancelled}}
+        </td>
+        <td>
+          <s *ngIf="orderItem.total !== orderItem.totalEffective">€{{orderItem.total | number:'1.2-2'}}</s>
+          €{{orderItem.totalEffective | number:'1.2-2'}}
+        </td>
+      </tr>
+      <tr *ngIf="order.customTotal !== 0">
+        <td colspan="3" class="text-left">Custom</td>
+        <td>
+          <s *ngIf="order.total !== order.totalEffective">€{{order.customTotal | number:'1.2-2'}}</s>
+          €{{order.customTotalEffective | number:'1.2-2'}}
+        </td>
+      </tr>
+    </ng-container>
+
+    </tbody>
+  </table>
+</div>

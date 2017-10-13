@@ -1,7 +1,7 @@
 import {
   Component,
   Input, OnDestroy,
-  OnInit
+  OnInit, ViewChild
 } from '@angular/core';
 import { RestService } from '../rest-service/rest.service';
 import { Guest } from '../model/guest';
@@ -19,6 +19,8 @@ import 'rxjs/add/operator/repeat';
 import { AnimationEvent, animate, state, style, transition, trigger } from '@angular/animations';
 import { Status } from '../model/status';
 import { isDarkBackground } from '../util/is-dark-background';
+import { MessageComponent } from '../message/message.component';
+import { OrderHistoryComponent } from '../order-history/order-history.component';
 
 enum ScanState {
   Waiting,
@@ -62,6 +64,12 @@ export class CardBarComponent implements OnInit, OnDestroy {
   @Input()
   fullscreen: boolean;
 
+  @Input()
+  message: MessageComponent;
+
+  @ViewChild(OrderHistoryComponent)
+  orderHistory: OrderHistoryComponent;
+
   constructor(private restService: RestService) {
   }
 
@@ -102,6 +110,10 @@ export class CardBarComponent implements OnInit, OnDestroy {
         this.status = this.resolveStatus(guest);
         this.setState(ScanState.Valid);
         this.startCountdown();
+
+        if (this.fullscreen && this.orderHistory) {
+          this.orderHistory.getOrderHistory(guest);
+        }
       })
       .catch(reason => {
         this.setState(ScanState.NotFound);

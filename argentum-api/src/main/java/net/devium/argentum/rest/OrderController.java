@@ -20,7 +20,6 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.lang.Integer.max;
 import static java.lang.Integer.min;
 import static net.devium.argentum.constants.ApplicationConstants.DECIMAL_PLACES;
 
@@ -175,9 +174,9 @@ public class OrderController {
         List<GuestEntity> updatedGuests = new LinkedList<>();
         List<BalanceEventEntity> balanceEvents = new LinkedList<>();
         for (CancelOrderItemRequest orderItemRequest: orderCustomCancelled) {
-            OrderEntity order = orderRepository.findOne(orderItemRequest.getOrderItemId());
+            OrderEntity order = orderRepository.findOne(orderItemRequest.getId());
             if (order == null) {
-                String message = String.format("Order %s not found.", orderItemRequest.getOrderItemId());
+                String message = String.format("Order %s not found.", orderItemRequest.getId());
                 LOGGER.info(message);
                 return Response.notFound(message);
             }
@@ -220,9 +219,9 @@ public class OrderController {
 
         List<OrderItemEntity> updatedOrderItems = new LinkedList<>();
         for (CancelOrderItemRequest orderItemRequest: orderItemsCancelled) {
-            OrderItemEntity orderItem = orderItemRepository.findOne(orderItemRequest.getOrderItemId());
+            OrderItemEntity orderItem = orderItemRepository.findOne(orderItemRequest.getId());
             if (orderItem == null) {
-                String message = String.format("Order item %s not found.", orderItemRequest.getOrderItemId());
+                String message = String.format("Order item %s not found.", orderItemRequest.getId());
                 LOGGER.info(message);
                 return Response.notFound(message);
             }

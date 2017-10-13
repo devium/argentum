@@ -3,6 +3,7 @@ package net.devium.argentum.rest;
 import net.devium.argentum.jpa.*;
 import net.devium.argentum.rest.model.request.ProductRequest;
 import net.devium.argentum.rest.model.response.ProductResponse;
+import net.devium.argentum.rest.model.response.ProductResponseMeta;
 import net.devium.argentum.rest.model.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,8 +48,22 @@ public class ProductController {
         return Response.ok(products);
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
-            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(
+            path = "/all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+    )
+    public ResponseEntity<?> getAllProducts() {
+        List<ProductResponseMeta> products = productRepository.findAll().stream()
+                .map(ProductResponseMeta::from)
+                .collect(Collectors.toList());
+
+        return Response.ok(products);
+    }
+
+    @RequestMapping(
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+    )
     @Transactional
     public ResponseEntity<?> mergeProducts(@RequestBody List<ProductRequest> products) {
         Set<Long> unknownCategories = new HashSet<>();

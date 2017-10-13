@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MessageComponent } from '../common/message/message.component';
 
 @Component({
   selector: 'app-balance',
@@ -6,6 +7,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./scan.component.scss']
 })
 export class ScanComponent implements OnInit {
+
+  @ViewChild(MessageComponent)
+  message: MessageComponent;
 
   constructor() {
   }

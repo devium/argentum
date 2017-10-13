@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,6 +37,10 @@ public class GuestControllerTest {
     private ConfigRepository configRepository;
     @Autowired
     private BalanceEventRepository balanceEventRepository;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private OrderItemRepository orderItemRepository;
 
     private GuestController sut;
 
@@ -133,8 +138,8 @@ public class GuestControllerTest {
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/guests")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(body))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data", hasSize(4)))
@@ -198,8 +203,8 @@ public class GuestControllerTest {
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/guests")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(body))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
                 .andDo(print())
                 .andExpect(status().isOk());
 
@@ -217,8 +222,8 @@ public class GuestControllerTest {
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/guests")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(body))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
 
@@ -234,8 +239,8 @@ public class GuestControllerTest {
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/guests")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(body))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
 
@@ -379,8 +384,8 @@ public class GuestControllerTest {
         ));
 
         mockMvc.perform(put("/guests/{guestId}/balance", guest.getId())
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content("2.20"))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content("2.20"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data", closeTo(5.20, 0.001)));
@@ -399,8 +404,8 @@ public class GuestControllerTest {
     @Test
     public void testAddBalanceGuestNotFound() throws Exception {
         mockMvc.perform(put("/guests/1/balance")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content("2.20"))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content("2.20"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
@@ -412,8 +417,8 @@ public class GuestControllerTest {
         ));
 
         mockMvc.perform(put("/guests/{guestId}/bonus", guest.getId())
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content("5.20"))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content("5.20"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data", closeTo(7.50, 0.001)));
@@ -425,8 +430,8 @@ public class GuestControllerTest {
     @Test
     public void testAddBonusGuestNotFound() throws Exception {
         mockMvc.perform(put("/guests/1/bonus")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content("5.20"))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content("5.20"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
@@ -438,8 +443,8 @@ public class GuestControllerTest {
         ));
 
         mockMvc.perform(put("/guests/{guestId}/card", guest.getId())
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content("12341234"))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content("12341234"))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
@@ -450,8 +455,8 @@ public class GuestControllerTest {
     @Test
     public void testSetCardGuestNotFound() throws Exception {
         mockMvc.perform(put("/guests/1/card")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content("12341234"))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content("12341234"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
@@ -466,8 +471,8 @@ public class GuestControllerTest {
         ));
 
         mockMvc.perform(put("/guests/{guestId}/card", guest2.getId())
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content("12341234"))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content("12341234"))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
@@ -482,7 +487,7 @@ public class GuestControllerTest {
         ));
 
         mockMvc.perform(put("/guests/{guestId}/checkin", guest.getId())
-                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data", notNullValue()));
@@ -496,5 +501,41 @@ public class GuestControllerTest {
         mockMvc.perform(put("/guests/1/checkin"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testGetOrders() throws Exception {
+        GuestEntity guest = guestRepository.save(new GuestEntity(
+                "someCode", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
+        ));
+        guest = guestRepository.save(guest);
+        OrderEntity order1 = new OrderEntity(guest, new Date(), new BigDecimal(1.50));
+        order1 = orderRepository.save(order1);
+        OrderEntity order2 = new OrderEntity(guest, new Date(), new BigDecimal(0.80));
+        order2 = orderRepository.save(order2);
+        ProductEntity product = new ProductEntity("someProduct", new BigDecimal(0.25), null, Collections.emptySet());
+        product = productRepository.save(product);
+        OrderItemEntity orderItem = new OrderItemEntity(product, 2, order1);
+        orderItem = orderItemRepository.save(orderItem);
+
+        mockMvc.perform(get("/guests/{guestId}/orders", guest.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[0].id", is((int) order1.getId())))
+                .andExpect(jsonPath("$.data[0].time", notNullValue()))
+                .andExpect(jsonPath("$.data[0].guest.id", is((int) guest.getId())))
+                .andExpect(jsonPath("$.data[0].items", hasSize(1)))
+                .andExpect(jsonPath("$.data[0].items[0].id", is((int) orderItem.getId())))
+                .andExpect(jsonPath("$.data[0].items[0].productId", is((int) product.getId())))
+                .andExpect(jsonPath("$.data[0].items[0].quantity", is(2)))
+                .andExpect(jsonPath("$.data[0].items[0].cancelled", is(0)))
+                .andExpect(jsonPath("$.data[0].total", closeTo(1.50, 0.001)))
+                .andExpect(jsonPath("$.data[0].customCancelled", closeTo(0, 0.001)))
+                .andExpect(jsonPath("$.data[1].id", is((int) order2.getId())))
+                .andExpect(jsonPath("$.data[1].time", notNullValue()))
+                .andExpect(jsonPath("$.data[1].guest.id", is((int) guest.getId())))
+                .andExpect(jsonPath("$.data[1].items", hasSize(0)))
+                .andExpect(jsonPath("$.data[1].total", closeTo(0.80, 0.001)))
+                .andExpect(jsonPath("$.data[1].customCancelled", closeTo(0, 0.001)));
     }
 }

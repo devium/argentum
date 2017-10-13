@@ -13,13 +13,22 @@ public class OrderResponse {
     private final GuestResponse guest;
     private final List<OrderItemResponse> items;
     private final BigDecimal total;
+    private final BigDecimal customCancelled;
 
-    private OrderResponse(long id, Date time, GuestResponse guest, List<OrderItemResponse> items, BigDecimal total) {
+    private OrderResponse(
+            long id,
+            Date time,
+            GuestResponse guest,
+            List<OrderItemResponse> items,
+            BigDecimal total,
+            BigDecimal customCancelled
+    ) {
         this.id = id;
         this.time = time;
         this.guest = guest;
         this.items = items;
         this.total = total;
+        this.customCancelled = customCancelled;
     }
 
     public static OrderResponse from(OrderEntity order) {
@@ -28,7 +37,8 @@ public class OrderResponse {
                 order.getTime(),
                 GuestResponse.from(order.getGuest()),
                 order.getOrderItems().stream().map(OrderItemResponse::from).collect(Collectors.toList()),
-                order.getTotal()
+                order.getTotal(),
+                order.getCustomCancelled()
         );
     }
 
@@ -50,5 +60,9 @@ public class OrderResponse {
 
     public BigDecimal getTotal() {
         return total;
+    }
+
+    public BigDecimal getCustomCancelled() {
+        return customCancelled;
     }
 }

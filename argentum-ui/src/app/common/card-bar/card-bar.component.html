@@ -1,29 +1,30 @@
-<div class="fixed-top py-1 container-fluid"
-     [class.h-100]="fullscreen"
+<div class="py-1 px-0 container-fluid"
+     [class.fixed-top]="!fullscreen"
+     [class.flex-grow-1]="fullscreen"
+     [class.d-flex]="fullscreen"
+     [class.flex-column]="fullscreen"
      [class.bg-primary]="state == scanState.Waiting"
      [class.bg-success]="state == scanState.Valid"
      [class.bg-danger]="state == scanState.NotFound">
 
-  <div class="row">
+  <div class="row mx-0 flex-shrink-0">
 
     <div
       class="col-12 p-0 text-center text-white"
       [class.overflow-ellipsis]="!fullscreen"
       [class.col-sm-4]="!fullscreen"
       [class.col-md-5]="!fullscreen"
-      [class.div-reserve]="fullscreen"
-      [class.mt-5]="fullscreen"
-      [class.mb-3]="fullscreen"
       [class.mb-1]="!fullscreen"
+      [class.mt-2]="fullscreen"
     >
-      <span *ngIf="state == scanState.Waiting" [class.h3]="fullscreen">Ready for scan.</span>
-      <span *ngIf="state == scanState.Valid" [class.text-nowrap]="!fullscreen" [class.h3]="fullscreen">
+      <span *ngIf="state == scanState.Waiting" [class.h4]="fullscreen">Ready for scan.</span>
+      <span *ngIf="state == scanState.Valid" [class.text-nowrap]="!fullscreen" [class.h4]="fullscreen">
           {{guest.name}}
-        </span>
-      <span *ngIf="state == scanState.NotFound" [class.h3]="fullscreen">Card number not found.</span>
-      <div [class.d-inline-block]="!fullscreen" [class.mt-3]="fullscreen">
+      </span>
+      <span *ngIf="state == scanState.NotFound" [class.h4]="fullscreen">Card number not found.</span>
+      <div [class.d-inline-block]="!fullscreen">
         <span
-          *ngIf="state == scanState.Valid"
+          *ngIf="state == scanState.Valid && status.displayName"
           class="text-center badge badge-light root-size font-weight-normal"
           [style.background-color]="status.color"
           [class.badge-dark]="isDarkBackground(status.color)"
@@ -35,13 +36,13 @@
 
     <div class="col-12 p-0" [class.col-sm-8]="!fullscreen" [class.col-md-7]="!fullscreen">
 
-      <div class="row">
+      <div class="row mx-0">
 
         <div class="p-0 text-center" [class.col-4]="!fullscreen" [class.col-12]="fullscreen" [class.my-3]="fullscreen">
-          <span *ngIf="state == scanState.Valid" class="align-middle text-white" [class.h1]="fullscreen">
+          <span *ngIf="state == scanState.Valid" class="align-middle text-white" [class.h3]="fullscreen">
             €{{guest.balance | number:'1.2-2'}}
           </span>
-          <span *ngIf="state != scanState.Valid && fullscreen" class="m-0 h1 d-block">&#x200b;</span>
+          <span *ngIf="state != scanState.Valid && fullscreen" class="m-0 h3 d-block">&#x200b;</span>
         </div>
 
         <div
@@ -49,7 +50,6 @@
           [class.col-4]="!fullscreen"
           [class.col-12]="fullscreen"
           [class.flex-first]="fullscreen"
-          [class.my-3]="fullscreen"
         >
           <div class="progress mx-auto h-100 align-items-center" [class.progress-lg]="fullscreen">
             <span class="w-100 m-auto text-white" [class.root-size]="!fullscreen" [class.h3]="fullscreen">
@@ -68,8 +68,11 @@
           <span *ngIf="state == scanState.Valid && !fullscreen" class="align-middle text-white">
             + €{{guest.bonus | number:'1.2-2'}}
           </span>
-          <span *ngIf="state == scanState.Valid && fullscreen && guest.bonus > 0" class="align-middle text-white h2">
+          <span *ngIf="fullscreen && state == scanState.Valid && guest.bonus > 0" class="align-middle text-white h4">
             + €{{guest.bonus | number:'1.2-2'}} Bonus
+          </span>
+          <span *ngIf="fullscreen && (state != scanState.Valid || guest.bonus == 0) " class="m-0 h4 d-block">
+            &#x200b;
           </span>
         </div>
 
@@ -78,5 +81,7 @@
 
   </div>
 
+  <app-order-history *ngIf="fullscreen" [message]="message" class="flex-grow-1 d-flex flex-column"></app-order-history>
+
 </div>
-<div class="container-fluid card-pad"></div>
+<div *ngIf="!fullscreen" class="container-fluid card-pad"></div>

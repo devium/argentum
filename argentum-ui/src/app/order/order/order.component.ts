@@ -7,7 +7,7 @@ import { isDarkBackground } from '../../common/util/is-dark-background';
 import { ProductRange } from '../../common/model/product-range';
 import { MessageComponent } from '../../common/message/message.component';
 import { CardBarComponent } from '../../common/card-bar/card-bar.component';
-import { Order } from '../../common/model/order';
+import { RawOrder } from '../../common/model/raw-order';
 import { OrderResponse } from '../../common/rest-service/response/order-response';
 
 @Component({
@@ -171,7 +171,7 @@ export class OrderComponent implements OnInit {
     this.waitingForOrder = true;
     this.cardBar.active = false;
     const guest = this.cardBar.guest;
-    const order: Order = {
+    const order: RawOrder = {
       guest: guest,
       products: this.orderedProducts
     };

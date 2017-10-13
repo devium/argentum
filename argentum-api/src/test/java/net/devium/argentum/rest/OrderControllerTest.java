@@ -604,15 +604,15 @@ public class OrderControllerTest {
 
         String body = "[" +
                 "   {" +
-                "       'orderItemId': %s," +
+                "       'id': %s," +
                 "       'cancelled': 1" +
                 "   }," +
                 "   {" +
-                "       'orderItemId': %s," +
+                "       'id': %s," +
                 "       'customTotal': 0.20" +
                 "   }" +
                 "]";
-        body = String.format(body, guest.getId(), product.getId());
+        body = String.format(body, orderItem.getId(), order.getId());
         body = body.replace('\'', '"');
 
         mockMvc.perform(
@@ -686,15 +686,15 @@ public class OrderControllerTest {
 
         String body = "[" +
                 "   {" +
-                "       'orderItemId': %s," +
+                "       'id': %s," +
                 "       'cancelled': 3" +
                 "   }," +
                 "   {" +
-                "       'orderItemId': %s," +
+                "       'id': %s," +
                 "       'customTotal': 0.70" +
                 "   }" +
                 "]";
-        body = String.format(body, guest.getId(), product.getId());
+        body = String.format(body, orderItem.getId(), order.getId());
         body = body.replace('\'', '"');
 
         mockMvc.perform(
@@ -750,15 +750,15 @@ public class OrderControllerTest {
 
         String body = "[" +
                 "   {" +
-                "       'orderItemId': %s," +
+                "       'id': %s," +
                 "       'cancelled': 2" +
                 "   }," +
                 "   {" +
-                "       'orderItemId': %s," +
+                "       'id': %s," +
                 "       'customTotal': 0.40" +
                 "   }" +
                 "]";
-        body = String.format(body, guest.getId(), product.getId());
+        body = String.format(body, orderItem.getId(), order.getId());
         body = body.replace('\'', '"');
 
         mockMvc.perform(

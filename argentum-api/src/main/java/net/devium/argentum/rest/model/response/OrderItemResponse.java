@@ -6,18 +6,21 @@ public class OrderItemResponse {
     private final long id;
     private final long productId;
     private final int quantity;
+    private final int cancelled;
 
-    private OrderItemResponse(long id, long productId, int quantity) {
+    private OrderItemResponse(long id, long productId, int quantity, int cancelled) {
         this.id = id;
         this.productId = productId;
         this.quantity = quantity;
+        this.cancelled = cancelled;
     }
 
     public static OrderItemResponse from(OrderItemEntity orderItem) {
         return new OrderItemResponse(
                 orderItem.getId(),
                 orderItem.getProduct().getId(),
-                orderItem.getQuantity()
+                orderItem.getQuantity(),
+                orderItem.getCancelled()
         );
     }
 
@@ -31,5 +34,9 @@ public class OrderItemResponse {
 
     public int getQuantity() {
         return quantity;
+    }
+
+    public int getCancelled() {
+        return cancelled;
     }
 }

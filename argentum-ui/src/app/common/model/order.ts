@@ -1,7 +1,12 @@
-import { Product } from './product';
-import { Guest } from './guest';
+import { OrderItem } from './order-item';
 
 export class Order {
-  products: Map<Product, number>;
-  guest: Guest;
+  id: number;
+  time: Date;
+  orderItems: OrderItem[];
+  total: number;
+  customCancelled: number;
+  customTotal: number;
+  customTotalEffective: number;
+  totalEffective: number;
 }

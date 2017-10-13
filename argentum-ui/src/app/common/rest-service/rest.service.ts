@@ -6,7 +6,7 @@ import 'rxjs/add/operator/map';
 import { ProductRange } from '../model/product-range';
 import { Category } from '../model/category';
 import { Guest } from '../model/guest';
-import { Order } from '../model/order';
+import { RawOrder } from '../model/raw-order';
 import { Statistics } from '../model/statistics';
 import { environment } from '../../../environments/environment';
 import { ProductResponse, toProductEager } from './response/product-response';
@@ -20,7 +20,7 @@ import { GuestResponse, toGuest } from './response/guest-response';
 import { GuestResponsePaginated } from './response/guest-response-paginated';
 import { fromGuest } from './request/guest-request';
 import { StatisticsResponse, toStatistics } from './response/statistics-response';
-import { OrderResponse } from './response/order-response';
+import { OrderResponse, toOrder } from './response/order-response';
 import { fromOrder } from './request/order-request';
 import { toUser, UserResponse } from './response/user-response';
 import { TokenResponse } from './response/token-response';
@@ -34,6 +34,8 @@ import 'rxjs/add/operator/catch';
 import { fromStatus } from './request/status-request';
 import { Status } from '../model/status';
 import { StatusResponse, toStatus } from './response/status-response';
+import { Order } from '../model/order';
+import { ProductResponseMeta, toProductMeta } from "./response/product-response-meta";
 
 @Injectable()
 export class RestService {
@@ -68,6 +70,21 @@ export class RestService {
       .toPromise()
       .then(response => response.json().data as ProductResponse[])
       .catch(RestService.handleError);
+  }
+
+  private getAllProductsRaw(): Promise<ProductResponseMeta[]> {
+    // Includes legacy products.
+    return this.http.get(`${this.apiUrl}/products/all`, { headers: RestService.prepareHeaders() })
+      .toPromise()
+      .then(response => response.json().data as ProductResponseMeta[])
+      .catch(RestService.handleError);
+  }
+
+  private getAllProducts(): Promise<Product[]> {
+    return this.getAllProductsRaw()
+      .then((products: ProductResponseMeta[]) => Promise.resolve(
+        products.map((product: ProductResponseMeta) => toProductMeta(product, null))
+      ));
   }
 
   mergeProducts(products: Product[]): Promise<ProductResponse[]> {
@@ -315,6 +332,30 @@ export class RestService {
       .then((guestResponse: GuestResponse) => Promise.resolve(toGuest(guestResponse)));
   }
 
+  private getOrdersRaw(guest: Guest): Promise<OrderResponse[]> {
+    return this.http.get(`${this.apiUrl}/guests/${guest.id}/orders`, { headers: RestService.prepareHeaders() })
+      .toPromise()
+      .then(response => response.json().data as OrderResponse[])
+      .catch(RestService.handleError);
+  }
+
+  getOrders(guest: Guest): Promise<Order[]> {
+    const pProducts = this.getAllProducts();
+    const pOrders = this.getOrdersRaw(guest);
+    return Promise.all([pProducts, pOrders])
+      .then((values: any[]) => {
+        const products: Product[] = values[0];
+        const ordersResponse: OrderResponse[] = values[1];
+
+        const productsMap = new Map<number, Product>();
+        products.forEach((product: Product) => productsMap[product.id] = product);
+
+        const orders = ordersResponse.map((orderResponse: OrderResponse) => toOrder(orderResponse, productsMap));
+        return Promise.resolve(orders);
+      })
+      .catch(RestService.handleError);
+  }
+
   // /statuses
 
   private getStatusesRaw(): Promise<StatusResponse[]> {
@@ -353,7 +394,7 @@ export class RestService {
 
   // /orders
 
-  placeOrder(order: Order): Promise<OrderResponse> {
+  placeOrder(order: RawOrder): Promise<OrderResponse> {
     const body = fromOrder(order);
 
     return this.http.post(`${this.apiUrl}/orders`, body, { headers: RestService.prepareHeaders() })

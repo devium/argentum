@@ -34,6 +34,7 @@ import { UserEditorComponent } from './admin/user-editor/user-editor.component';
 import { ConfigEditorComponent } from './admin/config-editor/config-editor.component';
 import { RoleBasedComponent } from './common/role-based/role-based.component';
 import { StatusEditorComponent } from './admin/status-editor/status-editor.component';
+import { OrderHistoryComponent } from './common/order-history/order-history.component';
 
 @NgModule({
   declarations: [
@@ -63,7 +64,8 @@ import { StatusEditorComponent } from './admin/status-editor/status-editor.compo
     UserEditorComponent,
     ConfigEditorComponent,
     RoleBasedComponent,
-    StatusEditorComponent
+    StatusEditorComponent,
+    OrderHistoryComponent
   ],
   imports: [
     BrowserModule,

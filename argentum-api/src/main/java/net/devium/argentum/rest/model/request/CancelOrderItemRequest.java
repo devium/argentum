@@ -4,12 +4,12 @@ import java.math.BigDecimal;
 
 public class CancelOrderItemRequest {
     // Union order ID if customTotal is used and cancelled is unused.
-    private Long orderItemId;
+    private Long id;
     private int cancelled;
     private BigDecimal customTotal;
 
-    public Long getOrderItemId() {
-        return orderItemId;
+    public Long getId() {
+        return id;
     }
 
     public int getCancelled() {

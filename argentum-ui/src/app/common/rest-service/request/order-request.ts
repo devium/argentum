@@ -1,4 +1,4 @@
-import { Order } from '../../model/order';
+import { RawOrder } from '../../model/raw-order';
 import { fromOrderItem, OrderItemRequest } from './order-item-request';
 export class OrderRequest {
   guestId: number;
@@ -6,7 +6,7 @@ export class OrderRequest {
   customTotal: number;
 }
 
-export function fromOrder(order: Order): OrderRequest {
+export function fromOrder(order: RawOrder): OrderRequest {
   return {
     guestId: order.guest.id,
     items: Array.from(order.products.entries())
