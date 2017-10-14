@@ -162,7 +162,7 @@ export class CardBarComponent implements OnInit, OnDestroy {
       if (state === ScanState.Valid) {
         this.orderHistory.getOrderHistory(this.guest);
       } else {
-        this.orderHistory.orders = [];
+        this.orderHistory.clear();
       }
     }
   }

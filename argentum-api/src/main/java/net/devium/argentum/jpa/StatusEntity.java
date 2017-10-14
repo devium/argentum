@@ -3,7 +3,7 @@ package net.devium.argentum.jpa;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "balance_log")
+@Table(name = "statuses")
 public class StatusEntity {
     @Id
     @GeneratedValue

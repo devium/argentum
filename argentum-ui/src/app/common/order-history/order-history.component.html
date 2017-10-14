@@ -1,6 +1,13 @@
-<div class="container-fluid flex-grow-1 pre-scrollable">
+<div class="container-fluid flex-grow-1 pre-scrollable text-center">
+  <span
+    *ngIf="orders && orders.length == 0"
+    class="text-center h4"
+    [class.text-white]="!modal"
+  >
+    No orders.
+  </span>
   <table
-    *ngIf="orders.length > 0"
+    *ngIf="orders && orders.length > 0"
     class="table w-100 mb-0 text-right"
     [class.text-white]="!modal"
     [class.table-sm]="!modal"

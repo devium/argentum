@@ -18,7 +18,7 @@ export class OrderHistoryComponent implements OnInit {
   @Input()
   message: MessageComponent;
 
-  orders: Order[] = [];
+  orders: Order[];
 
   constructor(private restService: RestService) { }
 
@@ -31,6 +31,10 @@ export class OrderHistoryComponent implements OnInit {
         (order1: Order, order2: Order) => order2.time.getTime() - order1.time.getTime())
       )
       .catch(reason => this.message.error(reason));
+  }
+
+  clear() {
+    this.orders = null;
   }
 
   cancelOrderItem(orderItem: OrderItem) {

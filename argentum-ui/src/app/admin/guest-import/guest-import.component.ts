@@ -54,6 +54,9 @@ export class GuestImportComponent implements OnInit {
         const guests: Guest[] = [];
 
         results.data.forEach(row => {
+          if (!row[this.codeCol] || !row[this.nameCol] || !row[this.statusCol]) {
+            return;
+          }
           guests.push({
             id: -1,
             code: row[this.codeCol],

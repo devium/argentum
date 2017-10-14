@@ -31,6 +31,7 @@
         >
           {{status.displayName}}
         </span>
+        <span *ngIf="fullscreen && (state != scanState.Valid || !status.displayName)">&#x200b;</span>
       </div>
     </div>
 
