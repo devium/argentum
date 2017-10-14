@@ -1,4 +1,9 @@
-<div class="container-fluid flex-grow-1 pre-scrollable text-center rounded bg-white">
+<div
+  class="order-history px-3 text-center bg-white"
+  [class.flex-grow-1]="!modal"
+  [class.h-max-420]="modal"
+  [class.h-max-none]="!modal"
+>
   <span
     *ngIf="orders && orders.length == 0"
     class="text-center h4"
@@ -7,7 +12,7 @@
   </span>
   <table
     *ngIf="orders && orders.length > 0"
-    class="table w-100 mb-0 text-right"
+    class="table mb-0 text-right"
     [class.table-sm]="!modal"
   >
     <thead>

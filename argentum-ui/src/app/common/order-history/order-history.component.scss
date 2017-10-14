@@ -1,7 +1,19 @@
+.order-history {
+  overflow: scroll;
+}
+
 .order-row {
   background: rgba(0, 0, 0, 0.2) !important;
 }
 
+.h-max-none {
+  max-height: none;
+}
+
+.h-max-420 {
+  max-height: 420px;
+}
+
 .pre-scrollable {
-  max-height: 600px;
+  overflow-x: scroll;
 }
