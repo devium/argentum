@@ -117,3 +117,16 @@ input:disabled {
   display: block;
   max-width: 800px;
 }
+
+.history-modal {
+  display: block !important;
+
+  > .modal-dialog {
+    display: block !important;
+
+    > .modal-content {
+      max-width: 1000px;
+    }
+  }
+}
+

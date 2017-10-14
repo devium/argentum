@@ -81,7 +81,7 @@
       </div>
 
       <div class="row m-0">
-        <div class="col-12 px-1">
+        <div class="col-6 px-1">
           <button
             (focus)="$event.target.blur()"
             (click)="refreshProducts()"
@@ -91,6 +91,18 @@
             [class.disabled]="!selectedRange"
           >
             <i class="fa fa-refresh fa-lg"></i>
+          </button>
+        </div>
+        <div class="col-6 px-1">
+          <button
+            (focus)="$event.target.blur()"
+            (click)="showOrderHistory()"
+            type="button"
+            class="btn-grid-bar"
+            [disabled]="this.cardBar.state != this.cardBar.scanState.Valid"
+            [class.disabled]="this.cardBar.state != this.cardBar.scanState.Valid"
+          >
+            <i class="fa fa-history fa-lg"></i>
           </button>
         </div>
       </div>

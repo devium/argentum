@@ -78,6 +78,7 @@ export class SearchGuestModalComponent extends RoleBasedComponent implements OnI
     this.searchInput.nativeElement.value = '';
     this.searchInput.nativeElement.disabled = false;
     this.searchInput.nativeElement.focus();
+    this.results = [];
   }
 
   resolveStatus(guest: Guest): Status {

@@ -1,0 +1,12 @@
+<div class="modal-body mx-4 my-3 p-0 d-flex flex-column">
+  <app-order-history [allowCancel]="true" [modal]="true" class="flex-grow-1 d-flex flex-column"></app-order-history>
+
+  <button
+    (focus)="$event.target.blur()"
+    (click)="activeModal.dismiss('Cancel click')"
+    type="button"
+    class="btn btn-secondary btn-block btn-lg"
+  >
+    <i class="fa fa-close fa-lg"></i>
+  </button>
+</div>

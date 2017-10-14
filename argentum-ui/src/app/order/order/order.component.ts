@@ -9,6 +9,7 @@ import { MessageComponent } from '../../common/message/message.component';
 import { CardBarComponent } from '../../common/card-bar/card-bar.component';
 import { RawOrder } from '../../common/model/raw-order';
 import { OrderResponse } from '../../common/rest-service/response/order-response';
+import { OrderHistoryModalComponent } from '../order-history-modal/order-history-modal.component';
 
 @Component({
   selector: 'app-order',
@@ -193,5 +194,12 @@ export class OrderComponent implements OnInit {
         this.waitingForOrder = false;
         this.cardBar.active = true;
       });
+  }
+
+  showOrderHistory() {
+    const modal = this.modalService.open(
+      OrderHistoryModalComponent, { backdrop: 'static', windowClass: 'history-modal' }
+    );
+    (<OrderHistoryModalComponent>modal.componentInstance).orderHistory.getOrderHistory(this.cardBar.guest);
   }
 }
