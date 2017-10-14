@@ -50,12 +50,22 @@ export class OrderComponent implements OnInit {
       this.orderProductsPerPage = 6;
       this.pagesShown = 5;
     } else if (newWindow.innerWidth < 768) {
-      this.rangeProductsPerPage = 23;
-      this.orderProductsPerPage = 12;
+      if (newWindow.innerHeight < 800) {
+        this.rangeProductsPerPage = 11;
+        this.orderProductsPerPage = 6;
+      } else {
+        this.rangeProductsPerPage = 23;
+        this.orderProductsPerPage = 12;
+      }
       this.pagesShown = 10;
     } else if (newWindow.innerWidth < 992) {
-      this.rangeProductsPerPage = 17;
-      this.orderProductsPerPage = 9;
+      if (newWindow.innerHeight < 600) {
+        this.rangeProductsPerPage = 17;
+        this.orderProductsPerPage = 9;
+      } else {
+        this.rangeProductsPerPage = 23;
+        this.orderProductsPerPage = 12;
+      }
       this.pagesShown = 10;
     } else {
       this.rangeProductsPerPage = 35;
