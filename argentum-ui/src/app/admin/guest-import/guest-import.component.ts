@@ -46,7 +46,7 @@ export class GuestImportComponent implements OnInit {
         const requiredFields = [this.codeCol, this.nameCol, this.mailCol, this.statusCol];
         for (const field of requiredFields) {
           if (!results.meta.fields.includes(field)) {
-            this.message.error(`Column "${field}" not found in imported file.`);
+            this.message.error(`Column <b>${field}</b> not found in imported file.`);
             return;
           }
         }
@@ -71,7 +71,7 @@ export class GuestImportComponent implements OnInit {
         });
 
         this.restService.mergeGuests(guests)
-          .then(() => this.message.success(`Successfully imported ${guests.length} guests.`))
+          .then(() => this.message.success(`Successfully imported <b>${guests.length}</b> guests.`))
           .catch(reason => this.message.error(reason));
       }
     });
@@ -81,7 +81,7 @@ export class GuestImportComponent implements OnInit {
     const modal = this.modalService.open(DeleteGuestsModalComponent, { backdrop: 'static' });
     modal.result.then(() => {
       this.restService.deleteGuests()
-        .then(() => this.message.success(`Deleted all guests and orders.`))
+        .then(() => this.message.success(`<b>Deleted all guests and orders.</b>`))
         .catch(reason => this.message.error(reason));
     }, () => void(0));
   }

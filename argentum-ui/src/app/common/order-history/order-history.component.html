@@ -1,15 +1,13 @@
-<div class="container-fluid flex-grow-1 pre-scrollable text-center">
+<div class="container-fluid flex-grow-1 pre-scrollable text-center rounded bg-white">
   <span
     *ngIf="orders && orders.length == 0"
     class="text-center h4"
-    [class.text-white]="!modal"
   >
     No orders.
   </span>
   <table
     *ngIf="orders && orders.length > 0"
     class="table w-100 mb-0 text-right"
-    [class.text-white]="!modal"
     [class.table-sm]="!modal"
   >
     <thead>
@@ -25,31 +23,43 @@
     <tbody class="px-2">
     <ng-container *ngFor="let order of orders">
 
-      <tr class="text-center bg-transparent order-row">
-        <td [attr.colspan]="allowCancel ? 5 : 4">
-          <div class="row mx-0">
-            <div class="col-6 mx-0 px-0">{{order.time.toLocaleTimeString()}}</div>
-            <div class="col-6 mx-0 px-0">
-              Total: <s *ngIf="order.total !== order.totalEffective">€{{order.total | number:'1.2-2'}}</s>
-              €{{order.totalEffective | number:'1.2-2'}}
-            </div>
-          </div>
+      <tr class="order-row">
+        <td [attr.colspan]="3" class="text-left">
+          {{order.time.toLocaleTimeString()}}
         </td>
+        <td class="text-right">
+          <span *ngIf="order.total !== order.totalEffective" class="text-danger">
+                <s>€{{order.total | number:'1.2-2'}}</s>
+          </span>
+          <span [class.text-success]="order.total !== order.totalEffective">
+                €{{order.totalEffective | number:'1.2-2'}}
+          </span>
+        </td>
+        <td *ngIf="allowCancel"></td>
       </tr>
 
       <tr *ngFor="let orderItem of order.orderItems">
         <td class="text-left">{{orderItem.product.name}}</td>
         <td>€{{orderItem.product.price | number:'1.2-2'}}</td>
         <td>
-          <s *ngIf="orderItem.cancelled !== 0">{{orderItem.quantity}}</s>
-          {{orderItem.quantity - orderItem.cancelled}}
+          <span *ngIf="orderItem.cancelled !== 0" class="text-danger">
+            <s>{{orderItem.quantity}}</s>
+          </span>
+          <span [class.text-success]="orderItem.cancelled !== 0">
+            {{orderItem.quantity - orderItem.cancelled}}
+          </span>
         </td>
         <td>
-          <s *ngIf="orderItem.total !== orderItem.totalEffective">€{{orderItem.total | number:'1.2-2'}}</s>
-          €{{orderItem.totalEffective | number:'1.2-2'}}
+          <span *ngIf="orderItem.total !== orderItem.totalEffective" class="text-danger">
+            <s>€{{orderItem.total | number:'1.2-2'}}</s>
+          </span>
+          <span [class.text-success]="orderItem.total !== orderItem.totalEffective">
+            €{{orderItem.totalEffective | number:'1.2-2'}}
+          </span>
         </td>
-        <td *ngIf="allowCancel" class="p-0 align-middle">
+        <td *ngIf="allowCancel" class="py-0 align-middle">
           <button
+            *ngIf="orderItem.cancelled !== orderItem.quantity"
             (focus)="$event.target.blur()"
             (click)="cancelOrderItem(orderItem)"
             type="button"
@@ -63,11 +73,16 @@
       <tr *ngIf="order.customTotal !== 0">
         <td colspan="3" class="text-left">Custom</td>
         <td>
-          <s *ngIf="order.total !== order.totalEffective">€{{order.customTotal | number:'1.2-2'}}</s>
-          €{{order.customTotalEffective | number:'1.2-2'}}
+          <span *ngIf="order.customTotal !== order.customTotalEffective" class="text-danger">
+            <s>€{{order.customTotal | number:'1.2-2'}}</s>
+          </span>
+          <span [class.text-success]="order.customTotal !== order.customTotalEffective">
+            €{{order.customTotalEffective | number:'1.2-2'}}
+          </span>
         </td>
-        <td *ngIf="allowCancel" class="p-0 align-middle">
+        <td *ngIf="allowCancel" class="py-0 align-middle">
           <button
+            *ngIf="order.customTotalEffective > 0.001"
             (focus)="$event.target.blur()"
             (click)="cancelCustom(order)"
             type="button"

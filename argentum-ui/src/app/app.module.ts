@@ -36,6 +36,7 @@ import { RoleBasedComponent } from './common/role-based/role-based.component';
 import { StatusEditorComponent } from './admin/status-editor/status-editor.component';
 import { OrderHistoryComponent } from './common/order-history/order-history.component';
 import { OrderHistoryModalComponent } from './order/order-history-modal/order-history-modal.component';
+import { ConfirmModalComponent } from './common/confirm-modal/confirm-modal.component';
 
 @NgModule({
   declarations: [
@@ -67,7 +68,8 @@ import { OrderHistoryModalComponent } from './order/order-history-modal/order-hi
     RoleBasedComponent,
     StatusEditorComponent,
     OrderHistoryComponent,
-    OrderHistoryModalComponent
+    OrderHistoryModalComponent,
+    ConfirmModalComponent
   ],
   imports: [
     BrowserModule,
@@ -90,7 +92,8 @@ import { OrderHistoryModalComponent } from './order/order-history-modal/order-hi
     SearchGuestModalComponent,
     CardModalComponent,
     DeleteGuestsModalComponent,
-    OrderHistoryModalComponent
+    OrderHistoryModalComponent,
+    ConfirmModalComponent
   ]
 })
 export class AppModule {

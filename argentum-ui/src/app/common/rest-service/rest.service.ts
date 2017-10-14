@@ -36,6 +36,8 @@ import { Status } from '../model/status';
 import { StatusResponse, toStatus } from './response/status-response';
 import { Order } from '../model/order';
 import { ProductResponseMeta, toProductMeta } from "./response/product-response-meta";
+import { OrderItem } from '../model/order-item';
+import { cancelFromOrder, cancelFromOrderItem } from './request/cancel-order-item-request';
 
 @Injectable()
 export class RestService {
@@ -400,6 +402,24 @@ export class RestService {
     return this.http.post(`${this.apiUrl}/orders`, body, { headers: RestService.prepareHeaders() })
       .toPromise()
       .then(response => response.json().data as OrderResponse)
+      .catch(RestService.handleError);
+  }
+
+  cancelOrderItem(orderItem: OrderItem): Promise<void> {
+    const body = [cancelFromOrderItem(orderItem)];
+
+    return this.http.delete(`${this.apiUrl}/orders`, { body, headers: RestService.prepareHeaders() })
+      .toPromise()
+      .then(() => void(0))
+      .catch(RestService.handleError);
+  }
+
+  cancelCustom(order: Order): Promise<void> {
+    const body = [cancelFromOrder(order)];
+
+    return this.http.delete(`${this.apiUrl}/orders`, { body, headers: RestService.prepareHeaders() })
+      .toPromise()
+      .then(() => void(0))
       .catch(RestService.handleError);
   }
 

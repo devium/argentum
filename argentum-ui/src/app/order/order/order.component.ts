@@ -178,10 +178,12 @@ export class OrderComponent implements OnInit {
     };
     this.restService.placeOrder(order)
       .then((response: OrderResponse) => {
-        this.message.success(
-          `Order placed for "${response.guest.name}". Total: €${response.total.toFixed(2)}.
-          Remaining balance: €${response.guest.balance.toFixed(2)} (+ €${response.guest.bonus.toFixed(2)})`
-        );
+        this.message.success(`
+          Order placed for <b>${response.guest.name}</b>.
+          Total: <b>€${response.total.toFixed(2)}</b>.<br>
+          New balance: <b>€${response.guest.balance.toFixed(2)}</b>
+          (+ <b>€${response.guest.bonus.toFixed(2)}</b>)
+        `);
         guest.balance = response.guest.balance;
         this.orderedProducts.clear();
         this.updateTotal();
@@ -200,6 +202,8 @@ export class OrderComponent implements OnInit {
     const modal = this.modalService.open(
       OrderHistoryModalComponent, { backdrop: 'static', windowClass: 'history-modal' }
     );
-    (<OrderHistoryModalComponent>modal.componentInstance).orderHistory.getOrderHistory(this.cardBar.guest);
+    const orderHistoryModal = (<OrderHistoryModalComponent>modal.componentInstance);
+    orderHistoryModal.orderHistory.message = this.message;
+    orderHistoryModal.orderHistory.getOrderHistory(this.cardBar.guest);
   }
 }

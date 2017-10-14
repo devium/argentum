@@ -108,10 +108,11 @@ export class CategoryEditorComponent implements OnInit {
 
     Promise.all([pCreate, pDelete])
       .then(result => {
-        this.message.success(
-          `Categories saved successfully.
-          (${updatedCategories.length} created/updated, ${deletedCategories.length} deleted)`
-         );
+        this.message.success(`
+          Categories saved successfully.
+          (<b>${updatedCategories.length}</b> created/updated,
+          <b>${deletedCategories.length}</b> deleted)
+        `);
         this.loadCategories();
       })
       .catch(reason => this.message.error(reason));

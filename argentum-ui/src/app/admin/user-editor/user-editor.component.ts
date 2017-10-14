@@ -162,9 +162,11 @@ export class UserEditorComponent implements OnInit {
 
     Promise.all([pCreate, pDelete])
       .then(() => {
-        this.message.success(
-          `Users saved successfully. (${mergedUsers.length} created/updated, ${deletedUsers.length} deleted)`
-        );
+        this.message.success(`
+          Users saved successfully.
+          (<b>${mergedUsers.length}</b> created/updated,
+          <b>${deletedUsers.length}</b> deleted)
+        `);
         this.loadUsers();
         this.restService.getUser()
           .then((user: UserResponse) => {

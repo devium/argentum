@@ -100,9 +100,11 @@ export class RangeEditorComponent implements OnInit {
 
     Promise.all([pCreate, pDelete])
       .then(() => {
-        this.message.success(
-          `Product ranges saved successfully. (${mergedRanges.length} created/updated, ${deletedRanges.length} deleted)`
-        );
+        this.message.success(`
+          Product ranges saved successfully.
+          (<b>${mergedRanges.length}</b> created/updated,
+          <b>${deletedRanges.length}</b> deleted)
+        `);
         this.loadRanges();
       })
       .catch(reason => this.message.error(reason));

@@ -110,10 +110,11 @@ export class StatusEditorComponent implements OnInit {
 
     Promise.all([pCreate, pDelete])
       .then(result => {
-        this.message.success(
-          `Statuses saved successfully.
-          (${updatedStatuses.length} created/updated, ${deletedStatuses.length} deleted)`
-        );
+        this.message.success(`
+          Statuses saved successfully.
+          (<b>${updatedStatuses.length}</b> created/updated,
+          <b>${deletedStatuses.length}</b> deleted)
+        `);
         this.loadStatuses();
       })
       .catch(reason => this.message.error(reason));

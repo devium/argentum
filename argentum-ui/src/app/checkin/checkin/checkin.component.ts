@@ -31,7 +31,7 @@ export class CheckinComponent extends RoleBasedComponent implements OnInit {
     modal.result.then((guest: Guest) => {
       this.restService.mergeGuests([guest])
         .then(() => {
-          this.message.success(`Created guest "${guest.name}".`);
+          this.message.success(`Created guest <b>${guest.name}</b>.`);
         })
         .catch(reason => {
           this.message.error(reason);
@@ -56,9 +56,11 @@ export class CheckinComponent extends RoleBasedComponent implements OnInit {
       this.restService.addBalance(guest, value)
         .then((newBalance: number) => {
           this.cardBar.active = true;
-          this.message.success(
-            `Recharged balance of "${guest.name}" with €${value.toFixed(2)}. New balance: €${newBalance.toFixed(2)}`
-          );
+          this.message.success(`
+            Recharged balance of <b>${guest.name}</b>
+            with <b>€${value.toFixed(2)}</b>.
+            New balance: <b>€${newBalance.toFixed(2)}</b>
+          `);
           guest.balance = newBalance;
         })
         .catch(reason => {
@@ -89,9 +91,11 @@ export class CheckinComponent extends RoleBasedComponent implements OnInit {
 
       this.restService.addBalance(guest, balanceAdded).then((newBalance: number) => {
         this.cardBar.active = true;
-        this.message.success(
-          `Settled balance of "${guest.name}" by €${value.toFixed(2)}. New balance: €${newBalance.toFixed(2)}`
-        );
+        this.message.success(`
+          Settled balance of <b>${guest.name}</b>
+          by <b>€${value.toFixed(2)}</b>.
+          New balance: <b>€${newBalance.toFixed(2)}</b>
+        `);
         guest.balance = newBalance;
       })
       .catch(reason => {

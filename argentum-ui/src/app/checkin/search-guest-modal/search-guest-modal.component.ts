@@ -103,7 +103,7 @@ export class SearchGuestModalComponent extends RoleBasedComponent implements OnI
     this.restService.checkIn(this.guest)
       .then((date: Date) => {
         this.guest.checkedIn = date;
-        this.message.success(`Guest "${this.guest.name}" checked in.`);
+        this.message.success(`Guest <b>${this.guest.name}</b> checked in.`);
       })
       .catch(reason => this.message.error(reason));
   }
@@ -113,7 +113,7 @@ export class SearchGuestModalComponent extends RoleBasedComponent implements OnI
     modal.result.then(card => {
       this.guest.card = card;
       this.restService.registerCard(this.guest, card)
-        .then(() => this.message.success(`Card ${card} registered to "${this.guest.name}"`))
+        .then(() => this.message.success(`Card <b>${card}</b> registered to <b>${this.guest.name}</b>`))
         .catch(reason => this.message.error(reason));
     }, result => void(0));
   }
@@ -124,9 +124,11 @@ export class SearchGuestModalComponent extends RoleBasedComponent implements OnI
       this.restService.addBalance(this.guest, value)
         .then(newBalance => {
           this.guest.balance = newBalance;
-          this.message.success(
-            `Added €${value.toFixed(2)} to balance of "${this.guest.name}". New balance: €${newBalance.toFixed(2)}`
-          );
+          this.message.success(`
+            Added <b>€${value.toFixed(2)}</b>
+            to balance of <b>${this.guest.name}</b>.
+            New balance: <b>€${newBalance.toFixed(2)}</b>
+          `);
         })
         .catch(reason => this.message.error(reason));
     }, result => void(0));
@@ -138,9 +140,11 @@ export class SearchGuestModalComponent extends RoleBasedComponent implements OnI
       this.restService.addBalance(this.guest, -value)
         .then(newBalance => {
           this.guest.balance = newBalance;
-          this.message.success(
-            `Removed €${value.toFixed(2)} from balance of "${this.guest.name}". New balance: €${newBalance.toFixed(2)}`
-          );
+          this.message.success(`
+            Removed <b>€${value.toFixed(2)}</b>
+            from balance of <b>${this.guest.name}</b>.
+            New balance: <b>€${newBalance.toFixed(2)}</b>
+          `);
         })
         .catch(reason => this.message.error(reason));
     }, result => void(0));
@@ -152,9 +156,11 @@ export class SearchGuestModalComponent extends RoleBasedComponent implements OnI
       this.restService.addBonus(this.guest, value)
         .then(newBonus => {
           this.guest.bonus = newBonus;
-          this.message.success(
-            `Added €${value.toFixed(2)} to bonus of "${this.guest.name}". New bonus: €${newBonus.toFixed(2)}`
-          );
+          this.message.success(`
+            Added <b>€${value.toFixed(2)}</b>
+            to bonus of <b>${this.guest.name}</b>.
+            New bonus: <b>€${newBonus.toFixed(2)}</b>
+          `);
         })
         .catch(reason => this.message.error(reason));
     }, result => void(0));
@@ -166,9 +172,11 @@ export class SearchGuestModalComponent extends RoleBasedComponent implements OnI
       this.restService.addBonus(this.guest, -value)
         .then(newBonus => {
           this.guest.bonus = newBonus;
-          this.message.success(
-            `Removed €${value.toFixed(2)} from bonus of "${this.guest.name}". New bonus: €${newBonus.toFixed(2)}`
-          );
+          this.message.success(`
+            Removed <b>€${value.toFixed(2)}</b>
+            from bonus of <b>${this.guest.name}</b>.
+            New bonus: <b>€${newBonus.toFixed(2)}</b>
+          `);
         })
         .catch(reason => this.message.error(reason));
     }, result => void(0));

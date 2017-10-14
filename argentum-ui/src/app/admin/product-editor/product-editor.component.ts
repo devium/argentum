@@ -180,7 +180,11 @@ export class ProductEditorComponent implements OnInit {
 
     Promise.all([pCreate, pDelete])
       .then(() => {
-        this.message.success(`Products saved successfully. (${mergedProducts.length} created/updated, ${deletedProducts.length} deleted)`);
+        this.message.success(`
+          Products saved successfully.
+          (<b>${mergedProducts.length}</b> created/updated,
+          <b>${deletedProducts.length}</b> deleted)
+        `);
         this.loadProducts();
       })
       .catch(reason => this.message.error(reason));

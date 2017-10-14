@@ -4,6 +4,9 @@ import { Guest } from '../model/guest';
 import { Order } from '../model/order';
 import { MessageComponent } from '../message/message.component';
 import { OrderItem } from '../model/order-item';
+import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { KeypadModalComponent } from '../keypad-modal/keypad-modal.component';
 
 @Component({
   selector: 'app-order-history',
@@ -18,14 +21,17 @@ export class OrderHistoryComponent implements OnInit {
   @Input()
   message: MessageComponent;
 
+  guest: Guest;
   orders: Order[];
 
-  constructor(private restService: RestService) { }
+  constructor(private restService: RestService, private modalService: NgbModal) {
+  }
 
   ngOnInit() {
   }
 
   getOrderHistory(guest: Guest) {
+    this.guest = guest;
     this.restService.getOrders(guest)
       .then((orders: Order[]) => this.orders = orders.sort(
         (order1: Order, order2: Order) => order2.time.getTime() - order1.time.getTime())
@@ -33,16 +39,77 @@ export class OrderHistoryComponent implements OnInit {
       .catch(reason => this.message.error(reason));
   }
 
+  refresh() {
+    if (this.guest) {
+      this.getOrderHistory(this.guest);
+    }
+  }
+
   clear() {
+    this.guest = null;
     this.orders = null;
   }
 
   cancelOrderItem(orderItem: OrderItem) {
+    const confirmModal = this.modalService.open(ConfirmModalComponent, { backdrop: 'static' });
+    const confirmModalComponent = <ConfirmModalComponent>confirmModal.componentInstance;
 
+    confirmModalComponent.message = `
+      Are you sure you want to refund <b>${this.guest.name}</b>
+      with <b>€${orderItem.product.price.toFixed(2)}</b>
+      for one <b>${orderItem.product.name}?</b>
+    `;
+
+    confirmModal.result
+      .then(() => {
+        orderItem.cancelled += 1;
+        this.restService.cancelOrderItem(orderItem)
+          .then(() => {
+            this.message.success(`
+                Refunded <b>${this.guest.name}</b>
+                with <b>${orderItem.product.price.toFixed(2)}</b>
+                for one <b>${orderItem.product.name}</b>.
+            `);
+            this.refresh();
+          })
+          .catch(reason => this.message.error(reason));
+      })
+      .catch(() => void(0));
   }
 
   cancelCustom(order: Order) {
+    const keypadModal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    const keypadModalComponent = <KeypadModalComponent>keypadModal.componentInstance;
 
+    keypadModal.result
+      .then((customCancelled: number) => {
+        customCancelled = Math.min(customCancelled, order.customTotalEffective);
+        const confirmModal = this.modalService.open(ConfirmModalComponent, { backdrop: 'static' });
+        const confirmModalComponent = <ConfirmModalComponent>confirmModal.componentInstance;
+
+        confirmModalComponent.message = `
+          Are you sure you want to refund <b>${this.guest.name}</b>
+          with <b>€${customCancelled.toFixed(2)}</b>
+          for a custom order?</b>
+        `;
+
+        confirmModal.result
+          .then(() => {
+            order.customCancelled += customCancelled;
+            this.restService.cancelCustom(order)
+              .then(() => {
+                this.message.success(`
+                  Refunded <b>${this.guest.name}</b>
+                  with <b>${customCancelled.toFixed(2)}</b>
+                  for a custom order.</b>.
+                `);
+                this.refresh();
+              })
+              .catch(reason => this.message.error(reason));
+          })
+          .catch(() => void(0));
+      })
+      .catch(() => void(0));
   }
 
 

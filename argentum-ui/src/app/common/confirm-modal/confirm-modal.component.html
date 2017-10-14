@@ -1,0 +1,26 @@
+<div class="modal-body mx-4 my-3 p-0 text-center">
+  <span [innerHTML]="message" class="h5"></span>
+
+  <div class="row mt-2">
+    <div class="col-6 p-1">
+      <button
+        (focus)="$event.target.blur()"
+        (click)="activeModal.dismiss()"
+        type="button"
+        class="btn btn-secondary btn-block btn-lg"
+      >
+        <i class="fa fa-close fa-lg"></i>
+      </button>
+    </div>
+    <div class="col-6 p-1">
+      <button
+        (focus)="$event.target.blur()"
+        (click)="activeModal.close()"
+        type="button"
+        class="btn btn-primary btn-block btn-lg"
+      >
+        <i class="fa fa-check fa-lg"></i>
+      </button>
+    </div>
+  </div>
+</div>

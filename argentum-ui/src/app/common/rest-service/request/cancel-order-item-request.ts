@@ -7,7 +7,7 @@ export class CancelOrderItemRequest {
   customTotal: number;
 }
 
-export function fromOrderItem(orderItem: OrderItem): CancelOrderItemRequest {
+export function cancelFromOrderItem(orderItem: OrderItem): CancelOrderItemRequest {
   return {
     id: orderItem.id,
     cancelled: orderItem.cancelled,
@@ -15,7 +15,7 @@ export function fromOrderItem(orderItem: OrderItem): CancelOrderItemRequest {
   };
 }
 
-export function fromOrder(order: Order): CancelOrderItemRequest {
+export function cancelFromOrder(order: Order): CancelOrderItemRequest {
   return {
     id: order.id,
     cancelled: null,
