@@ -16,10 +16,19 @@
     <ul class="navbar-nav mx-auto text-center">
 
       <li class="nav-item">
-        <a *ngIf="hasRole(['ORDER'])" routerLink="/order" routerLinkActive="active" class="nav-link">Order</a>
+        <a
+          (focus)="$event.target.blur()"
+          *ngIf="hasRole(['ORDER'])"
+          routerLink="/order"
+          routerLinkActive="active"
+          class="nav-link"
+        >
+          Order
+        </a>
       </li>
       <li class="nav-item">
         <a
+          (focus)="$event.target.blur()"
           *ngIf="hasRole(['CHECKIN', 'RECHARGE', 'SETTLE'])"
           routerLink="/checkin"
           routerLinkActive="active" class="nav-link"
@@ -28,13 +37,34 @@
         </a>
       </li>
       <li class="nav-item">
-        <a *ngIf="hasRole(['SCAN'])" routerLink="/scan" routerLinkActive="active" class="nav-link">Scan</a>
+        <a
+          (focus)="$event.target.blur()"
+          *ngIf="hasRole(['SCAN'])"
+          routerLink="/scan"
+          routerLinkActive="active"
+          class="nav-link"
+        >
+          Scan
+        </a>
       </li>
       <li class="nav-item">
-        <a *ngIf="hasRole(['ADMIN'])" routerLink="/admin" routerLinkActive="active" class="nav-link">Admin</a>
+        <a
+          (focus)="$event.target.blur()"
+          *ngIf="hasRole(['ADMIN'])"
+          routerLink="/admin"
+          routerLinkActive="active"
+          class="nav-link"
+        >
+          Admin
+        </a>
       </li>
       <li class="nav-item">
-        <a routerLink="/logout" class="nav-link">Logout<i class="fa fa-sign-out pl-1"></i>
+        <a
+          (focus)="$event.target.blur()"
+          routerLink="/logout"
+          class="nav-link"
+        >
+          Logout<i class="fa fa-sign-out pl-1"></i>
         </a>
       </li>
 
