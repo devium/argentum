@@ -50,7 +50,7 @@ export class OrderComponent implements OnInit {
       this.orderProductsPerPage = 6;
       this.pagesShown = 5;
     } else if (newWindow.innerWidth < 768) {
-      if (newWindow.innerHeight < 800) {
+      if (newWindow.innerHeight < 720) {
         this.rangeProductsPerPage = 11;
         this.orderProductsPerPage = 6;
       } else {
@@ -59,7 +59,7 @@ export class OrderComponent implements OnInit {
       }
       this.pagesShown = 10;
     } else if (newWindow.innerWidth < 992) {
-      if (newWindow.innerHeight < 600) {
+      if (newWindow.innerHeight < 720) {
         this.rangeProductsPerPage = 17;
         this.orderProductsPerPage = 9;
       } else {
