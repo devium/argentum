@@ -28,8 +28,6 @@ export class LoginComponent implements OnInit {
 
   onSubmit() {
     this.waitingForLogin = true;
-    // TODO REMOVE
-    console.log('AAAAAAAAAAAAH');
 
     this.restService.authenticate(this.username, this.password)
       .then(((response: TokenResponse) => {
