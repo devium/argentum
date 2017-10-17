@@ -50,7 +50,7 @@ export class CheckinComponent extends RoleBasedComponent implements OnInit {
   recharge() {
     const guest = this.cardBar.guest;
     const keypadModal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
-    this.cardBar.active = false;
+    this.enableCardBar(false);
 
     keypadModal.result.then((value: number) => {
       this.restService.addBalance(guest, value)
@@ -64,11 +64,11 @@ export class CheckinComponent extends RoleBasedComponent implements OnInit {
           guest.balance = newBalance;
         })
         .catch(reason => {
-          this.cardBar.active = true;
+          this.enableCardBar(true);
           this.message.error(reason);
         });
 
-    }, () => void(0));
+    }, () => this.cardBar.active = true);
   }
 
   settle() {
@@ -80,7 +80,7 @@ export class CheckinComponent extends RoleBasedComponent implements OnInit {
     }
 
     const keypadModal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
-    this.cardBar.active = false;
+    this.enableCardBar(false);
     keypadModal.result.then((value: number) => {
       // If balance > 0, reinterpret as refund.
       // If balance < 0, reinterpret as settlement.
@@ -90,7 +90,7 @@ export class CheckinComponent extends RoleBasedComponent implements OnInit {
       }
 
       this.restService.addBalance(guest, balanceAdded).then((newBalance: number) => {
-        this.cardBar.active = true;
+        this.enableCardBar(true);
         this.message.success(`
           Settled balance of <b>${guest.name}</b>
           by <b>€${value.toFixed(2)}</b>.
@@ -99,10 +99,10 @@ export class CheckinComponent extends RoleBasedComponent implements OnInit {
         guest.balance = newBalance;
       })
       .catch(reason => {
-        this.cardBar.active = true;
+        this.enableCardBar(true);
         this.message.error(reason);
       });
-    }, () => void(0));
+    }, () => this.enableCardBar(true));
   }
 
   enableCardBar(enable: boolean): void {
