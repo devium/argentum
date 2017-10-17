@@ -30,8 +30,20 @@ export class RouteGuard implements CanActivate {
   };
 
   static logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('roles');
+    localStorage.clear();
+  }
+
+  private resolveHome(roles: string[]): string {
+    for (const home_role in this.ROLES_TO_PATH) {
+      if (this.ROLES_TO_PATH.hasOwnProperty(home_role)) {
+        for (const role of roles) {
+          if (role === home_role) {
+            return '/' + this.ROLES_TO_PATH[role][0];
+          }
+        }
+      }
+    }
+    return '';
   }
 
   constructor(private restService: RestService, private router: Router) {
@@ -39,20 +51,43 @@ export class RouteGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | Promise<boolean> {
     const path = route.url[0].path;
+    console.log(`Checking permissions for route ${path}.`);
 
     if (path === 'login') {
+      console.log('At login page. Logging out.');
       RouteGuard.logout();
       return true;
     }
 
-    if (path === 'logout' || !localStorage.getItem('token')) {
+    if (path === 'logout') {
       this.router.navigate(['/login']);
       return false;
     }
 
+    if (!localStorage.getItem('token')) {
+      console.log('No access token. Redirecting to login.');
+      this.router.navigate(['/login']);
+      return false;
+    }
+
+    console.log('Getting user information from backend.');
     return this.restService.getUser()
       .then((user: UserResponse) => {
+        console.log(`Roles: ${user.roles}`);
         localStorage.setItem('roles', user.roles.join(','));
+
+        if (path === 'home') {
+          const home = this.resolveHome(user.roles);
+
+          if (!home) {
+            console.log(`No home for user roles. Logging out.`)
+            this.router.navigate(['/login']);
+          } else {
+            console.log(`Redirecting to home ${home}`);
+            this.router.navigate([home]);
+          }
+          return false;
+        }
 
         // If role is allowed to access, return true.
         for (const role in this.ROLES_TO_PATH) {
@@ -63,8 +98,9 @@ export class RouteGuard implements CanActivate {
           }
         }
 
+        console.log(`User denied. Redirecting to home.`);
         // Not allowed, redirect to home.
-        const home: string = this.ROLES_TO_PATH[user.roles[0]][0];
+        const home: string = this.resolveHome(user.roles);
         this.router.navigate([home]);
         return Promise.resolve(false);
       })

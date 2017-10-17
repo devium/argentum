@@ -24,27 +24,17 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    Observable.fromEvent(document, 'keydown').subscribe((event: KeyboardEvent) => {
-      if (event.keyCode === 13 /* Enter */) {
-        this.onSubmit();
-      }
-    });
   }
 
   onSubmit() {
     this.waitingForLogin = true;
+    // TODO REMOVE
+    console.log('AAAAAAAAAAAAH');
 
     this.restService.authenticate(this.username, this.password)
       .then(((response: TokenResponse) => {
-        this.restService.getUser()
-          .then((user: UserResponse) => {
-            this.waitingForLogin = false;
-            this.router.navigate(['/home']);
-          })
-          .catch(reason => {
-            this.waitingForLogin = false;
-            this.message.error(reason);
-          });
+        this.router.navigate(['/home']);
+        this.waitingForLogin = false;
       }))
       .catch((reason: string) => {
         this.waitingForLogin = false;

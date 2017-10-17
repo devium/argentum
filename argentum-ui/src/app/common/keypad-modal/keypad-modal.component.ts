@@ -1,22 +1,26 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-keypad',
   templateUrl: 'keypad-modal.component.html',
   styleUrls: ['keypad-modal.component.scss']
 })
-export class KeypadModalComponent implements OnInit {
+export class KeypadModalComponent implements OnInit, OnDestroy {
   display = '';
   captureKeyboard = false;
+  keyStreamSub: Subscription;
 
   constructor(public activeModal: NgbActiveModal) {
   }
 
   ngOnInit(): void {
-    Observable.fromEvent(document, 'keydown').subscribe((event: KeyboardEvent) => {
+    this.keyStreamSub = Observable.fromEvent(document, 'keydown').subscribe((event: KeyboardEvent) => {
       if (this.captureKeyboard) {
+        // TODO REMOVE
+        console.log('aaaah');
         if (event.keyCode === 8 /* Backspace */) {
           this.deleteChar();
         } else if (event.keyCode === 13 /* Enter */) {
@@ -28,6 +32,10 @@ export class KeypadModalComponent implements OnInit {
         }
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.keyStreamSub.unsubscribe();
   }
 
   entry(char: string): void {

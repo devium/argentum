@@ -1,16 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs/Observable';
 import { convertCard } from '../../common/util/convert-card';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-card-modal',
   templateUrl: './card-modal.component.html',
   styleUrls: ['./card-modal.component.scss']
 })
-export class CardModalComponent implements OnInit {
+export class CardModalComponent implements OnInit, OnDestroy {
   card: string;
   private cardStream: Observable<string>;
+  cardStreamSub: Subscription;
 
   constructor(private modalService: NgbModal, public activeModal: NgbActiveModal) {
   }
@@ -25,7 +27,11 @@ export class CardModalComponent implements OnInit {
       .map(card => convertCard(card))
       .repeat();
 
-    this.cardStream.subscribe(result => this.card = result);
+    this.cardStreamSub = this.cardStream.subscribe(result => this.card = result);
+  }
+
+  ngOnDestroy(): void {
+    this.cardStreamSub.unsubscribe();
   }
 
   confirm() {

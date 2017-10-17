@@ -57,6 +57,7 @@ export class CardBarComponent implements OnInit, OnDestroy {
   status: Status;
   countdownState = 'empty';
   countdownStream = new Subject();
+  countdownSub: Subscription;
   state: ScanState = ScanState.Waiting;
   active = true;
   statuses: Status[] = [];
@@ -85,7 +86,7 @@ export class CardBarComponent implements OnInit, OnDestroy {
 
     this.keyboardSub = this.cardStream.subscribe(result => this.newNumber(result));
 
-    this.countdownStream
+    this.countdownSub = this.countdownStream
       .debounceTime(10000)
       .subscribe(() => this.setState(ScanState.Waiting));
 
@@ -96,6 +97,7 @@ export class CardBarComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.keyboardSub.unsubscribe();
+    this.countdownSub.unsubscribe();
   }
 
   newNumber(card: string): void {
