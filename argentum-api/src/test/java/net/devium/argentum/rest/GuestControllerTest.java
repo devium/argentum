@@ -253,13 +253,24 @@ public class GuestControllerTest {
                 "someCode", "someName", "someMail", "someStatus", null, "12341234", BigDecimal.ZERO, BigDecimal.ZERO
         ));
         orderRepository.save(new OrderEntity(guest, new Date(), new BigDecimal(5.00)));
-        orderRepository.save(new OrderEntity(guest, new Date(), new BigDecimal(3.20)));
+        OrderEntity order = orderRepository.save(new OrderEntity(guest, new Date(), new BigDecimal(3.20)));
+        ProductEntity product = productRepository.save(new ProductEntity(
+                "someProduct", new BigDecimal(3.20), null, Collections.emptySet()
+        ));
+        OrderItemEntity orderItem = orderItemRepository.save(new OrderItemEntity(product, 2));
+        order.setOrderItems(Collections.singleton(orderItem));
+        orderRepository.save(order);
+
+        BalanceEventEntity balanceEvent = balanceEventRepository.save(new BalanceEventEntity(
+                guest, new Date(), new BigDecimal(5), "refund"
+        ));
 
         mockMvc.perform(delete("/guests/"))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
         assertThat(orderRepository.findAll(), empty());
+        assertThat(balanceEventRepository.findAll(), empty());
         assertThat(guestRepository.findAll(), empty());
     }
 

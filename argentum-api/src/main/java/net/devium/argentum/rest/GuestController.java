@@ -93,6 +93,7 @@ public class GuestController {
     @RequestMapping(method = RequestMethod.DELETE)
     @Transactional
     public ResponseEntity<?> deleteGuests() {
+        balanceEventRepository.deleteAll();
         orderRepository.deleteAll();
         guestRepository.deleteAll();
 
