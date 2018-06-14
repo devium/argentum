@@ -12,6 +12,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 
+import java.util.List;
+
 @SpringBootApplication
 @EnableResourceServer
 public class Application {
@@ -28,15 +30,13 @@ public class Application {
             RoleEntity admin = new RoleEntity("ADMIN");
             RoleEntity order = new RoleEntity("ORDER");
             RoleEntity checkin = new RoleEntity("CHECKIN");
-            RoleEntity recharge = new RoleEntity("RECHARGE");
-            RoleEntity settle = new RoleEntity("SETTLE");
+            RoleEntity transfer = new RoleEntity("TRANSFER");
             RoleEntity scan = new RoleEntity("SCAN");
             RoleEntity rangeAll = new RoleEntity("ALL_RANGES");
-            admin = roleRepository.save(
-                    ImmutableList.of(admin, order, checkin, recharge, settle, scan, rangeAll)
-            ).get(0);
+            List<RoleEntity> all_roles = ImmutableList.of(admin, order, checkin, transfer, scan, rangeAll);
+            all_roles = roleRepository.save(all_roles);
 
-            UserEntity adminUser = userRepository.save(new UserEntity("admin", "argentum", ImmutableSet.of(admin)));
+            userRepository.save(new UserEntity("admin", "argentum", ImmutableSet.copyOf(all_roles)));
         }
 
         builder.userDetailsService(username -> new CustomUserDetails(userRepository.findByUsername(username)));

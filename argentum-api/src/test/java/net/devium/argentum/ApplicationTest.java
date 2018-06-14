@@ -1,5 +1,6 @@
 package net.devium.argentum;
 
+import com.google.common.collect.ImmutableSet;
 import net.devium.argentum.jpa.RoleEntity;
 import net.devium.argentum.jpa.RoleRepository;
 import net.devium.argentum.jpa.UserEntity;
@@ -11,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -35,16 +38,13 @@ public class ApplicationTest {
         assertThat(admin.getPassword(), is("argentum"));
 
         List<RoleEntity> roles = roleRepository.findAll();
-        assertThat(roles, hasSize(7));
-        assertThat(admin.getRoles(), hasSize(1));
+        assertThat(roles, hasSize(6));
+        assertThat(admin.getRoles(), hasSize(6));
 
-        assertThat(admin.getRoles().iterator().next().getName(), is("ADMIN"));
-        assertThat(roles.get(0).getName(), is("ADMIN"));
-        assertThat(roles.get(1).getName(), is("ORDER"));
-        assertThat(roles.get(2).getName(), is("CHECKIN"));
-        assertThat(roles.get(3).getName(), is("RECHARGE"));
-        assertThat(roles.get(4).getName(), is("SETTLE"));
-        assertThat(roles.get(5).getName(), is("SCAN"));
-        assertThat(roles.get(6).getName(), is("ALL_RANGES"));
+        Set<String> allRoles = ImmutableSet.of("ADMIN", "ORDER", "CHECKIN", "TRANSFER", "SCAN", "ALL_RANGES");
+        Set<String> adminRoles = admin.getRoles().stream().map(RoleEntity::getName).collect(Collectors.toSet());
+        assertThat(adminRoles, is(allRoles));
+        Set<String> savedRoles = roles.stream().map(RoleEntity::getName).collect(Collectors.toSet());
+        assertThat(savedRoles, is(allRoles));
     }
 }

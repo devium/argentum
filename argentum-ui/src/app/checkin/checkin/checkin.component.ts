@@ -47,61 +47,48 @@ export class CheckinComponent extends RoleBasedComponent implements OnInit {
     modal.result.then(() => this.enableCardBar(true), () => this.enableCardBar(true));
   }
 
-  recharge() {
+  deposit() {
+    this.transfer(false);
+  }
+
+  withdraw() {
+    this.transfer(true);
+  }
+
+  private transfer(withdrawal: boolean) {
     const guest = this.cardBar.guest;
     const keypadModal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
     this.enableCardBar(false);
 
     keypadModal.result.then((value: number) => {
+      if (withdrawal) {
+        value = -value;
+      }
+
       this.restService.addBalance(guest, value)
         .then((newBalance: number) => {
-          this.cardBar.active = true;
-          this.message.success(`
-            Recharged balance of <b>${guest.name}</b>
-            with <b>€${value.toFixed(2)}</b>.
-            New balance: <b>€${newBalance.toFixed(2)}</b>
-          `);
+          this.enableCardBar(true);
+
+          if (withdrawal) {
+            this.message.success(`
+              Withdrew balance of <b>€${value.toFixed(2)}</b>
+              from <b>${guest.name}</b>.
+              New balance: <b>€${newBalance.toFixed(2)}</b>
+            `);
+          } else {
+            this.message.success(`
+              Deposited balance of <b>€${value.toFixed(2)}</b>
+              for <b>${guest.name}</b>.
+              New balance: <b>€${newBalance.toFixed(2)}</b>
+            `);
+          }
+
           guest.balance = newBalance;
         })
         .catch(reason => {
           this.enableCardBar(true);
           this.message.error(reason);
         });
-
-    }, () => this.cardBar.active = true);
-  }
-
-  settle() {
-    const guest = this.cardBar.guest;
-
-    if (guest.balance === 0) {
-      this.message.success('Nothing to settle.');
-      return;
-    }
-
-    const keypadModal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
-    this.enableCardBar(false);
-    keypadModal.result.then((value: number) => {
-      // If balance > 0, reinterpret as refund.
-      // If balance < 0, reinterpret as settlement.
-      let balanceAdded = value;
-      if (guest.balance > 0) {
-        balanceAdded = -balanceAdded;
-      }
-
-      this.restService.addBalance(guest, balanceAdded).then((newBalance: number) => {
-        this.enableCardBar(true);
-        this.message.success(`
-          Settled balance of <b>${guest.name}</b>
-          by <b>€${value.toFixed(2)}</b>.
-          New balance: <b>€${newBalance.toFixed(2)}</b>
-        `);
-        guest.balance = newBalance;
-      })
-      .catch(reason => {
-        this.enableCardBar(true);
-        this.message.error(reason);
-      });
     }, () => this.enableCardBar(true));
   }
 

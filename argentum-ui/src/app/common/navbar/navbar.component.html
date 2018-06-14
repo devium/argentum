@@ -29,7 +29,7 @@
       <li class="nav-item">
         <a
           (focus)="$event.target.blur()"
-          *ngIf="hasRole(['CHECKIN', 'RECHARGE', 'SETTLE'])"
+          *ngIf="hasRole(['CHECKIN', 'TRANSFER'])"
           routerLink="/checkin"
           routerLinkActive="active" class="nav-link"
         >

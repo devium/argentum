@@ -320,20 +320,6 @@ export class RestService {
       .catch(RestService.handleError);
   }
 
-  private settleRaw(guest: Guest): Promise<GuestResponse> {
-    return this.http.put(
-        `${this.apiUrl}/guests/${guest.id}/settle`, guest.balance, { headers: RestService.prepareHeaders() }
-      )
-      .toPromise()
-      .then(response => response.json().data as GuestResponse)
-      .catch(RestService.handleError);
-  }
-
-  settle(guest: Guest): Promise<Guest> {
-    return this.settleRaw(guest)
-      .then((guestResponse: GuestResponse) => Promise.resolve(toGuest(guestResponse)));
-  }
-
   private getOrdersRaw(guest: Guest): Promise<OrderResponse[]> {
     return this.http.get(`${this.apiUrl}/guests/${guest.id}/orders`, { headers: RestService.prepareHeaders() })
       .toPromise()

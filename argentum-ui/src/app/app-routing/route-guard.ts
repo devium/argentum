@@ -24,8 +24,7 @@ export class RouteGuard implements CanActivate {
     'ADMIN': ['admin'].concat(this.ADMIN_SUBPATHS),
     'ORDER': ['order'],
     'CHECKIN': ['checkin'],
-    'RECHARGE': ['checkin'],
-    'SETTLE': ['checkin'],
+    'TRANSFER': ['checkin'],
     'SCAN': ['scan']
   };
 

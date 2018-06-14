@@ -2,9 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { RestService } from '../common/rest-service/rest.service';
 import { TokenResponse } from '../common/rest-service/response/token-response';
 import { MessageComponent } from '../common/message/message.component';
-import { UserResponse } from '../common/rest-service/response/user-response';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'app-login',
