@@ -1,7 +1,18 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost/argentum
-    username: root
-    password: ${MYSQL_ROOT_PASSWORD}
+    platform: postgres
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/argentum
+    username: postgres
+    password: ${POSTGRES_PASSWORD}
+    testWhileIdle: true
+    validationQuery: SELECT 1
 
-  jpa.hibernate.ddl-auto: update
+  jpa:
+    database: POSTGRESQL
+    database-platform: org.hibernate.dialect.PostgreSQL94Dialect
+    hibernate.ddl-auto: update
+    generate-ddl: true
+    show-sql: true
+
+  session.store-type: none

@@ -6,12 +6,12 @@ services:
     image: argentum-api
     image: 514036853215.dkr.ecr.eu-central-1.amazonaws.com/argentum-api:latest
     environment:
-      - MYSQL_ROOT_PASSWORD
-      - spring.datasource.url=jdbc:mysql://mysql/argentum
+      - POSTGRES_PASSWORD
+      - spring.datasource.url=jdbc:postgresql://postgres:5432/argentum
     ports:
       - '8080:8080'
     depends_on:
-      - mysql
+      - postgres
 
   ui:
     build: argentum-ui
@@ -22,13 +22,12 @@ services:
     depends_on:
       - api
 
-  mysql:
-    image: mysql
+  postgres:
+    image: postgres:9
     volumes:
-      - ./mysql:/var/lib/mysql
+      - ./postgres:/var/lib/postgresql/data
     environment:
-      - MYSQL_ROOT_PASSWORD
-      - MYSQL_DATABASE=argentum
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB=argentum
     ports:
-      - '3306:3306'
-    command: [--character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci]
+      - '5432:5432'
