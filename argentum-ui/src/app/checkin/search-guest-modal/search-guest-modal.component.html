@@ -1,10 +1,16 @@
 <div class="modal-body mx-4 my-3 p-0">
 
   <div class="form-group">
-    <label *ngIf="!guest" for="searchInput">Search by</label>
+    <label *ngIf="!guest" for="searchInput" class="mb-0">Search by</label>
     <label *ngIf="guest" for="searchInput">Guest</label>
 
-    <div *ngIf="!guest" ngbRadioGroup [(ngModel)]="searchField" (change)="search(searchInput.value)">
+    <div
+      *ngIf="!guest"
+      ngbRadioGroup
+      [(ngModel)]="searchField"
+      (change)="search(searchInput.value)"
+      class="btn-group btn-group-toggle d-block mb-2"
+    >
       <label ngbButtonLabel class="btn-primary">
         <input ngbButton type="radio" value="code" (focus)="searchInput.focus()">
         Code
@@ -19,22 +25,26 @@
       </label>
     </div>
 
-    <div class="btn-group w-100">
-      <input
-        #searchInput
-        (input)="search($event.target.value)"
-        id="searchInput"
-        type="text"
-        class="form-control"
-      >
-      <span
-        *ngIf="searchInput.value"
-        (click)="clearGuest(guest)"
-        class="fa fa-close fa-lg clear-input p-2 m-auto"
-      ></span>
-    </div>
-
-    <div ngbDropdown [open]="true" [autoClose]="false">
+    <div
+      ngbDropdown
+      [open]="true"
+      [autoClose]="false"
+    >
+      <div class="btn-group w-100">
+        <input
+          #searchInput
+          ngbDropdownAnchor
+          (input)="search($event.target.value)"
+          id="searchInput"
+          type="text"
+          class="form-control"
+        >
+        <span
+          *ngIf="searchInput.value"
+          (click)="clearGuest(guest)"
+          class="fa fa-close fa-lg clear-input p-2 m-auto"
+        ></span>
+      </div>
       <div ngbDropdownMenu *ngIf="results.length > 0 && !guest" class="dropdown-menu">
         <button
           *ngFor="let guest of results"

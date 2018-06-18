@@ -1,10 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
 import { Guest } from '../../common/model/guest';
 import { RestService } from '../../common/rest-service/rest.service';
 import { MessageComponent } from '../../common/message/message.component';
 import { DeleteGuestsModalComponent } from '../delete-guests-modal/delete-guests-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import * as Papa from 'papaparse/papaparse.min.js';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { PapaParseService } from 'ngx-papaparse';
 
 @Component({
   selector: 'app-guest-import',
@@ -20,7 +20,11 @@ export class GuestImportComponent implements OnInit {
   @ViewChild(MessageComponent)
   private message: MessageComponent;
 
-  constructor(private restService: RestService, private modalService: NgbModal) {
+  constructor(
+    private restService: RestService,
+    private modalService: NgbModal,
+    private papa: PapaParseService
+  ) {
   }
 
   ngOnInit() {
@@ -40,7 +44,7 @@ export class GuestImportComponent implements OnInit {
   }
 
   parse(content: string) {
-    Papa.parse(content, {
+    this.papa.parse(content, {
       header: true,
       complete: results => {
         const requiredFields = [this.codeCol, this.nameCol, this.mailCol, this.statusCol];

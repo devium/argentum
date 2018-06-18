@@ -37,6 +37,7 @@ import { StatusEditorComponent } from './admin/status-editor/status-editor.compo
 import { OrderHistoryComponent } from './common/order-history/order-history.component';
 import { OrderHistoryModalComponent } from './order/order-history-modal/order-history-modal.component';
 import { ConfirmModalComponent } from './common/confirm-modal/confirm-modal.component';
+import { PapaParseModule } from 'ngx-papaparse';
 
 @NgModule({
   declarations: [
@@ -77,7 +78,8 @@ import { ConfirmModalComponent } from './common/confirm-modal/confirm-modal.comp
     HttpModule,
     NgbModule.forRoot(),
     AppRoutingModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    PapaParseModule
   ],
   providers: [
     RestService,

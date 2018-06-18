@@ -150,7 +150,11 @@
           *ngFor="let i of 1 | range : getNumPadItems(orderedProducts.size, orderProductsPerPage, orderPage)"
           class="col-product-order"
         >
-          <button type="button" class="btn-product btn-dummy disabled" disabled></button>
+          <button type="button" class="btn-product btn-dummy disabled" disabled>
+            <div>&zwnj;</div>
+            <div>&zwnj;</div>
+            <div>&zwnj;</div>
+          </button>
         </div>
 
       </div>

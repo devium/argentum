@@ -99,18 +99,12 @@ input:disabled {
   position: fixed;
 }
 
-.checkbox-sm {
-  width: 1.5rem;
-  height: 1.5rem;
-
-  span {
-    left: 4px;
-    top: 8px;
-  }
-}
-
 .container-buttons {
   line-height: 2rem;
+
+  .btn {
+    @extend .mx-1;
+  }
 }
 
 .message-800 {
@@ -120,4 +114,14 @@ input:disabled {
 
 .history-modal > .modal-dialog > .modal-content {
   max-width: 640px;
+}
+
+.color-picker {
+  cursor: pointer;
+  display: inline-block;
+}
+
+.checkbox-lg {
+  width: 20px;
+  height: 20px;
 }

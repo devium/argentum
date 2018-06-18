@@ -59,7 +59,7 @@ class EditorProduct {
   styleUrls: ['product-editor.component.scss']
 })
 export class ProductEditorComponent implements OnInit {
-  readonly PAGE_SIZE = 15;
+  readonly PAGE_SIZE = 12;
   page = 1;
   products: EditorProduct[] = [];
   productRanges: ProductRange[] = [];
