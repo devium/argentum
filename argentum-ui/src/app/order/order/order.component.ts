@@ -46,13 +46,13 @@ export class OrderComponent implements OnInit {
 
   onResize(newWindow: Window): void {
     if (newWindow.innerWidth < 576) {
-      this.rangeProductsPerPage = 14;
-      this.orderProductsPerPage = 6;
+      this.rangeProductsPerPage = 15;
+      this.orderProductsPerPage = 4;
       this.pagesShown = 5;
     } else if (newWindow.innerWidth < 768) {
       if (newWindow.innerHeight < 720) {
-        this.rangeProductsPerPage = 11;
-        this.orderProductsPerPage = 6;
+        this.rangeProductsPerPage = 15;
+        this.orderProductsPerPage = 8;
       } else {
         this.rangeProductsPerPage = 23;
         this.orderProductsPerPage = 12;
@@ -60,11 +60,11 @@ export class OrderComponent implements OnInit {
       this.pagesShown = 10;
     } else if (newWindow.innerWidth < 992) {
       if (newWindow.innerHeight < 720) {
-        this.rangeProductsPerPage = 17;
-        this.orderProductsPerPage = 9;
+        this.rangeProductsPerPage = 19;
+        this.orderProductsPerPage = 10;
       } else {
-        this.rangeProductsPerPage = 23;
-        this.orderProductsPerPage = 12;
+        this.rangeProductsPerPage = 27;
+        this.orderProductsPerPage = 14;
       }
       this.pagesShown = 10;
     } else {

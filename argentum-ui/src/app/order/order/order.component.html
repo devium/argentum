@@ -3,7 +3,7 @@
 
   <div class="container-fluid row col-sm mx-0 px-1 d-sm-flex flex-sm-column">
 
-    <div class="container-grid col-md-8 flex-grow-2">
+    <div class="container-grid-range col-md-8">
 
       <div class="row mx-0 mb-1">
         <div class="col px-1">
@@ -43,8 +43,10 @@
             [style.background-color]="product.category ? product.category.color : '#ffffff'"
             [class.dark-bg]="product.category && isDarkBackground(product.category.color)"
           >
-            <div>{{product.name}}</div>
-            <div>€{{product.price | number: '1.2-2'}}</div>
+            <div class="product-name">{{product.name}}</div>
+            <div>
+              <span class="product-price">€{{product.price | number: '1.2-2'}}</span>
+            </div>
           </button>
         </div>
 
@@ -52,7 +54,10 @@
           *ngFor="let i of 1 | range : getNumPadItems(products.length, rangeProductsPerPage, rangePage)"
           class="col-product-range"
         >
-          <button type="button" class="btn-product btn-dummy disabled" disabled></button>
+          <button type="button" class="btn-product btn-dummy disabled" disabled>
+            <div class="product-name">&zwnj;</div>
+            <div>&zwnj;</div>
+          </button>
         </div>
 
         <div class="col-product-range">
@@ -110,7 +115,7 @@
     </div>
 
 
-    <div class="container-grid col-md-4 flex-grow-1">
+    <div class="container-grid-order col-md-4">
 
       <div class="row mx-0 mb-1">
         <div class="col px-1">
@@ -140,9 +145,11 @@
             [class.dark-bg]="productEntry.key.category && isDarkBackground(productEntry.key.category.color)"
             [class.btn-outline-primary]="productEntry.key.id == -1"
           >
-            <div>{{productEntry.key.name}}</div>
-            <div>€{{productEntry.key.price | number: '1.2-2'}}</div>
-            <div *ngIf="productEntry.key.id > -1">x{{productEntry.value}}</div>
+            <div class="product-name">{{productEntry.key.name}}</div>
+            <div>
+              <span class="product-price">€{{productEntry.key.price | number: '1.2-2'}}</span>
+              <span *ngIf="productEntry.key.id > -1" class="product-quantity">x{{productEntry.value}}</span>
+            </div>
           </button>
         </div>
 
@@ -151,8 +158,7 @@
           class="col-product-order"
         >
           <button type="button" class="btn-product btn-dummy disabled" disabled>
-            <div>&zwnj;</div>
-            <div>&zwnj;</div>
+            <div class="product-name">&zwnj;</div>
             <div>&zwnj;</div>
           </button>
         </div>
