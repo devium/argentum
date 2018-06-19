@@ -2,5 +2,6 @@
 build/
 .gradle/
 gradle/
-/.env
-/mysql
+.env
+mysql/
+postgres/
