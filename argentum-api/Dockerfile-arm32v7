@@ -1,0 +1,15 @@
+FROM arm32v7/openjdk
+
+RUN mkdir argentum-api
+WORKDIR argentum-api
+
+RUN apt-get update && apt-get install -y \
+  netcat-openbsd
+
+COPY build/libs/argentum-*.jar argentum-api.jar
+COPY production/application.yaml .
+COPY start.sh .
+
+EXPOSE 8080
+
+CMD ["sh", "-e", "start.sh"]

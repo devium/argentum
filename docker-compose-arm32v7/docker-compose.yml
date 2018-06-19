@@ -2,9 +2,11 @@ version: '3'
 
 services:
   api:
-    build: argentum-api
-    image: argentum-api
-    image: 514036853215.dkr.ecr.eu-central-1.amazonaws.com/argentum-api:latest
+    build:
+      context: ../argentum-api
+      dockerfile: Dockerfile-arm32v7
+    image: arm32v7/argentum-api
+    image: 514036853215.dkr.ecr.eu-central-1.amazonaws.com/arm32v7/argentum-api:latest
     environment:
       - POSTGRES_PASSWORD
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/argentum
@@ -14,16 +16,18 @@ services:
       - postgres
 
   ui:
-    build: argentum-ui
-    image: argentum-ui
-    image: 514036853215.dkr.ecr.eu-central-1.amazonaws.com/argentum-ui:latest
+    build:
+      context: ../argentum-ui
+      dockerfile: Dockerfile-arm32v7
+    image: arm/argentum-ui
+    image: 514036853215.dkr.ecr.eu-central-1.amazonaws.com/arm32v7/argentum-ui:latest
     ports:
       - '80:80'
     depends_on:
       - api
 
   postgres:
-    image: postgres:9
+    image: arm32v7/postgres:9
     volumes:
       - ./postgres:/var/lib/postgresql/data
     environment:
@@ -31,3 +35,4 @@ services:
       - POSTGRES_DB=argentum
     ports:
       - '5432:5432'
+

@@ -13,6 +13,5 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQL94Dialect
     hibernate.ddl-auto: update
     generate-ddl: true
-    show-sql: true
 
   session.store-type: none
