@@ -15,3 +15,11 @@ spring:
     generate-ddl: true
 
   session.store-type: none
+
+server:
+  port: 8443
+  ssl:
+    keyStoreType: PKCS12
+    keyAlias: tomcat
+    key-store: keystore.p12
+    key-store-password: ${SSL_KEYSTORE_PASSWORD}

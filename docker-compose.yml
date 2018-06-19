@@ -7,9 +7,10 @@ services:
     image: 514036853215.dkr.ecr.eu-central-1.amazonaws.com/argentum-api:latest
     environment:
       - POSTGRES_PASSWORD
+      - SSL_KEYSTORE_PASSWORD
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/argentum
     ports:
-      - '8080:8080'
+      - '8443:8443'
     depends_on:
       - postgres
 
@@ -19,6 +20,7 @@ services:
     image: 514036853215.dkr.ecr.eu-central-1.amazonaws.com/argentum-ui:latest
     ports:
       - '80:80'
+      - '443:443'
     depends_on:
       - api
 

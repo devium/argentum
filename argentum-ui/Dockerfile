@@ -1,4 +1,6 @@
 FROM nginx:alpine
 
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY production/nginx.conf /etc/nginx/nginx.conf
+COPY production/fullchain.pem /
+COPY production/privkey.pem /
 COPY dist /usr/share/nginx/html

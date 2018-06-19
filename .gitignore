@@ -5,3 +5,5 @@ gradle/
 .env
 mysql/
 postgres/
+keystore.p12
+*.pem
