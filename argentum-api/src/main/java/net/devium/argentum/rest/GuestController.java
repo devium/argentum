@@ -2,10 +2,7 @@ package net.devium.argentum.rest;
 
 import net.devium.argentum.jpa.*;
 import net.devium.argentum.rest.model.request.GuestRequest;
-import net.devium.argentum.rest.model.response.GuestResponse;
-import net.devium.argentum.rest.model.response.GuestResponsePaginated;
-import net.devium.argentum.rest.model.response.OrderResponse;
-import net.devium.argentum.rest.model.response.Response;
+import net.devium.argentum.rest.model.response.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,16 +26,19 @@ import static net.devium.argentum.constants.ApplicationConstants.DECIMAL_PLACES;
 public class GuestController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private GuestRepository guestRepository;
+    private CoatCheckTagRepository coatCheckTagRepository;
     private OrderRepository orderRepository;
     private BalanceEventRepository balanceEventRepository;
 
     @Autowired
     public GuestController(
             GuestRepository guestRepository,
+            CoatCheckTagRepository coatCheckTagRepository,
             OrderRepository orderRepository,
             BalanceEventRepository balanceEventRepository
     ) {
         this.guestRepository = guestRepository;
+        this.coatCheckTagRepository = coatCheckTagRepository;
         this.orderRepository = orderRepository;
         this.balanceEventRepository = balanceEventRepository;
     }
@@ -94,6 +94,7 @@ public class GuestController {
     @Transactional
     public ResponseEntity<?> deleteGuests() {
         balanceEventRepository.deleteAll();
+        coatCheckTagRepository.deleteAll();
         orderRepository.deleteAll();
         guestRepository.deleteAll();
 
@@ -229,6 +230,28 @@ public class GuestController {
 
         List<OrderResponse> response = orderRepository.findByGuest(guest).stream()
                 .map(OrderResponse::from)
+                .collect(Collectors.toList());
+
+        return Response.ok(response);
+    }
+
+    @RequestMapping(
+            path = "/{guestId}/coat_check_tags",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+    )
+    @Transactional
+    public ResponseEntity<?> getCoatCheckTags(@PathVariable long guestId) {
+        GuestEntity guest = guestRepository.findOne(guestId);
+
+        if (guest == null) {
+            String message = String.format("Guest %s not found.", guestId);
+            LOGGER.info(message);
+            return Response.notFound(message);
+        }
+
+        List<CoatCheckTagResponse> response = coatCheckTagRepository.findByGuest(guest).stream()
+                .map(CoatCheckTagResponse::from)
                 .collect(Collectors.toList());
 
         return Response.ok(response);

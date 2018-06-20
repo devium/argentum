@@ -38,10 +38,18 @@ public class ApplicationTest {
         assertThat(admin.getPassword(), is("argentum"));
 
         List<RoleEntity> roles = roleRepository.findAll();
-        assertThat(roles, hasSize(6));
-        assertThat(admin.getRoles(), hasSize(6));
+        assertThat(roles, hasSize(7));
+        assertThat(admin.getRoles(), hasSize(7));
 
-        Set<String> allRoles = ImmutableSet.of("ADMIN", "ORDER", "CHECKIN", "TRANSFER", "SCAN", "ALL_RANGES");
+        Set<String> allRoles = ImmutableSet.of(
+                "ADMIN",
+                "ORDER",
+                "COAT_CHECK",
+                "CHECKIN",
+                "TRANSFER",
+                "SCAN",
+                "ALL_RANGES"
+        );
         Set<String> adminRoles = admin.getRoles().stream().map(RoleEntity::getName).collect(Collectors.toSet());
         assertThat(adminRoles, is(allRoles));
         Set<String> savedRoles = roles.stream().map(RoleEntity::getName).collect(Collectors.toSet());

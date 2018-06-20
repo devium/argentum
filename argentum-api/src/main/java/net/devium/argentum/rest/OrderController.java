@@ -25,33 +25,25 @@ import static net.devium.argentum.constants.ApplicationConstants.DECIMAL_PLACES;
 
 @RestController
 @RequestMapping("/orders")
-public class OrderController {
+public class OrderController extends AbstractBalanceController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private OrderRepository orderRepository;
     private ProductRepository productRepository;
-    private ProductRangeRepository productRangeRepository;
     private OrderItemRepository orderItemRepository;
-    private BalanceEventRepository balanceEventRepository;
-    private GuestRepository guestRepository;
-    private ConfigRepository configRepository;
 
     @Autowired
     public OrderController(
             OrderRepository orderRepository,
             ProductRepository productRepository,
-            ProductRangeRepository productRangeRepository,
             OrderItemRepository orderItemRepository,
             BalanceEventRepository balanceEventRepository,
             GuestRepository guestRepository,
             ConfigRepository configRepository
     ) {
+        super(guestRepository, balanceEventRepository, configRepository);
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
-        this.productRangeRepository = productRangeRepository;
         this.orderItemRepository = orderItemRepository;
-        this.balanceEventRepository = balanceEventRepository;
-        this.guestRepository = guestRepository;
-        this.configRepository = configRepository;
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -116,31 +108,19 @@ public class OrderController {
             return Response.notFound(message);
         }
 
-        // Get postpaid limit if set.
-        BigDecimal postpaidLimit = BigDecimal.ZERO;
-        ConfigEntity postpaidLimitEntry = configRepository.findOne("postpaidLimit");
-        if (postpaidLimitEntry != null) {
-            postpaidLimit = new BigDecimal(postpaidLimitEntry.getValue());
+        ResponseEntity<?> creditResponse = credit(guest, total);
+        if (creditResponse != null) {
+            return creditResponse;
         }
 
-        // Check balance.
-        BigDecimal totalPostBonus = total.subtract(guest.getBonus());
-        if (totalPostBonus.compareTo(BigDecimal.ZERO) <= 0) {
-            guest.setBonus(guest.getBonus().subtract(total));
-        } else if (guest.getBalance().subtract(totalPostBonus).compareTo(postpaidLimit.negate()) >= 0) {
-            guest.setBonus(BigDecimal.ZERO);
-            guest.setBalance(guest.getBalance().subtract(totalPostBonus));
-        } else {
-            String message = "Insufficient funds.";
-            LOGGER.info(message);
-            return Response.badRequest(message);
-        }
-        guestRepository.save(guest);
-
-        OrderEntity newOrder = orderRepository.save(new OrderEntity(guest, new Date(), total));
+        Date time = new Date();
+        OrderEntity newOrder = orderRepository.save(new OrderEntity(guest, time, total));
         orderItems.forEach(orderItem -> orderItem.setOrder(newOrder));
         orderItems = orderItemRepository.save(orderItems);
         newOrder.setOrderItems(ImmutableSet.copyOf(orderItems));
+
+        String eventDescription = String.format("order #%s", newOrder.getId());
+        balanceEventRepository.save(new BalanceEventEntity(guest, time, total.negate(), eventDescription));
 
         return Response.ok(OrderResponse.from(newOrder));
     }
@@ -156,10 +136,10 @@ public class OrderController {
         Set<CancelOrderItemRequest> orderCustomCancelled = new HashSet<>();
         Set<CancelOrderItemRequest> orderItemsCancelled = new HashSet<>();
 
-        for (CancelOrderItemRequest orderItem: orderItems) {
+        for (CancelOrderItemRequest orderItem : orderItems) {
             if (orderItem.getCustomTotal() == null) {
                 orderItemsCancelled.add(orderItem);
-            } else  {
+            } else {
                 orderCustomCancelled.add(orderItem);
             }
         }
@@ -173,7 +153,7 @@ public class OrderController {
         List<OrderEntity> updatedOrders = new LinkedList<>();
         List<GuestEntity> updatedGuests = new LinkedList<>();
         List<BalanceEventEntity> balanceEvents = new LinkedList<>();
-        for (CancelOrderItemRequest orderItemRequest: orderCustomCancelled) {
+        for (CancelOrderItemRequest orderItemRequest : orderCustomCancelled) {
             OrderEntity order = orderRepository.findOne(orderItemRequest.getId());
             if (order == null) {
                 String message = String.format("Order %s not found.", orderItemRequest.getId());
@@ -218,7 +198,7 @@ public class OrderController {
         balanceEvents.clear();
 
         List<OrderItemEntity> updatedOrderItems = new LinkedList<>();
-        for (CancelOrderItemRequest orderItemRequest: orderItemsCancelled) {
+        for (CancelOrderItemRequest orderItemRequest : orderItemsCancelled) {
             OrderItemEntity orderItem = orderItemRepository.findOne(orderItemRequest.getId());
             if (orderItem == null) {
                 String message = String.format("Order item %s not found.", orderItemRequest.getId());

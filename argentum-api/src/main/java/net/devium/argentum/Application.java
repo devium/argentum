@@ -29,11 +29,12 @@ public class Application {
         if (userRepository.count() == 0) {
             RoleEntity admin = new RoleEntity("ADMIN");
             RoleEntity order = new RoleEntity("ORDER");
+            RoleEntity coatCheck = new RoleEntity("COAT_CHECK");
             RoleEntity checkin = new RoleEntity("CHECKIN");
             RoleEntity transfer = new RoleEntity("TRANSFER");
             RoleEntity scan = new RoleEntity("SCAN");
             RoleEntity rangeAll = new RoleEntity("ALL_RANGES");
-            List<RoleEntity> all_roles = ImmutableList.of(admin, order, checkin, transfer, scan, rangeAll);
+            List<RoleEntity> all_roles = ImmutableList.of(admin, order, coatCheck, checkin, transfer, scan, rangeAll);
             all_roles = roleRepository.save(all_roles);
 
             userRepository.save(new UserEntity("admin", "argentum", ImmutableSet.copyOf(all_roles)));

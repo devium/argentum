@@ -32,6 +32,8 @@ public class GuestControllerTest {
     @Autowired
     private GuestRepository guestRepository;
     @Autowired
+    private CoatCheckTagRepository coatCheckTagRepository;
+    @Autowired
     private OrderRepository orderRepository;
     @Autowired
     private ConfigRepository configRepository;
@@ -48,13 +50,19 @@ public class GuestControllerTest {
 
     @Before
     public void setUp() {
-        sut = new GuestController(guestRepository, orderRepository, balanceEventRepository);
+        sut = new GuestController(
+                guestRepository,
+                coatCheckTagRepository,
+                orderRepository,
+                balanceEventRepository
+        );
         mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
     }
 
     @After
     public void tearDown() throws Exception {
         balanceEventRepository.deleteAll();
+        coatCheckTagRepository.deleteAll();
         orderRepository.deleteAll();
         guestRepository.deleteAll();
         configRepository.deleteAll();
@@ -252,6 +260,9 @@ public class GuestControllerTest {
         GuestEntity guest = guestRepository.save(new GuestEntity(
                 "someCode", "someName", "someMail", "someStatus", null, "12341234", BigDecimal.ZERO, BigDecimal.ZERO
         ));
+
+        coatCheckTagRepository.save(new CoatCheckTagEntity(4, new Date(), guest));
+
         orderRepository.save(new OrderEntity(guest, new Date(), new BigDecimal(5.00)));
         OrderEntity order = orderRepository.save(new OrderEntity(guest, new Date(), new BigDecimal(3.20)));
         ProductEntity product = productRepository.save(new ProductEntity(
@@ -269,6 +280,7 @@ public class GuestControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
+        assertThat(coatCheckTagRepository.findAll(), empty());
         assertThat(orderRepository.findAll(), empty());
         assertThat(balanceEventRepository.findAll(), empty());
         assertThat(guestRepository.findAll(), empty());
@@ -548,5 +560,26 @@ public class GuestControllerTest {
                 .andExpect(jsonPath("$.data[1].items", hasSize(0)))
                 .andExpect(jsonPath("$.data[1].total", closeTo(0.80, 0.001)))
                 .andExpect(jsonPath("$.data[1].customCancelled", closeTo(0, 0.001)));
+    }
+
+    @Test
+    public void testGetCoatCheckTags() throws Exception {
+        GuestEntity guest = guestRepository.save(new GuestEntity(
+                "someCode", "someName", "someMail", "someStatus", null, null, BigDecimal.ZERO, BigDecimal.ZERO
+        ));
+        guest = guestRepository.save(guest);
+
+        CoatCheckTagEntity coatCheckTag1 = coatCheckTagRepository.save(new CoatCheckTagEntity(5, new Date(), guest));
+        CoatCheckTagEntity coatCheckTag2 = coatCheckTagRepository.save(new CoatCheckTagEntity(7, new Date(), guest));
+
+        mockMvc.perform(get("/guests/{guestId}/coat_check_tags", guest.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[0].id", is((int) coatCheckTag1.getId())))
+                .andExpect(jsonPath("$.data[0].time", notNullValue()))
+                .andExpect(jsonPath("$.data[0].guest.id", is((int) guest.getId())))
+                .andExpect(jsonPath("$.data[1].id", is((int) coatCheckTag2.getId())))
+                .andExpect(jsonPath("$.data[1].time", notNullValue()))
+                .andExpect(jsonPath("$.data[1].guest.id", is((int) guest.getId())));
     }
 }

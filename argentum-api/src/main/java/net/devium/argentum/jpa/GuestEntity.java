@@ -21,6 +21,9 @@ public class GuestEntity {
     private BigDecimal bonus;
 
     @OneToMany(mappedBy = "guest")
+    private Set<CoatCheckTagEntity> coatCheckTags;
+
+    @OneToMany(mappedBy = "guest")
     private Set<OrderEntity> orders;
 
     @OneToMany(mappedBy = "guest")

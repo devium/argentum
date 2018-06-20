@@ -57,7 +57,6 @@ public class OrderControllerTest {
         sut = new OrderController(
                 orderRepository,
                 productRepository,
-                productRangeRepository,
                 orderItemRepository,
                 balanceEventRepository,
                 guestRepository,
@@ -211,7 +210,16 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.data.items[0].quantity", is(2)))
                 .andExpect(jsonPath("$.data.total", closeTo(10.20, 0.001)));
 
-        assertThat(orderRepository.findAll(), hasSize(1));
+        List<OrderEntity> orders = orderRepository.findAll();
+        assertThat(orders, hasSize(1));
+
+        List<BalanceEventEntity> balanceEvents = balanceEventRepository.findAll();
+        assertThat(balanceEvents, hasSize(1));
+        BalanceEventEntity balanceEvent = balanceEvents.get(0);
+        assertThat(balanceEvent.getGuest(), is(guest));
+        assertThat(balanceEvent.getValue(), is(new BigDecimal(-10.20).setScale(DECIMAL_PLACES, RoundingMode.HALF_UP)));
+        assertThat(balanceEvent.getTime(), notNullValue());
+        assertThat(balanceEvent.getDescription(), is(String.format("order #%s", orders.get(0).getId())));
     }
 
     @Test
