@@ -19,8 +19,6 @@ export class KeypadModalComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.keyStreamSub = Observable.fromEvent(document, 'keydown').subscribe((event: KeyboardEvent) => {
       if (this.captureKeyboard) {
-        // TODO REMOVE
-        console.log('aaaah');
         if (event.keyCode === 8 /* Backspace */) {
           this.deleteChar();
         } else if (event.keyCode === 13 /* Enter */) {

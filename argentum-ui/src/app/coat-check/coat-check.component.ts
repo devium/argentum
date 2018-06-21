@@ -26,8 +26,7 @@ class EditorTag extends CoatCheckTag {
   styleUrls: ['./coat-check.component.scss']
 })
 export class CoatCheckComponent implements OnInit {
-  // TODO: change to 999
-  readonly MAX_ID = 111;
+  readonly MAX_ID = 999;
 
   free_page_size: number;
   max_free_pages_shown: number;
