@@ -1,36 +1,37 @@
 <div (window:resize)="onResize($event.target)" class="h-100 container-fluid d-sm-flex flex-sm-column p-0">
   <app-card-bar [fullscreen]="false" [message]="message"></app-card-bar>
 
-  <div class="container-fluid row col-sm mx-0 px-1 d-sm-flex flex-sm-column">
+  <div class="container-fluid row h-100 m-0 p-0 container-outer">
 
-    <div class="container-grid-range col-md-8">
+    <div class="container-grid-range">
 
-      <div class="row mx-0 mb-1">
-        <div class="col px-1">
-          <div ngbDropdown>
+      <!-- Product range selection. -->
+      <div class="row m-0">
+        <div ngbDropdown class="w-100 p-1">
+          <button
+            (focus)="$event.target.blur()"
+            class="btn btn-primary w-100"
+            ngbDropdownToggle
+          >
+            {{selectedRange ? selectedRange.name : 'Select product range'}}
+          </button>
+          <div ngbDropdownMenu>
             <button
+              *ngFor="let range of productRanges"
               (focus)="$event.target.blur()"
-              class="btn-grid-bar"
-              ngbDropdownToggle
+              (click)="setProductRange(range)"
+              class="dropdown-item"
             >
-              {{selectedRange ? selectedRange.name : 'Select product range'}}
+              {{range.name}}
             </button>
-            <div ngbDropdownMenu>
-              <button
-                *ngFor="let range of productRanges"
-                (focus)="$event.target.blur()"
-                (click)="setProductRange(range)"
-                class="dropdown-item"
-              >
-                {{range.name}}
-              </button>
-            </div>
           </div>
         </div>
       </div>
 
-      <div class="col-sm row p-0 m-0">
+      <!-- Actual grid body. -->
+      <div class="row-grid-body">
 
+        <!-- Product buttons. -->
         <div
           *ngFor="let product of getPaginated(products, rangeProductsPerPage, rangePage)"
           class="col-product-range"
@@ -50,16 +51,18 @@
           </button>
         </div>
 
+        <!-- Padding buttons. -->
         <div
           *ngFor="let i of 1 | range : getNumPadItems(products.length, rangeProductsPerPage, rangePage)"
           class="col-product-range"
         >
-          <button type="button" class="btn-product btn-dummy disabled" disabled>
+          <button type="button" class="btn-product btn-dummy" disabled>
             <div class="product-name">&zwnj;</div>
             <div>&zwnj;</div>
           </button>
         </div>
 
+        <!-- Custom product button. -->
         <div class="col-product-range">
           <button
             (focus)="$event.target.blur()"
@@ -73,6 +76,7 @@
 
       </div>
 
+      <!-- Pagination. -->
       <div class="row justify-content-center mx-0 my-1">
         <ngb-pagination
           [collectionSize]="products.length"
@@ -85,27 +89,26 @@
         </ngb-pagination>
       </div>
 
+      <!-- Refresh and order history buttons. -->
       <div class="row m-0">
-        <div class="col-6 px-1">
+        <div class="col-6 p-1">
           <button
             (focus)="$event.target.blur()"
             (click)="refreshProducts()"
             type="button"
-            class="btn-grid-bar"
+            class="btn-grid-row-multi"
             [disabled]="!selectedRange"
-            [class.disabled]="!selectedRange"
           >
             <i class="fa fa-refresh fa-lg"></i>
           </button>
         </div>
-        <div class="col-6 px-1">
+        <div class="col-6 p-1">
           <button
             (focus)="$event.target.blur()"
             (click)="showOrderHistory()"
             type="button"
-            class="btn-grid-bar"
+            class="btn-grid-row-multi"
             [disabled]="this.cardBar.state != this.cardBar.scanState.Valid"
-            [class.disabled]="this.cardBar.state != this.cardBar.scanState.Valid"
           >
             <i class="fa fa-history fa-lg"></i>
           </button>
@@ -115,22 +118,23 @@
     </div>
 
 
-    <div class="container-grid-order col-md-4">
+    <div class="container-grid-order">
 
-      <div class="row mx-0 mb-1">
-        <div class="col px-1">
-          <button
-            (focus)="$event.target.blur()"
-            disabled
-            class="btn-grid-bar disabled"
-          >
-            Current order: €{{total | number:'1.2-2'}}
-          </button>
-        </div>
+      <!-- "Current order" title "button". -->
+      <div class="row m-0">
+        <button
+          (focus)="$event.target.blur()"
+          disabled
+          class="btn-grid-row-single"
+        >
+          Current order: €{{total | number:'1.2-2'}}
+        </button>
       </div>
 
-      <div class="row col-sm p-0 m-0">
+      <!-- Actual grid body. -->
+      <div class="row-grid-body">
 
+        <!-- Product buttons. -->
         <div
           *ngFor="let productEntry of orderedProducts | iterable | slice:(orderProductsPerPage * (orderPage - 1)):(orderProductsPerPage * orderPage)"
           class="col-product-order"
@@ -153,11 +157,12 @@
           </button>
         </div>
 
+        <!-- Padding buttons. -->
         <div
           *ngFor="let i of 1 | range : getNumPadItems(orderedProducts.size, orderProductsPerPage, orderPage)"
           class="col-product-order"
         >
-          <button type="button" class="btn-product btn-dummy disabled" disabled>
+          <button type="button" class="btn-product btn-dummy" disabled>
             <div class="product-name">&zwnj;</div>
             <div>&zwnj;</div>
           </button>
@@ -165,6 +170,7 @@
 
       </div>
 
+      <!-- Pagination. -->
       <div class="row justify-content-center mx-0 my-1">
         <ngb-pagination
           [collectionSize]="orderedProducts.size"
@@ -178,31 +184,29 @@
         </ngb-pagination>
       </div>
 
+      <!-- Clear and buy buttons. -->
       <div class="row m-0">
-
-        <div class="col-6 px-1">
+        <div class="col-6 p-1">
           <button
             (focus)="$event.target.blur()"
             (click)="clear()"
             type="button"
-            class="btn-grid-bar"
+            class="btn-grid-row-multi"
             [disabled]="this.waitingForOrder || this.orderedProducts.size == 0"
-            [class.disabled]="this.waitingForOrder || this.orderedProducts.size == 0"
           >
             <i class="fa fa-trash fa-lg"></i>
           </button>
         </div>
 
-        <div class="col-6 px-1">
+        <div class="col-6 p-1">
           <button
             (focus)="$event.target.blur()"
             (click)="placeOrder()"
             type="button"
-            class="btn-grid-bar"
+            class="btn-grid-row-multi"
             [disabled]="this.waitingForOrder || this.orderedProducts.size == 0 || this.cardBar.state != this.cardBar.scanState.Valid"
-            [class.disabled]="this.waitingForOrder || this.orderedProducts.size == 0 || this.cardBar.state != this.cardBar.scanState.Valid"
           >
-            <i class="fa fa-shopping-cart fa-lg"></i>
+            <i class="fa fa-shopping-cart fa-lg mr-1"></i>
             <i class="fa fa-long-arrow-right fa-lg"></i>
           </button>
         </div>

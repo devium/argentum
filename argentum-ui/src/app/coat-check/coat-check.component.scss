@@ -20,32 +20,34 @@
 
 .container-grid-free-tags {
   @extend .container-grid;
+  @extend .col-md-8;
   flex-grow: 2;
 }
 
 .container-grid-stored-tags {
   @extend .container-grid;
+  @extend .col-md-4;
   flex-grow: 1;
 }
 
-.btn-grid-aux {
+.btn-grid-row {
   @extend .btn;
   @extend .btn-primary;
   @extend .btn-block;
   @extend .btn-lg;
 }
 
-.btn-grid-bar {
-  @extend .btn-grid-aux;
+.btn-grid-row-single {
+  @extend .btn-grid-row;
   @extend .m-1;
 }
 
-.btn-grid-block {
-  @extend .btn-grid-aux;
+.btn-grid-row-multi {
+  @extend .btn-grid-row;
   @extend .m-0;
 }
 
-.row-grid {
+.row-grid-body {
   @extend .row;
   @extend .p-0;
   @extend .m-0;

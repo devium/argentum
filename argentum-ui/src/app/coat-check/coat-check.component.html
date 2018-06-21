@@ -3,21 +3,21 @@
 
   <div class="container-fluid row h-100 m-0 p-0 container-outer">
 
-    <div class="container-grid-free-tags col-md-8">
+    <div class="container-grid-free-tags">
 
       <!-- Title "button". -->
       <div class="row m-0">
         <button
           (focus)="$event.target.blur()"
           disabled
-          class="btn-grid-bar disabled"
+          class="btn-grid-row-single"
         >
           Available tags
         </button>
       </div>
 
       <!-- Actual grid body. -->
-      <div class="row-grid">
+      <div class="row-grid-body">
         <!-- Free tag IDs. -->
         <div
           *ngFor="let tagId of getPaginated(freeIds, free_page_size, freePage)"
@@ -63,7 +63,7 @@
         <button
           (focus)="$event.target.blur()"
           (click)="refreshTags()"
-          class="btn-grid-bar"
+          class="btn-grid-row-single"
         >
           <i class="fa fa-refresh fa-lg"></i>
         </button>
@@ -89,7 +89,7 @@
     </div>
 
 
-    <div class="container-grid-stored-tags col-md-4">
+    <div class="container-grid-stored-tags">
 
       <!-- Title "button". -->
       <div class="row m-0">
@@ -113,7 +113,7 @@
       </div>
 
       <!-- Actual grid body. -->
-      <div class="row-grid">
+      <div class="row-grid-body">
         <!-- Stored and to be stored tag buttons. -->
         <div
           *ngFor="let tag of getPaginated(storedTags, stored_page_size, storedPage)"
@@ -170,10 +170,10 @@
             (focus)="$event.target.blur()"
             (click)="removeAllTags()"
             type="button"
-            class="btn-grid-block"
+            class="btn-grid-row-multi"
             [disabled]="!canRemoveAll()"
           >
-            <i class="fa fa-trash fa-lg mr-1"></i>
+            <i class="fa fa-trash fa-lg"></i>
           </button>
         </div>
         <div class="col-6 p-1">
@@ -181,10 +181,10 @@
             (focus)="$event.target.blur()"
             (click)="unflagAllTags()"
             type="button"
-            class="btn-grid-block"
+            class="btn-grid-row-multi"
             [disabled]="!canUnflagAll()"
           >
-            <i class="fa fa-undo fa-lg mr-1"></i>
+            <i class="fa fa-undo fa-lg"></i>
           </button>
         </div>
       </div>
@@ -195,7 +195,7 @@
           (focus)="$event.target.blur()"
           (click)="saveTags()"
           type="button"
-          class="btn-grid-bar"
+          class="btn-grid-row-single"
           [disabled]="!canSave()"
         >
           <i class="fa fa-save fa-lg mr-1"></i>€{{activePrice | number: '1.2-2'}}

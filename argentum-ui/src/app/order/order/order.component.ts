@@ -46,30 +46,16 @@ export class OrderComponent implements OnInit {
 
   onResize(newWindow: Window): void {
     if (newWindow.innerWidth < 576) {
-      this.rangeProductsPerPage = 15;
+      this.rangeProductsPerPage = 13;
       this.orderProductsPerPage = 4;
       this.pagesShown = 5;
     } else if (newWindow.innerWidth < 768) {
-      if (newWindow.innerHeight < 720) {
-        this.rangeProductsPerPage = 15;
-        this.orderProductsPerPage = 8;
-      } else {
-        this.rangeProductsPerPage = 23;
-        this.orderProductsPerPage = 12;
-      }
+      this.rangeProductsPerPage = 23;
+      this.orderProductsPerPage = 4;
       this.pagesShown = 10;
     } else if (newWindow.innerWidth < 992) {
-      if (newWindow.innerHeight < 720) {
-        this.rangeProductsPerPage = 19;
-        this.orderProductsPerPage = 10;
-      } else {
-        this.rangeProductsPerPage = 27;
-        this.orderProductsPerPage = 14;
-      }
-      this.pagesShown = 10;
-    } else {
-      this.rangeProductsPerPage = 35;
-      this.orderProductsPerPage = 18;
+      this.rangeProductsPerPage = 27;
+      this.orderProductsPerPage = 14;
       this.pagesShown = 10;
     }
   }
@@ -88,7 +74,14 @@ export class OrderComponent implements OnInit {
   refreshProducts() {
     if (this.selectedRange) {
       this.restService.getProductRange(this.selectedRange)
-        .then((range: ProductRange) => this.products = range.products.filter(product => !product.legacy))
+        .then((range: ProductRange) => {
+          this.products = range.products.filter(product => !product.legacy);
+          this.products.sort((a: Product, b: Product) => {
+            const categoryA: string = a.category === null ? '' : a.category.name;
+            const categoryB: string = b.category === null ? '' : b.category.name;
+            return categoryA.localeCompare(categoryB);
+          });
+        })
         .catch(reason => this.message.error(reason));
     }
   }

@@ -1,6 +1,23 @@
 @import 'node_modules/bootstrap/scss/bootstrap';
 @import 'src/styles.scss';
 
+.container-outer {
+  @include media-breakpoint-down(sm) {
+    // Manual measurement from both container-grids. Without this it will shrink more than its contents.
+    min-height: 656px;
+  }
+  @include media-breakpoint-down(xs) {
+    min-height: 760px;
+  }
+}
+
+.row-grid-body {
+  @extend .row;
+  @extend .p-0;
+  @extend .m-0;
+  flex-grow: 1;
+}
+
 .btn-product {
   @extend .btn;
   @extend .btn-block;
@@ -34,33 +51,42 @@
 }
 
 .container-grid {
-  @extend .px-0;
-  @extend .px-lg-1;
-  @extend .mx-0;
-  @extend .my-2;
-  @extend .d-sm-flex;
-  @extend .flex-sm-column;
+  @extend .p-1;
+  @extend .m-0;
+  @extend .d-flex;
+  @extend .flex-column;
 }
 
 .container-grid-range {
   @extend .container-grid;
+  @extend .col-md-8;
   flex-grow: 2;
 }
 
 .container-grid-order {
   @extend .container-grid;
+  @extend .col-md-4;
   flex-grow: 1;
 }
 
-.btn-grid-bar {
+.btn-grid-row {
   @extend .btn;
   @extend .btn-primary;
   @extend .btn-block;
 }
 
+.btn-grid-row-single {
+  @extend .btn-grid-row;
+  @extend .m-1;
+}
+
+.btn-grid-row-multi {
+  @extend .btn-grid-row;
+  @extend .m-0;
+}
+
 .product-name {
   @extend .font-weight-bold;
-  font-family: "Helvetica Narrow","Arial Narrow",Tahoma,Arial,Helvetica,sans-serif;
 }
 
 .product-price {
