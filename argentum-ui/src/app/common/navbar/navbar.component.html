@@ -18,6 +18,17 @@
       <li class="nav-item">
         <a
           (focus)="$event.target.blur()"
+          *ngIf="hasRole(['COAT_CHECK'])"
+          routerLink="/coat_check"
+          routerLinkActive="active"
+          class="nav-link"
+        >
+          Coat check
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          (focus)="$event.target.blur()"
           *ngIf="hasRole(['ORDER'])"
           routerLink="/order"
           routerLinkActive="active"

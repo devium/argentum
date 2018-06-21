@@ -15,12 +15,14 @@ import { DummyComponent } from '../dummy/dummy.component';
 import { UserEditorComponent } from '../admin/user-editor/user-editor.component';
 import { ConfigEditorComponent } from '../admin/config-editor/config-editor.component';
 import { StatusEditorComponent } from '../admin/status-editor/status-editor.component';
+import { CoatCheckComponent } from '../coat-check/coat-check.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'home', component: DummyComponent, canActivate: [RouteGuard] },
   { path: 'login', component: LoginComponent, canActivate: [RouteGuard] },
   { path: 'logout', component: DummyComponent, canActivate: [RouteGuard] },
+  { path: 'coat_check', component: CoatCheckComponent, canActivate: [RouteGuard] },
   { path: 'order', component: OrderComponent, canActivate: [RouteGuard] },
   { path: 'checkin', component: CheckinComponent, canActivate: [RouteGuard] },
   { path: 'scan', component: ScanComponent, canActivate: [RouteGuard] },

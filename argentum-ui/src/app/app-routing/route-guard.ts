@@ -22,6 +22,7 @@ export class RouteGuard implements CanActivate {
   // Note: the first path in the array will be considered the respective role's home page.
   readonly ROLES_TO_PATH: { [role: string]: string[] } = {
     'ADMIN': ['admin'].concat(this.ADMIN_SUBPATHS),
+    'COAT_CHECK': ['coat_check'],
     'ORDER': ['order'],
     'CHECKIN': ['checkin'],
     'TRANSFER': ['checkin'],

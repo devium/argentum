@@ -1,0 +1,119 @@
+@import 'node_modules/bootstrap/scss/bootstrap';
+@import 'src/styles.scss';
+
+.container-outer {
+  @include media-breakpoint-down(sm) {
+    // Manual measurement from both container-grids. Without this it will shrink more than its contents.
+    min-height: 630px;
+  }
+  @include media-breakpoint-down(xs) {
+    min-height: 730px;
+  }
+}
+
+.container-grid {
+  @extend .m-0;
+  @extend .p-1;
+  @extend .d-flex;
+  @extend .flex-column;
+}
+
+.container-grid-free-tags {
+  @extend .container-grid;
+  flex-grow: 2;
+}
+
+.container-grid-stored-tags {
+  @extend .container-grid;
+  flex-grow: 1;
+}
+
+.btn-grid-aux {
+  @extend .btn;
+  @extend .btn-primary;
+  @extend .btn-block;
+  @extend .btn-lg;
+}
+
+.btn-grid-bar {
+  @extend .btn-grid-aux;
+  @extend .m-1;
+}
+
+.btn-grid-block {
+  @extend .btn-grid-aux;
+  @extend .m-0;
+}
+
+.row-grid {
+  @extend .row;
+  @extend .p-0;
+  @extend .m-0;
+  flex-grow: 1;
+}
+
+.col-tag {
+  @extend .col-6;
+  @extend .p-05;
+  @extend .col-sm-3;
+  min-height: 50px;
+}
+
+.col-free-tag {
+  @extend .col-tag;
+}
+
+.col-stored-tag {
+  @extend .col-tag;
+  @extend .col-md-6;
+}
+
+.btn-tag {
+  @extend .p-0;
+  @extend .h-100;
+  @extend .btn;
+  @extend .btn-block;
+}
+
+.tag-text {
+  font-weight: bold;
+  font-size: large;
+  @include media-breakpoint-up(sm) {
+    font-size: x-large;
+  }
+}
+
+.tag-time {
+  position: absolute;
+
+  @include media-breakpoint-down(sm) {
+    text-align: right;
+    margin-right: 0;
+    left: 0;
+    right: 5px;
+    bottom: 0;
+  }
+
+  @include media-breakpoint-up(sm) {
+    text-align: center;
+    margin: auto;
+    left: 0;
+    right: 0;
+    bottom: 5px;
+  }
+}
+
+.btn-dummy {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-color: transparent;
+}
+
+.message-wrap {
+  bottom: 15vh;
+  z-index: 10000;
+}
+
+app-message {
+  max-width: 600px;
+  z-index: 10000;
+}

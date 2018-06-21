@@ -38,10 +38,12 @@ import { OrderHistoryComponent } from './common/order-history/order-history.comp
 import { OrderHistoryModalComponent } from './order/order-history-modal/order-history-modal.component';
 import { ConfirmModalComponent } from './common/confirm-modal/confirm-modal.component';
 import { PapaParseModule } from 'ngx-papaparse';
+import { CoatCheckComponent } from './coat-check/coat-check.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    CoatCheckComponent,
     OrderComponent,
     IterablePipe,
     KeypadModalComponent,

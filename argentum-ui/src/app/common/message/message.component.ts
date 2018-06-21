@@ -7,6 +7,7 @@ import { Subject } from 'rxjs/Subject';
   styleUrls: ['./message.component.scss']
 })
 export class MessageComponent implements OnInit {
+  readonly DEFAULT_MESSAGE_TIME = 30000;
   message: string;
   messageType: string;
   messageStream = new Subject<{ message: string, type: string }>();
@@ -25,7 +26,7 @@ export class MessageComponent implements OnInit {
       }
     });
 
-    this.timer.debounceTime(5000).subscribe(() => this.message = null);
+    this.timer.debounceTime(this.DEFAULT_MESSAGE_TIME).subscribe(() => this.message = null);
   }
 
   error(message: string) {

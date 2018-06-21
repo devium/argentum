@@ -35,9 +35,12 @@ import { fromStatus } from './request/status-request';
 import { Status } from '../model/status';
 import { StatusResponse, toStatus } from './response/status-response';
 import { Order } from '../model/order';
-import { ProductResponseMeta, toProductMeta } from "./response/product-response-meta";
+import { ProductResponseMeta, toProductMeta } from './response/product-response-meta';
 import { OrderItem } from '../model/order-item';
 import { cancelFromOrder, cancelFromOrderItem } from './request/cancel-order-item-request';
+import { CoatCheckTagResponse, toCoatCheckTag } from './response/coat-check-tag-response';
+import { fromCoatCheckTagIds } from './request/coat-check-tags-request';
+import { CoatCheckTag } from '../model/coat-check-tag';
 
 @Injectable()
 export class RestService {
@@ -46,9 +49,15 @@ export class RestService {
   constructor(private http: Http) {
   }
 
-  private static prepareHeaders(): Headers {
+  private static prepareJsonHeaders(): Headers {
     return new Headers({
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    });
+  }
+
+  private static prepareHeaders(): Headers {
+    return new Headers({
       'Authorization': `Bearer ${localStorage.getItem('token')}`
     });
   }
@@ -65,10 +74,42 @@ export class RestService {
     );
   }
 
+  // /coat_check
+
+  getGuestCoatCheckTags(guest: Guest): Promise<CoatCheckTag[]> {
+    return this.http.get(`${this.apiUrl}/guests/${guest.id}/coat_check_tags`, { headers: RestService.prepareHeaders() })
+      .toPromise()
+      .then(response => response.json().data as CoatCheckTagResponse[])
+      .catch(RestService.handleError)
+      .then((tags: CoatCheckTagResponse[]) => tags.map(toCoatCheckTag));
+  }
+
+  getAllCoatCheckTags(): Promise<number[]> {
+    return this.http.get(`${this.apiUrl}/coat_check`, { headers: RestService.prepareHeaders() })
+      .toPromise()
+      .then(response => response.json().data as number[])
+      .catch(RestService.handleError);
+  }
+
+  deregisterTags(tagIds: number[]): Promise<void> {
+    return this.http.delete(`${this.apiUrl}/coat_check`, { body: tagIds, headers: RestService.prepareJsonHeaders() })
+      .toPromise()
+      .then(() => void(0))
+      .catch(RestService.handleError);
+  }
+
+  registerTags(tagIds: number[], guest: Guest, price: number): Promise<CoatCheckTagResponse[]> {
+    const body = fromCoatCheckTagIds(tagIds, guest, price);
+    return this.http.put(`${this.apiUrl}/coat_check`, body, { headers: RestService.prepareJsonHeaders() })
+      .toPromise()
+      .then(response => response.json().data as CoatCheckTagResponse[])
+      .catch(RestService.handleError);
+  }
+
   // /products
 
   private getProductsRaw(): Promise<ProductResponse[]> {
-    return this.http.get(`${this.apiUrl}/products`, { headers: RestService.prepareHeaders() })
+    return this.http.get(`${this.apiUrl}/products`, { headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(response => response.json().data as ProductResponse[])
       .catch(RestService.handleError);
@@ -76,7 +117,7 @@ export class RestService {
 
   private getAllProductsRaw(): Promise<ProductResponseMeta[]> {
     // Includes legacy products.
-    return this.http.get(`${this.apiUrl}/products/all`, { headers: RestService.prepareHeaders() })
+    return this.http.get(`${this.apiUrl}/products/all`, { headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(response => response.json().data as ProductResponseMeta[])
       .catch(RestService.handleError);
@@ -91,7 +132,7 @@ export class RestService {
 
   mergeProducts(products: Product[]): Promise<ProductResponse[]> {
     const body = products.map(fromProduct);
-    return this.http.post(`${this.apiUrl}/products`, body, { headers: RestService.prepareHeaders() })
+    return this.http.post(`${this.apiUrl}/products`, body, { headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(response => response.json().data as ProductResponse[])
       .catch(RestService.handleError);
@@ -103,7 +144,7 @@ export class RestService {
     if (products.length === 0) {
       return Promise.resolve();
     }
-    return this.http.delete(`${this.apiUrl}/products`, { body, headers: RestService.prepareHeaders() })
+    return this.http.delete(`${this.apiUrl}/products`, { body, headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(() => void(0))
       .catch(RestService.handleError);
@@ -113,7 +154,7 @@ export class RestService {
   // /ranges
 
   private getProductRangesRaw(): Promise<ProductRangeResponseMeta[]> {
-    return this.http.get(`${this.apiUrl}/ranges`, { headers: RestService.prepareHeaders() })
+    return this.http.get(`${this.apiUrl}/ranges`, { headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(response => response.json().data as ProductRangeResponseMeta[])
       .catch(RestService.handleError);
@@ -125,7 +166,7 @@ export class RestService {
   }
 
   private getProductRangeRaw(range: ProductRange): Promise<ProductRangeResponseEager> {
-    return this.http.get(`${this.apiUrl}/ranges/${range.id}`, { headers: RestService.prepareHeaders() })
+    return this.http.get(`${this.apiUrl}/ranges/${range.id}`, { headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(response => response.json().data as ProductRangeResponseEager)
       .catch(RestService.handleError);
@@ -149,7 +190,7 @@ export class RestService {
   mergeProductRanges(productRanges: ProductRange[]): Promise<ProductRangeResponseMeta[]> {
     const body = productRanges.map(fromProductRange);
 
-    return this.http.post(`${this.apiUrl}/ranges`, body, { headers: RestService.prepareHeaders() })
+    return this.http.post(`${this.apiUrl}/ranges`, body, { headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(response => response.json().data as ProductRangeResponseMeta[])
       .catch(RestService.handleError);
@@ -161,7 +202,7 @@ export class RestService {
     if (productRanges.length === 0) {
       return Promise.resolve();
     }
-    return this.http.delete(this.apiUrl + '/ranges', { body, headers: RestService.prepareHeaders() })
+    return this.http.delete(this.apiUrl + '/ranges', { body, headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(() => void(0))
       .catch(RestService.handleError);
@@ -171,7 +212,7 @@ export class RestService {
   // /categories
 
   private getCategoriesRaw(): Promise<CategoryResponse[]> {
-    return this.http.get(`${this.apiUrl}/categories`, { headers: RestService.prepareHeaders() })
+    return this.http.get(`${this.apiUrl}/categories`, { headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(response => response.json().data as CategoryResponse[])
       .catch(RestService.handleError);
@@ -185,7 +226,7 @@ export class RestService {
   mergeCategories(categories: Category[]): Promise<CategoryResponse[]> {
     const body = categories.map(fromCategory);
 
-    return this.http.post(`${this.apiUrl}/categories`, body, { headers: RestService.prepareHeaders() })
+    return this.http.post(`${this.apiUrl}/categories`, body, { headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(response => response.json().data as CategoryResponse[])
       .catch(RestService.handleError);
@@ -197,7 +238,7 @@ export class RestService {
     if (categories.length === 0) {
       return Promise.resolve();
     }
-    return this.http.delete(`${this.apiUrl}/categories`, { body, headers: RestService.prepareHeaders() })
+    return this.http.delete(`${this.apiUrl}/categories`, { body, headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(() => void(0))
       .catch(RestService.handleError);
@@ -227,7 +268,7 @@ export class RestService {
   // /guests
 
   private getGuestByCardRaw(card: string): Promise<GuestResponse> {
-    return this.http.get(`${this.apiUrl}/guests/card/${card}`, { headers: RestService.prepareHeaders() })
+    return this.http.get(`${this.apiUrl}/guests/card/${card}`, { headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(response => response.json().data as GuestResponse)
       .catch(RestService.handleError);
@@ -249,7 +290,7 @@ export class RestService {
       `name=${nameLike}&` +
       `mail=${mailLike}&` +
       `status=${statusLike}`,
-      { headers: RestService.prepareHeaders() }
+      { headers: RestService.prepareJsonHeaders() }
     )
       .toPromise()
       .then(response => response.json().data as GuestResponsePaginated)
@@ -267,7 +308,7 @@ export class RestService {
   }
 
   private getGuestsBySearchRaw(field: string, search: string): Observable<GuestResponse[]> {
-    return this.http.get(`${this.apiUrl}/guests/search/${field}/${search}`, { headers: RestService.prepareHeaders() })
+    return this.http.get(`${this.apiUrl}/guests/search/${field}/${search}`, { headers: RestService.prepareJsonHeaders() })
       .map(response => response.json().data as GuestResponse[])
       .catch(RestService.handleError);
   }
@@ -279,49 +320,61 @@ export class RestService {
   mergeGuests(guests: Guest[]): Promise<GuestResponse[]> {
     const body = guests.map(fromGuest);
 
-    return this.http.post(`${this.apiUrl}/guests`, body, { headers: RestService.prepareHeaders() })
+    return this.http.post(`${this.apiUrl}/guests`, body, { headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(response => response.json().data as GuestResponse[])
       .catch(RestService.handleError);
   }
 
   deleteGuests(): Promise<void> {
-    return this.http.delete(`${this.apiUrl}/guests`, { headers: RestService.prepareHeaders() })
+    return this.http.delete(`${this.apiUrl}/guests`, { headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(() => void(0))
       .catch(RestService.handleError);
   }
 
   addBalance(guest: Guest, value: number): Promise<number> {
-    return this.http.put(`${this.apiUrl}/guests/${guest.id}/balance`, value, { headers: RestService.prepareHeaders() })
+    return this.http.put(
+      `${this.apiUrl}/guests/${guest.id}/balance`,
+      value,
+      { headers: RestService.prepareJsonHeaders() }
+    )
       .toPromise()
       .then(response => response.json().data as number)
       .catch(RestService.handleError);
   }
 
   addBonus(guest: Guest, value: number): Promise<number> {
-    return this.http.put(`${this.apiUrl}/guests/${guest.id}/bonus`, value, { headers: RestService.prepareHeaders() })
+    return this.http.put(
+      `${this.apiUrl}/guests/${guest.id}/bonus`,
+      value,
+      { headers: RestService.prepareJsonHeaders() }
+    )
       .toPromise()
       .then(response => response.json().data as number)
       .catch(RestService.handleError);
   }
 
   registerCard(guest: Guest, card: string): Promise<void> {
-    return this.http.put(`${this.apiUrl}/guests/${guest.id}/card`, card, { headers: RestService.prepareHeaders() })
+    return this.http.put(`${this.apiUrl}/guests/${guest.id}/card`, card, { headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(() => void(0))
       .catch(RestService.handleError);
   }
 
   checkIn(guest: Guest): Promise<Date> {
-    return this.http.put(`${this.apiUrl}/guests/${guest.id}/checkin`, null, { headers: RestService.prepareHeaders() })
+    return this.http.put(
+      `${this.apiUrl}/guests/${guest.id}/checkin`,
+      null,
+      { headers: RestService.prepareJsonHeaders() }
+    )
       .toPromise()
       .then(response => new Date(response.json().data as number))
       .catch(RestService.handleError);
   }
 
   private getOrdersRaw(guest: Guest): Promise<OrderResponse[]> {
-    return this.http.get(`${this.apiUrl}/guests/${guest.id}/orders`, { headers: RestService.prepareHeaders() })
+    return this.http.get(`${this.apiUrl}/guests/${guest.id}/orders`, { headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(response => response.json().data as OrderResponse[])
       .catch(RestService.handleError);
@@ -347,7 +400,7 @@ export class RestService {
   // /statuses
 
   private getStatusesRaw(): Promise<StatusResponse[]> {
-    return this.http.get(`${this.apiUrl}/statuses`, { headers: RestService.prepareHeaders() })
+    return this.http.get(`${this.apiUrl}/statuses`, { headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(response => response.json().data as StatusResponse[])
       .catch(RestService.handleError);
@@ -361,7 +414,7 @@ export class RestService {
   mergeStatuses(statuses: Status[]): Promise<StatusResponse[]> {
     const body = statuses.map(fromStatus);
 
-    return this.http.post(`${this.apiUrl}/statuses`, body, { headers: RestService.prepareHeaders() })
+    return this.http.post(`${this.apiUrl}/statuses`, body, { headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(response => response.json().data as StatusResponse[])
       .catch(RestService.handleError);
@@ -373,7 +426,7 @@ export class RestService {
     if (statuses.length === 0) {
       return Promise.resolve();
     }
-    return this.http.delete(`${this.apiUrl}/statuses`, { body, headers: RestService.prepareHeaders() })
+    return this.http.delete(`${this.apiUrl}/statuses`, { body, headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(() => void(0))
       .catch(RestService.handleError);
@@ -385,7 +438,7 @@ export class RestService {
   placeOrder(order: RawOrder): Promise<OrderResponse> {
     const body = fromOrder(order);
 
-    return this.http.post(`${this.apiUrl}/orders`, body, { headers: RestService.prepareHeaders() })
+    return this.http.post(`${this.apiUrl}/orders`, body, { headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(response => response.json().data as OrderResponse)
       .catch(RestService.handleError);
@@ -394,7 +447,7 @@ export class RestService {
   cancelOrderItem(orderItem: OrderItem): Promise<void> {
     const body = [cancelFromOrderItem(orderItem)];
 
-    return this.http.delete(`${this.apiUrl}/orders`, { body, headers: RestService.prepareHeaders() })
+    return this.http.delete(`${this.apiUrl}/orders`, { body, headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(() => void(0))
       .catch(RestService.handleError);
@@ -403,7 +456,7 @@ export class RestService {
   cancelCustom(order: Order): Promise<void> {
     const body = [cancelFromOrder(order)];
 
-    return this.http.delete(`${this.apiUrl}/orders`, { body, headers: RestService.prepareHeaders() })
+    return this.http.delete(`${this.apiUrl}/orders`, { body, headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(() => void(0))
       .catch(RestService.handleError);
@@ -413,7 +466,7 @@ export class RestService {
   // /statistics
 
   private getStatisticsRaw(): Promise<StatisticsResponse> {
-    return this.http.get(this.apiUrl + '/statistics', { headers: RestService.prepareHeaders() })
+    return this.http.get(this.apiUrl + '/statistics', { headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(response => response.json().data as StatisticsResponse)
       .catch(RestService.handleError);
@@ -427,7 +480,7 @@ export class RestService {
 
   // /users
   private getUsersRaw(): Promise<UserResponse[]> {
-    return this.http.get(this.apiUrl + '/users', { headers: RestService.prepareHeaders() })
+    return this.http.get(this.apiUrl + '/users', { headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(response => response.json().data as UserResponse[])
       .catch(RestService.handleError);
@@ -441,7 +494,7 @@ export class RestService {
   mergeUsers(users: User[]): Promise<UserResponse[]> {
     const body = users.map(fromUser);
 
-    return this.http.post(`${this.apiUrl}/users`, body, { headers: RestService.prepareHeaders() })
+    return this.http.post(`${this.apiUrl}/users`, body, { headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(response => response.json().data as UserResponse[])
       .catch(RestService.handleError);
@@ -453,14 +506,14 @@ export class RestService {
     if (users.length === 0) {
       return Promise.resolve();
     }
-    return this.http.delete(`${this.apiUrl}/users`, { body, headers: RestService.prepareHeaders() })
+    return this.http.delete(`${this.apiUrl}/users`, { body, headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(() => void(0))
       .catch(RestService.handleError);
   }
 
   getUser(): Promise<UserResponse> {
-    return this.http.get(this.apiUrl + '/users/me', { headers: RestService.prepareHeaders() })
+    return this.http.get(this.apiUrl + '/users/me', { headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(response => response.json().data as UserResponse)
       .catch(RestService.handleError);
@@ -469,7 +522,7 @@ export class RestService {
 
   // /config
   private getConfigRaw(): Promise<ConfigResponse> {
-    return this.http.get(this.apiUrl + '/config', { headers: RestService.prepareHeaders() })
+    return this.http.get(this.apiUrl + '/config', { headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(response => response.json().data as ConfigResponse)
       .catch(RestService.handleError);
@@ -481,7 +534,7 @@ export class RestService {
   }
 
   setConfig(config: Config): Promise<ConfigResponse> {
-    return this.http.put(this.apiUrl + '/config', fromConfig(config), { headers: RestService.prepareHeaders() })
+    return this.http.put(this.apiUrl + '/config', fromConfig(config), { headers: RestService.prepareJsonHeaders() })
       .toPromise()
       .then(response => response.json().data as ConfigResponse)
       .catch(RestService.handleError);

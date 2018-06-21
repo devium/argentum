@@ -61,6 +61,7 @@ export class UserEditorComponent implements OnInit {
   ranges: ProductRange[] = [];
   ROLES: { [id: string]: string } = {
     'ADMIN': 'Admin',
+    'COAT_CHECK': 'Coat check',
     'ORDER': 'Order',
     'CHECKIN': 'Check-in',
     'TRANSFER': 'Transfer',

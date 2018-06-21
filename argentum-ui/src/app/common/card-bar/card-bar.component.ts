@@ -53,7 +53,7 @@ export class CardBarComponent implements OnInit, OnDestroy {
   cardStream: Observable<string>;
   card = '';
   keyboardSub: Subscription;
-  guest: Guest;
+  guest: Guest = null;
   status: Status;
   countdownState = 'empty';
   countdownStream = new Subject();

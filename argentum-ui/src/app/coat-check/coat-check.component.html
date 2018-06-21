@@ -1,0 +1,214 @@
+<div (window:resize)="onResize($event.target)" class="h-100 container-fluid d-sm-flex flex-sm-column p-0">
+  <app-card-bar [fullscreen]="false" [message]="message"></app-card-bar>
+
+  <div class="container-fluid row h-100 m-0 p-0 container-outer">
+
+    <div class="container-grid-free-tags col-md-8">
+
+      <!-- Title "button". -->
+      <div class="row m-0">
+        <button
+          (focus)="$event.target.blur()"
+          disabled
+          class="btn-grid-bar disabled"
+        >
+          Available tags
+        </button>
+      </div>
+
+      <!-- Actual grid body. -->
+      <div class="row-grid">
+        <!-- Free tag IDs. -->
+        <div
+          *ngFor="let tagId of getPaginated(freeIds, free_page_size, freePage)"
+          class="col-free-tag"
+        >
+          <button
+            (focus)="$event.target.blur()"
+            (click)="addTag(tagId)"
+            type="button"
+            class="btn-tag btn-primary"
+          >
+            <span class="tag-text">{{tagId}}</span>
+          </button>
+        </div>
+
+        <!-- Padding buttons. -->
+        <div
+          *ngFor="let i of 1 | range : getNumPadItems(freeIds.length, free_page_size, freePage)"
+          class="col-free-tag"
+        >
+          <button type="button" class="btn-tag btn-dummy disabled" disabled>
+            <span class="tag-text">&zwnj;</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Pagination. -->
+      <div class="row justify-content-center mx-0 my-1">
+        <ngb-pagination
+          [collectionSize]="freeIds.length"
+          [(page)]="freePage"
+          [pageSize]="free_page_size"
+          [maxSize]="max_free_pages_shown"
+          [rotate]="true"
+          [ellipses]="false"
+          class="pagination-lg"
+        >
+        </ngb-pagination>
+      </div>
+
+      <!-- Refresh button. -->
+      <div class="row m-0">
+        <button
+          (focus)="$event.target.blur()"
+          (click)="refreshTags()"
+          class="btn-grid-bar"
+        >
+          <i class="fa fa-refresh fa-lg"></i>
+        </button>
+      </div>
+
+      <!-- Price buttons. -->
+      <div class="row m-0">
+        <div
+          ngbRadioGroup
+          [(ngModel)]="activePrice"
+          class="btn-group btn-group-toggle w-100 m-1"
+        >
+          <label
+            *ngFor="let price of prices"
+            ngbButtonLabel
+            class="btn-primary btn-lg px-1 w-100"
+          >
+            <input ngbButton type="radio" [value]="price" (focus)="$event.target.blur()">
+            €{{price | number: '1.2-2'}}
+          </label>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="container-grid-stored-tags col-md-4">
+
+      <!-- Title "button". -->
+      <div class="row m-0">
+        <div class="btn-group w-100 p-1" role="group">
+          <button
+            (focus)="$event.target.blur()"
+            disabled
+            class="btn btn-primary btn-lg w-100"
+          >
+            {{activeGuest != null ? 'Tags of ' + activeGuest.name : 'Store tags'}}
+          </button>
+          <button
+            *ngIf="activeGuest != null"
+            (focus)="$event.target.blur()"
+            (click)="setActiveGuest(null)"
+            class="btn btn-primary btn-lg"
+          >
+            <i class="fa fa-times fa-lg"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Actual grid body. -->
+      <div class="row-grid">
+        <!-- Stored and to be stored tag buttons. -->
+        <div
+          *ngFor="let tag of getPaginated(storedTags, stored_page_size, storedPage)"
+          class="col-stored-tag"
+        >
+          <button
+            (focus)="$event.target.blur()"
+            (click)="removeTag(tag)"
+            type="button"
+            class="btn-tag"
+            [class.btn-primary]="tag.time === null"
+            [class.btn-outline-primary]="tag.time !== null && !tag.flaggedForRemoval"
+            [class.btn-hover-red]="tag.time !== null && !tag.flaggedForRemoval"
+            [class.btn-danger]="tag.time !== null && tag.flaggedForRemoval"
+          >
+            <span class="tag-text">{{tag.id}}</span>
+            <span *ngIf="tag.time !== null" class="tag-time" >
+              <i class="fa fa-clock-o"></i>
+              {{formatTime(tag.time)}}
+            </span>
+          </button>
+
+        </div>
+
+        <!-- Padding buttons. -->
+        <div
+          *ngFor="let i of 1 | range : getNumPadItems(storedTags.length, stored_page_size, storedPage)"
+          class="col-stored-tag"
+        >
+          <button type="button" class="btn-tag btn-dummy disabled" disabled>
+            <span class="tag-text">&zwnj;</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Pagination. -->
+      <div class="row justify-content-center mx-0 my-1">
+        <ngb-pagination
+          [collectionSize]="storedTags.length"
+          [(page)]="storedPage"
+          [pageSize]="stored_page_size"
+          [maxSize]="max_stored_pages_shown"
+          [rotate]="true"
+          [ellipses]="false"
+          class="pagination-lg"
+        >
+        </ngb-pagination>
+      </div>
+
+      <!-- Delete and unflag all button. -->
+      <div class="row m-0">
+        <div class="col-6 p-1">
+          <button
+            (focus)="$event.target.blur()"
+            (click)="removeAllTags()"
+            type="button"
+            class="btn-grid-block"
+            [disabled]="!canRemoveAll()"
+          >
+            <i class="fa fa-trash fa-lg mr-1"></i>
+          </button>
+        </div>
+        <div class="col-6 p-1">
+          <button
+            (focus)="$event.target.blur()"
+            (click)="unflagAllTags()"
+            type="button"
+            class="btn-grid-block"
+            [disabled]="!canUnflagAll()"
+          >
+            <i class="fa fa-undo fa-lg mr-1"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Save button. -->
+      <div class="row m-0">
+        <button
+          (focus)="$event.target.blur()"
+          (click)="saveTags()"
+          type="button"
+          class="btn-grid-bar"
+          [disabled]="!canSave()"
+        >
+          <i class="fa fa-save fa-lg mr-1"></i>€{{activePrice | number: '1.2-2'}}
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="message-wrap position-fixed w-100 px-3">
+    <app-message class="text-center d-block mx-auto"></app-message>
+  </div>
+
+  <app-navbar></app-navbar>
+
+</div>
