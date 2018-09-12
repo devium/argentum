@@ -8,7 +8,9 @@ export function convertCard(card: string): string {
     const minor = parseInt(second, 10);
 
     if (major > 0x00FF0000 || minor > 0x0000FFFF) {
-      console.warn(`Card number exceeds supported range (major: ${major.toString(16)}, minor: ${minor.toString(16)}).`);
+      console.warn(
+        `Card number exceeds supported range (major: 0x${major.toString(16)}, minor: 0x${minor.toString(16)}).`
+      );
     }
     return '' + (major + minor);
   } else {

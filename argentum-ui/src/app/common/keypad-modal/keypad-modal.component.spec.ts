@@ -4,7 +4,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-describe('KeypadModalComponent', () => {
+xdescribe('KeypadModalComponent', () => {
   let component: KeypadModalComponent;
   let fixture: ComponentFixture<KeypadModalComponent>;
   let buttons: DebugElement[];

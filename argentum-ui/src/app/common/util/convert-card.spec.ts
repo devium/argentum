@@ -73,9 +73,20 @@ describe('convertCard', () => {
     expect(convertCard('01234')).toBe('1234');
   });
 
-  it('should throw errors on cards that are out of range', () => {
-    expect(() => convertCard('25600000')).toThrow(new RangeError('Card number exceeds supported range.'));
-    expect(() => convertCard('25565537')).toThrow(new RangeError('Card number exceeds supported range.'));
+  it('should print warnings on cards that are out of major range', () => {
+    console.warn = jasmine.createSpy('log');
+    convertCard('25600000');
+    expect(console.warn).toHaveBeenCalledWith(
+      'Card number exceeds supported range (major: 0x1000000, minor: 0x0).'
+    );
+  });
+
+  it('should print warnings on cards that are out of minor range', () => {
+    console.warn = jasmine.createSpy('log');
+    convertCard('25565537');
+    expect(console.warn).toHaveBeenCalledWith(
+      'Card number exceeds supported range (major: 0xff0000, minor: 0x10001).'
+    );
   });
 
   it('should result in the same string for two different card-bar readers', () => {

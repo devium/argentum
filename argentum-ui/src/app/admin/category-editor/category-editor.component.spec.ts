@@ -12,7 +12,7 @@ class RestServiceStub {
   }
 }
 
-describe('CategoryEditorComponent', () => {
+xdescribe('CategoryEditorComponent', () => {
   let component: CategoryEditorComponent;
   let fixture: ComponentFixture<CategoryEditorComponent>;
 
