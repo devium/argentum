@@ -8,7 +8,7 @@ import { MessageComponent } from '../common/message/message.component';
 })
 export class ScanComponent implements OnInit {
 
-  @ViewChild(MessageComponent)
+  @ViewChild('message')
   message: MessageComponent;
 
   constructor() {

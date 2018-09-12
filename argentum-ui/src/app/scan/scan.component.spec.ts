@@ -1,10 +1,16 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ScanComponent } from './scan.component';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { By } from '@angular/platform-browser';
 
 @Component({selector: 'app-card-bar', template: ''})
-class CardBarStubComponent {}
+class CardBarStubComponent {
+  @Input()
+  fullscreen: boolean;
+  @Input()
+  message: MessageStubComponent;
+}
 
 @Component({selector: 'app-navbar', template: ''})
 class NavbarStubComponent {}
@@ -12,13 +18,19 @@ class NavbarStubComponent {}
 @Component({selector: 'app-message', template: ''})
 class MessageStubComponent {}
 
-xdescribe('ScanComponent', () => {
+describe('ScanComponent', () => {
   let component: ScanComponent;
+  let cardBarComponent: CardBarStubComponent;
   let fixture: ComponentFixture<ScanComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ScanComponent]
+      declarations: [
+        ScanComponent,
+        CardBarStubComponent,
+        NavbarStubComponent,
+        MessageStubComponent
+      ]
     })
       .compileComponents();
   }));
@@ -26,10 +38,20 @@ xdescribe('ScanComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ScanComponent);
     component = fixture.componentInstance;
+    cardBarComponent = fixture.debugElement.query(By.directive(CardBarStubComponent)).componentInstance;
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should use a full screen card bar', () => {
+    expect(cardBarComponent.fullscreen).toBeTruthy();
+  });
+
+  it('should link its message component to the full screen card bar', () => {
+    expect(component.message).toBeDefined();
+    expect(cardBarComponent.message).toBe(component.message);
   });
 });
