@@ -1,7 +1,7 @@
 import { RangePipe } from './range.pipe';
 
-xdescribe('RangePipe', () => {
-  it('create an instance', () => {
+describe('RangePipe', () => {
+  it('should create an instance', () => {
     const pipe = new RangePipe();
     expect(pipe).toBeTruthy();
   });
