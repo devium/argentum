@@ -2,12 +2,10 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { KeypadModalComponent } from './keypad-modal.component';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
 
-xdescribe('KeypadModalComponent', () => {
+describe('KeypadModalComponent', () => {
   let component: KeypadModalComponent;
   let fixture: ComponentFixture<KeypadModalComponent>;
-  let buttons: DebugElement[];
   let b0: any;
   let b1: any;
   let b2: any;
@@ -20,7 +18,7 @@ xdescribe('KeypadModalComponent', () => {
   let b9: any;
   let del: any;
   let period: any;
-  let close: any;
+  let cancel: any;
   let confirm: any;
 
   let display: any;
@@ -39,23 +37,21 @@ xdescribe('KeypadModalComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
 
-    buttons = fixture.debugElement.queryAll(By.css('.btn-primary'));
-    del = buttons[0].nativeElement;
-    b1 = buttons[1].nativeElement;
-    b2 = buttons[2].nativeElement;
-    b3 = buttons[3].nativeElement;
-    b4 = buttons[4].nativeElement;
-    b5 = buttons[5].nativeElement;
-    b6 = buttons[6].nativeElement;
-    b7 = buttons[7].nativeElement;
-    b8 = buttons[8].nativeElement;
-    b9 = buttons[9].nativeElement;
-    period = buttons[10].nativeElement;
-    b0 = buttons[11].nativeElement;
-    close = fixture.debugElement.query(By.css('.btn-secondary')).nativeElement;
-    confirm = buttons[12].nativeElement;
-
-    display = fixture.debugElement.query(By.css('.form-control.keypad-modal-display')).nativeElement;
+    display = fixture.debugElement.query(By.css('#keypadDisplay')).nativeElement;
+    del = fixture.debugElement.query(By.css('#keypadDel')).nativeElement;
+    b0 = fixture.debugElement.query(By.css('#keypad0')).nativeElement;
+    b1 = fixture.debugElement.query(By.css('#keypad1')).nativeElement;
+    b2 = fixture.debugElement.query(By.css('#keypad2')).nativeElement;
+    b3 = fixture.debugElement.query(By.css('#keypad3')).nativeElement;
+    b4 = fixture.debugElement.query(By.css('#keypad4')).nativeElement;
+    b5 = fixture.debugElement.query(By.css('#keypad5')).nativeElement;
+    b6 = fixture.debugElement.query(By.css('#keypad6')).nativeElement;
+    b7 = fixture.debugElement.query(By.css('#keypad7')).nativeElement;
+    b8 = fixture.debugElement.query(By.css('#keypad8')).nativeElement;
+    b9 = fixture.debugElement.query(By.css('#keypad9')).nativeElement;
+    period = fixture.debugElement.query(By.css('#keypadPeriod')).nativeElement;
+    cancel = fixture.debugElement.query(By.css('#keypadCancel')).nativeElement;
+    confirm = fixture.debugElement.query(By.css('#keypadConfirm')).nativeElement;
 
     activeModal = fixture.debugElement.injector.get(NgbActiveModal);
     spyOn(activeModal, 'close');
@@ -67,19 +63,19 @@ xdescribe('KeypadModalComponent', () => {
   });
 
   it('should have buttons labelled correctly', () => {
-    expect(b0.textContent).toBe('0');
-    expect(b1.textContent).toBe('1');
-    expect(b2.textContent).toBe('2');
-    expect(b3.textContent).toBe('3');
-    expect(b4.textContent).toBe('4');
-    expect(b5.textContent).toBe('5');
-    expect(b6.textContent).toBe('6');
-    expect(b7.textContent).toBe('7');
-    expect(b8.textContent).toBe('8');
-    expect(b9.textContent).toBe('9');
-    expect(period.textContent).toBe('.');
+    expect(b0.textContent.trim()).toBe('0');
+    expect(b1.textContent.trim()).toBe('1');
+    expect(b2.textContent.trim()).toBe('2');
+    expect(b3.textContent.trim()).toBe('3');
+    expect(b4.textContent.trim()).toBe('4');
+    expect(b5.textContent.trim()).toBe('5');
+    expect(b6.textContent.trim()).toBe('6');
+    expect(b7.textContent.trim()).toBe('7');
+    expect(b8.textContent.trim()).toBe('8');
+    expect(b9.textContent.trim()).toBe('9');
+    expect(period.textContent.trim()).toBe('.');
     expect(del.firstElementChild.className).toContain('fa-caret-square-o-left');
-    expect(close.firstElementChild.className).toContain('fa-close');
+    expect(cancel.firstElementChild.className).toContain('fa-close');
     expect(confirm.firstElementChild.className).toContain('fa-check');
   });
 
@@ -92,12 +88,10 @@ xdescribe('KeypadModalComponent', () => {
     b3.click();
 
     fixture.detectChanges();
-    fixture.whenStable().then(() => {
-      expect(component.display).toBe('108.43');
-      expect(display.textContent).toBe('108.43');
-      component.confirm();
-      expect(activeModal.close).toHaveBeenCalledWith(108.43);
-    });
+    expect(component.display).toBe('108.43');
+    expect(display.textContent).toBe('108.43');
+    component.confirm();
+    expect(activeModal.close).toHaveBeenCalledWith(108.43);
   });
 
   it('should be limited to two decimal places', () => {
@@ -110,24 +104,20 @@ xdescribe('KeypadModalComponent', () => {
     b5.click();
 
     fixture.detectChanges();
-    fixture.whenStable().then(() => {
-      expect(component.display).toBe('438.79');
-      expect(display.textContent).toBe('438.79');
-      component.confirm();
-      expect(activeModal.close).toHaveBeenCalledWith(438.79);
-    });
+    expect(component.display).toBe('438.79');
+    expect(display.textContent).toBe('438.79');
+    component.confirm();
+    expect(activeModal.close).toHaveBeenCalledWith(438.79);
   });
 
   it('should insert a zero if . is pressed first', () => {
     period.click();
 
     fixture.detectChanges();
-    fixture.whenStable().then(() => {
-      expect(component.display).toBe('0.');
-      expect(display.textContent).toBe('0.');
-      component.confirm();
-      expect(activeModal.close).toHaveBeenCalledWith(0);
-    });
+    expect(component.display).toBe('0.');
+    expect(display.textContent).toBe('0.');
+    component.confirm();
+    expect(activeModal.close).toHaveBeenCalledWith(0);
   });
 
   it('should be able to delete characters', () => {
@@ -137,12 +127,10 @@ xdescribe('KeypadModalComponent', () => {
     del.click();
 
     fixture.detectChanges();
-    fixture.whenStable().then(() => {
-      expect(component.display).toBe('1.');
-      expect(display.textContent).toBe('1.');
-      component.confirm();
-      expect(activeModal.close).toHaveBeenCalledWith(1);
-    });
+    expect(component.display).toBe('1.');
+    expect(display.textContent).toBe('1.');
+    component.confirm();
+    expect(activeModal.close).toHaveBeenCalledWith(1);
   });
 
   it('should convert an empty display to 0', () => {
@@ -154,12 +142,10 @@ xdescribe('KeypadModalComponent', () => {
     del.click();
 
     fixture.detectChanges();
-    fixture.whenStable().then(() => {
-      expect(component.display).toBe('');
-      expect(display.textContent).toBe('');
-      component.confirm();
-      expect(activeModal.close).toHaveBeenCalledWith(0);
-    });
+    expect(component.display).toBe('');
+    expect(display.textContent).toBe('');
+    component.confirm();
+    expect(activeModal.close).toHaveBeenCalledWith(0);
   });
 
   it('should be limited to 8 characters', () => {
@@ -175,12 +161,10 @@ xdescribe('KeypadModalComponent', () => {
     b6.click();
 
     fixture.detectChanges();
-    fixture.whenStable().then(() => {
-      expect(component.display).toBe('131239.8');
-      expect(display.textContent).toBe('131239.8');
-      component.confirm();
-      expect(activeModal.close).toHaveBeenCalledWith(131239.8);
-    });
+    expect(component.display).toBe('131239.8');
+    expect(display.textContent).toBe('131239.8');
+    component.confirm();
+    expect(activeModal.close).toHaveBeenCalledWith(131239.8);
   });
 
   it('should do nothing on close', () => {
@@ -192,12 +176,10 @@ xdescribe('KeypadModalComponent', () => {
     b8.click();
     b7.click();
     b6.click();
-    close.click();
+    cancel.click();
 
     fixture.detectChanges();
-    fixture.whenStable().then(() => {
-      expect(activeModal.close).toHaveBeenCalledTimes(0);
-      expect(activeModal.dismiss).toHaveBeenCalled();
-    });
+    expect(activeModal.close).toHaveBeenCalledTimes(0);
+    expect(activeModal.dismiss).toHaveBeenCalled();
   });
 });
