@@ -13,12 +13,12 @@
   </button>
 
   <div class="collapse navbar-collapse" [ngbCollapse]="navbarCollapsed">
-    <ul class="navbar-nav mx-auto text-center">
+    <ul id="navLinks" class="navbar-nav mx-auto text-center">
 
-      <li class="nav-item">
+      <li *ngIf="hasRole(['COAT_CHECK'])" class="nav-item">
         <a
+          id="coatCheck"
           (focus)="$event.target.blur()"
-          *ngIf="hasRole(['COAT_CHECK'])"
           routerLink="/coat_check"
           routerLinkActive="active"
           class="nav-link"
@@ -26,10 +26,10 @@
           Coat check
         </a>
       </li>
-      <li class="nav-item">
+      <li *ngIf="hasRole(['ORDER'])" class="nav-item">
         <a
+          id="order"
           (focus)="$event.target.blur()"
-          *ngIf="hasRole(['ORDER'])"
           routerLink="/order"
           routerLinkActive="active"
           class="nav-link"
@@ -37,20 +37,20 @@
           Order
         </a>
       </li>
-      <li class="nav-item">
+      <li *ngIf="hasRole(['CHECKIN', 'TRANSFER'])" class="nav-item">
         <a
+          id="checkin"
           (focus)="$event.target.blur()"
-          *ngIf="hasRole(['CHECKIN', 'TRANSFER'])"
           routerLink="/checkin"
           routerLinkActive="active" class="nav-link"
         >
           Check-in
         </a>
       </li>
-      <li class="nav-item">
+      <li *ngIf="hasRole(['SCAN'])" class="nav-item">
         <a
+          id="scan"
           (focus)="$event.target.blur()"
-          *ngIf="hasRole(['SCAN'])"
           routerLink="/scan"
           routerLinkActive="active"
           class="nav-link"
@@ -58,10 +58,10 @@
           Scan
         </a>
       </li>
-      <li class="nav-item">
+      <li *ngIf="hasRole(['ADMIN'])" class="nav-item">
         <a
+          id="admin"
           (focus)="$event.target.blur()"
-          *ngIf="hasRole(['ADMIN'])"
           routerLink="/admin"
           routerLinkActive="active"
           class="nav-link"
@@ -71,6 +71,7 @@
       </li>
       <li class="nav-item">
         <a
+          id="logout"
           (focus)="$event.target.blur()"
           routerLink="/logout"
           class="nav-link"

@@ -22,6 +22,11 @@ describe('RoleBasedComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should assume no roles on empty local storage', () => {
+    fixture.detectChanges();
+    expect(component.roles).toEqual([]);
+  });
+
   it('should read roles from local storage', () => {
     spyOn(localStorage, 'getItem').and.callFake((item: string) => {
       return item === 'roles' ? 'ADMIN,SCAN,ORDER' : null;

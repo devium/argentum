@@ -2,7 +2,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
 import { AppComponent } from './app.component';
 import { OrderComponent } from './order/order/order.component';
 import { RestService } from './common/rest-service/rest.service';
@@ -39,7 +38,7 @@ import { OrderHistoryModalComponent } from './order/order-history-modal/order-hi
 import { ConfirmModalComponent } from './common/confirm-modal/confirm-modal.component';
 import { PapaParseModule } from 'ngx-papaparse';
 import { CoatCheckComponent } from './coat-check/coat-check.component';
-import { SimpleTestComponent } from './simple-test/simple-test.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -73,14 +72,13 @@ import { SimpleTestComponent } from './simple-test/simple-test.component';
     StatusEditorComponent,
     OrderHistoryComponent,
     OrderHistoryModalComponent,
-    ConfirmModalComponent,
-    SimpleTestComponent
+    ConfirmModalComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
-    HttpModule,
-    NgbModule.forRoot(),
+    HttpClientModule,
+    NgbModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     PapaParseModule
