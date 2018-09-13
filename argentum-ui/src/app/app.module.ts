@@ -39,6 +39,7 @@ import { OrderHistoryModalComponent } from './order/order-history-modal/order-hi
 import { ConfirmModalComponent } from './common/confirm-modal/confirm-modal.component';
 import { PapaParseModule } from 'ngx-papaparse';
 import { CoatCheckComponent } from './coat-check/coat-check.component';
+import { SimpleTestComponent } from './simple-test/simple-test.component';
 
 @NgModule({
   declarations: [
@@ -72,7 +73,8 @@ import { CoatCheckComponent } from './coat-check/coat-check.component';
     StatusEditorComponent,
     OrderHistoryComponent,
     OrderHistoryModalComponent,
-    ConfirmModalComponent
+    ConfirmModalComponent,
+    SimpleTestComponent
   ],
   imports: [
     BrowserModule,

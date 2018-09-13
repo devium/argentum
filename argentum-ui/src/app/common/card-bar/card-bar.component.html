@@ -13,13 +13,14 @@
     [class.col-sm-4]="!fullscreen"
     [class.col-md-5]="!fullscreen"
   >
-    <span *ngIf="state == scanState.Waiting" [class.h4]="fullscreen">Ready for scan.</span>
-    <span *ngIf="state == scanState.Valid" [class.text-nowrap]="!fullscreen" [class.h4]="fullscreen">
+    <span id="stateWaiting" *ngIf="state == scanState.Waiting" [class.h4]="fullscreen">Ready for scan.</span>
+    <span id="stateValid" *ngIf="state == scanState.Valid" [class.text-nowrap]="!fullscreen" [class.h4]="fullscreen">
         {{guest.name}}
     </span>
-    <span *ngIf="state == scanState.NotFound" [class.h4]="fullscreen">Card number not found.</span>
+    <span id="stateNotFound" *ngIf="state == scanState.NotFound" [class.h4]="fullscreen">Card number not found.</span>
     <div [class.d-inline-block]="!fullscreen">
       <span
+        id="status"
         *ngIf="state == scanState.Valid && status.displayName"
         class="text-center badge badge-light root-size font-weight-normal"
         [style.background-color]="status.color"
@@ -36,10 +37,16 @@
     <div class="row mx-0">
 
       <div class="p-0 text-center" [class.col-4]="!fullscreen" [class.col-12]="fullscreen" [class.my-3]="fullscreen">
-        <span *ngIf="state == scanState.Valid" class="align-middle text-white" [class.h3]="fullscreen">
+        <span id="balance" *ngIf="state == scanState.Valid" class="align-middle text-white" [class.h3]="fullscreen">
           €{{guest.balance | number:'1.2-2'}}
         </span>
-        <span *ngIf="state != scanState.Valid && fullscreen" class="m-0 h3 d-block">&#x200b;</span>
+        <span
+          id="balancePadFullscreen"
+          *ngIf="state != scanState.Valid && fullscreen"
+          class="m-0 h3 d-block"
+        >
+          &#x200b;
+        </span>
       </div>
 
       <div
@@ -49,7 +56,7 @@
         [class.flex-first]="fullscreen"
       >
         <div class="progress mx-auto h-100 align-items-center" [class.progress-lg]="fullscreen">
-          <span class="w-100 m-auto text-white" [class.root-size]="!fullscreen" [class.h3]="fullscreen">
+          <span id="card" class="w-100 m-auto text-white" [class.root-size]="!fullscreen" [class.h3]="fullscreen">
             {{card}}
           </span>
           <div
@@ -62,13 +69,25 @@
       </div>
 
       <div class="p-0 text-center" [class.col-4]="!fullscreen" [class.col-12]="fullscreen" [class.my-3]="fullscreen">
-        <span *ngIf="state == scanState.Valid && !fullscreen" class="align-middle text-white">
+        <span
+          id="bonus"
+          *ngIf="state == scanState.Valid && !fullscreen"
+          class="align-middle text-white"
+        >
           + €{{guest.bonus | number:'1.2-2'}}
         </span>
-        <span *ngIf="fullscreen && state == scanState.Valid && guest.bonus > 0" class="align-middle text-white h4">
+        <span
+          id="bonusFullscreen"
+          *ngIf="fullscreen && state == scanState.Valid && guest.bonus > 0"
+          class="align-middle text-white h4"
+        >
           + €{{guest.bonus | number:'1.2-2'}} Bonus
         </span>
-        <span *ngIf="fullscreen && (state != scanState.Valid || guest.bonus == 0) " class="m-0 h4 d-block">
+        <span
+          id="bonusPadFullscreen"
+          *ngIf="fullscreen && (state != scanState.Valid || guest.bonus == 0)"
+          class="m-0 h4 d-block"
+        >
           &#x200b;
         </span>
       </div>
@@ -78,6 +97,12 @@
 
 </div>
 
-<app-order-history *ngIf="fullscreen" [message]="message" class="flex-grow-1 d-flex flex-column"></app-order-history>
+<app-order-history
+  #orderHistory
+  *ngIf="fullscreen"
+  [message]="message"
+  class="flex-grow-1 d-flex flex-column"
+>
+</app-order-history>
 
 <div *ngIf="!fullscreen" class="container-fluid card-pad"></div>

@@ -9,7 +9,6 @@ import { convertCard } from '../util/convert-card';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/mergeMap';
@@ -21,6 +20,7 @@ import { Status } from '../model/status';
 import { isDarkBackground } from '../util/is-dark-background';
 import { MessageComponent } from '../message/message.component';
 import { OrderHistoryComponent } from '../order-history/order-history.component';
+import { fromEvent } from 'rxjs';
 
 enum ScanState {
   Waiting,
@@ -54,7 +54,7 @@ export class CardBarComponent implements OnInit, OnDestroy {
   card = '';
   keyboardSub: Subscription;
   guest: Guest = null;
-  status: Status;
+  status: Status = null;
   countdownState = 'empty';
   countdownStream = new Subject();
   countdownSub: Subscription;
@@ -62,24 +62,27 @@ export class CardBarComponent implements OnInit, OnDestroy {
   active = true;
   statuses: Status[] = [];
 
+  flushInputTimeout = 500;
+  cardTimeout = 10000;
+
   @Input()
   fullscreen: boolean;
 
   @Input()
   message: MessageComponent;
 
-  @ViewChild(OrderHistoryComponent)
+  @ViewChild('orderHistory')
   orderHistory: OrderHistoryComponent;
 
   constructor(private restService: RestService) {
   }
 
   ngOnInit(): void {
-    this.cardStream = Observable.fromEvent(document, 'keydown')
+    this.cardStream = fromEvent(document, 'keydown')
       .filter((event: KeyboardEvent) => '0123456789'.includes(event.key))
       .flatMap((event: KeyboardEvent) => event.key)
       .scan((acc, char) => acc + char)
-      .debounceTime(500)
+      .debounceTime(this.flushInputTimeout)
       .first()
       .map(card => convertCard(card))
       .repeat();
@@ -87,7 +90,7 @@ export class CardBarComponent implements OnInit, OnDestroy {
     this.keyboardSub = this.cardStream.subscribe(result => this.newNumber(result));
 
     this.countdownSub = this.countdownStream
-      .debounceTime(10000)
+      .debounceTime(this.cardTimeout)
       .subscribe(() => this.setState(ScanState.Waiting));
 
     this.restService.getStatuses()

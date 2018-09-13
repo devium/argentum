@@ -3,6 +3,7 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs/Observable';
 import { convertCard } from '../../common/util/convert-card';
 import { Subscription } from 'rxjs/Subscription';
+import { fromEvent } from 'rxjs';
 
 @Component({
   selector: 'app-card-modal',
@@ -18,7 +19,7 @@ export class CardModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.cardStream = Observable.fromEvent(document, 'keydown')
+    this.cardStream = fromEvent(document, 'keydown')
       .filter((event: KeyboardEvent) => '0123456789'.includes(event.key))
       .flatMap((event: KeyboardEvent) => event.key)
       .scan((acc, char) => acc + char)

@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
+import { fromEvent } from 'rxjs';
 
 @Component({
   selector: 'app-keypad',
@@ -17,7 +17,7 @@ export class KeypadModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.keyStreamSub = Observable.fromEvent(document, 'keydown').subscribe((event: KeyboardEvent) => {
+    this.keyStreamSub = fromEvent(document, 'keydown').subscribe((event: KeyboardEvent) => {
       if (this.captureKeyboard) {
         if (event.keyCode === 8 /* Backspace */) {
           this.deleteChar();
