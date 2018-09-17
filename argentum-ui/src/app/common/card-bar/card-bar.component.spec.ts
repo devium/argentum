@@ -8,6 +8,7 @@ import { STATUSES } from '../rest-service/mock-statuses';
 import { By } from '@angular/platform-browser';
 import createSpyObj = jasmine.createSpyObj;
 import { MessageComponent } from '../message/message.component';
+import createSpy = jasmine.createSpy;
 
 @Component({selector: 'app-order-history', template: ''})
 class OrderHistoryStubComponent {
@@ -105,7 +106,7 @@ describe('CardBarComponent bar mode', () => {
     expect(newNumberSpy).toHaveBeenCalledWith('376');
     expect(newNumberSpy).toHaveBeenCalledTimes(4);
 
-    tick(component.cardTimeout + 10);
+    tick(component.cardTimeout);
   }));
 
   it('should ignore non-numerical input', fakeAsync(() => {
@@ -130,7 +131,7 @@ describe('CardBarComponent bar mode', () => {
     expect(newNumberSpy).toHaveBeenCalledWith('376');
     expect(newNumberSpy).toHaveBeenCalledTimes(1);
 
-    tick(component.cardTimeout + 10);
+    tick(component.cardTimeout);
   }));
 
   it('should display and reset card values properly (no valid number)', fakeAsync(() => {
@@ -160,7 +161,7 @@ describe('CardBarComponent bar mode', () => {
     expect(fixture.debugElement.query(By.css('#balance'))).toBeNull();
     expect(fixture.debugElement.query(By.css('#bonus'))).toBeNull();
 
-    tick(component.cardTimeout + 10);
+    tick(component.cardTimeout);
 
     fixture.detectChanges();
     expect(component.card).toBe('');
@@ -179,7 +180,7 @@ describe('CardBarComponent bar mode', () => {
     fixture.detectChanges();
     tick();
 
-    const inputs = '8102162'.split('').map((digit: string) => new KeyboardEvent('keydown', {'key': digit}));
+    const inputs = '12341234'.split('').map((digit: string) => new KeyboardEvent('keydown', {'key': digit}));
 
     for (const input of inputs) {
       document.dispatchEvent(input);
@@ -201,7 +202,7 @@ describe('CardBarComponent bar mode', () => {
     expect(fixture.debugElement.query(By.css('#balance')).nativeElement.textContent.trim()).toBe('€10.00');
     expect(fixture.debugElement.query(By.css('#bonus')).nativeElement.textContent.trim()).toBe('+ €5.00');
 
-    tick(component.cardTimeout + 10);
+    tick(component.cardTimeout);
 
     fixture.detectChanges();
     expect(component.card).toBe('');
@@ -220,7 +221,7 @@ describe('CardBarComponent bar mode', () => {
     fixture.detectChanges();
     tick();
 
-    const inputs = '8102162'.split('').map((digit: string) => new KeyboardEvent('keydown', {'key': digit}));
+    const inputs = '12341234'.split('').map((digit: string) => new KeyboardEvent('keydown', {'key': digit}));
 
     for (const input of inputs) {
       document.dispatchEvent(input);
@@ -230,7 +231,45 @@ describe('CardBarComponent bar mode', () => {
 
     fixture.detectChanges();
     expect(fixture.debugElement.query(By.css('#status')).nativeElement.textContent.trim()).toBe('default');
-    tick(component.cardTimeout + 10);
+    tick(component.cardTimeout);
+  }));
+
+  it('should ignore scans while disabled', fakeAsync(() => {
+    fixture.detectChanges();
+    component.active = false;
+    const inputs = [
+      new KeyboardEvent('keydown', {'key': '3'}),
+      new KeyboardEvent('keydown', {'key': '7'}),
+      new KeyboardEvent('keydown', {'key': '6'})
+    ];
+
+    for (const input of inputs) {
+      document.dispatchEvent(input);
+      tick(10);
+    }
+    tick(component.flushInputTimeout);
+
+    fixture.detectChanges();
+
+    expect(component.card).toBe('');
+    expect(component.guest).toBeNull();
+    expect(component.state).toBe(component.scanState.Waiting);
+
+    component.active = true;
+
+    for (const input of inputs) {
+      document.dispatchEvent(input);
+      tick(10);
+    }
+    tick(component.flushInputTimeout);
+
+    fixture.detectChanges();
+
+    expect(component.card).toBe('376');
+    expect(component.guest).toBeNull();
+    expect(component.state).toBe(component.scanState.NotFound);
+
+    tick(component.cardTimeout);
   }));
 });
 
@@ -263,6 +302,11 @@ describe('CardBarComponent fullscreen mode', () => {
     component = fixture.componentInstance;
     component.fullscreen = true;
     component.message = messageComponent as MessageComponent;
+
+    restService.getGuestByCard.and.callFake((card: string) => Promise.resolve(
+      GUESTS.find(guest => guest.card === card)
+    ));
+    restService.getStatuses.and.returnValue(Promise.resolve(STATUSES));
   });
 
   it('should create', () => {
@@ -277,4 +321,30 @@ describe('CardBarComponent fullscreen mode', () => {
     expect(component.message).toBeDefined();
     expect(orderHistoryComponent.message).toBe(component.message);
   });
+
+  it('should trigger an order history request on scan', fakeAsync(() => {
+    fixture.detectChanges();
+    tick();
+
+    const orderHistoryComponent = fixture.debugElement.query(By.directive(OrderHistoryStubComponent)).componentInstance;
+    orderHistoryComponent.clear = createSpy('clear');
+    orderHistoryComponent.getOrderHistory = createSpy('getOrderHistory');
+
+    const inputs = '12341234'.split('').map((digit: string) => new KeyboardEvent('keydown', {'key': digit}));
+
+    for (const input of inputs) {
+      document.dispatchEvent(input);
+      tick(10);
+    }
+    tick(component.flushInputTimeout);
+
+    expect(orderHistoryComponent.clear).not.toHaveBeenCalled();
+    expect(orderHistoryComponent.getOrderHistory).toHaveBeenCalledWith(GUESTS[1]);
+
+    document.dispatchEvent(new KeyboardEvent('keydown', {'key': '5'}));
+    tick(component.flushInputTimeout);
+
+    expect(orderHistoryComponent.clear).toHaveBeenCalled();
+    tick(component.cardTimeout);
+  }));
 });

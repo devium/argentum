@@ -50,7 +50,7 @@ export class OrderHistoryComponent implements OnInit {
     this.orders = null;
   }
 
-  cancelOrderItem(orderItem: OrderItem) {
+  cancelOrderItem(order: Order, orderItem: OrderItem) {
     const confirmModal = this.modalService.open(ConfirmModalComponent, { backdrop: 'static' });
     const confirmModalComponent = <ConfirmModalComponent>confirmModal.componentInstance;
 
@@ -63,23 +63,25 @@ export class OrderHistoryComponent implements OnInit {
     confirmModal.result
       .then(() => {
         orderItem.cancelled += 1;
+        order.update();
         this.restService.cancelOrderItem(orderItem)
           .then(() => {
             this.message.success(`
                 Refunded <b>${this.guest.name}</b>
-                with <b>${orderItem.product.price.toFixed(2)}</b>
+                with <b>€${orderItem.product.price.toFixed(2)}</b>
                 for one <b>${orderItem.product.name}</b>.
             `);
-            this.refresh();
           })
-          .catch(reason => this.message.error(reason));
+          .catch(reason => {
+            this.message.error(reason);
+            this.refresh();
+          });
       })
       .catch(() => void(0));
   }
 
   cancelCustom(order: Order) {
     const keypadModal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
-    const keypadModalComponent = <KeypadModalComponent>keypadModal.componentInstance;
 
     keypadModal.result
       .then((customCancelled: number) => {
@@ -90,27 +92,29 @@ export class OrderHistoryComponent implements OnInit {
         confirmModalComponent.message = `
           Are you sure you want to refund <b>${this.guest.name}</b>
           with <b>€${customCancelled.toFixed(2)}</b>
-          for a custom order?</b>
+          for a custom order?
         `;
 
         confirmModal.result
           .then(() => {
             order.customCancelled += customCancelled;
+            order.update();
             this.restService.cancelCustom(order)
               .then(() => {
                 this.message.success(`
                   Refunded <b>${this.guest.name}</b>
-                  with <b>${customCancelled.toFixed(2)}</b>
-                  for a custom order.</b>.
+                  with <b>€${customCancelled.toFixed(2)}</b>
+                  for a custom order.
                 `);
-                this.refresh();
               })
-              .catch(reason => this.message.error(reason));
+              .catch(reason => {
+                this.message.error(reason);
+                this.refresh();
+              });
           })
           .catch(() => void(0));
       })
       .catch(() => void(0));
   }
-
 
 }

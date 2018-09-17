@@ -18,7 +18,7 @@ export const GUESTS: Guest[] = [
     name: 'James the Sunderer',
     mail: 'jimmy@cherpcherp.com',
     status: 'default',
-    checkedIn: new Date('2017-04-01T22:13:18'),
+    checkedIn: new Date('2018-12-31T22:00:00'),
     card: '8102162', // 12341234
     balance: 10,
     bonus: 5

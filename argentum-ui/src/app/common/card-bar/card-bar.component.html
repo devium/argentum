@@ -41,7 +41,6 @@
           €{{guest.balance | number:'1.2-2'}}
         </span>
         <span
-          id="balancePadFullscreen"
           *ngIf="state != scanState.Valid && fullscreen"
           class="m-0 h3 d-block"
         >
@@ -77,14 +76,14 @@
           + €{{guest.bonus | number:'1.2-2'}}
         </span>
         <span
-          id="bonusFullscreen"
+          id="bonus-fullscreen"
           *ngIf="fullscreen && state == scanState.Valid && guest.bonus > 0"
           class="align-middle text-white h4"
         >
           + €{{guest.bonus | number:'1.2-2'}} Bonus
         </span>
         <span
-          id="bonusPadFullscreen"
+          id="bonus-pad-fullscreen"
           *ngIf="fullscreen && (state != scanState.Valid || guest.bonus == 0)"
           class="m-0 h4 d-block"
         >
