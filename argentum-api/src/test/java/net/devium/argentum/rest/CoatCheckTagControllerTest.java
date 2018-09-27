@@ -1,6 +1,5 @@
 package net.devium.argentum.rest;
 
-import com.google.common.collect.ImmutableList;
 import net.devium.argentum.jpa.*;
 import org.junit.After;
 import org.junit.Before;
@@ -261,6 +260,41 @@ public class CoatCheckTagControllerTest {
     }
 
     @Test
+    public void testRegisterTagsEmpty() throws Exception {
+        GuestEntity guest1 = guestRepository.save(new GuestEntity(
+                "someCode",
+                "someName",
+                "someMail",
+                "someStatus",
+                null,
+                null,
+                new BigDecimal(3.00),
+                new BigDecimal(1.00)
+        ));
+        guest1 = guestRepository.save(guest1);
+        coatCheckTagRepository.save(new CoatCheckTagEntity(5, new Date(), guest1));
+
+        String body = "{" +
+                "   'ids': []," +
+                "   'guestId': %s," +
+                "   'price': 2.50" +
+                "}";
+        body = String.format(body, guest1.getId());
+        body = body.replace('\'', '"');
+
+        mockMvc.perform(put("/coat_check")
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body)
+        )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isEmpty());
+
+        List<CoatCheckTagEntity> coatCheckTags = coatCheckTagRepository.findAll();
+        assertThat(coatCheckTags, hasSize(1));
+    }
+
+    @Test
     public void testDeregisterTags() throws Exception {
         GuestEntity guest1 = guestRepository.save(new GuestEntity(
                 "someCode",
@@ -302,5 +336,34 @@ public class CoatCheckTagControllerTest {
         assertThat(coatCheckTags, hasSize(2));
         assertThat(coatCheckTags.get(0).getId(), is(5L));
         assertThat(coatCheckTags.get(1).getId(), is(7L));
+    }
+
+    @Test
+    public void testDeregisterTagsEmpty() throws Exception {
+        GuestEntity guest1 = guestRepository.save(new GuestEntity(
+                "someCode",
+                "someName",
+                "someMail",
+                "someStatus",
+                null,
+                null,
+                new BigDecimal(3.00),
+                new BigDecimal(1.00)
+        ));
+        guest1 = guestRepository.save(guest1);
+
+        coatCheckTagRepository.save(new CoatCheckTagEntity(5, new Date(), guest1));
+
+        String body = "[]";
+
+        mockMvc.perform(delete("/coat_check")
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body)
+        )
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        List<CoatCheckTagEntity> coatCheckTags = coatCheckTagRepository.findAll();
+        assertThat(coatCheckTags, hasSize(1));
     }
 }

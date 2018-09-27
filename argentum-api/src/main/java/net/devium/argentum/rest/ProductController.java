@@ -3,7 +3,6 @@ package net.devium.argentum.rest;
 import net.devium.argentum.jpa.*;
 import net.devium.argentum.rest.model.request.ProductRequest;
 import net.devium.argentum.rest.model.response.ProductResponse;
-import net.devium.argentum.rest.model.response.ProductResponseMeta;
 import net.devium.argentum.rest.model.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,8 +51,8 @@ public class ProductController {
             path = "/all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     public ResponseEntity<?> getAllProducts() {
-        List<ProductResponseMeta> products = productRepository.findAll().stream()
-                .map(ProductResponseMeta::from)
+        List<ProductResponse> products = productRepository.findAll().stream()
+                .map(ProductResponse::from)
                 .collect(Collectors.toList());
 
         return Response.ok(products);
@@ -128,11 +127,9 @@ public class ProductController {
         }
 
         // All categories and ranges are known. Updated products with changed name or price will be created anew.
-        List<ProductResponse> response = productRepository.save(mergedProducts).stream()
-                .map(ProductResponse::from)
-                .collect(Collectors.toList());
+        productRepository.save(mergedProducts);
 
-        return Response.ok(response);
+        return ResponseEntity.noContent().build();
     }
 
     @RequestMapping(method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)

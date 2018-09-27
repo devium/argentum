@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Config } from '../../common/model/config';
 import { RestService } from '../../common/rest-service/rest.service';
 import { MessageComponent } from '../../common/message/message.component';
-import { ConfigResponse } from '../../common/rest-service/response/config-response';
 import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -58,7 +57,7 @@ export class ConfigEditorComponent implements OnInit {
 
   save() {
     this.restService.setConfig(this.config.edited)
-      .then((response: ConfigResponse) => {
+      .then(() => {
         this.message.success('Config saved successfully.');
         this.loadConfig();
       })

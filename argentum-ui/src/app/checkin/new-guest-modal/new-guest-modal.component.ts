@@ -71,17 +71,17 @@ export class NewGuestModalComponent extends RoleBasedComponent implements OnInit
   }
 
   confirm(): void {
-    const guest: Guest = {
-      id: -1,
-      code: null,
-      name: this.name,
-      mail: this.mail,
-      status: this.status ? this.status.internalName : '',
-      checkedIn: new Date(),
-      card: this.card,
-      balance: this.balance,
-      bonus: this.bonus
-    };
+    const guest: Guest = new Guest(
+      -1,
+      null,
+      this.name,
+      this.mail,
+      this.status ? this.status.internalName : '',
+      new Date(),
+      this.card,
+      this.balance,
+      this.bonus
+  );
     this.activeModal.close(guest);
   }
 

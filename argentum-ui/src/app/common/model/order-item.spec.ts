@@ -1,5 +1,5 @@
 import { OrderItem } from './order-item';
-import { TAP_WATER } from '../rest-service/mock-data';
+import { TAP_WATER } from '../rest-service/mocks/mock-products';
 
 describe('OrderItem', () => {
   it('should create and validate valid redundant values', () => {

@@ -3,10 +3,8 @@ import { CardBarComponent } from '../common/card-bar/card-bar.component';
 import { MessageComponent } from '../common/message/message.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RestService } from '../common/rest-service/rest.service';
-import { Product } from '../common/model/product';
 import { CoatCheckTag } from '../common/model/coat-check-tag';
 import { Guest } from '../common/model/guest';
-import { CoatCheckTagResponse, toCoatCheckTag } from '../common/rest-service/response/coat-check-tag-response';
 
 class EditorTag extends CoatCheckTag {
   flaggedForRemoval = false;
@@ -26,6 +24,9 @@ class EditorTag extends CoatCheckTag {
   styleUrls: ['./coat-check.component.scss']
 })
 export class CoatCheckComponent implements OnInit {
+
+  constructor(private restService: RestService, private modalService: NgbModal) {
+  }
   readonly MAX_ID = 999;
 
   free_page_size: number;
@@ -49,7 +50,8 @@ export class CoatCheckComponent implements OnInit {
   @ViewChild(CardBarComponent)
   cardBar: CardBarComponent;
 
-  constructor(private restService: RestService, private modalService: NgbModal) {
+  static getPaginated<T>(data: T[], pageSize: number, page: number): T[] {
+    return data.slice(pageSize * (page - 1), pageSize * page);
   }
 
   ngOnInit() {
@@ -80,8 +82,12 @@ export class CoatCheckComponent implements OnInit {
     }
   }
 
-  getPaginated(data: any[], pageSize: number, page: number): Product[] {
-    return data.slice(pageSize * (page - 1), pageSize * page);
+  getPaginatedEditorTag(data: EditorTag[], pageSize: number, page: number): EditorTag[] {
+    return CoatCheckComponent.getPaginated(data, pageSize, page);
+  }
+
+  getPaginatedNumber(data: number[], pageSize: number, page: number): number[] {
+    return CoatCheckComponent.getPaginated(data, pageSize, page);
   }
 
   getNumPadItems(count: number, pageSize: number, page: number): number {
@@ -243,13 +249,13 @@ export class CoatCheckComponent implements OnInit {
     }
 
     // Register new tags.
-    let pRegister: Promise<CoatCheckTagResponse[]> = Promise.resolve([]);
+    let pRegister: Promise<CoatCheckTag[]> = Promise.resolve([]);
     if (newTagIds.length > 0) {
       pRegister = this.restService.registerTags(newTagIds, guest, price);
     }
 
     Promise.all([pDelete, pRegister])
-      .then(([{}, response]: [void, CoatCheckTagResponse[]]) => {
+      .then(([{}, response]: [void, CoatCheckTag[]]) => {
         let message = '';
         if (deleteTagIds.length > 0) {
           message += `Deregistered the following tags: <b>${deleteTagIds}</b>.<br>`;
@@ -265,8 +271,8 @@ export class CoatCheckComponent implements OnInit {
 
         // Update saved tags to reflect their saved state.
         this.storedTags = this.storedTags.filter((tag: EditorTag) => tag.time !== null);
-        for (const tagResponse of response) {
-          this.storedTags.push(new EditorTag(toCoatCheckTag(tagResponse)));
+        for (const tag of response) {
+          this.storedTags.push(new EditorTag(tag));
         }
 
         // Update tag views to remove deleted tags and make them available again.

@@ -1,47 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { AdminNavComponent } from './admin-nav.component';
-import { ProductEditorComponent } from '../product-editor/product-editor.component';
-import { CategoryEditorComponent } from '../category-editor/category-editor.component';
-import { RangeEditorComponent } from '../range-editor/range-editor.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { NavbarComponent } from '../../common/navbar/navbar.component';
-import { CATEGORIES, PRODUCTS, PRODUCT_RANGES } from '../../common/rest-service/mock-data';
-import { Category } from '../../common/model/category';
-import { Product } from '../../common/model/product';
-import { ProductRange } from '../../common/model/product-range';
-import { RestService } from '../../common/rest-service/rest.service';
+import { By } from '@angular/platform-browser';
+import { RouterTestingModule } from '@angular/router/testing';
 
-class RestServiceStub {
-  getProductRangesMeta(): Promise<ProductRange[]> {
-    return Promise.resolve(PRODUCT_RANGES);
-  }
-
-  getProducts(): Promise<Product[]> {
-    return Promise.resolve(PRODUCTS);
-  }
-
-  getCategories(): Promise<Category[]> {
-    return Promise.resolve(CATEGORIES);
-  }
-}
-
-xdescribe('AdminNavComponent', () => {
+describe('AdminNavComponent', () => {
   let component: AdminNavComponent;
   let fixture: ComponentFixture<AdminNavComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        AdminNavComponent,
-        ProductEditorComponent,
-        CategoryEditorComponent,
-        RangeEditorComponent,
-        NavbarComponent
-      ],
+      declarations: [AdminNavComponent],
       imports: [
-        NgbModule.forRoot()
-      ],
-      providers: [{ provide: RestService, useClass: RestServiceStub }]
+        NgbModule,
+        RouterTestingModule.withRoutes([])
+      ]
     })
       .compileComponents();
   }));
@@ -54,5 +27,15 @@ xdescribe('AdminNavComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should create links for all admin sites', () => {
+    expect(fixture.debugElement.query(By.css('#adminLinks')).children.length).toBe(8);
+    expect(
+      fixture.debugElement.query(By.css('#adminLinks :nth-child(1) > a')).nativeElement.textContent
+    ).toBe('Dashboard');
+    expect(
+      fixture.debugElement.query(By.css('#adminLinks :nth-child(1) > a')).nativeElement.href
+    ).toBe(window.location.origin + '/admin/dashboard');
   });
 });

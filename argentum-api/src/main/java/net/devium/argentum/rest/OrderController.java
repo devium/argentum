@@ -122,7 +122,7 @@ public class OrderController extends AbstractBalanceController {
         String eventDescription = String.format("order #%s", newOrder.getId());
         balanceEventRepository.save(new BalanceEventEntity(guest, time, total.negate(), eventDescription));
 
-        return Response.ok(OrderResponse.from(newOrder));
+        return ResponseEntity.noContent().build();
     }
 
     @RequestMapping(
@@ -137,7 +137,7 @@ public class OrderController extends AbstractBalanceController {
         Set<CancelOrderItemRequest> orderItemsCancelled = new HashSet<>();
 
         for (CancelOrderItemRequest orderItem : orderItems) {
-            if (orderItem.getCustomTotal() == null) {
+            if (orderItem.getCustomCancelled() == null) {
                 orderItemsCancelled.add(orderItem);
             } else {
                 orderCustomCancelled.add(orderItem);
@@ -162,7 +162,7 @@ public class OrderController extends AbstractBalanceController {
             }
 
             // Check if the cancelled amount is already included in the order's cancelled amount.
-            if (orderItemRequest.getCustomTotal().compareTo(order.getCustomCancelled()) <= 0) {
+            if (orderItemRequest.getCustomCancelled().compareTo(order.getCustomCancelled()) <= 0) {
                 continue;
             }
 
@@ -175,7 +175,7 @@ public class OrderController extends AbstractBalanceController {
             }
             // Update custom cancelled amount.
             BigDecimal customTotal = order.getTotal().subtract(orderItemTotal);
-            BigDecimal newCustomCancelled = customTotal.min(orderItemRequest.getCustomTotal());
+            BigDecimal newCustomCancelled = customTotal.min(orderItemRequest.getCustomCancelled());
             BigDecimal refund = newCustomCancelled.subtract(order.getCustomCancelled());
             order.setCustomCancelled(newCustomCancelled);
 

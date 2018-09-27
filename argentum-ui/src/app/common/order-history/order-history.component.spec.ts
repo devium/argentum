@@ -3,16 +3,15 @@ import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core
 import { OrderHistoryComponent } from './order-history.component';
 import createSpyObj = jasmine.createSpyObj;
 import { RestService } from '../rest-service/rest.service';
-import { GUESTS } from '../rest-service/mock-guests';
+import { GUESTS } from '../rest-service/mocks/mock-guests';
 import { Guest } from '../model/guest';
 import { Order } from '../model/order';
 import { OrderItem } from '../model/order-item';
-import { COFFEE, COKE, PEPSI } from '../rest-service/mock-data';
+import { COFFEE, COKE, PEPSI } from '../rest-service/mocks/mock-products';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { By } from '@angular/platform-browser';
 import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component';
 import { KeypadModalComponent } from '../keypad-modal/keypad-modal.component';
-import Spy = jasmine.Spy;
 
 
 class ConfirmModalStubComponent {

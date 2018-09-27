@@ -4,13 +4,13 @@ import net.devium.argentum.jpa.OrderItemEntity;
 
 public class OrderItemResponse {
     private final long id;
-    private final long productId;
+    private final long product;
     private final int quantity;
     private final int cancelled;
 
-    private OrderItemResponse(long id, long productId, int quantity, int cancelled) {
+    private OrderItemResponse(long id, long product, int quantity, int cancelled) {
         this.id = id;
-        this.productId = productId;
+        this.product = product;
         this.quantity = quantity;
         this.cancelled = cancelled;
     }
@@ -28,8 +28,8 @@ public class OrderItemResponse {
         return id;
     }
 
-    public long getProductId() {
-        return productId;
+    public long getProduct() {
+        return product;
     }
 
     public int getQuantity() {

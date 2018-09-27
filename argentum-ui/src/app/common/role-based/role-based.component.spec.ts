@@ -42,8 +42,8 @@ describe('RoleBasedComponent', () => {
     fixture.detectChanges();
     expect(component.hasRole(['ADMIN'])).toBeTruthy();
     expect(component.hasRole(['SCAN'])).toBeTruthy();
-    expect(component.hasRole(['CHECKIN', 'SCAN'])).toBeTruthy();
-    expect(component.hasRole(['CHECKIN'])).toBeFalsy();
-    expect(component.hasRole(['CHECKIN', 'ALL_RANGES'])).toBeFalsy();
+    expect(component.hasRole(['RECEPTION', 'SCAN'])).toBeTruthy();
+    expect(component.hasRole(['RECEPTION'])).toBeFalsy();
+    expect(component.hasRole(['RECEPTION', 'ALL_RANGES'])).toBeFalsy();
   });
 });

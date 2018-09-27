@@ -1,18 +1,15 @@
 import { Injectable } from '@angular/core';
-import { Headers, Http, URLSearchParams } from '@angular/http';
 import { Product } from '../model/product';
 import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/map';
 import { ProductRange } from '../model/product-range';
 import { Category } from '../model/category';
 import { Guest } from '../model/guest';
-import { RawOrder } from '../model/raw-order';
 import { Statistics } from '../model/statistics';
 import { environment } from '../../../environments/environment';
-import { ProductResponse, toProductEager } from './response/product-response';
+import { ProductResponse, toProduct } from './response/product-response';
 import { fromProduct } from './request/product-request';
-import { ProductRangeResponseMeta, toProductRangeMeta } from './response/product-range-response-meta';
-import { ProductRangeResponseEager, toProductRangeEager } from './response/product-range-response-eager';
+import { ProductRangeResponse, toProductRange } from './response/product-range-response';
 import { fromProductRange } from './request/product-range-request';
 import { CategoryResponse, toCategory } from './response/category-response';
 import { fromCategory } from './request/category-request';
@@ -21,7 +18,7 @@ import { GuestResponsePaginated } from './response/guest-response-paginated';
 import { fromGuest } from './request/guest-request';
 import { StatisticsResponse, toStatistics } from './response/statistics-response';
 import { OrderResponse, toOrder } from './response/order-response';
-import { fromOrder } from './request/order-request';
+import { fromItems } from './request/order-request';
 import { toUser, UserResponse } from './response/user-response';
 import { TokenResponse } from './response/token-response';
 import { User } from '../model/user';
@@ -35,254 +32,287 @@ import { fromStatus } from './request/status-request';
 import { Status } from '../model/status';
 import { StatusResponse, toStatus } from './response/status-response';
 import { Order } from '../model/order';
-import { ProductResponseMeta, toProductMeta } from './response/product-response-meta';
 import { OrderItem } from '../model/order-item';
 import { cancelFromOrder, cancelFromOrderItem } from './request/cancel-order-item-request';
 import { CoatCheckTagResponse, toCoatCheckTag } from './response/coat-check-tag-response';
 import { fromCoatCheckTagIds } from './request/coat-check-tags-request';
 import { CoatCheckTag } from '../model/coat-check-tag';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { Message } from '../model/message';
 
 @Injectable()
 export class RestService {
-  private readonly apiUrl = environment.apiUrl;
+  // Note: requests that contain an empty array are OK. Backend is supposed to handle those.
+  readonly apiUrl = environment.apiUrl;
 
-  constructor(private http: Http) {
+  constructor(private http: HttpClient) {
   }
 
-  private static prepareJsonHeaders(): Headers {
-    return new Headers({
+  readonly authOptions = {
+    headers: new HttpHeaders({
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    })
+  };
+
+  readonly authJsonOptions = {
+    headers: new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('token')}`
-    });
-  }
+    })
+  };
 
-  private static prepareHeaders(): Headers {
-    return new Headers({
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
-    });
-  }
-
-  private static handleError(error: any): Promise<any> {
+  private static handleError(error: HttpErrorResponse): Promise<any> {
     console.error('An API error occurred.', error);
-    const body = error.json();
-    if (error.status === 0) {
-      return Promise.reject('No response from backend.');
+    if (error.status === 400 && error.error.error === 'invalid_grant') {
+      return Promise.reject('Invalid username or password.');
     }
-    return Promise.reject(
-      `Error code ${error.status}:${body.error ? ' ' + body.error : ''}` +
-      `${body.message ? ' (' + body.message + ')' : ''}`
+    if (error.status === 0) {
+      return Promise.reject('No response from backend. Is the API server running?');
+    }
+    return Promise.reject(error.message);
+  }
+
+  private static checkMessage<T>(message: Message<T>): Promise<T> {
+    if (message.data === null || message.error !== null) {
+      // An erroneous response object that is not flagged as an HTTP error should not happen but just to be safe, we
+      // wrap it in an HttpErrorResponse to be handled by the usual error handler.
+      return Promise.reject(new HttpErrorResponse({
+        error: { status: 0, name: 'Unknown error', message: message.error }
+      }));
+    }
+    return Promise.resolve(message.data);
+  }
+
+  updateToken() {
+    this.authOptions.headers = this.authOptions.headers.set(
+      'Authorization', `Bearer ${localStorage.getItem('token')}`
+    );
+    this.authJsonOptions.headers = this.authJsonOptions.headers.set(
+      'Authorization', `Bearer ${localStorage.getItem('token')}`
     );
   }
 
   // /coat_check
 
   getGuestCoatCheckTags(guest: Guest): Promise<CoatCheckTag[]> {
-    return this.http.get(`${this.apiUrl}/guests/${guest.id}/coat_check_tags`, { headers: RestService.prepareHeaders() })
+    return this.http.get<Message<CoatCheckTagResponse[]>>(
+      `${this.apiUrl}/guests/${guest.id}/coat_check_tags`,
+      this.authOptions
+    )
       .toPromise()
-      .then(response => response.json().data as CoatCheckTagResponse[])
-      .catch(RestService.handleError)
-      .then((tags: CoatCheckTagResponse[]) => tags.map(toCoatCheckTag));
+      .then(RestService.checkMessage)
+      .then((tags: CoatCheckTagResponse[]) => tags.map(toCoatCheckTag))
+      .catch(RestService.handleError);
   }
 
   getAllCoatCheckTags(): Promise<number[]> {
-    return this.http.get(`${this.apiUrl}/coat_check`, { headers: RestService.prepareHeaders() })
+    return this.http.get<Message<number[]>>(
+      `${this.apiUrl}/coat_check`,
+      this.authOptions
+    )
       .toPromise()
-      .then(response => response.json().data as number[])
+      .then(RestService.checkMessage)
       .catch(RestService.handleError);
   }
 
   deregisterTags(tagIds: number[]): Promise<void> {
-    return this.http.delete(`${this.apiUrl}/coat_check`, { body: tagIds, headers: RestService.prepareJsonHeaders() })
+    return this.http.request(
+      'delete',
+      `${this.apiUrl}/coat_check`,
+      Object.assign({}, this.authJsonOptions, { body: tagIds })
+    )
       .toPromise()
-      .then(() => void(0))
       .catch(RestService.handleError);
   }
 
-  registerTags(tagIds: number[], guest: Guest, price: number): Promise<CoatCheckTagResponse[]> {
+  registerTags(tagIds: number[], guest: Guest, price: number): Promise<CoatCheckTag[]> {
     const body = fromCoatCheckTagIds(tagIds, guest, price);
-    return this.http.put(`${this.apiUrl}/coat_check`, body, { headers: RestService.prepareJsonHeaders() })
+    return this.http.put<Message<CoatCheckTagResponse[]>>(
+      `${this.apiUrl}/coat_check`,
+      body,
+      this.authJsonOptions
+    )
       .toPromise()
-      .then(response => response.json().data as CoatCheckTagResponse[])
+      .then(RestService.checkMessage)
+      .then((response: CoatCheckTagResponse[]) => response.map(toCoatCheckTag))
       .catch(RestService.handleError);
   }
 
   // /products
 
-  private getProductsRaw(): Promise<ProductResponse[]> {
-    return this.http.get(`${this.apiUrl}/products`, { headers: RestService.prepareJsonHeaders() })
+  getProducts(): Promise<Product[]> {
+    return this.http.get<Message<ProductResponse[]>>(
+      `${this.apiUrl}/products`,
+      this.authJsonOptions
+    )
       .toPromise()
-      .then(response => response.json().data as ProductResponse[])
+      .then(RestService.checkMessage)
+      .then((products: ProductResponse[]) => products.map(toProduct))
       .catch(RestService.handleError);
   }
 
-  private getAllProductsRaw(): Promise<ProductResponseMeta[]> {
+  getAllProducts(): Promise<Product[]> {
     // Includes legacy products.
-    return this.http.get(`${this.apiUrl}/products/all`, { headers: RestService.prepareJsonHeaders() })
+    return this.http.get<Message<ProductResponse[]>>(
+      `${this.apiUrl}/products/all`,
+      this.authJsonOptions
+    )
       .toPromise()
-      .then(response => response.json().data as ProductResponseMeta[])
+      .then(RestService.checkMessage)
+      .then((products: ProductResponse[]) => products.map(
+        (product: ProductResponse) => toProduct(product)
+      ))
       .catch(RestService.handleError);
   }
 
-  private getAllProducts(): Promise<Product[]> {
-    return this.getAllProductsRaw()
-      .then((products: ProductResponseMeta[]) => Promise.resolve(
-        products.map((product: ProductResponseMeta) => toProductMeta(product, null))
-      ));
-  }
-
-  mergeProducts(products: Product[]): Promise<ProductResponse[]> {
+  mergeProducts(products: Product[]): Promise<void> {
     const body = products.map(fromProduct);
-    return this.http.post(`${this.apiUrl}/products`, body, { headers: RestService.prepareJsonHeaders() })
+    return this.http.post(
+      `${this.apiUrl}/products`, body,
+      this.authJsonOptions
+    )
       .toPromise()
-      .then(response => response.json().data as ProductResponse[])
       .catch(RestService.handleError);
   }
 
   deleteProducts(products: Product[]): Promise<void> {
     const body = products.map(product => product.id);
 
-    if (products.length === 0) {
-      return Promise.resolve();
-    }
-    return this.http.delete(`${this.apiUrl}/products`, { body, headers: RestService.prepareJsonHeaders() })
+    return this.http.request(
+      'delete',
+      `${this.apiUrl}/products`,
+      Object.assign({}, this.authJsonOptions, { body: body })
+    )
       .toPromise()
-      .then(() => void(0))
       .catch(RestService.handleError);
   }
 
 
   // /ranges
 
-  private getProductRangesRaw(): Promise<ProductRangeResponseMeta[]> {
-    return this.http.get(`${this.apiUrl}/ranges`, { headers: RestService.prepareJsonHeaders() })
+  getProductRanges(): Promise<ProductRangeResponse[]> {
+    return this.http.get<Message<ProductRangeResponse[]>>(
+      `${this.apiUrl}/ranges`,
+      this.authJsonOptions
+    )
       .toPromise()
-      .then(response => response.json().data as ProductRangeResponseMeta[])
+      .then(RestService.checkMessage)
+      .then((ranges: ProductRangeResponse[]) => ranges.map(toProductRange))
       .catch(RestService.handleError);
   }
 
-  getProductRanges(): Promise<ProductRange[]> {
-    return this.getProductRangesRaw()
-      .then((ranges: ProductRangeResponseMeta[]) => Promise.resolve(ranges.map(toProductRangeMeta)));
-  }
-
-  private getProductRangeRaw(range: ProductRange): Promise<ProductRangeResponseEager> {
-    return this.http.get(`${this.apiUrl}/ranges/${range.id}`, { headers: RestService.prepareJsonHeaders() })
+  getRangeProducts(range: ProductRange): Promise<Product[]> {
+    return this.http.get<Message<ProductResponse[]>>(
+      `${this.apiUrl}/ranges/${range.id}`,
+      this.authJsonOptions
+    )
       .toPromise()
-      .then(response => response.json().data as ProductRangeResponseEager)
+      .then(RestService.checkMessage)
+      .then((products: ProductResponse[]) => products.map(toProduct))
       .catch(RestService.handleError);
   }
 
-  getProductRange(range: ProductRange): Promise<ProductRange> {
-    const pCategories = this.getCategoriesRaw();
-    const pRanges = this.getProductRangeRaw(range);
-
-    return Promise.all([pCategories, pRanges])
-      .then((values: any[]) => {
-        const categoriesResponse: CategoryResponse[] = values[0];
-        const rangeResponse: ProductRangeResponseEager = values[1];
-
-        const categories = categoriesResponse.map(toCategory);
-
-        return Promise.resolve(toProductRangeEager(rangeResponse, categories));
-      });
-  }
-
-  mergeProductRanges(productRanges: ProductRange[]): Promise<ProductRangeResponseMeta[]> {
+  mergeProductRanges(productRanges: ProductRange[]): Promise<void> {
     const body = productRanges.map(fromProductRange);
 
-    return this.http.post(`${this.apiUrl}/ranges`, body, { headers: RestService.prepareJsonHeaders() })
+    return this.http.post(
+      `${this.apiUrl}/ranges`,
+      body,
+      this.authJsonOptions
+    )
       .toPromise()
-      .then(response => response.json().data as ProductRangeResponseMeta[])
       .catch(RestService.handleError);
   }
 
   deleteProductRanges(productRanges: ProductRange[]): Promise<void> {
     const body = productRanges.map(range => range.id);
 
-    if (productRanges.length === 0) {
-      return Promise.resolve();
-    }
-    return this.http.delete(this.apiUrl + '/ranges', { body, headers: RestService.prepareJsonHeaders() })
+    return this.http.request(
+      'delete',
+      this.apiUrl + '/ranges',
+      Object.assign({}, this.authJsonOptions, { body: body })
+    )
       .toPromise()
-      .then(() => void(0))
       .catch(RestService.handleError);
   }
 
 
   // /categories
 
-  private getCategoriesRaw(): Promise<CategoryResponse[]> {
-    return this.http.get(`${this.apiUrl}/categories`, { headers: RestService.prepareJsonHeaders() })
+  getCategories(): Promise<Category[]> {
+    return this.http.get<Message<CategoryResponse[]>>(
+      `${this.apiUrl}/categories`,
+      this.authOptions
+    )
       .toPromise()
-      .then(response => response.json().data as CategoryResponse[])
+      .then(RestService.checkMessage)
+      .then((categories: CategoryResponse[]) => categories.map(toCategory))
       .catch(RestService.handleError);
   }
 
-  getCategories(): Promise<Category[]> {
-    return this.getCategoriesRaw()
-      .then((categories: CategoryResponse[]) => Promise.resolve(categories.map(toCategory)));
-  }
-
-  mergeCategories(categories: Category[]): Promise<CategoryResponse[]> {
+  mergeCategories(categories: Category[]): Promise<void> {
     const body = categories.map(fromCategory);
 
-    return this.http.post(`${this.apiUrl}/categories`, body, { headers: RestService.prepareJsonHeaders() })
+    return this.http.post(
+      `${this.apiUrl}/categories`,
+      body,
+      this.authJsonOptions
+    )
       .toPromise()
-      .then(response => response.json().data as CategoryResponse[])
       .catch(RestService.handleError);
   }
 
   deleteCategories(categories: Category[]): Promise<void> {
     const body = categories.map(category => category.id);
 
-    if (categories.length === 0) {
-      return Promise.resolve();
-    }
-    return this.http.delete(`${this.apiUrl}/categories`, { body, headers: RestService.prepareJsonHeaders() })
+    return this.http.request(
+      'delete',
+      `${this.apiUrl}/categories`,
+      Object.assign({}, this.authJsonOptions, { body: body })
+    )
       .toPromise()
-      .then(() => void(0))
       .catch(RestService.handleError);
   }
 
 
   getProductData(): Promise<{ products: Product[], categories: Category[], ranges: ProductRange[] }> {
-    const pProducts = this.getProductsRaw();
-    const pRanges = this.getProductRangesRaw();
-    const pCategories = this.getCategoriesRaw();
+    const pProducts = this.getProducts();
+    const pRanges = this.getProductRanges();
+    const pCategories = this.getCategories();
 
     return Promise.all([pProducts, pRanges, pCategories])
       .then((values: any[]) => {
-        const productsResponse: ProductResponse[] = values[0];
-        const rangesResponse: ProductRangeResponseMeta[] = values[1];
-        const categoriesResponse: CategoryResponse[] = values[2];
+        const products: Product[] = values[0];
+        const ranges: ProductRange[] = values[1];
+        const categories: Category[] = values[2];
 
-        const categories = categoriesResponse.map(response => toCategory(response));
-        const ranges = rangesResponse.map(response => toProductRangeMeta(response));
-        const products = productsResponse.map(response => toProductEager(response, categories, ranges));
-
-        return Promise.resolve({ products, ranges, categories });
+        return { products, ranges, categories };
       });
   }
 
 
   // /guests
 
-  private getGuestByCardRaw(card: string): Promise<GuestResponse> {
-    return this.http.get(`${this.apiUrl}/guests/card/${card}`, { headers: RestService.prepareJsonHeaders() })
+  getGuestByCard(card: string): Promise<Guest> {
+    return this.http.get<Message<GuestResponse>>(
+      `${this.apiUrl}/guests/card/${card}`,
+      this.authOptions
+    )
       .toPromise()
-      .then(response => response.json().data as GuestResponse)
+      .then(RestService.checkMessage)
+      .then((guest: GuestResponse) => toGuest(guest))
       .catch(RestService.handleError);
   }
 
-  getGuestByCard(card: string): Promise<Guest> {
-    return this.getGuestByCardRaw(card)
-      .then((guest: GuestResponse) => Promise.resolve(toGuest(guest)));
-  }
-
-  private getGuestsPaginatedAndFilteredRaw(
-    pageSize: number, page: number, codeLike: string, nameLike: string, mailLike: string, statusLike: string
-  ): Promise<GuestResponsePaginated> {
-    return this.http.get(
+  getGuestsPaginatedAndFiltered(
+    pageSize: number,
+    page: number,
+    codeLike: string,
+    nameLike: string,
+    mailLike: string,
+    statusLike: string
+  ): Promise<{guests: Guest[], guestsTotal: number}> {
+    return this.http.get<Message<GuestResponsePaginated>>(
       `${this.apiUrl}/guests/?` +
       `size=${pageSize}&` +
       `page=${page}&` +
@@ -290,93 +320,99 @@ export class RestService {
       `name=${nameLike}&` +
       `mail=${mailLike}&` +
       `status=${statusLike}`,
-      { headers: RestService.prepareJsonHeaders() }
+      this.authJsonOptions
     )
       .toPromise()
-      .then(response => response.json().data as GuestResponsePaginated)
-      .catch(RestService.handleError);
-  }
-
-  getGuestsPaginatedAndFiltered(
-    pageSize: number, page: number, codeLike: string, nameLike: string, mailLike: string, statusLike: string
-  ): Promise<{ guests: Guest[], guestsTotal: number }> {
-    return this.getGuestsPaginatedAndFilteredRaw(pageSize, page, codeLike, nameLike, mailLike, statusLike)
-      .then((response: GuestResponsePaginated) => Promise.resolve({
+      .then(RestService.checkMessage)
+      .then((response: GuestResponsePaginated) => ({
         guests: response.guests.map(toGuest),
         guestsTotal: response.guestsTotal
-      }));
-  }
-
-  private getGuestsBySearchRaw(field: string, search: string): Observable<GuestResponse[]> {
-    return this.http.get(`${this.apiUrl}/guests/search/${field}/${search}`, { headers: RestService.prepareJsonHeaders() })
-      .map(response => response.json().data as GuestResponse[])
+      }))
       .catch(RestService.handleError);
   }
 
   getGuestsBySearch(field: string, search: string): Observable<Guest[]> {
-    return this.getGuestsBySearchRaw(field, search).map((guests: GuestResponse[]) => guests.map(toGuest));
+    return this.http.get<Message<GuestResponse[]>>(
+      `${this.apiUrl}/guests/search/${field}/${search}`,
+      this.authJsonOptions
+    )
+      .map((response: Message<GuestResponse[]>) => response.data)
+      .map((guests: GuestResponse[]) => guests.map(toGuest))
+      .catch(RestService.handleError);
   }
 
-  mergeGuests(guests: Guest[]): Promise<GuestResponse[]> {
+  mergeGuests(guests: Guest[]): Promise<void> {
     const body = guests.map(fromGuest);
 
-    return this.http.post(`${this.apiUrl}/guests`, body, { headers: RestService.prepareJsonHeaders() })
+    return this.http.post(
+      `${this.apiUrl}/guests`,
+      body,
+      this.authJsonOptions
+    )
       .toPromise()
-      .then(response => response.json().data as GuestResponse[])
       .catch(RestService.handleError);
   }
 
   deleteGuests(): Promise<void> {
-    return this.http.delete(`${this.apiUrl}/guests`, { headers: RestService.prepareJsonHeaders() })
+    return this.http.delete(
+      `${this.apiUrl}/guests`,
+      this.authOptions
+    )
       .toPromise()
-      .then(() => void(0))
       .catch(RestService.handleError);
   }
 
   addBalance(guest: Guest, value: number): Promise<number> {
-    return this.http.put(
+    return this.http.put<Message<number>>(
       `${this.apiUrl}/guests/${guest.id}/balance`,
       value,
-      { headers: RestService.prepareJsonHeaders() }
+      this.authJsonOptions
     )
       .toPromise()
-      .then(response => response.json().data as number)
+      .then(RestService.checkMessage)
       .catch(RestService.handleError);
   }
 
   addBonus(guest: Guest, value: number): Promise<number> {
-    return this.http.put(
+    return this.http.put<Message<number>>(
       `${this.apiUrl}/guests/${guest.id}/bonus`,
       value,
-      { headers: RestService.prepareJsonHeaders() }
+      this.authJsonOptions
     )
       .toPromise()
-      .then(response => response.json().data as number)
+      .then(RestService.checkMessage)
       .catch(RestService.handleError);
   }
 
   registerCard(guest: Guest, card: string): Promise<void> {
-    return this.http.put(`${this.apiUrl}/guests/${guest.id}/card`, card, { headers: RestService.prepareJsonHeaders() })
+    return this.http.put(
+      `${this.apiUrl}/guests/${guest.id}/card`,
+      card,
+      this.authJsonOptions
+    )
       .toPromise()
-      .then(() => void(0))
       .catch(RestService.handleError);
   }
 
   checkIn(guest: Guest): Promise<Date> {
-    return this.http.put(
+    return this.http.put<Message<number>>(
       `${this.apiUrl}/guests/${guest.id}/checkin`,
       null,
-      { headers: RestService.prepareJsonHeaders() }
+      this.authOptions
     )
       .toPromise()
-      .then(response => new Date(response.json().data as number))
+      .then(RestService.checkMessage)
+      .then((checkInDate: number) => new Date(checkInDate))
       .catch(RestService.handleError);
   }
 
   private getOrdersRaw(guest: Guest): Promise<OrderResponse[]> {
-    return this.http.get(`${this.apiUrl}/guests/${guest.id}/orders`, { headers: RestService.prepareJsonHeaders() })
+    return this.http.get<Message<OrderResponse[]>>(
+      `${this.apiUrl}/guests/${guest.id}/orders`,
+      this.authJsonOptions
+    )
       .toPromise()
-      .then(response => response.json().data as OrderResponse[])
+      .then(RestService.checkMessage)
       .catch(RestService.handleError);
   }
 
@@ -391,112 +427,122 @@ export class RestService {
         const productsMap = new Map<number, Product>();
         products.forEach((product: Product) => productsMap[product.id] = product);
 
-        const orders = ordersResponse.map((orderResponse: OrderResponse) => toOrder(orderResponse, productsMap));
-        return Promise.resolve(orders);
+        return ordersResponse.map((orderResponse: OrderResponse) => toOrder(orderResponse, productsMap));
       })
       .catch(RestService.handleError);
   }
 
   // /statuses
 
-  private getStatusesRaw(): Promise<StatusResponse[]> {
-    return this.http.get(`${this.apiUrl}/statuses`, { headers: RestService.prepareJsonHeaders() })
+  getStatuses(): Promise<Status[]> {
+    return this.http.get<Message<StatusResponse[]>>(
+      `${this.apiUrl}/statuses`,
+      this.authOptions
+    )
       .toPromise()
-      .then(response => response.json().data as StatusResponse[])
+      .then(RestService.checkMessage)
+      .then((statuses: StatusResponse[]) => statuses.map(toStatus))
       .catch(RestService.handleError);
   }
 
-  getStatuses(): Promise<Status[]> {
-    return this.getStatusesRaw()
-      .then((statuses: StatusResponse[]) => Promise.resolve(statuses.map(toStatus)));
-  }
-
-  mergeStatuses(statuses: Status[]): Promise<StatusResponse[]> {
+  mergeStatuses(statuses: Status[]): Promise<void> {
     const body = statuses.map(fromStatus);
 
-    return this.http.post(`${this.apiUrl}/statuses`, body, { headers: RestService.prepareJsonHeaders() })
+    return this.http.post(
+      `${this.apiUrl}/statuses`,
+      body,
+      this.authJsonOptions
+    )
       .toPromise()
-      .then(response => response.json().data as StatusResponse[])
       .catch(RestService.handleError);
   }
 
   deleteStatuses(statuses: Status[]): Promise<void> {
     const body = statuses.map(status => status.id);
 
-    if (statuses.length === 0) {
-      return Promise.resolve();
-    }
-    return this.http.delete(`${this.apiUrl}/statuses`, { body, headers: RestService.prepareJsonHeaders() })
+    return this.http.request(
+      'delete',
+      `${this.apiUrl}/statuses`,
+      Object.assign({}, this.authJsonOptions, { body: body })
+    )
       .toPromise()
-      .then(() => void(0))
       .catch(RestService.handleError);
   }
 
 
   // /orders
 
-  placeOrder(order: RawOrder): Promise<OrderResponse> {
-    const body = fromOrder(order);
+  placeOrder(guest: Guest, products: Map<Product, number>): Promise<void> {
+    const body = fromItems(guest, products);
 
-    return this.http.post(`${this.apiUrl}/orders`, body, { headers: RestService.prepareJsonHeaders() })
+    return this.http.post(
+      `${this.apiUrl}/orders`,
+      body,
+      this.authJsonOptions
+    )
       .toPromise()
-      .then(response => response.json().data as OrderResponse)
       .catch(RestService.handleError);
   }
 
   cancelOrderItem(orderItem: OrderItem): Promise<void> {
     const body = [cancelFromOrderItem(orderItem)];
 
-    return this.http.delete(`${this.apiUrl}/orders`, { body, headers: RestService.prepareJsonHeaders() })
+    return this.http.request(
+      'delete',
+      `${this.apiUrl}/orders`,
+      Object.assign({}, this.authJsonOptions, { body: body })
+    )
       .toPromise()
-      .then(() => void(0))
       .catch(RestService.handleError);
   }
 
   cancelCustom(order: Order): Promise<void> {
     const body = [cancelFromOrder(order)];
 
-    return this.http.delete(`${this.apiUrl}/orders`, { body, headers: RestService.prepareJsonHeaders() })
+    return this.http.request(
+      'delete',
+      `${this.apiUrl}/orders`,
+      Object.assign({}, this.authJsonOptions, { body: body })
+    )
       .toPromise()
-      .then(() => void(0))
       .catch(RestService.handleError);
   }
 
 
   // /statistics
 
-  private getStatisticsRaw(): Promise<StatisticsResponse> {
-    return this.http.get(this.apiUrl + '/statistics', { headers: RestService.prepareJsonHeaders() })
+  getStatistics(): Promise<Statistics> {
+    return this.http.get<Message<StatisticsResponse>>(
+      this.apiUrl + '/statistics',
+      this.authOptions
+    )
       .toPromise()
-      .then(response => response.json().data as StatisticsResponse)
+      .then(RestService.checkMessage)
+      .then((stats: StatisticsResponse) => toStatistics(stats))
       .catch(RestService.handleError);
   }
-
-  getStatistics(): Promise<Statistics> {
-    return this.getStatisticsRaw()
-      .then((stats: StatisticsResponse) => Promise.resolve(toStatistics(stats)));
-  }
-
 
   // /users
-  private getUsersRaw(): Promise<UserResponse[]> {
-    return this.http.get(this.apiUrl + '/users', { headers: RestService.prepareJsonHeaders() })
+  getUsers(): Promise<User[]> {
+    return this.http.get<Message<UserResponse[]>>(
+      this.apiUrl + '/users',
+      this.authOptions
+    )
       .toPromise()
-      .then(response => response.json().data as UserResponse[])
+      .then(RestService.checkMessage)
+      .then((users: UserResponse[]) => users.map(toUser))
       .catch(RestService.handleError);
   }
 
-  getUsers(): Promise<User[]> {
-    return this.getUsersRaw()
-      .then((users: UserResponse[]) => Promise.resolve(users.map(toUser)));
-  }
-
-  mergeUsers(users: User[]): Promise<UserResponse[]> {
+  mergeUsers(users: User[]): Promise<void> {
     const body = users.map(fromUser);
 
-    return this.http.post(`${this.apiUrl}/users`, body, { headers: RestService.prepareJsonHeaders() })
+    return this.http.post(
+      `${this.apiUrl}/users`,
+      body,
+      this.authJsonOptions
+    )
       .toPromise()
-      .then(response => response.json().data as UserResponse[])
       .catch(RestService.handleError);
   }
 
@@ -506,37 +552,46 @@ export class RestService {
     if (users.length === 0) {
       return Promise.resolve();
     }
-    return this.http.delete(`${this.apiUrl}/users`, { body, headers: RestService.prepareJsonHeaders() })
+    return this.http.request(
+      'delete',
+      `${this.apiUrl}/users`,
+      Object.assign({}, this.authJsonOptions, { body: body })
+    )
       .toPromise()
-      .then(() => void(0))
       .catch(RestService.handleError);
   }
 
-  getUser(): Promise<UserResponse> {
-    return this.http.get(this.apiUrl + '/users/me', { headers: RestService.prepareJsonHeaders() })
+  getUser(): Promise<User> {
+    return this.http.get<Message<UserResponse>>(
+      this.apiUrl + '/users/me',
+      this.authOptions
+    )
       .toPromise()
-      .then(response => response.json().data as UserResponse)
+      .then(RestService.checkMessage)
+      .then(toUser)
       .catch(RestService.handleError);
   }
 
 
   // /config
-  private getConfigRaw(): Promise<ConfigResponse> {
-    return this.http.get(this.apiUrl + '/config', { headers: RestService.prepareJsonHeaders() })
+  getConfig(): Promise<Config> {
+    return this.http.get<Message<ConfigResponse>>(
+      this.apiUrl + '/config',
+      this.authOptions
+    )
       .toPromise()
-      .then(response => response.json().data as ConfigResponse)
+      .then(RestService.checkMessage)
+      .then((config: ConfigResponse) => toConfig(config))
       .catch(RestService.handleError);
   }
 
-  getConfig(): Promise<Config> {
-    return this.getConfigRaw()
-      .then((config: ConfigResponse) => toConfig(config));
-  }
-
-  setConfig(config: Config): Promise<ConfigResponse> {
-    return this.http.put(this.apiUrl + '/config', fromConfig(config), { headers: RestService.prepareJsonHeaders() })
+  setConfig(config: Config): Promise<void> {
+    return this.http.put(
+      this.apiUrl + '/config',
+      fromConfig(config),
+      this.authJsonOptions
+    )
       .toPromise()
-      .then(response => response.json().data as ConfigResponse)
       .catch(RestService.handleError);
   }
 
@@ -549,16 +604,20 @@ export class RestService {
     params.append('username', username);
     params.append('password', password);
 
-    return this.http.post(this.apiUrl + '/oauth/token', params.toString(), {
-      headers: new Headers({
-        'Authorization': `Basic ${clientEncoded}`,
-        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
-      })
-    })
+    return this.http.post<TokenResponse>(
+      this.apiUrl + '/oauth/token',
+      params.toString(),
+      {
+        headers: new HttpHeaders({
+          'Authorization': `Basic ${clientEncoded}`,
+          'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+        })
+      }
+    )
       .toPromise()
-      .then(response => {
-        const token = response.json() as TokenResponse;
+      .then((token: TokenResponse) => {
         localStorage.setItem('token', token.access_token);
+        this.updateToken();
         return token;
       })
       .catch(RestService.handleError);

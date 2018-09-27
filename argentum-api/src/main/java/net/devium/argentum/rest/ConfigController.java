@@ -58,6 +58,6 @@ public class ConfigController {
 
         configRepository.save(newConfig);
 
-        return getConfig();
+        return ResponseEntity.noContent().build();
     }
 }

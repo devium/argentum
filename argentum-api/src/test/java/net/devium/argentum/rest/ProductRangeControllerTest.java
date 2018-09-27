@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -94,19 +95,10 @@ public class ProductRangeControllerTest {
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/ranges")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(body))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data", hasSize(4)))
-                .andExpect(jsonPath("$.data[0].id", is((int) range1.getId())))
-                .andExpect(jsonPath("$.data[0].name", is("someUpdatedName")))
-                .andExpect(jsonPath("$.data[1].id").isNumber())
-                .andExpect(jsonPath("$.data[1].name", is("someOtherName")))
-                .andExpect(jsonPath("$.data[2].id").isNumber())
-                .andExpect(jsonPath("$.data[2].name", is("someThirdName")))
-                .andExpect(jsonPath("$.data[3].id").isNumber())
-                .andExpect(jsonPath("$.data[3].name", is("")));
+                .andExpect(status().isNoContent());
 
         List<ProductRangeEntity> ranges = productRangeRepository.findAll();
         assertThat(ranges, hasSize(4));
@@ -119,6 +111,22 @@ public class ProductRangeControllerTest {
         assertThat(roles.get(8).getName(), is(String.format("RANGE_%s", ranges.get(1).getId())));
         assertThat(roles.get(9).getName(), is(String.format("RANGE_%s", ranges.get(2).getId())));
         assertThat(roles.get(10).getName(), is(String.format("RANGE_%s", ranges.get(3).getId())));
+    }
+
+    @Test
+    public void testMergeProductRangesEmpty() throws Exception {
+        productRangeRepository.save(new ProductRangeEntity("someName"));
+
+        String body = "[]";
+
+        mockMvc.perform(post("/ranges")
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        List<ProductRangeEntity> ranges = productRangeRepository.findAll();
+        assertThat(ranges, hasSize(1));
     }
 
     @Test
@@ -136,8 +144,8 @@ public class ProductRangeControllerTest {
         String body = String.format("[ %s, %s ]", range1.getId(), range2.getId());
 
         mockMvc.perform(delete("/ranges")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(body))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
@@ -153,13 +161,16 @@ public class ProductRangeControllerTest {
 
     @Test
     public void testDeleteProductEmpty() throws Exception {
+        productRangeRepository.save(new ProductRangeEntity("someName"));
         String body = "[]";
 
         mockMvc.perform(delete("/ranges")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(body))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNoContent());
+
+        assertThat(productRangeRepository.findAll(), hasSize(1));
     }
 
     @Test
@@ -170,8 +181,8 @@ public class ProductRangeControllerTest {
         String body = String.format("[ %s, %s ]", range.getId(), range.getId() + 1);
 
         mockMvc.perform(delete("/ranges")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(body))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
@@ -189,8 +200,8 @@ public class ProductRangeControllerTest {
         String body = String.format("[ %s ]", range.getId());
 
         mockMvc.perform(delete("/ranges")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(body))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
@@ -198,7 +209,7 @@ public class ProductRangeControllerTest {
     }
 
     @Test
-    public void testGetProductRange() throws Exception {
+    public void testGetRangeProducts() throws Exception {
         CategoryEntity category1 = categoryRepository.save(new CategoryEntity("someCategory", "#112233"));
         CategoryEntity category2 = categoryRepository.save(new CategoryEntity("someOtherCategory", "#332211"));
 
@@ -207,12 +218,14 @@ public class ProductRangeControllerTest {
                 "someProduct",
                 new BigDecimal(3.50),
                 category1,
-                ImmutableSet.of(range));
+                ImmutableSet.of(range)
+        );
         ProductEntity product2 = new ProductEntity(
                 "someOtherProduct",
                 new BigDecimal(8.20),
                 category2,
-                ImmutableSet.of(range));
+                ImmutableSet.of(range)
+        );
 
         productRepository.save(product1);
         productRepository.save(product2);
@@ -220,10 +233,9 @@ public class ProductRangeControllerTest {
         mockMvc.perform(get("/ranges/{id}", range.getId()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.id", is((int) range.getId())))
-                .andExpect(jsonPath("$.data.name", is("someName")))
-                .andExpect(jsonPath("$.data.products", hasSize(2)))
-                .andExpect(jsonPath("$.data.products[0].name", is("someProduct")))
-                .andExpect(jsonPath("$.data.products[1].name", is("someOtherProduct")));
+                .andExpect(jsonPath("$.data", hasSize(2)))
+                .andExpect(jsonPath("$.data", containsInAnyOrder(
+                    ImmutableSet.of(hasEntry("id", (int)product1.getId()), hasEntry("id", (int)product2.getId()))
+                )));
     }
 }

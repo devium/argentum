@@ -70,8 +70,7 @@ export class RangeEditorComponent implements OnInit {
   newRange() {
     const newRange = new EditorRange({
       id: -1,
-      name: 'New Product Range',
-      products: []
+      name: 'New Product Range'
     });
     newRange.original = null;
     newRange.updateChanged();

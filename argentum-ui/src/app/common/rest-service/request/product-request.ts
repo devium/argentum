@@ -12,7 +12,7 @@ export function fromProduct(product: Product) {
     id: product.id,
     name: product.name,
     price: product.price,
-    category: product.category ? product.category.id : null,
-    ranges: Array.from(product.ranges.values()).map(range => range.id)
+    category: product.categoryId,
+    ranges: Array.from(product.rangeIds.keys())
   };
 }

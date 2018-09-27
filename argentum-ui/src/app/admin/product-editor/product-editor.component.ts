@@ -16,9 +16,9 @@ class EditorProduct {
 
   constructor(original: Product) {
     this.original = Object.assign({}, original);
-    this.original.ranges = new Set(original.ranges);
+    this.original.rangeIds = new Set(original.rangeIds);
     this.edited = Object.assign({}, original);
-    this.edited.ranges = new Set(original.ranges);
+    this.edited.rangeIds = new Set(original.rangeIds);
     this.displayed = this.edited;
   }
 
@@ -31,7 +31,7 @@ class EditorProduct {
   }
 
   hasChangedCategory(): boolean {
-    return !this.original || this.original.category !== this.edited.category;
+    return !this.original || this.original.categoryId !== this.edited.categoryId;
   }
 
   hasChangedRanges(): boolean {
@@ -40,8 +40,8 @@ class EditorProduct {
     }
 
     let equal = true;
-    this.original.ranges.forEach(range => equal = equal && this.edited.ranges.has(range));
-    this.edited.ranges.forEach(range => equal = equal && this.original.ranges.has(range));
+    this.original.rangeIds.forEach((rangeId: number) => equal = equal && this.edited.rangeIds.has(rangeId));
+    this.edited.rangeIds.forEach((rangeId: number) => equal = equal && this.original.rangeIds.has(rangeId));
     return !equal;
   }
 
@@ -96,16 +96,16 @@ export class ProductEditorComponent implements OnInit {
       .catch(reason => this.message.error(reason));
   }
 
-  setCategory(product: EditorProduct, category: Category) {
-    product.edited.category = category;
+  setCategory(product: EditorProduct, categoryId: number) {
+    product.edited.categoryId = categoryId;
     product.updateChanged();
   }
 
   toggleRange(product: EditorProduct, range: ProductRange) {
-    if (product.edited.ranges.has(range)) {
-      product.edited.ranges.delete(range);
+    if (product.edited.rangeIds.has(range.id)) {
+      product.edited.rangeIds.delete(range.id);
     } else {
-      product.edited.ranges.add(range);
+      product.edited.rangeIds.add(range.id);
     }
     product.updateChanged();
   }
@@ -116,7 +116,7 @@ export class ProductEditorComponent implements OnInit {
 
   reset(product: EditorProduct) {
     product.edited = Object.assign({}, product.original);
-    product.edited.ranges = new Set(product.original.ranges);
+    product.edited.rangeIds = new Set(product.original.rangeIds);
     product.displayed = product.edited;
     product.updateChanged();
   }
@@ -148,8 +148,8 @@ export class ProductEditorComponent implements OnInit {
       id: -1,
       name: 'New Product',
       price: 0.00,
-      category: null,
-      ranges: new Set(),
+      categoryId: null,
+      rangeIds: new Set(),
       legacy: false
     });
     newProduct.original = null;

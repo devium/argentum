@@ -3,8 +3,8 @@ package net.devium.argentum.rest;
 import com.google.common.collect.ImmutableSet;
 import net.devium.argentum.jpa.*;
 import net.devium.argentum.rest.model.request.ProductRangeRequest;
-import net.devium.argentum.rest.model.response.ProductRangeResponseEager;
-import net.devium.argentum.rest.model.response.ProductRangeResponseMeta;
+import net.devium.argentum.rest.model.response.ProductRangeResponse;
+import net.devium.argentum.rest.model.response.ProductResponse;
 import net.devium.argentum.rest.model.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,11 +57,11 @@ public class ProductRangeController {
                     .collect(Collectors.toSet());
         }
 
-        List<ProductRangeResponseMeta> response = productRangeRepository.findAll().stream()
+        List<ProductRangeResponse> response = productRangeRepository.findAll().stream()
                 .filter(range -> roles.contains("ALL_RANGES")
                         || roles.contains("ADMIN")
                         || roles.contains(String.format("RANGE_%s", range.getId())))
-                .map(ProductRangeResponseMeta::from)
+                .map(ProductRangeResponse::from)
                 .collect(Collectors.toList());
 
         return Response.ok(response);
@@ -82,6 +82,7 @@ public class ProductRangeController {
 
         mergedRanges = productRangeRepository.save(mergedRanges);
 
+        // Create new roles for new ranges.
         List<RoleEntity> newRoles = new LinkedList<>();
         mergedRanges.stream()
                 .map(ProductRangeEntity::getId)
@@ -90,22 +91,12 @@ public class ProductRangeController {
 
         roleRepository.save(newRoles);
 
-        List<ProductRangeResponseMeta> response = mergedRanges.stream()
-                .map(ProductRangeResponseMeta::from)
-                .collect(Collectors.toList());
-
-        return Response.ok(response);
+        return ResponseEntity.noContent().build();
     }
 
     @RequestMapping(method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @Transactional
     public ResponseEntity<?> deleteProductRanges(@RequestBody List<Long> rangeIds) {
-        if (rangeIds.isEmpty()) {
-            String message = "No ranges to delete.";
-            LOGGER.info(message);
-            return Response.badRequest(message);
-        }
-
         Set<Long> unknownRanges = new HashSet<>();
         Set<ProductRangeEntity> ranges = new HashSet<>();
 
@@ -158,7 +149,7 @@ public class ProductRangeController {
     }
 
     @RequestMapping(path = "/{rangeId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<?> getProductRange(@PathVariable long rangeId) {
+    public ResponseEntity<?> getRangeProducts(@PathVariable long rangeId) {
         ProductRangeEntity range = productRangeRepository.findOne(rangeId);
 
         if (range == null) {
@@ -167,6 +158,10 @@ public class ProductRangeController {
             return Response.notFound(message);
         }
 
-        return Response.ok(ProductRangeResponseEager.from(range));
+        List<ProductResponse> products = range.getProducts().stream()
+                .map(ProductResponse::from)
+                .collect(Collectors.toList());
+
+        return Response.ok(products);
     }
 }

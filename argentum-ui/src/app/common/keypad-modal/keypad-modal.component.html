@@ -27,7 +27,7 @@
       <button
         (focus)="$event.target.blur()"
         [attr.id]="'keypad' + i"
-        (click)="entry(i)" type="button"
+        (click)="entry('' + i)" type="button"
         class="btn btn-primary btn-block btn-lg"
       >
         {{i}}

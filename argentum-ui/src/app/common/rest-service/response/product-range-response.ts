@@ -1,13 +1,12 @@
 import { ProductRange } from '../../model/product-range';
-export class ProductRangeResponseMeta {
+export class ProductRangeResponse {
   id: number;
   name: string;
 }
 
-export function toProductRangeMeta(response: ProductRangeResponseMeta): ProductRange {
+export function toProductRange(response: ProductRangeResponse): ProductRange {
   return {
     id: response.id,
     name: response.name,
-    products: null
   };
 }

@@ -3,10 +3,10 @@ package net.devium.argentum.rest.model.request;
 import java.math.BigDecimal;
 
 public class CancelOrderItemRequest {
-    // Union order ID if customTotal is used and cancelled is unused.
+    // Union order ID if customCancelled is used and cancelled is unused.
     private Long id;
     private int cancelled;
-    private BigDecimal customTotal;
+    private BigDecimal customCancelled;
 
     public Long getId() {
         return id;
@@ -16,7 +16,7 @@ public class CancelOrderItemRequest {
         return cancelled;
     }
 
-    public BigDecimal getCustomTotal() {
-        return customTotal;
+    public BigDecimal getCustomCancelled() {
+        return customCancelled;
     }
 }

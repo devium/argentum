@@ -61,17 +61,13 @@ export class GuestImportComponent implements OnInit {
           if (!row[this.codeCol] || !row[this.nameCol] || !row[this.statusCol]) {
             return;
           }
-          guests.push({
-            id: -1,
-            code: row[this.codeCol],
-            name: row[this.nameCol],
-            mail: row[this.mailCol],
-            status: row[this.statusCol],
-            checkedIn: null,
-            card: null,
-            balance: 0,
-            bonus: 0
-          });
+          guests.push(new Guest(
+            -1,
+            row[this.codeCol],
+            row[this.nameCol],
+            row[this.mailCol],
+            row[this.statusCol]
+          ));
         });
 
         this.restService.mergeGuests(guests)

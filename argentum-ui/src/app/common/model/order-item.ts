@@ -18,15 +18,21 @@ export class OrderItem {
     this.update();
   }
 
+  private recalculate(): { total: number, totalEffective: number } {
+    const total = this.quantity * this.product.price;
+    const totalEffective = (this.quantity - this.cancelled) * this.product.price;
+    return { total, totalEffective };
+  }
+
   update() {
-    this.total = this.quantity * this.product.price;
-    this.totalEffective = (this.quantity - this.cancelled) * this.product.price;
+    Object.assign(this, this.recalculate());
   }
 
   validate(): boolean {
+    const expected = this.recalculate();
     return (
-      this.total === this.quantity * this.product.price &&
-      this.totalEffective === (this.quantity - this.cancelled) * this.product.price
+      this.total === expected.total &&
+      this.totalEffective === expected.totalEffective
     );
   }
 }

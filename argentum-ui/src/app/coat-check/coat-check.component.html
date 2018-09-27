@@ -20,7 +20,7 @@
       <div class="row-grid-body">
         <!-- Free tag IDs. -->
         <div
-          *ngFor="let tagId of getPaginated(freeIds, free_page_size, freePage)"
+          *ngFor="let tagId of getPaginatedNumber(freeIds, free_page_size, freePage)"
           class="col-free-tag"
         >
           <button
@@ -116,7 +116,7 @@
       <div class="row-grid-body">
         <!-- Stored and to be stored tag buttons. -->
         <div
-          *ngFor="let tag of getPaginated(storedTags, stored_page_size, storedPage)"
+          *ngFor="let tag of getPaginatedEditorTag(storedTags, stored_page_size, storedPage)"
           class="col-stored-tag"
         >
           <button

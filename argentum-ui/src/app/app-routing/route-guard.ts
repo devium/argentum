@@ -1,7 +1,7 @@
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { RestService } from '../common/rest-service/rest.service';
-import { UserResponse } from '../common/rest-service/response/user-response';
+import { User } from '../common/model/user';
 
 @Injectable()
 export class RouteGuard implements CanActivate {
@@ -34,10 +34,10 @@ export class RouteGuard implements CanActivate {
   }
 
   private resolveHome(roles: string[]): string {
-    for (const home_role in this.ROLES_TO_PATH) {
-      if (this.ROLES_TO_PATH.hasOwnProperty(home_role)) {
+    for (const homeRole in this.ROLES_TO_PATH) {
+      if (this.ROLES_TO_PATH.hasOwnProperty(homeRole)) {
         for (const role of roles) {
-          if (role === home_role) {
+          if (role === homeRole) {
             return '/' + this.ROLES_TO_PATH[role][0];
           }
         }
@@ -72,19 +72,19 @@ export class RouteGuard implements CanActivate {
 
     console.log('Getting user information from backend.');
     return this.restService.getUser()
-      .then((user: UserResponse) => {
+      .then((user: User) => {
         console.log(`Roles: ${user.roles}`);
         localStorage.setItem('roles', user.roles.join(','));
 
         if (path === 'home') {
-          const home = this.resolveHome(user.roles);
+          const homePath = this.resolveHome(user.roles);
 
-          if (!home) {
-            console.log(`No home for user roles. Logging out.`)
+          if (!homePath) {
+            console.log(`No home for user roles. Logging out.`);
             this.router.navigate(['/login']);
           } else {
-            console.log(`Redirecting to home ${home}`);
-            this.router.navigate([home]);
+            console.log(`Redirecting to home ${homePath}`);
+            this.router.navigate([homePath]);
           }
           return false;
         }

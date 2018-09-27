@@ -1,5 +1,5 @@
 import { OrderItem } from './order-item';
-import { CAKE, TAP_WATER } from '../rest-service/mock-data';
+import { CAKE, TAP_WATER } from '../rest-service/mocks/mock-products';
 import { Order } from './order';
 
 describe('Order', () => {

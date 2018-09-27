@@ -84,28 +84,29 @@ public class CategoryControllerTest {
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/categories")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(body))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data", hasSize(4)))
-                .andExpect(jsonPath("$.data[0].id", is((int) category1.getId())))
-                .andExpect(jsonPath("$.data[0].name", is("someUpdatedCategory")))
-                .andExpect(jsonPath("$.data[0].color", is("#998877")))
-                .andExpect(jsonPath("$.data[1].id").isNumber())
-                .andExpect(jsonPath("$.data[1].name", is("someOtherCategory")))
-                .andExpect(jsonPath("$.data[1].color", is("#112233")))
-                .andExpect(jsonPath("$.data[2].id").isNumber())
-                .andExpect(jsonPath("$.data[2].name", is("someThirdCategory")))
-                .andExpect(jsonPath("$.data[2].color", is("#332211")))
-                .andExpect(jsonPath("$.data[3].id").isNumber())
-                .andExpect(jsonPath("$.data[3].name", is("")))
-                .andExpect(jsonPath("$.data[3].color", is("#ffffff")));
+                .andExpect(status().isNoContent());
 
         assertThat(categoryRepository.findAll(), hasSize(4));
         category1 = categoryRepository.findOne(category1.getId());
         assertThat(category1.getName(), is("someUpdatedCategory"));
         assertThat(category1.getColor(), is("#998877"));
+    }
+
+    @Test
+    public void testMergeCategoriesEmpty() throws Exception {
+        categoryRepository.save(new CategoryEntity("someCategory", "#778899"));
+        String body = "[]";
+
+        mockMvc.perform(post("/categories")
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        assertThat(categoryRepository.findAll(), hasSize(1));
     }
 
     @Test

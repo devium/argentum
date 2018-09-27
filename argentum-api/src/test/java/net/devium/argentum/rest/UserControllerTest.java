@@ -95,19 +95,10 @@ public class UserControllerTest {
         body = body.replace('\'', '"');
 
         mockMvc.perform(post("/users")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(body))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data[0].id", is((int) user1.getId())))
-                .andExpect(jsonPath("$.data[0].username", is("someUpdatedName")))
-                .andExpect(jsonPath("$.data[0].roles", containsInAnyOrder("RANGE_SOMETHING", "ORDER")))
-                .andExpect(jsonPath("$.data[1].id", is((int) user2.getId())))
-                .andExpect(jsonPath("$.data[1].username", is("someOtherName")))
-                .andExpect(jsonPath("$.data[1].roles", empty()))
-                .andExpect(jsonPath("$.data[2].id").isNumber())
-                .andExpect(jsonPath("$.data[2].username", is("someThirdName")))
-                .andExpect(jsonPath("$.data[2].roles", containsInAnyOrder("SCAN", "ORDER")));
+                .andExpect(status().isNoContent());
 
         user1 = userRepository.findOne(user1.getId());
         user2 = userRepository.findOne(user2.getId());
@@ -124,6 +115,26 @@ public class UserControllerTest {
         assertThat(roles1, containsInAnyOrder("RANGE_SOMETHING", "ORDER"));
 
         userRepository.delete(ImmutableList.of(user1, user2, user3));
+    }
+
+    @Test
+    public void testMergeUsersEmpty() throws Exception {
+        RoleEntity role1 = roleRepository.save(new RoleEntity("RANGE_SOMETHING"));
+        RoleEntity role2 = roleRepository.findByNameContains("ADMIN").get(0);
+        UserEntity user1 = userRepository.save(
+                new UserEntity("someName", "somePassword", ImmutableSet.of(role1, role2))
+        );
+
+        String body = "[]";
+
+        mockMvc.perform(post("/users")
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        assertThat(userRepository.findAll(), hasSize(2));
+        userRepository.delete(user1);
     }
 
     @Test

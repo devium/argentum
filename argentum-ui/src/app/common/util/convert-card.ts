@@ -4,6 +4,7 @@ export function convertCard(card: string): string {
     // 8-digit type card-bar reader (3 digit facility code + 5 digit card-bar number).
     const first = card.substr(0, 3);
     const second = card.substr(3);
+    // tslint:disable-next-line:no-bitwise
     const major = parseInt(first, 10) << 16;
     const minor = parseInt(second, 10);
 
@@ -15,6 +16,7 @@ export function convertCard(card: string): string {
     return '' + (major + minor);
   } else {
     // possibly 10-digit type card reader. Discard first two bytes to reduce range to same as 8-digit readers.
+    // tslint:disable-next-line:no-bitwise
     return '' + (parseInt(card, 10) & 0x00FFFFFF);
   }
 }

@@ -5,7 +5,7 @@ export class GuestRequest {
   name: string;
   mail: string;
   status: string;
-  checkedIn: Date;
+  checkedIn: number;
   card: string;
   balance: number;
   bonus: number;
@@ -18,7 +18,7 @@ export function fromGuest(guest: Guest): GuestRequest {
     name: guest.name,
     mail: guest.mail,
     status: guest.status,
-    checkedIn: guest.checkedIn,
+    checkedIn: guest.checkedIn ? guest.checkedIn.getTime() : null,
     card: guest.card,
     balance: guest.balance,
     bonus: guest.bonus

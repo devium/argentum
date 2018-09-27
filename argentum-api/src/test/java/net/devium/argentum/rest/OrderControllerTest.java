@@ -107,18 +107,16 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.data", hasSize(2)))
                 .andExpect(jsonPath("$.data[0].id", is((int) order1.getId())))
                 .andExpect(jsonPath("$.data[0].time", notNullValue()))
-                .andExpect(jsonPath("$.data[0].guest.id", is((int) guest.getId())))
                 .andExpect(jsonPath("$.data[0].items", hasSize(2)))
-                .andExpect(jsonPath("$.data[0].items[0].productId").isNumber())
+                .andExpect(jsonPath("$.data[0].items[0].product").isNumber())
                 .andExpect(jsonPath("$.data[0].items[0].quantity").isNumber())
-                .andExpect(jsonPath("$.data[0].items[1].productId").isNumber())
+                .andExpect(jsonPath("$.data[0].items[1].product").isNumber())
                 .andExpect(jsonPath("$.data[0].items[1].quantity").isNumber())
                 .andExpect(jsonPath("$.data[0].total", closeTo(19.75, 0.001)))
                 .andExpect(jsonPath("$.data[1].id", is((int) order2.getId())))
                 .andExpect(jsonPath("$.data[1].time", notNullValue()))
-                .andExpect(jsonPath("$.data[1].guest.id", is((int) guest.getId())))
                 .andExpect(jsonPath("$.data[1].items", hasSize(1)))
-                .andExpect(jsonPath("$.data[1].items[0].productId").isNumber())
+                .andExpect(jsonPath("$.data[1].items[0].product").isNumber())
                 .andExpect(jsonPath("$.data[1].items[0].quantity").isNumber())
                 .andExpect(jsonPath("$.data[1].total", closeTo(4.25, 0.001)));
     }
@@ -149,7 +147,7 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.data.time", notNullValue()))
                 .andExpect(jsonPath("$.data.total", closeTo(7.00, 0.001)))
                 .andExpect(jsonPath("$.data.items", hasSize(1)))
-                .andExpect(jsonPath("$.data.items[0].productId", is((int) product.getId())))
+                .andExpect(jsonPath("$.data.items[0].product", is((int) product.getId())))
                 .andExpect(jsonPath("$.data.items[0].quantity", is(2)));
     }
 
@@ -201,14 +199,7 @@ public class OrderControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                                 .content(body))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.id").isNumber())
-                .andExpect(jsonPath("$.data.time", notNullValue()))
-                .andExpect(jsonPath("$.data.guest.id", is((int) guest.getId())))
-                .andExpect(jsonPath("$.data.items", hasSize(1)))
-                .andExpect(jsonPath("$.data.items[0].productId", is((int) product.getId())))
-                .andExpect(jsonPath("$.data.items[0].quantity", is(2)))
-                .andExpect(jsonPath("$.data.total", closeTo(10.20, 0.001)));
+                .andExpect(status().isNoContent());
 
         List<OrderEntity> orders = orderRepository.findAll();
         assertThat(orders, hasSize(1));
@@ -248,12 +239,7 @@ public class OrderControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                                 .content(body))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.id").isNumber())
-                .andExpect(jsonPath("$.data.time", notNullValue()))
-                .andExpect(jsonPath("$.data.guest.id", is((int) guest.getId())))
-                .andExpect(jsonPath("$.data.items", empty()))
-                .andExpect(jsonPath("$.data.total", closeTo(5.00, 0.001)));
+                .andExpect(status().isNoContent());
 
         assertThat(orderRepository.findAll(), hasSize(1));
     }
@@ -284,12 +270,7 @@ public class OrderControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                                 .content(body))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.id").isNumber())
-                .andExpect(jsonPath("$.data.time", notNullValue()))
-                .andExpect(jsonPath("$.data.guest.id", is((int) guest.getId())))
-                .andExpect(jsonPath("$.data.items", empty()))
-                .andExpect(jsonPath("$.data.total", closeTo(5.00, 0.001)));
+                .andExpect(status().isNoContent());
 
         assertThat(orderRepository.findAll(), hasSize(1));
     }
@@ -322,12 +303,7 @@ public class OrderControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                                 .content(body))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.id").isNumber())
-                .andExpect(jsonPath("$.data.time", notNullValue()))
-                .andExpect(jsonPath("$.data.guest.id", is((int) guest.getId())))
-                .andExpect(jsonPath("$.data.items", empty()))
-                .andExpect(jsonPath("$.data.total", closeTo(6.20, 0.001)));
+                .andExpect(status().isNoContent());
 
         guest = guestRepository.findOne(guest.getId());
         assertThat(orderRepository.findAll(), hasSize(1));
@@ -495,7 +471,7 @@ public class OrderControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                                 .content(body))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         guest = guestRepository.findOne(guest.getId());
         assertThat(guest.getBalance(), is(BigDecimal.ZERO.setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
@@ -537,7 +513,7 @@ public class OrderControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                                 .content(body))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         guest = guestRepository.findOne(guest.getId());
         assertThat(guest.getBalance(), is(new BigDecimal(0.70).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
@@ -617,7 +593,7 @@ public class OrderControllerTest {
                 "   }," +
                 "   {" +
                 "       'id': %s," +
-                "       'customTotal': 0.20" +
+                "       'customCancelled': 0.20" +
                 "   }" +
                 "]";
         body = String.format(body, orderItem.getId(), order.getId());
@@ -665,6 +641,60 @@ public class OrderControllerTest {
     }
 
     @Test
+    public void testCancelOrderItemsEmpty() throws Exception {
+        ProductEntity product = new ProductEntity(
+                "someProduct",
+                new BigDecimal(3.50),
+                null,
+                Collections.emptySet()
+        );
+        product = productRepository.save(product);
+
+        GuestEntity guest = new GuestEntity(
+                "someCode",
+                "someName",
+                "someMail",
+                "someStatus",
+                new Date(),
+                "someCard",
+                new BigDecimal(4.50),
+                new BigDecimal(2.49)
+        );
+        guest = guestRepository.save(guest);
+
+        OrderEntity order = new OrderEntity(guest, new Date(), new BigDecimal(7.50));
+        order = orderRepository.save(order);
+
+        OrderItemEntity orderItem = new OrderItemEntity(product, 2, order);
+        orderItem = orderItemRepository.save(orderItem);
+
+        String body = "[]";
+
+        mockMvc.perform(
+                delete("/orders")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(body)
+        )
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        guest = guestRepository.findOne(guest.getId());
+        assertThat(guest.getBalance(), is(new BigDecimal(4.50).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+        assertThat(guest.getBonus(), is(new BigDecimal(2.49).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+
+        orderItem = orderItemRepository.findOne(orderItem.getId());
+        assertThat(orderItem.getCancelled(), is(0));
+
+        order = orderRepository.findOne(order.getId());
+        assertThat(
+                order.getCustomCancelled(), is(new BigDecimal(0.00).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP))
+        );
+
+        List<BalanceEventEntity> balanceEvents = balanceEventRepository.findAll();
+        assertThat(balanceEvents, hasSize(0));
+    }
+
+    @Test
     public void testCancelOrderItemsCapped() throws Exception {
         ProductEntity product = new ProductEntity(
                 "someProduct",
@@ -699,7 +729,7 @@ public class OrderControllerTest {
                 "   }," +
                 "   {" +
                 "       'id': %s," +
-                "       'customTotal': 0.70" +
+                "       'customCancelled': 0.70" +
                 "   }" +
                 "]";
         body = String.format(body, orderItem.getId(), order.getId());
@@ -763,7 +793,7 @@ public class OrderControllerTest {
                 "   }," +
                 "   {" +
                 "       'id': %s," +
-                "       'customTotal': 0.40" +
+                "       'customCancelled': 0.40" +
                 "   }" +
                 "]";
         body = String.format(body, orderItem.getId(), order.getId());

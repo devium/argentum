@@ -7,9 +7,9 @@ import { isDarkBackground } from '../../common/util/is-dark-background';
 import { ProductRange } from '../../common/model/product-range';
 import { MessageComponent } from '../../common/message/message.component';
 import { CardBarComponent } from '../../common/card-bar/card-bar.component';
-import { RawOrder } from '../../common/model/raw-order';
 import { OrderResponse } from '../../common/rest-service/response/order-response';
 import { OrderHistoryModalComponent } from '../order-history-modal/order-history-modal.component';
+import { Category } from '../../common/model/category';
 
 @Component({
   selector: 'app-order',
@@ -24,8 +24,9 @@ export class OrderComponent implements OnInit {
   pagesShown: number;
   rangePage = 0;
   orderPage = 0;
+  categories = new Map<number, Category>();
   products: Product[] = [];
-  orderedProducts: Map<Product, number> = new Map<Product, number>();
+  orderedProducts = new Map<Product, number>();
   total = 0;
   waitingForOrder = false;
 
@@ -73,12 +74,20 @@ export class OrderComponent implements OnInit {
 
   refreshProducts() {
     if (this.selectedRange) {
-      this.restService.getProductRange(this.selectedRange)
-        .then((range: ProductRange) => {
-          this.products = range.products.filter(product => !product.legacy);
+      const pProducts = this.restService.getRangeProducts(this.selectedRange);
+      const pCategories = this.restService.getCategories();
+      Promise.all([pProducts, pCategories])
+        .then((response: any[]) => {
+          const products: Product[] = response[0];
+          const categories: Category[] = response[1];
+
+          this.categories.clear();
+          categories.forEach((category: Category) => this.categories[category.id] = category);
+
+          this.products = products.filter(product => !product.legacy);
           this.products.sort((a: Product, b: Product) => {
-            const categoryA: string = a.category === null ? '' : a.category.name;
-            const categoryB: string = b.category === null ? '' : b.category.name;
+            const categoryA: string = a.categoryId === null ? '' : this.categories[a.categoryId].name;
+            const categoryB: string = b.categoryId === null ? '' : this.categories[b.categoryId].name;
             return categoryA.localeCompare(categoryB);
           });
         })
@@ -143,8 +152,8 @@ export class OrderComponent implements OnInit {
       id: -1,
       name: 'Custom',
       price: price,
-      category: null,
-      ranges: new Set(),
+      categoryId: null,
+      rangeIds: new Set(),
       legacy: false
     }, 1);
     this.updateTotal();
@@ -175,19 +184,11 @@ export class OrderComponent implements OnInit {
     this.waitingForOrder = true;
     this.cardBar.active = false;
     const guest = this.cardBar.guest;
-    const order: RawOrder = {
-      guest: guest,
-      products: this.orderedProducts
-    };
-    this.restService.placeOrder(order)
-      .then((response: OrderResponse) => {
+    this.restService.placeOrder(guest, this.orderedProducts)
+      .then(() => {
         this.message.success(`
-          Order placed for <b>${response.guest.name}</b>.
-          Total: <b>€${response.total.toFixed(2)}</b>.<br>
-          New balance: <b>€${response.guest.balance.toFixed(2)}</b>
-          (+ <b>€${response.guest.bonus.toFixed(2)}</b>)
+          Order placed for <b>${guest.name}</b>.
         `);
-        guest.balance = response.guest.balance;
         this.orderedProducts.clear();
         this.updateTotal();
         this.waitingForOrder = false;

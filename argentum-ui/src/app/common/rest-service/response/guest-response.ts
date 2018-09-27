@@ -13,15 +13,15 @@ export class GuestResponse {
 }
 
 export function toGuest(response: GuestResponse): Guest {
-  return {
-    id: response.id,
-    code: response.code,
-    name: response.name,
-    mail: response.mail,
-    status: response.status,
-    checkedIn: response.checkedIn ? new Date(response.checkedIn) : null,
-    card: response.card,
-    balance: response.balance,
-    bonus: response.bonus
-  };
+  return new Guest(
+    response.id,
+    response.code,
+    response.name,
+    response.mail,
+    response.status,
+    response.checkedIn ? new Date(response.checkedIn) : null,
+    response.card,
+    response.balance,
+    response.bonus
+  );
 }

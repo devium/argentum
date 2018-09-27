@@ -83,11 +83,9 @@ public class GuestController {
         cardVictims.forEach(guest -> guest.setCard(null));
         guestRepository.save(cardVictims);
 
-        List<GuestResponse> response = this.guestRepository.save(mergedGuests).stream()
-                .map(GuestResponse::from)
-                .collect(Collectors.toList());
+        this.guestRepository.save(mergedGuests);
 
-        return Response.ok(response);
+        return ResponseEntity.noContent().build();
     }
 
     @RequestMapping(method = RequestMethod.DELETE)

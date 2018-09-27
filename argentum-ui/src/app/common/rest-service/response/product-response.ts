@@ -1,6 +1,4 @@
 import { Product } from '../../model/product';
-import { ProductRange } from '../../model/product-range';
-import { Category } from '../../model/category';
 
 export class ProductResponse {
   id: number;
@@ -11,13 +9,13 @@ export class ProductResponse {
   ranges: number[];
 }
 
-export function toProductEager(response: ProductResponse, categories: Category[], ranges: ProductRange[]): Product {
+export function toProduct(response: ProductResponse): Product {
   return {
     id: response.id,
     name: response.name,
     price: response.price,
-    category: response.category ? categories.find(category => category.id === response.category) : null,
+    categoryId: response.category,
     legacy: response.legacy,
-    ranges: new Set(response.ranges.map(rangeId => ranges.find(range => range.id === rangeId)))
+    rangeIds: new Set(response.ranges)
   };
 }

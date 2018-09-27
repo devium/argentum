@@ -49,18 +49,18 @@
           <button
             class="btn btn-sm text-black"
             ngbDropdownToggle
-            [style.background-color]="product.displayed.category ? product.displayed.category.color : '#ffffff'"
+            [style.background-color]="product.displayed.categoryId ? categories[product.displayed.categoryId].color : '#ffffff'"
             [disabled]="!product.edited"
             [class.disabled]="!product.edited"
-            [class.dark-bg]="product.displayed.category && isDarkBackground(product.displayed.category.color)"
+            [class.dark-bg]="product.displayed.categoryId && isDarkBackground(categories[product.displayed.categoryId].color)"
           >
-            {{product.displayed.category ? product.displayed.category.name : 'No category'}}
+            {{product.displayed.categoryId ? categories[product.displayed.categoryId].name : 'No category'}}
           </button>
           <div *ngIf="product.edited" ngbDropdownMenu>
             <button (click)="setCategory(product, null)" class="dropdown-item">No category</button>
             <button
               *ngFor="let category of categories"
-              (click)="setCategory(product, category)"
+              (click)="setCategory(product, category.id)"
               class="dropdown-item"
               [style.background-color]="category.color"
               [class.dark-bg]="isDarkBackground(category.color)"
@@ -74,7 +74,7 @@
         <input
           type="checkbox"
           class="checkbox-lg"
-          [checked]="product.displayed.ranges.has(range)"
+          [checked]="product.displayed.rangeIds.has(range.id)"
           (change)="toggleRange(product, range)"
           [class.disabled]="!product.edited"
           [disabled]="!product.edited"

@@ -2,10 +2,10 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { OrderComponent } from './order.component';
 import { IterablePipe } from '../../common/pipes/iterable.pipe';
 import { RangePipe } from '../../common/pipes/range.pipe';
-import { PRODUCT_RANGES } from '../../common/rest-service/mock-data';
 import { ProductRange } from '../../common/model/product-range';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { RestService } from '../../common/rest-service/rest.service';
+import { PRODUCT_RANGES } from '../../common/rest-service/mocks/mock-ranges';
 
 class RestServiceStub {
   getProductRangesMeta(): Promise<ProductRange[]> {
@@ -28,7 +28,7 @@ xdescribe('OrderComponent', () => {
         IterablePipe,
         RangePipe
       ],
-      imports: [NgbModule.forRoot()],
+      imports: [NgbModule],
       providers: [{ provide: RestService, useClass: RestServiceStub }]
     })
       .compileComponents();

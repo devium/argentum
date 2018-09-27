@@ -8,11 +8,9 @@ export class CoatCheckTagResponse {
 }
 
 export function toCoatCheckTag(response: CoatCheckTagResponse): CoatCheckTag {
-  const coatCheckTag =  {
+  return {
     id: response.id,
     time: new Date(response.time),
     guest: toGuest(response.guest)
   };
-
-  return coatCheckTag;
 }

@@ -155,16 +155,16 @@ export class CardBarComponent implements OnInit, OnDestroy {
     }
   }
 
-  setState(state: ScanState) {
-    this.state = state;
-    if (state === ScanState.Waiting) {
+  setState(newState: ScanState) {
+    this.state = newState;
+    if (newState === ScanState.Waiting) {
       this.guest = null;
       this.card = '';
-    } else if (state === ScanState.NotFound) {
+    } else if (newState === ScanState.NotFound) {
       this.guest = null;
     }
     if (this.orderHistory) {
-      if (state === ScanState.Valid) {
+      if (newState === ScanState.Valid) {
         this.orderHistory.getOrderHistory(this.guest);
       } else {
         this.orderHistory.clear();

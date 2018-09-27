@@ -80,30 +80,27 @@ public class StatusControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                                 .content(body))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data", hasSize(4)))
-                .andExpect(jsonPath("$.data[0].id", is((int) status1.getId())))
-                .andExpect(jsonPath("$.data[0].internalName", is("someUpdatedStatus")))
-                .andExpect(jsonPath("$.data[0].displayName", is("Some Updated Status")))
-                .andExpect(jsonPath("$.data[0].color", is("#998877")))
-                .andExpect(jsonPath("$.data[1].id").isNumber())
-                .andExpect(jsonPath("$.data[1].internalName", is("someOtherStatus")))
-                .andExpect(jsonPath("$.data[1].displayName", is("Some Other Status")))
-                .andExpect(jsonPath("$.data[1].color", is("#112233")))
-                .andExpect(jsonPath("$.data[2].id").isNumber())
-                .andExpect(jsonPath("$.data[2].internalName", is("someThirdStatus")))
-                .andExpect(jsonPath("$.data[2].displayName", is("Some Third Status")))
-                .andExpect(jsonPath("$.data[2].color", is("#332211")))
-                .andExpect(jsonPath("$.data[3].id").isNumber())
-                .andExpect(jsonPath("$.data[3].internalName", is("")))
-                .andExpect(jsonPath("$.data[3].displayName", is("")))
-                .andExpect(jsonPath("$.data[3].color", is("#ffffff")));
+                .andExpect(status().isNoContent());
 
         assertThat(statusRepository.findAll(), hasSize(4));
         status1 = statusRepository.findOne(status1.getId());
         assertThat(status1.getInternalName(), is("someUpdatedStatus"));
         assertThat(status1.getDisplayName(), is("Some Updated Status"));
         assertThat(status1.getColor(), is("#998877"));
+    }
+
+    @Test
+    public void testMergeStatusesEmpty() throws Exception {
+        statusRepository.save(new StatusEntity("someStatus", "Some Status", "#778899"));
+        String body = "[]";
+
+        mockMvc.perform(post("/statuses")
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        assertThat(statusRepository.findAll(), hasSize(1));
     }
 
     @Test

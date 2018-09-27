@@ -3,7 +3,7 @@ import { Product } from '../../model/product';
 
 export class OrderItemResponse {
   id: number;
-  productId: number;
+  product: number;
   quantity: number;
   cancelled: number;
 }
@@ -11,7 +11,7 @@ export class OrderItemResponse {
 export function toOrderItem(response: OrderItemResponse, products: Map<number, Product>): OrderItem {
   return new OrderItem(
     response.id,
-    products[response.productId],
+    products[response.product],
     response.quantity,
     response.cancelled
   );

@@ -4,7 +4,6 @@ import { MessageComponent } from '../../common/message/message.component';
 import { ProductRange } from '../../common/model/product-range';
 import { RestService } from '../../common/rest-service/rest.service';
 import { NavbarComponent } from '../../common/navbar/navbar.component';
-import { UserResponse } from '../../common/rest-service/response/user-response';
 
 class EditorUser {
   original: User;
@@ -169,7 +168,7 @@ export class UserEditorComponent implements OnInit {
         `);
         this.loadUsers();
         this.restService.getUser()
-          .then((user: UserResponse) => {
+          .then((user: User) => {
             localStorage.setItem('roles', user.roles.join(','));
             this.navbar.getRoles();
           });

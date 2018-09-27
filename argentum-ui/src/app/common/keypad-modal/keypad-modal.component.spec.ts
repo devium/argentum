@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { KeypadModalComponent } from './keypad-modal.component';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { By } from '@angular/platform-browser';
@@ -182,4 +182,30 @@ describe('KeypadModalComponent', () => {
     expect(activeModal.close).toHaveBeenCalledTimes(0);
     expect(activeModal.dismiss).toHaveBeenCalled();
   });
+
+  it('should detect keyboard strokes if so configured', fakeAsync(() => {
+    component.captureKeyboard = true;
+    const inputs1 = ['1', '2', '3', '4', '.', '5', '6']
+      .map((digit: string) => new KeyboardEvent('keydown', {'key': digit}));
+    for (const input of inputs1) {
+      document.dispatchEvent(input);
+    }
+    fixture.detectChanges();
+    tick();
+    expect(component.display).toBe('1234.56');
+
+    const inputs2 = ['Backspace', 'Backspace', 'Backspace', '7', '8', '9', '0']
+      .map((digit: string) => new KeyboardEvent('keydown', {'key': digit}));
+    for (const input of inputs2) {
+      document.dispatchEvent(input);
+    }
+    fixture.detectChanges();
+    tick();
+    expect(component.display).toBe('12347890');
+
+    document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+    fixture.detectChanges();
+    tick();
+    expect(activeModal.close).toHaveBeenCalledWith(12347890);
+  }));
 });

@@ -112,13 +112,9 @@ public class UserController {
             mergedUsers.add(user.toEntity(roles));
         }
 
-        mergedUsers = userRepository.save(mergedUsers);
+        userRepository.save(mergedUsers);
 
-        List<UserResponse> response = mergedUsers.stream()
-                .map(UserResponse::from)
-                .collect(Collectors.toList());
-
-        return Response.ok(response);
+        return ResponseEntity.noContent().build();
     }
 
     @RequestMapping(method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,

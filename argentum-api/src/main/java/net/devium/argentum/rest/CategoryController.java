@@ -54,11 +54,9 @@ public class CategoryController {
                 .map(CategoryRequest::toEntity)
                 .collect(Collectors.toList());
 
-        List<CategoryResponse> response = categoryRepository.save(mergedCategories).stream()
-                .map(CategoryResponse::from)
-                .collect(Collectors.toList());
+        categoryRepository.save(mergedCategories);
 
-        return Response.ok(response);
+        return ResponseEntity.noContent().build();
     }
 
     @RequestMapping(method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,

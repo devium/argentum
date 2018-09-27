@@ -1,10 +1,10 @@
 import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { CardBarComponent } from './card-bar.component';
 import { RestService } from '../rest-service/rest.service';
-import { GUESTS } from '../rest-service/mock-guests';
+import { GUESTS } from '../rest-service/mocks/mock-guests';
 import { Component, Input } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { STATUSES } from '../rest-service/mock-statuses';
+import { STATUSES } from '../rest-service/mocks/mock-statuses';
 import { By } from '@angular/platform-browser';
 import createSpyObj = jasmine.createSpyObj;
 import { MessageComponent } from '../message/message.component';

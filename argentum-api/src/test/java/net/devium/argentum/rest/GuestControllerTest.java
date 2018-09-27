@@ -149,44 +149,7 @@ public class GuestControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                                 .content(body))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data", hasSize(4)))
-                .andExpect(jsonPath("$.data[0].id", is((int) guest1.getId())))
-                .andExpect(jsonPath("$.data[0].code", is("someUpdatedCode")))
-                .andExpect(jsonPath("$.data[0].name", is("someUpdatedName")))
-                .andExpect(jsonPath("$.data[0].mail", is("someUpdatedMail")))
-                .andExpect(jsonPath("$.data[0].status", is("someUpdatedStatus")))
-                .andExpect(jsonPath("$.data[0].checkedIn", is(1490357316000L)))
-                .andExpect(jsonPath("$.data[0].card", is("someCard")))
-                .andExpect(jsonPath("$.data[0].balance", closeTo(0.00, 0.001)))
-                .andExpect(jsonPath("$.data[0].bonus", closeTo(3.70, 0.001)))
-                .andExpect(jsonPath("$.data[1].id").isNumber())
-                .andExpect(jsonPath("$.data[1].code", is("someOtherCode")))
-                .andExpect(jsonPath("$.data[1].name", is("someOtherName")))
-                .andExpect(jsonPath("$.data[1].mail", is("someOtherMail")))
-                .andExpect(jsonPath("$.data[1].status", is("someOtherStatus")))
-                .andExpect(jsonPath("$.data[1].checkedIn", nullValue()))
-                .andExpect(jsonPath("$.data[1].card", is("someOtherCard")))
-                .andExpect(jsonPath("$.data[1].balance", closeTo(1.30, 0.001)))
-                .andExpect(jsonPath("$.data[1].bonus", closeTo(0.00, 0.001)))
-                .andExpect(jsonPath("$.data[2].id").isNumber())
-                .andExpect(jsonPath("$.data[2].code", is("someThirdCode")))
-                .andExpect(jsonPath("$.data[2].name", is("someThirdName")))
-                .andExpect(jsonPath("$.data[2].mail", is("someThirdMail")))
-                .andExpect(jsonPath("$.data[2].status", is("someThirdStatus")))
-                .andExpect(jsonPath("$.data[2].checkedIn", is(1490358516000L)))
-                .andExpect(jsonPath("$.data[2].card", nullValue()))
-                .andExpect(jsonPath("$.data[2].balance", closeTo(2.10, 0.001)))
-                .andExpect(jsonPath("$.data[2].bonus", closeTo(1.50, 0.001)))
-                .andExpect(jsonPath("$.data[3].id").isNumber())
-                .andExpect(jsonPath("$.data[3].code", is("")))
-                .andExpect(jsonPath("$.data[3].name", is("")))
-                .andExpect(jsonPath("$.data[3].mail", is("")))
-                .andExpect(jsonPath("$.data[3].status", is("")))
-                .andExpect(jsonPath("$.data[3].checkedIn", nullValue()))
-                .andExpect(jsonPath("$.data[3].card", nullValue()))
-                .andExpect(jsonPath("$.data[3].balance", closeTo(0.00, 0.001)))
-                .andExpect(jsonPath("$.data[3].bonus", closeTo(0.00, 0.001)));
+                .andExpect(status().isNoContent());
 
         assertThat(guestRepository.findAll(), hasSize(4));
         guest1 = guestRepository.findOne(guest1.getId());
@@ -198,6 +161,22 @@ public class GuestControllerTest {
         assertThat(guest1.getCard(), is("someCard"));
         assertThat(guest1.getBalance(), is(BigDecimal.ZERO.setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
         assertThat(guest1.getBonus(), is(new BigDecimal(3.70).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+    }
+
+    @Test
+    public void testMergeGuestsEmpty() throws Exception {
+        guestRepository.save(new GuestEntity(
+                "someCode", "someName", "someMail", "someStatus", null, null, new BigDecimal(3.80), new BigDecimal(2.30)
+        ));
+        String body = "[]";
+
+        mockMvc.perform(post("/guests")
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        assertThat(guestRepository.findAll(), hasSize(1));
     }
 
     @Test
@@ -214,7 +193,7 @@ public class GuestControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                                 .content(body))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         assertThat(guestRepository.findAll(), hasSize(2));
         assertThat(guestRepository.findOne(guest1.getId()).getCard(), nullValue());
@@ -272,9 +251,7 @@ public class GuestControllerTest {
         order.setOrderItems(Collections.singleton(orderItem));
         orderRepository.save(order);
 
-        BalanceEventEntity balanceEvent = balanceEventRepository.save(new BalanceEventEntity(
-                guest, new Date(), new BigDecimal(5), "refund"
-        ));
+        balanceEventRepository.save(new BalanceEventEntity(guest, new Date(), new BigDecimal(5), "refund"));
 
         mockMvc.perform(delete("/guests/"))
                 .andDo(print())
@@ -546,17 +523,15 @@ public class GuestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data[0].id", is((int) order1.getId())))
                 .andExpect(jsonPath("$.data[0].time", notNullValue()))
-                .andExpect(jsonPath("$.data[0].guest.id", is((int) guest.getId())))
                 .andExpect(jsonPath("$.data[0].items", hasSize(1)))
                 .andExpect(jsonPath("$.data[0].items[0].id", is((int) orderItem.getId())))
-                .andExpect(jsonPath("$.data[0].items[0].productId", is((int) product.getId())))
+                .andExpect(jsonPath("$.data[0].items[0].product", is((int) product.getId())))
                 .andExpect(jsonPath("$.data[0].items[0].quantity", is(2)))
                 .andExpect(jsonPath("$.data[0].items[0].cancelled", is(0)))
                 .andExpect(jsonPath("$.data[0].total", closeTo(1.50, 0.001)))
                 .andExpect(jsonPath("$.data[0].customCancelled", closeTo(0, 0.001)))
                 .andExpect(jsonPath("$.data[1].id", is((int) order2.getId())))
                 .andExpect(jsonPath("$.data[1].time", notNullValue()))
-                .andExpect(jsonPath("$.data[1].guest.id", is((int) guest.getId())))
                 .andExpect(jsonPath("$.data[1].items", hasSize(0)))
                 .andExpect(jsonPath("$.data[1].total", closeTo(0.80, 0.001)))
                 .andExpect(jsonPath("$.data[1].customCancelled", closeTo(0, 0.001)));

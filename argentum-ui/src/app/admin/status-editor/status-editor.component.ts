@@ -109,7 +109,7 @@ export class StatusEditorComponent implements OnInit {
     const pDelete = this.restService.deleteStatuses(deletedStatuses);
 
     Promise.all([pCreate, pDelete])
-      .then(result => {
+      .then(() => {
         this.message.success(`
           Statuses saved successfully.
           (<b>${updatedStatuses.length}</b> created/updated,

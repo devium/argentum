@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -70,12 +71,24 @@ public class ConfigControllerTest {
         body = body.replace('\'', '"');
 
         mockMvc.perform(put("/config")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(body))
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.postpaidLimit", closeTo(30.50, 0.001)));
+                .andExpect(status().isNoContent());
 
         assertThat(configRepository.findOne("postpaidLimit").getValue(), is("30.50"));
+    }
+
+    @Test
+    public void testSetConfigEmpty() throws Exception {
+        String body = "{}";
+
+        mockMvc.perform(put("/config")
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content(body))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        assertTrue(configRepository.findAll().isEmpty());
     }
 }

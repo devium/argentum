@@ -36,7 +36,7 @@ xdescribe('AppComponent', () => {
       ],
       imports: [
         AppRoutingModule,
-        NgbModule.forRoot()
+        NgbModule
       ]
     }).compileComponents();
   }));

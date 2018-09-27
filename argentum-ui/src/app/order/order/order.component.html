@@ -41,8 +41,8 @@
             (click)="rangeProductClicked(product)"
             type="button"
             class="btn-product"
-            [style.background-color]="product.category ? product.category.color : '#ffffff'"
-            [class.dark-bg]="product.category && isDarkBackground(product.category.color)"
+            [style.background-color]="product.categoryId ? categories[product.categoryId].color : '#ffffff'"
+            [class.dark-bg]="product.categoryId && isDarkBackground(categories[product.categoryId].color)"
           >
             <div class="product-name">{{product.name}}</div>
             <div>

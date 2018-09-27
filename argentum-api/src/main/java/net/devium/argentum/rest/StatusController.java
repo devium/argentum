@@ -49,11 +49,9 @@ public class StatusController {
                 .map(StatusRequest::toEntity)
                 .collect(Collectors.toList());
 
-        List<StatusResponse> response = statusRepository.save(mergedStatuses).stream()
-                .map(StatusResponse::from)
-                .collect(Collectors.toList());
+        statusRepository.save(mergedStatuses);
 
-        return Response.ok(response);
+        return ResponseEntity.noContent().build();
     }
 
     @RequestMapping(method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,

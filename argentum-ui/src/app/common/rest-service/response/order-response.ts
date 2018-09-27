@@ -1,12 +1,10 @@
 import { OrderItemResponse, toOrderItem } from './order-item-response';
-import { GuestResponse } from './guest-response';
 import { Order } from '../../model/order';
 import { Product } from '../../model/product';
 
 export class OrderResponse {
   id: number;
   time: number;
-  guest: GuestResponse;
   items: OrderItemResponse[];
   total: number;
   customCancelled: number;
