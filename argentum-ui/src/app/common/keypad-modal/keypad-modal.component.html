@@ -6,7 +6,7 @@
         <div class="input-group-prepend">
           <span class="input-group-text keypad-display">&euro;</span>
         </div>
-        <div id="keypadDisplay" class="form-control disabled text-right keypad-display">{{display}}</div>
+        <div id="keypadDisplay" class="form-control disabled text-right keypad-display h-100">{{display}}</div>
       </div>
     </div>
     <div class="col-4 p-05">
@@ -15,7 +15,7 @@
         (focus)="$event.target.blur()"
         (click)="deleteChar()"
         type="button"
-        class="btn btn-primary btn-block btn-lg"
+        class="btn btn-primary btn-block btn-lg h-100"
       >
         <i class="fa fa-caret-square-o-left fa-lg"></i>
       </button>

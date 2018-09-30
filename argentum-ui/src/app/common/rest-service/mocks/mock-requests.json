@@ -128,14 +128,14 @@
     {
       "id": 2,
       "cancelled": 1,
-      "customTotal": null
+      "customCancelled": null
     }
   ],
   "CUSTOMDELETE/orders": [
     {
       "id": 1,
       "cancelled": null,
-      "customTotal": 0.20
+      "customCancelled": 0.20
     }
   ],
   "POST/users": [
