@@ -13,7 +13,7 @@ export class KeypadModalComponent implements OnInit, OnDestroy {
   captureKeyboard = false;
   keyStreamSub: Subscription;
 
-  constructor(public activeModal: NgbActiveModal) {
+  constructor(private activeModal: NgbActiveModal) {
   }
 
   ngOnInit(): void {

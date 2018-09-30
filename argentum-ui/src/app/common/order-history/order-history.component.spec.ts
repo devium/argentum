@@ -22,9 +22,9 @@ describe('OrderHistoryComponent', () => {
   let component: OrderHistoryComponent;
   let fixture: ComponentFixture<OrderHistoryComponent>;
 
-  const restService = createSpyObj('RestService', ['getOrders', 'cancelOrderItem', 'cancelCustom']);
-  const modalService = createSpyObj('NgbModal', ['open']);
-  const messageComponent = createSpyObj('MessageComponent', ['success']);
+  let restService: any;
+  let modalService: any;
+  let messageComponent: any;
 
   let orders: Order[];
 
@@ -34,6 +34,9 @@ describe('OrderHistoryComponent', () => {
   let order2: Order;
 
   beforeEach(async(() => {
+    restService = createSpyObj('RestService', ['getOrders', 'cancelOrderItem', 'cancelCustom']);
+    modalService = createSpyObj('NgbModal', ['open']);
+    messageComponent = createSpyObj('MessageComponent', ['success']);
     TestBed.configureTestingModule({
       declarations: [OrderHistoryComponent],
       providers: [
@@ -76,15 +79,6 @@ describe('OrderHistoryComponent', () => {
     order1 = orders[0];
     order1item1 = orders[0].orderItems[0];
     order2 = orders[1];
-
-    // Reset all spy calls from previous tests.
-    for (const spyObj of [restService, modalService, messageComponent]) {
-      for (const key in spyObj) {
-        if (spyObj.hasOwnProperty(key)) {
-          spyObj[key].calls.reset();
-        }
-      }
-    }
 
     // Shared order history for all tests.
     restService.getOrders.and.callFake((guest: Guest): Promise<Order[]> => {

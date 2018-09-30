@@ -2,6 +2,8 @@ import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core
 import { KeypadModalComponent } from './keypad-modal.component';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { By } from '@angular/platform-browser';
+import createSpyObj = jasmine.createSpyObj;
+import { SpyObject } from '@angular/core/testing/src/testing_internal';
 
 describe('KeypadModalComponent', () => {
   let component: KeypadModalComponent;
@@ -22,12 +24,13 @@ describe('KeypadModalComponent', () => {
   let confirm: any;
 
   let display: any;
-  let activeModal: NgbActiveModal;
+  let activeModal: any;
 
   beforeEach(async(() => {
+    activeModal = createSpyObj('NgbActiveModal', ['close', 'dismiss']);
     TestBed.configureTestingModule({
       declarations: [KeypadModalComponent],
-      providers: [NgbActiveModal]
+      providers: [{ provide: NgbActiveModal, useValue: activeModal }]
     })
       .compileComponents();
   }));
@@ -52,10 +55,6 @@ describe('KeypadModalComponent', () => {
     period = fixture.debugElement.query(By.css('#keypadPeriod')).nativeElement;
     cancel = fixture.debugElement.query(By.css('#keypadCancel')).nativeElement;
     confirm = fixture.debugElement.query(By.css('#keypadConfirm')).nativeElement;
-
-    activeModal = fixture.debugElement.injector.get(NgbActiveModal);
-    spyOn(activeModal, 'close');
-    spyOn(activeModal, 'dismiss');
   });
 
   it('should create', () => {
@@ -186,7 +185,7 @@ describe('KeypadModalComponent', () => {
   it('should detect keyboard strokes if so configured', fakeAsync(() => {
     component.captureKeyboard = true;
     const inputs1 = ['1', '2', '3', '4', '.', '5', '6']
-      .map((digit: string) => new KeyboardEvent('keydown', {'key': digit}));
+      .map((digit: string) => new KeyboardEvent('keydown', { 'key': digit }));
     for (const input of inputs1) {
       document.dispatchEvent(input);
     }
@@ -195,7 +194,7 @@ describe('KeypadModalComponent', () => {
     expect(component.display).toBe('1234.56');
 
     const inputs2 = ['Backspace', 'Backspace', 'Backspace', '7', '8', '9', '0']
-      .map((digit: string) => new KeyboardEvent('keydown', {'key': digit}));
+      .map((digit: string) => new KeyboardEvent('keydown', { 'key': digit }));
     for (const input of inputs2) {
       document.dispatchEvent(input);
     }
@@ -203,7 +202,7 @@ describe('KeypadModalComponent', () => {
     tick();
     expect(component.display).toBe('12347890');
 
-    document.dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+    document.dispatchEvent(new KeyboardEvent('keydown', { 'key': 'Enter' }));
     fixture.detectChanges();
     tick();
     expect(activeModal.close).toHaveBeenCalledWith(12347890);
