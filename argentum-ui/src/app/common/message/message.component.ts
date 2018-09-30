@@ -7,7 +7,7 @@ import { Subject } from 'rxjs/Subject';
   styleUrls: ['./message.component.scss']
 })
 export class MessageComponent implements OnInit {
-  readonly DEFAULT_MESSAGE_TIME = 30000;
+  readonly DEFAULT_MESSAGE_TIME = 15000;
   message: string;
   messageType: string;
   messageStream = new Subject<{ message: string, type: string }>();
