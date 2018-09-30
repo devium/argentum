@@ -171,6 +171,7 @@ export class UserEditorComponent implements OnInit {
           .then((user: User) => {
             localStorage.setItem('roles', user.roles.join(','));
             this.navbar.getRoles();
+            this.navbar.refreshLinks();
           });
       })
       .catch(reason => this.message.error(reason));

@@ -19,7 +19,7 @@ export class RoleBasedComponent implements OnInit {
     this.roles = roles ? roles.split(',') : [];
   }
 
-  hasRole(roles: string[]) {
+  hasRole(roles: string[]): boolean {
     return roles
       .map(role => this.roles.includes(role))
       .reduce((a, b) => a || b, false);

@@ -14,59 +14,14 @@
 
   <div class="collapse navbar-collapse" [ngbCollapse]="navbarCollapsed">
     <ul id="navLinks" class="navbar-nav mx-auto text-center">
-
-      <li *ngIf="hasRole(['COAT_CHECK'])" class="nav-item">
+      <li *ngFor="let link of links" class="nav-item">
         <a
-          id="coatCheck"
           (focus)="$event.target.blur()"
-          routerLink="/coat_check"
+          [routerLink]="[link[0]]"
           routerLinkActive="active"
           class="nav-link"
         >
-          Coat check
-        </a>
-      </li>
-      <li *ngIf="hasRole(['ORDER'])" class="nav-item">
-        <a
-          id="order"
-          (focus)="$event.target.blur()"
-          routerLink="/order"
-          routerLinkActive="active"
-          class="nav-link"
-        >
-          Order
-        </a>
-      </li>
-      <li *ngIf="hasRole(['CHECKIN', 'TRANSFER'])" class="nav-item">
-        <a
-          id="checkin"
-          (focus)="$event.target.blur()"
-          routerLink="/checkin"
-          routerLinkActive="active" class="nav-link"
-        >
-          Check-in
-        </a>
-      </li>
-      <li *ngIf="hasRole(['SCAN'])" class="nav-item">
-        <a
-          id="scan"
-          (focus)="$event.target.blur()"
-          routerLink="/scan"
-          routerLinkActive="active"
-          class="nav-link"
-        >
-          Scan
-        </a>
-      </li>
-      <li *ngIf="hasRole(['ADMIN'])" class="nav-item">
-        <a
-          id="admin"
-          (focus)="$event.target.blur()"
-          routerLink="/admin"
-          routerLinkActive="active"
-          class="nav-link"
-        >
-          Admin
+          {{link[1]}}
         </a>
       </li>
       <li class="nav-item">
