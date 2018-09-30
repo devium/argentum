@@ -304,10 +304,11 @@ describe('RestService', () => {
 
   it('should GET /guests/?<query> correctly', fakeAsync(() => {
     const method = 'GET';
-    const path = '/guests/?size=3&page=1&code=4&name=r&mail=j&status=default';
+    const path = '/guests/?size=3&page=1&code=4&name=r&mail=j&status=default&sort=balance&direction=desc';
 
-    restService.getGuestsPaginatedAndFiltered(3, 1, '4', 'r', 'j', 'default')
+    restService.getGuestsPaginatedAndFiltered(3, 1, '4', 'r', 'j', 'default', 'balance', 'desc')
       .then((response: { guests: Guest[], guestsTotal: number }) => {
+        // Response not actually correct.
         expect(response.guestsTotal).toBe(GUESTS.length);
         expect(response.guests).toEqual([GUESTS[3], GUESTS[6], GUESTS[11]]);
         resolved = true;

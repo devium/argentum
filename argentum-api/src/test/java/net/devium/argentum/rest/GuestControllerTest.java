@@ -82,7 +82,7 @@ public class GuestControllerTest {
         }
         guests = guestRepository.save(guests);
 
-        mockMvc.perform(get("/guests?page=1&size=2&code=&name=&mail=&status="))
+        mockMvc.perform(get("/guests?page=1&size=2&code=&name=&mail=&status=&sort=&direction="))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.guestsTotal", is(5)))
@@ -120,12 +120,40 @@ public class GuestControllerTest {
         ));
         guests = guestRepository.save(guests);
 
-        mockMvc.perform(get("/guests?page=0&size=2&code=11&name=11&mail=11&status=11"))
+        mockMvc.perform(get("/guests?page=0&size=2&code=11&name=11&mail=11&status=11&sort=id&direction=asc"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.guestsTotal", is(1)))
                 .andExpect(jsonPath("$.data.guests", hasSize(1)))
                 .andExpect(jsonPath("$.data.guests[0].id", is((int) guests.get(0).getId())));
+    }
+
+    @Test
+    public void testGetGuestsSortOrder() throws Exception {
+        List<GuestEntity> guests = new LinkedList<>();
+        GuestEntity guest1 = guestRepository.save(new GuestEntity(
+                "CODE11", "name11", "mail11", "status11", null, null, new BigDecimal(-10.00), BigDecimal.ZERO // X
+        ));
+        GuestEntity guest2 = guestRepository.save(new GuestEntity(
+                "CODE10", "name11", "mail11", "status11", null, null, new BigDecimal(-5.30), BigDecimal.ZERO
+        ));
+        GuestEntity guest3 = guestRepository.save(new GuestEntity(
+                "CODE11", "name10", "mail11", "status11", null, null, new BigDecimal(2.10), BigDecimal.ZERO
+        ));
+        GuestEntity guest4 = guestRepository.save(new GuestEntity(
+                "CODE11", "name11", "mail10", "status11", null, null, new BigDecimal(1.50), BigDecimal.ZERO // X
+        ));
+        GuestEntity guest5 = guestRepository.save(new GuestEntity(
+                "CODE11", "name11", "mail11", "status10", null, null, new BigDecimal(-1.00), BigDecimal.ZERO // X
+        ));
+
+        mockMvc.perform(get("/guests?page=0&size=2&code=11&name=11&mail=&status=&sort=balance&direction=desc"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.guestsTotal", is(3)))
+                .andExpect(jsonPath("$.data.guests", hasSize(2)))
+                .andExpect(jsonPath("$.data.guests[0].id", is((int) guest4.getId())))
+                .andExpect(jsonPath("$.data.guests[1].id", is((int) guest5.getId())));
     }
 
     @Test
@@ -161,6 +189,18 @@ public class GuestControllerTest {
         assertThat(guest1.getCard(), is("someCard"));
         assertThat(guest1.getBalance(), is(BigDecimal.ZERO.setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
         assertThat(guest1.getBonus(), is(new BigDecimal(3.70).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP)));
+
+        List<BalanceEventEntity> balanceEvents = balanceEventRepository.findAll();
+        assertThat(balanceEvents, hasSize(2));
+        assertThat(balanceEvents.get(0).getDescription(), is("balance"));
+        assertThat(
+                balanceEvents.get(0).getValue(),
+                is(new BigDecimal(1.30).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP))
+        );
+        assertThat(
+                balanceEvents.get(1).getValue(),
+                is(new BigDecimal(2.10).setScale(DECIMAL_PLACES, BigDecimal.ROUND_HALF_UP))
+        );
     }
 
     @Test

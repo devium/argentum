@@ -24,6 +24,7 @@ public class StatisticsController {
     private ProductRangeRepository productRangeRepository;
     private CategoryRepository categoryRepository;
     private GuestRepository guestRepository;
+    private BalanceEventRepository balanceEventRepository;
 
     @Autowired
     public StatisticsController(
@@ -31,13 +32,15 @@ public class StatisticsController {
             ProductRepository productRepository,
             ProductRangeRepository productRangeRepository,
             CategoryRepository categoryRepository,
-            GuestRepository guestRepository
+            GuestRepository guestRepository,
+            BalanceEventRepository balanceEventRepository
     ) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.productRangeRepository = productRangeRepository;
         this.categoryRepository = categoryRepository;
         this.guestRepository = guestRepository;
+        this.balanceEventRepository = balanceEventRepository;
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -45,12 +48,21 @@ public class StatisticsController {
         long guestsTotal = guestRepository.count();
         long guestsCheckedIn = guestRepository.countByCheckedInNotNull();
         long cardsTotal = guestRepository.countByCardNotNull();
-        BigDecimal totalBalance = guestRepository.sumBalance();
-        totalBalance = totalBalance != null ? totalBalance : BigDecimal.ZERO;
+        BigDecimal totalPositiveBalance = guestRepository.sumPositiveBalance();
+        totalPositiveBalance = totalPositiveBalance != null ? totalPositiveBalance : BigDecimal.ZERO;
+        BigDecimal totalNegativeBalance = guestRepository.sumNegativeBalance();
+        totalNegativeBalance = totalNegativeBalance != null ? totalNegativeBalance.negate() : BigDecimal.ZERO;
         BigDecimal totalBonus = guestRepository.sumBonus();
         totalBonus = totalBonus != null ? totalBonus : BigDecimal.ZERO;
         BigDecimal totalSpent = orderRepository.sumTotal();
         totalSpent = totalSpent != null ? totalSpent : BigDecimal.ZERO;
+        BigDecimal totalRefund = balanceEventRepository.sumRefunds();
+        totalRefund = totalRefund != null ? totalRefund : BigDecimal.ZERO;
+        BigDecimal totalDeposited = balanceEventRepository.sumDeposits();
+        totalDeposited = totalDeposited != null ? totalDeposited : BigDecimal.ZERO;
+        BigDecimal totalWithdrawn = balanceEventRepository.sumWithdrawals();
+        totalWithdrawn = totalWithdrawn != null ? totalWithdrawn.negate() : BigDecimal.ZERO;
+
         long numProducts = productRepository.count();
         long numLegacyProducts = productRepository.countByLegacyIsTrue();
         long numRanges = productRangeRepository.count();
@@ -60,9 +72,13 @@ public class StatisticsController {
                 guestsTotal,
                 guestsCheckedIn,
                 cardsTotal,
-                totalBalance,
+                totalPositiveBalance,
+                totalNegativeBalance,
                 totalBonus,
                 totalSpent,
+                totalRefund,
+                totalDeposited,
+                totalWithdrawn,
                 numProducts,
                 numLegacyProducts,
                 numRanges,

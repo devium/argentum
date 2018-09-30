@@ -316,7 +316,9 @@ export class RestService {
     codeLike: string,
     nameLike: string,
     mailLike: string,
-    statusLike: string
+    statusLike: string,
+    sort: string,
+    direction: string
   ): Promise<{guests: Guest[], guestsTotal: number}> {
     return this.http.get<Message<GuestResponsePaginated>>(
       `${this.apiUrl}/guests/?` +
@@ -325,7 +327,9 @@ export class RestService {
       `code=${codeLike}&` +
       `name=${nameLike}&` +
       `mail=${mailLike}&` +
-      `status=${statusLike}`,
+      `status=${statusLike}&` +
+      `sort=${sort}&` +
+      `direction=${direction}`,
       this.authJsonOptions
     )
       .toPromise()

@@ -2,11 +2,17 @@
 
 <div class="container-fluid mt-3">
 
-  <table class="table table-sm table-responsive table-striped mt-3">
+  <table class="table table-sm table-responsive table-striped mt-3 text-nowrap">
     <thead>
     <tr>
       <th>
-        <div>Code</div>
+        <div>
+          <a (click)="cycleSort('code')">
+            Code
+            <i *ngIf="sort === 'code' && direction === 'asc'" class="fa fa-sort-up"></i>
+            <i *ngIf="sort === 'code' && direction === 'desc'" class="fa fa-sort-down"></i>
+          </a>
+        </div>
         <div>
           <input
             (input)="filterCode($event.target.value)"
@@ -17,7 +23,13 @@
         </div>
       </th>
       <th>
-        <div>Name</div>
+        <div>
+          <a (click)="cycleSort('name')">
+            Name
+            <i *ngIf="sort === 'name' && direction === 'asc'" class="fa fa-sort-up"></i>
+            <i *ngIf="sort === 'name' && direction === 'desc'" class="fa fa-sort-down"></i>
+          </a>
+        </div>
         <div>
           <input
             (input)="filterName($event.target.value)"
@@ -28,7 +40,13 @@
         </div>
       </th>
       <th>
-        <div>E-Mail</div>
+        <div>
+          <a (click)="cycleSort('mail')">
+            E-Mail
+            <i *ngIf="sort === 'mail' && direction === 'asc'" class="fa fa-sort-up"></i>
+            <i *ngIf="sort === 'mail' && direction === 'desc'" class="fa fa-sort-down"></i>
+          </a>
+        </div>
         <div>
           <input
             (input)="filterMail($event.target.value)"
@@ -39,7 +57,13 @@
         </div>
       </th>
       <th>
-        <div>Status</div>
+        <div>
+          <a (click)="cycleSort('status')">
+            Status
+            <i *ngIf="sort === 'status' && direction === 'asc'" class="fa fa-sort-up"></i>
+            <i *ngIf="sort === 'status' && direction === 'desc'" class="fa fa-sort-down"></i>
+          </a>
+        </div>
         <div>
           <input
             (input)="filterStatus($event.target.value)"
@@ -49,10 +73,28 @@
           >
         </div>
       </th>
-      <th>Checked in</th>
+      <th>
+        <a (click)="cycleSort('checkedIn')">
+          Checked in
+          <i *ngIf="sort === 'checkedIn' && direction === 'asc'" class="fa fa-sort-up"></i>
+          <i *ngIf="sort === 'checkedIn' && direction === 'desc'" class="fa fa-sort-down"></i>
+        </a>
+      </th>
       <th class="text-right">Card</th>
-      <th class="text-center">Balance</th>
-      <th class="text-center">Bonus</th>
+      <th class="text-center">
+        <a (click)="cycleSort('balance')">
+          Balance
+          <i *ngIf="sort === 'balance' && direction === 'asc'" class="fa fa-sort-up"></i>
+          <i *ngIf="sort === 'balance' && direction === 'desc'" class="fa fa-sort-down"></i>
+        </a>
+      </th>
+      <th class="text-center">
+        <a (click)="cycleSort('bonus')">
+          Bonus
+          <i *ngIf="sort === 'bonus' && direction === 'asc'" class="fa fa-sort-up"></i>
+          <i *ngIf="sort === 'bonus' && direction === 'desc'" class="fa fa-sort-down"></i>
+        </a>
+      </th>
     </tr>
     </thead>
 
@@ -85,8 +127,9 @@
           </button>
 
           <input id="balanceInput" disabled
-                 class="disabled form-control form-control-sm d-inline-block flex-grow-1 text-center"
-                 [value]="guest.balance | number:'1.2-2'">
+                 class="disabled form-control form-control-sm d-inline-block flex-grow-1 text-center value-display"
+                 [value]="guest.balance | number:'1.2-2'"
+          >
 
           <button (click)="addBalance(guest)" type="button" class="btn btn-sm btn-primary">
             <i class="fa fa-plus"></i>
@@ -103,8 +146,9 @@
           </button>
 
           <input id="bonusInput" disabled
-                 class="disabled form-control form-control-sm d-inline-block flex-grow-1 text-center"
-                 [value]="guest.bonus | number:'1.2-2'">
+                 class="disabled form-control form-control-sm d-inline-block flex-grow-1 text-center value-display"
+                 [value]="guest.bonus | number:'1.2-2'"
+          >
 
           <button (click)="addBonus(guest)" type="button" class="btn btn-sm btn-primary">
             <i class="fa fa-plus"></i>

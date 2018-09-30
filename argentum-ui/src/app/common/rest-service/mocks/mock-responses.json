@@ -214,7 +214,7 @@
     },
     "error": null
   },
-  "GET/guests/?size=3&page=1&code=4&name=r&mail=j&status=default": {
+  "GET/guests/?size=3&page=1&code=4&name=r&mail=j&status=default&sort=balance&direction=desc": {
     "data": {
       "guests": [
         {
@@ -435,9 +435,13 @@
       "guestsTotal": 120,
       "guestsCheckedIn": 90,
       "cardsTotal": 82,
-      "totalBalance": 1200,
+      "totalPositiveBalance": 1200,
+      "totalNegativeBalance": 110,
       "totalBonus": 43,
       "totalSpent": 743,
+      "totalRefund": 54,
+      "totalDeposited": 1430,
+      "totalWithdrawn": 23,
       "numProducts": 32,
       "numLegacyProducts": 3,
       "numRanges": 4,

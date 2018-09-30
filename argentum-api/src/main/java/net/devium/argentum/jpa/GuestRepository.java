@@ -31,8 +31,11 @@ public interface GuestRepository extends JpaRepository<GuestEntity, Long> {
 
     long countByCardNotNull();
 
-    @Query(value = "SELECT SUM(balance) FROM GuestEntity g")
-    BigDecimal sumBalance();
+    @Query(value = "SELECT SUM(balance) FROM GuestEntity g WHERE balance > 0")
+    BigDecimal sumPositiveBalance();
+
+    @Query(value = "SELECT SUM(balance) FROM GuestEntity g WHERE balance < 0")
+    BigDecimal sumNegativeBalance();
 
     @Query(value = "SELECT SUM(bonus) FROM GuestEntity g")
     BigDecimal sumBonus();

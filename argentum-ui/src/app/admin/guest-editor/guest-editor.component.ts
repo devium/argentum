@@ -25,6 +25,8 @@ export class GuestEditorComponent implements OnInit {
   nameStream = new Subject<string>();
   mailStream = new Subject<string>();
   statusStream = new Subject<string>();
+  sort = '';
+  direction = 'asc';
 
   @ViewChild(MessageComponent)
   message: MessageComponent;
@@ -68,14 +70,26 @@ export class GuestEditorComponent implements OnInit {
     this.changePage(1);
   }
 
-  changePage(newPage: number) {
+  refresh() {
     this.restService.getGuestsPaginatedAndFiltered(
-      this.PAGE_SIZE, newPage - 1, this.codeLike, this.nameLike, this.mailLike, this.statusLike
+      this.PAGE_SIZE,
+      this.page - 1,
+      this.codeLike,
+      this.nameLike,
+      this.mailLike,
+      this.statusLike,
+      this.sort,
+      this.direction
     )
       .then((result: { guests: Guest[], guestsTotal: number }) => {
-      this.guests = result.guests;
-      this.guestsTotal = result.guestsTotal;
-    });
+        this.guests = result.guests;
+        this.guestsTotal = result.guestsTotal;
+      });
+  }
+
+  changePage(newPage: number) {
+    this.page = newPage;
+    this.refresh();
   }
 
   addBalance(guest: Guest) {
@@ -156,6 +170,22 @@ export class GuestEditorComponent implements OnInit {
 
   filterStatus(status: string) {
     this.statusStream.next(status);
+  }
+
+  cycleSort(field: string) {
+    if (this.sort === field) {
+      if (this.direction === 'asc') {
+        this.direction = 'desc';
+      } else if (this.direction === 'desc') {
+        this.direction = 'asc';
+        this.sort = 'id';
+      } else {
+        this.direction = 'asc';
+      }
+    } else {
+      this.sort = field;
+    }
+    this.refresh();
   }
 
 }

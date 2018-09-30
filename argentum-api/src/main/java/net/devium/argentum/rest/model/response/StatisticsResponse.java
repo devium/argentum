@@ -6,9 +6,13 @@ public class StatisticsResponse {
     private final long guestsTotal;
     private final long guestsCheckedIn;
     private final long cardsTotal;
-    private final BigDecimal totalBalance;
+    private final BigDecimal totalPositiveBalance;
+    private final BigDecimal totalNegativeBalance;
     private final BigDecimal totalBonus;
     private final BigDecimal totalSpent;
+    private final BigDecimal totalRefund;
+    private final BigDecimal totalDeposited;
+    private final BigDecimal totalWithdrawn;
     private final long numProducts;
     private final long numLegacyProducts;
     private final long numRanges;
@@ -18,9 +22,13 @@ public class StatisticsResponse {
             long guestsTotal,
             long guestsCheckedIn,
             long cardsTotal,
-            BigDecimal totalBalance,
+            BigDecimal totalPositiveBalance,
+            BigDecimal totalNegativeBalance,
             BigDecimal totalBonus,
             BigDecimal totalSpent,
+            BigDecimal totalRefund,
+            BigDecimal totalDeposited,
+            BigDecimal totalWithdrawn,
             long numProducts,
             long numLegacyProducts,
             long numRanges,
@@ -29,9 +37,13 @@ public class StatisticsResponse {
         this.guestsTotal = guestsTotal;
         this.guestsCheckedIn = guestsCheckedIn;
         this.cardsTotal = cardsTotal;
-        this.totalBalance = totalBalance;
+        this.totalPositiveBalance = totalPositiveBalance;
+        this.totalNegativeBalance = totalNegativeBalance;
         this.totalBonus = totalBonus;
         this.totalSpent = totalSpent;
+        this.totalRefund = totalRefund;
+        this.totalDeposited = totalDeposited;
+        this.totalWithdrawn = totalWithdrawn;
         this.numProducts = numProducts;
         this.numLegacyProducts = numLegacyProducts;
         this.numRanges = numRanges;
@@ -50,8 +62,12 @@ public class StatisticsResponse {
         return cardsTotal;
     }
 
-    public BigDecimal getTotalBalance() {
-        return totalBalance;
+    public BigDecimal getTotalPositiveBalance() {
+        return totalPositiveBalance;
+    }
+
+    public BigDecimal getTotalNegativeBalance() {
+        return totalNegativeBalance;
     }
 
     public BigDecimal getTotalBonus() {
@@ -60,6 +76,18 @@ public class StatisticsResponse {
 
     public BigDecimal getTotalSpent() {
         return totalSpent;
+    }
+
+    public BigDecimal getTotalRefund() {
+        return totalRefund;
+    }
+
+    public BigDecimal getTotalDeposited() {
+        return totalDeposited;
+    }
+
+    public BigDecimal getTotalWithdrawn() {
+        return totalWithdrawn;
     }
 
     public long getNumProducts() {

@@ -3,9 +3,13 @@ export class StatisticsResponse {
   guestsTotal: number;
   guestsCheckedIn: number;
   cardsTotal: number;
-  totalBalance: number;
+  totalPositiveBalance: number;
+  totalNegativeBalance: number;
   totalBonus: number;
   totalSpent: number;
+  totalRefund: number;
+  totalDeposited: number;
+  totalWithdrawn: number;
   numProducts: number;
   numLegacyProducts: number;
   numRanges: number;
@@ -17,9 +21,13 @@ export function toStatistics(response: StatisticsResponse): Statistics {
     guestsTotal: response.guestsTotal,
     guestsCheckedIn: response.guestsCheckedIn,
     cardsTotal: response.cardsTotal,
-    totalBalance: response.totalBalance,
+    totalPositiveBalance: response.totalPositiveBalance,
+    totalNegativeBalance: response.totalNegativeBalance,
     totalBonus: response.totalBonus,
     totalSpent: response.totalSpent,
+    totalRefund: response.totalRefund,
+    totalDeposited: response.totalDeposited,
+    totalWithdrawn: response.totalWithdrawn,
     numProducts: response.numProducts,
     numLegacyProducts: response.numLegacyProducts,
     numRanges: response.numRanges,

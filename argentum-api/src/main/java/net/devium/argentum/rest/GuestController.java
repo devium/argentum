@@ -1,5 +1,6 @@
 package net.devium.argentum.rest;
 
+import com.google.common.collect.ImmutableSet;
 import net.devium.argentum.jpa.*;
 import net.devium.argentum.rest.model.request.GuestRequest;
 import net.devium.argentum.rest.model.response.*;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,14 +45,37 @@ public class GuestController {
         this.balanceEventRepository = balanceEventRepository;
     }
 
-    @RequestMapping(method = RequestMethod.GET, params = {"page", "size", "code", "name", "mail", "status"},
-            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(
+            method = RequestMethod.GET,
+            params = {"page", "size", "code", "name", "mail", "status", "sort", "direction"},
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+    )
     public ResponseEntity<?> getGuests(
-            @RequestParam int page, @RequestParam int size, @RequestParam String code,
-            @RequestParam String name, @RequestParam String mail,
-            @RequestParam String status
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam String code,
+            @RequestParam String name,
+            @RequestParam String mail,
+            @RequestParam String status,
+            @RequestParam String sort,
+            @RequestParam String direction
     ) {
-        Pageable pageRequest = new PageRequest(page, size);
+        Set<String> supportedSortFields = ImmutableSet.of(
+                "id",
+                "code",
+                "name",
+                "mail",
+                "status",
+                "checkedIn",
+                "balance",
+                "bonus"
+        );
+        sort = supportedSortFields.contains(sort) ? sort : "id";
+        Pageable pageRequest = new PageRequest(
+                page,
+                size,
+                new Sort(direction.equals("desc") ? Sort.Direction.DESC : Sort.Direction.ASC, sort)
+        );
         Page<GuestEntity> guests = guestRepository
                 .findByCodeContainsAndNameContainsAndMailContainsAndStatusContainsAllIgnoreCase(
                         code, name, mail, status, pageRequest);
@@ -83,7 +108,15 @@ public class GuestController {
         cardVictims.forEach(guest -> guest.setCard(null));
         guestRepository.save(cardVictims);
 
-        this.guestRepository.save(mergedGuests);
+        mergedGuests = this.guestRepository.save(mergedGuests);
+
+        Date date = new Date();
+        List<BalanceEventEntity> balanceEvents = mergedGuests.stream()
+                .filter(guest -> guest.getBalance().compareTo(BigDecimal.ZERO) != 0)
+                .map(guest -> new BalanceEventEntity(guest, date, guest.getBalance(), "balance"))
+                .collect(Collectors.toList());
+
+        this.balanceEventRepository.save(balanceEvents);
 
         return ResponseEntity.noContent().build();
     }

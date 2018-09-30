@@ -8,8 +8,8 @@
       <td>{{stats.guestsTotal}}</td>
     </tr>
     <tr>
-      <td>Guests checked in</td>
-      <td>{{stats.guestsCheckedIn}}</td>
+      <td><b>Guests checked in</b></td>
+      <td><b>{{stats.guestsCheckedIn}}</b></td>
     </tr>
     <tr>
       <td>Guests not checked in</td>
@@ -20,8 +20,12 @@
       <td>{{stats.cardsTotal}}</td>
     </tr>
     <tr>
-      <td>Total balance available to guests</td>
-      <td>€{{stats.totalBalance | number:'1.2-2'}}</td>
+      <td><b>Guests total balance (positive only)</b></td>
+      <td><b>€{{stats.totalPositiveBalance | number:'1.2-2'}}</b></td>
+    </tr>
+    <tr>
+      <td><b>Guests total balance (negative only)</b></td>
+      <td><b>€{{stats.totalNegativeBalance | number:'1.2-2'}}</b></td>
     </tr>
     <tr>
       <td>Total bonus available to guests</td>
@@ -30,6 +34,22 @@
     <tr>
       <td>Total funds spent (including bonus)</td>
       <td>€{{stats.totalSpent | number:'1.2-2'}}</td>
+    </tr>
+    <tr>
+      <td>of which has been refunded</td>
+      <td>€{{stats.totalRefund | number:'1.2-2'}}</td>
+    </tr>
+    <tr>
+      <td><b>Net sales (including refunds)</b></td>
+      <td><b>€{{stats.totalSpent - stats.totalRefund | number:'1.2-2'}}</b></td>
+    </tr>
+    <tr>
+      <td>Total deposits</td>
+      <td>€{{stats.totalDeposited | number:'1.2-2'}}</td>
+    </tr>
+    <tr>
+      <td>Total withdrawals</td>
+      <td>€{{stats.totalWithdrawn | number:'1.2-2'}}</td>
     </tr>
     <tr>
       <td>Products</td>

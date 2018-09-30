@@ -1,5 +1,6 @@
 package net.devium.argentum.rest;
 
+import com.google.common.collect.ImmutableSet;
 import net.devium.argentum.jpa.*;
 import org.junit.After;
 import org.junit.Before;
@@ -28,6 +29,8 @@ public class StatisticsControllerTest {
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
+    private OrderItemRepository orderItemRepository;
+    @Autowired
     private ProductRepository productRepository;
     @Autowired
     private ProductRangeRepository productRangeRepository;
@@ -35,6 +38,8 @@ public class StatisticsControllerTest {
     private CategoryRepository categoryRepository;
     @Autowired
     private GuestRepository guestRepository;
+    @Autowired
+    private BalanceEventRepository balanceEventRepository;
 
     private StatisticsController sut;
 
@@ -42,17 +47,25 @@ public class StatisticsControllerTest {
 
     @Before
     public void setUp() {
-        sut = new StatisticsController(orderRepository, productRepository, productRangeRepository,
-                categoryRepository, guestRepository);
+        sut = new StatisticsController(
+                orderRepository,
+                productRepository,
+                productRangeRepository,
+                categoryRepository,
+                guestRepository,
+                balanceEventRepository
+        );
         mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
     }
 
     @After
     public void tearDown() throws Exception {
         orderRepository.deleteAll();
+        orderItemRepository.deleteAll();
         productRepository.deleteAll();
         productRangeRepository.deleteAll();
         categoryRepository.deleteAll();
+        balanceEventRepository.deleteAll();
         guestRepository.deleteAll();
     }
 
@@ -68,8 +81,14 @@ public class StatisticsControllerTest {
         ));
         GuestEntity guest3 = guestRepository.save(new GuestEntity(
                 "someCode", "someName", "someMail", "someStatus", new Date(), null,
-                new BigDecimal(0.50), new BigDecimal(2.00)
+                new BigDecimal(-0.50), new BigDecimal(2.00)
         ));
+
+        balanceEventRepository.save(new BalanceEventEntity(guest1, new Date(), new BigDecimal(10.00), "balance"));
+        balanceEventRepository.save(new BalanceEventEntity(guest1, new Date(), new BigDecimal(2.50), "balance"));
+        balanceEventRepository.save(new BalanceEventEntity(guest1, new Date(), new BigDecimal(-6.50), "balance"));
+        balanceEventRepository.save(new BalanceEventEntity(guest2, new Date(), new BigDecimal(15.50), "balance"));
+        balanceEventRepository.save(new BalanceEventEntity(guest3, new Date(), new BigDecimal(-1.50), "balance"));
 
         CategoryEntity category1 = categoryRepository.save(new CategoryEntity("someCategory", "#443322"));
         CategoryEntity category2 = categoryRepository.save(new CategoryEntity("someOtherCategory", "#112233"));
@@ -83,21 +102,41 @@ public class StatisticsControllerTest {
         ProductRangeEntity range4 = productRangeRepository.save(new ProductRangeEntity("someFourthName"));
 
         ProductEntity product1 = productRepository.save(new ProductEntity(
-                "someProduct", new BigDecimal(2.50), null, Collections.emptySet()));
+                "someProduct", new BigDecimal(2.50), category1, ImmutableSet.of(range1)
+        ));
         ProductEntity product2 = productRepository.save(new ProductEntity(
-                "someOtherProduct", new BigDecimal(6.75), null, Collections.emptySet()));
+                "someOtherProduct", new BigDecimal(6.75), category2, ImmutableSet.of(range1, range2)
+        ));
         ProductEntity product3 = productRepository.save(new ProductEntity(
-                "someThirdProduct", new BigDecimal(2.50), null, Collections.emptySet()));
+                "someThirdProduct", new BigDecimal(2.50), category1, ImmutableSet.of(range1)
+        ));
         ProductEntity product4 = productRepository.save(new ProductEntity(
-                "someFourthProduct", new BigDecimal(6.75), null, true, Collections.emptySet()));
+                "someFourthProduct", new BigDecimal(6.75), category3, true, ImmutableSet.of(range1, range2, range3)
+        ));
         ProductEntity product5 = productRepository.save(new ProductEntity(
-                "someFifthProduct", new BigDecimal(2.50), null, Collections.emptySet()));
+                "someFifthProduct", new BigDecimal(2.50), category5, ImmutableSet.of(range4)
+        ));
         ProductEntity product6 = productRepository.save(new ProductEntity(
-                "someSixthProduct", new BigDecimal(6.75), null, true, Collections.emptySet()));
+                "someSixthProduct", new BigDecimal(6.75), category1, true, ImmutableSet.of(range1)
+        ));
 
-        OrderEntity order1 = orderRepository.save(new OrderEntity(guest1, new Date(), new BigDecimal(4.30)));
-        OrderEntity order2 = orderRepository.save(new OrderEntity(guest2, new Date(), new BigDecimal(1.20)));
-        OrderEntity order3 = orderRepository.save(new OrderEntity(guest3, new Date(), new BigDecimal(6.10)));
+        OrderEntity order1 = orderRepository.save(new OrderEntity(guest1, new Date(), new BigDecimal(22.50)));
+        OrderEntity order2 = orderRepository.save(new OrderEntity(guest2, new Date(), new BigDecimal(3.00)));
+        OrderEntity order3 = orderRepository.save(new OrderEntity(guest3, new Date(), new BigDecimal(14.50)));
+
+        OrderItemEntity orderItem1 = orderItemRepository.save(new OrderItemEntity(product2, 2, order1)); // 13.50
+        OrderItemEntity orderItem2 = orderItemRepository.save(new OrderItemEntity(product1, 3, order1)); //  7.50
+        OrderItemEntity orderItem3 = orderItemRepository.save(new OrderItemEntity(product5, 1, order2)); //  2.50
+        OrderItemEntity orderItem4 = orderItemRepository.save(new OrderItemEntity(product6, 2, order3)); // 13.50
+
+        order1.setCustomCancelled(new BigDecimal(0.50));
+        balanceEventRepository.save(new BalanceEventEntity(guest1, new Date(), new BigDecimal(0.50), "refund"));
+        orderItem2.setCancelled(1); // 2.50
+        balanceEventRepository.save(new BalanceEventEntity(guest1, new Date(), new BigDecimal(2.50), "refund"));
+        orderItem4.setCancelled(2); // 13.50
+        balanceEventRepository.save(new BalanceEventEntity(guest3, new Date(), new BigDecimal(13.50), "refund"));
+        order3.setCustomCancelled(new BigDecimal(1.00));
+        balanceEventRepository.save(new BalanceEventEntity(guest3, new Date(), new BigDecimal(1.00), "refund"));
 
         mockMvc.perform(get("/statistics"))
                 .andDo(print())
@@ -105,9 +144,13 @@ public class StatisticsControllerTest {
                 .andExpect(jsonPath("$.data.guestsTotal", is(3)))
                 .andExpect(jsonPath("$.data.guestsCheckedIn", is(1)))
                 .andExpect(jsonPath("$.data.cardsTotal", is(2)))
-                .andExpect(jsonPath("$.data.totalBalance", closeTo(5.20, 0.001)))
+                .andExpect(jsonPath("$.data.totalPositiveBalance", closeTo(4.70, 0.001)))
+                .andExpect(jsonPath("$.data.totalNegativeBalance", closeTo(0.50, 0.001)))
                 .andExpect(jsonPath("$.data.totalBonus", closeTo(12.00, 0.001)))
-                .andExpect(jsonPath("$.data.totalSpent", closeTo(11.60, 0.001)))
+                .andExpect(jsonPath("$.data.totalSpent", closeTo(40.00, 0.001)))
+                .andExpect(jsonPath("$.data.totalRefund", closeTo(17.50, 0.001)))
+                .andExpect(jsonPath("$.data.totalDeposited", closeTo(28.00, 0.001)))
+                .andExpect(jsonPath("$.data.totalWithdrawn", closeTo(8.00, 0.001)))
                 .andExpect(jsonPath("$.data.numProducts", is(6)))
                 .andExpect(jsonPath("$.data.numLegacyProducts", is(2)))
                 .andExpect(jsonPath("$.data.numRanges", is(4)))
