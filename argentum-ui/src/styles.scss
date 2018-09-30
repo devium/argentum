@@ -25,6 +25,12 @@ input:disabled {
 
 .text-black {
   color: black;
+
+  &.dropdown-toggle.text-black {
+    &:focus,&:hover {
+      color: black;
+    }
+  }
 }
 
 .dark-bg,

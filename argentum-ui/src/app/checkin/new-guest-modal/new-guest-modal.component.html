@@ -14,9 +14,9 @@
     <label for="mailInput">Status (optional)</label>
     <div ngbDropdown>
       <button
-        class="btn btn-primary"
+        class="btn btn-primary text-black"
         ngbDropdownToggle
-        [style.background-color]="status ? status.color : ''"
+        [style.background-color]="status ? status.color : '#ffffff'"
         [class.dark-bg]="status && isDarkBackground(status.color)"
       >
         {{status ? status.displayName : 'No status'}}
