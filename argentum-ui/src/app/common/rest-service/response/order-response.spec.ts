@@ -34,8 +34,9 @@ describe('OrderResponse', () => {
       customCancelled: 0.75
     };
 
-    const productsMap = new Map<number, Product>();
-    PRODUCTS.forEach((product: Product) => productsMap[product.id] = product);
+    const productsMap = new Map<number, Product>(PRODUCTS.map(
+      (product: Product) => [product.id, product] as [number, Product]
+    ));
     const order = toOrder(orderResponse, productsMap);
 
     expect(order.id).toBe(2);

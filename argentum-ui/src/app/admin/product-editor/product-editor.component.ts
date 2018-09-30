@@ -63,7 +63,7 @@ export class ProductEditorComponent implements OnInit {
   page = 1;
   products: EditorProduct[] = [];
   productRanges: ProductRange[] = [];
-  categories: Category[] = [];
+  categories  = new Map<number, Category>();
 
   @ViewChild(MessageComponent)
   message: MessageComponent;
@@ -78,7 +78,9 @@ export class ProductEditorComponent implements OnInit {
   loadProducts() {
     this.restService.getProductData()
       .then((productData: { products: Product[], categories: Category[], ranges: ProductRange[] }) => {
-        this.categories = productData.categories;
+        this.categories = new Map(productData.categories.map(
+          (category: Category) => [category.id, category] as [number, Category])
+        );
         this.productRanges = productData.ranges;
         this.products = productData.products
           .map(product => new EditorProduct(product))

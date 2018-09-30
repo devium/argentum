@@ -424,8 +424,9 @@ export class RestService {
         const products: Product[] = values[0];
         const ordersResponse: OrderResponse[] = values[1];
 
-        const productsMap = new Map<number, Product>();
-        products.forEach((product: Product) => productsMap[product.id] = product);
+        const productsMap = new Map<number, Product>(products.map(
+          (product: Product) => [product.id, product] as [number, Product]
+        ));
 
         return ordersResponse.map((orderResponse: OrderResponse) => toOrder(orderResponse, productsMap));
       })

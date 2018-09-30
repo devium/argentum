@@ -49,7 +49,7 @@ describe('NavbarComponent', () => {
     expect(fixture.debugElement.query(By.css('#navLinks')).children.length).toBe(2);
     expect(fixture.debugElement.query(By.css('#checkin')).nativeElement.textContent.trim()).toBe('Check-in');
 
-    component.roles = ['RECEPTION'];
+    component.roles = ['CHECKIN'];
     fixture.detectChanges();
     expect(fixture.debugElement.query(By.css('#navLinks')).children.length).toBe(2);
     expect(fixture.debugElement.query(By.css('#checkin')).nativeElement.textContent.trim()).toBe('Check-in');
@@ -64,7 +64,7 @@ describe('NavbarComponent', () => {
     expect(fixture.debugElement.query(By.css('#navLinks')).children.length).toBe(2);
     expect(fixture.debugElement.query(By.css('#coatCheck')).nativeElement.textContent.trim()).toBe('Coat check');
 
-    component.roles = ['TRANSFER', 'RECEPTION', 'SCAN', 'ORDER'];
+    component.roles = ['TRANSFER', 'CHECKIN', 'SCAN', 'ORDER'];
     fixture.detectChanges();
     // Transfer and checkin share a single site.
     expect(fixture.debugElement.query(By.css('#navLinks')).children.length).toBe(4);

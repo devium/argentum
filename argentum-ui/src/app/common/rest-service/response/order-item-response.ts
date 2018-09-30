@@ -11,7 +11,7 @@ export class OrderItemResponse {
 export function toOrderItem(response: OrderItemResponse, products: Map<number, Product>): OrderItem {
   return new OrderItem(
     response.id,
-    products[response.product],
+    products.get(response.product),
     response.quantity,
     response.cancelled
   );

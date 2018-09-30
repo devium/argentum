@@ -37,7 +37,7 @@
           Order
         </a>
       </li>
-      <li *ngIf="hasRole(['RECEPTION', 'TRANSFER'])" class="nav-item">
+      <li *ngIf="hasRole(['CHECKIN', 'TRANSFER'])" class="nav-item">
         <a
           id="checkin"
           (focus)="$event.target.blur()"
