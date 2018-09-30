@@ -63,12 +63,6 @@ public class CategoryController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @Transactional
     public ResponseEntity<?> deleteCategories(@RequestBody List<Long> categoryIds) {
-        if (categoryIds.isEmpty()) {
-            String message = "No categories to delete.";
-            LOGGER.info(message);
-            return Response.badRequest(message);
-        }
-
         Set<Long> unknownCategories = new HashSet<>();
         Set<CategoryEntity> categories = new HashSet<>();
 

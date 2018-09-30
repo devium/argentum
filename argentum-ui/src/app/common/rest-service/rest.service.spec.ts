@@ -1,4 +1,4 @@
-import { fakeAsync, TestBed } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { RestService } from './rest.service';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { GUESTS, JIMMY, NORBERT } from './mocks/mock-guests';
@@ -24,6 +24,7 @@ import { TokenResponse } from './response/token-response';
 import { TOKEN } from './mocks/mock-tokens';
 import { BAR, BUFFET, COATCHECK } from './mocks/mock-ranges';
 import { BEV_ALC, BEV_NONALC } from './mocks/mock-categories';
+import createSpyObj = jasmine.createSpyObj;
 
 describe('RestService', () => {
   let http: HttpClient;
@@ -32,6 +33,7 @@ describe('RestService', () => {
   let resolved = false;
   const requestData: any = require('./mocks/mock-requests.json');
   const responseData: any = require('./mocks/mock-responses.json');
+  const router = createSpyObj('Router', ['navigate']);
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -40,7 +42,7 @@ describe('RestService', () => {
 
     http = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
-    restService = new RestService(http);
+    restService = new RestService(http, router);
     resolved = false;
   });
 
@@ -692,5 +694,52 @@ describe('RestService', () => {
     expect(req.request.headers.get('Content-Type')).toBe('application/x-www-form-urlencoded; charset=utf-8');
     expect(req.request.body).toEqual(requestData[method + path]);
     req.flush(responseData[method + path]);
+  }));
+
+  it('should handle API usage errors correctly', fakeAsync(() => {
+    const method = 'GET';
+    const path = '/config';
+
+    restService.getConfig()
+      .catch((error: string) => {
+        expect(error).toBe('You did something wrong.');
+        resolved = true;
+      });
+
+    const req = httpTestingController.expectOne(restService.apiUrl + path);
+    req.flush(responseData['ERROR' + method + path], { status: 400, statusText: 'NOT_GOOD' });
+    tick();
+  }));
+
+  it('should handle malformed API usage errors correctly', fakeAsync(() => {
+    const method = 'GET';
+    const path = '/config';
+
+    restService.getConfig()
+      .catch((error: string) => {
+        expect(error).toBe('You did something wrong.');
+        resolved = true;
+      });
+
+    const req = httpTestingController.expectOne(restService.apiUrl + path);
+    req.flush(responseData['ERROR' + method + path]);
+  }));
+
+  it('should handle invalid token errors correctly', fakeAsync(() => {
+    const method = 'GET';
+    const path = '/config';
+
+    restService.getConfig()
+      .catch((error: string) => {
+        expect(error).toBe('Session expired. Redirecting to login.');
+        resolved = true;
+      });
+
+    const req = httpTestingController.expectOne(restService.apiUrl + path);
+    req.flush(responseData['INVALIDTOKEN' + method + path], { status: 401, statusText: 'NOT_GOOD' });
+    tick(restService.SESSION_EXPIRED_REDIRECT_TIMEOUT - 1);
+    expect(router.navigate).toHaveBeenCalledTimes(0);
+    tick(1);
+    expect(router.navigate).toHaveBeenCalledWith(['/login']);
   }));
 });

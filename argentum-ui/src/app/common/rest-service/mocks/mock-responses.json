@@ -502,5 +502,13 @@
     "token_type": "tokentype",
     "expires_in": 3600,
     "scope": "tokenscope"
+  },
+  "ERRORGET/config": {
+    "data": null,
+    "error": "You did something wrong."
+  },
+  "INVALIDTOKENGET/config": {
+    "data": null,
+    "error": "invalid_token"
   }
 }

@@ -39,14 +39,17 @@ import { fromCoatCheckTagIds } from './request/coat-check-tags-request';
 import { CoatCheckTag } from '../model/coat-check-tag';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Message } from '../model/message';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class RestService {
+
+  constructor(private http: HttpClient, private router: Router) {
+  }
   // Note: requests that contain an empty array are OK. Backend is supposed to handle those.
   readonly apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {
-  }
+  readonly SESSION_EXPIRED_REDIRECT_TIMEOUT = 3000;
 
   readonly authOptions = {
     headers: new HttpHeaders({
@@ -61,26 +64,29 @@ export class RestService {
     })
   };
 
-  private static handleError(error: HttpErrorResponse): Promise<any> {
-    console.error('An API error occurred.', error);
-    if (error.status === 400 && error.error.error === 'invalid_grant') {
-      return Promise.reject('Invalid username or password.');
-    }
-    if (error.status === 0) {
-      return Promise.reject('No response from backend. Is the API server running?');
-    }
-    return Promise.reject(error.message);
-  }
-
   private static checkMessage<T>(message: Message<T>): Promise<T> {
     if (message.data === null || message.error !== null) {
       // An erroneous response object that is not flagged as an HTTP error should not happen but just to be safe, we
       // wrap it in an HttpErrorResponse to be handled by the usual error handler.
-      return Promise.reject(new HttpErrorResponse({
-        error: { status: 0, name: 'Unknown error', message: message.error }
-      }));
+      return Promise.reject(new HttpErrorResponse({ error: message, status: 400 }));
     }
     return Promise.resolve(message.data);
+  }
+
+  private handleError(error: HttpErrorResponse): Promise<any> {
+    console.error('An API error occurred.', error);
+    if (error.status === 400 && error.error.error === 'invalid_grant') {
+      return Promise.reject('Invalid username or password.');
+    } else if (error.status === 401 && error.error.error === 'invalid_token') {
+      setTimeout(() => this.router.navigate(['/login']), this.SESSION_EXPIRED_REDIRECT_TIMEOUT);
+      return Promise.reject('Session expired. Redirecting to login.');
+    } else if (error.error.error) {
+      return Promise.reject(error.error.error);
+    } else if (error.status === 0) {
+      return Promise.reject('No response from backend. Is the API server running?');
+    } else {
+      return Promise.reject(error.message);
+    }
   }
 
   updateToken() {
@@ -102,7 +108,7 @@ export class RestService {
       .toPromise()
       .then(RestService.checkMessage)
       .then((tags: CoatCheckTagResponse[]) => tags.map(toCoatCheckTag))
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   getAllCoatCheckTags(): Promise<number[]> {
@@ -112,7 +118,7 @@ export class RestService {
     )
       .toPromise()
       .then(RestService.checkMessage)
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   deregisterTags(tagIds: number[]): Promise<void> {
@@ -122,7 +128,7 @@ export class RestService {
       Object.assign({}, this.authJsonOptions, { body: tagIds })
     )
       .toPromise()
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   registerTags(tagIds: number[], guest: Guest, price: number): Promise<CoatCheckTag[]> {
@@ -135,7 +141,7 @@ export class RestService {
       .toPromise()
       .then(RestService.checkMessage)
       .then((response: CoatCheckTagResponse[]) => response.map(toCoatCheckTag))
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   // /products
@@ -148,7 +154,7 @@ export class RestService {
       .toPromise()
       .then(RestService.checkMessage)
       .then((products: ProductResponse[]) => products.map(toProduct))
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   getAllProducts(): Promise<Product[]> {
@@ -162,7 +168,7 @@ export class RestService {
       .then((products: ProductResponse[]) => products.map(
         (product: ProductResponse) => toProduct(product)
       ))
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   mergeProducts(products: Product[]): Promise<void> {
@@ -172,7 +178,7 @@ export class RestService {
       this.authJsonOptions
     )
       .toPromise()
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   deleteProducts(products: Product[]): Promise<void> {
@@ -184,7 +190,7 @@ export class RestService {
       Object.assign({}, this.authJsonOptions, { body: body })
     )
       .toPromise()
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
 
@@ -198,7 +204,7 @@ export class RestService {
       .toPromise()
       .then(RestService.checkMessage)
       .then((ranges: ProductRangeResponse[]) => ranges.map(toProductRange))
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   getRangeProducts(range: ProductRange): Promise<Product[]> {
@@ -209,7 +215,7 @@ export class RestService {
       .toPromise()
       .then(RestService.checkMessage)
       .then((products: ProductResponse[]) => products.map(toProduct))
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   mergeProductRanges(productRanges: ProductRange[]): Promise<void> {
@@ -221,7 +227,7 @@ export class RestService {
       this.authJsonOptions
     )
       .toPromise()
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   deleteProductRanges(productRanges: ProductRange[]): Promise<void> {
@@ -233,7 +239,7 @@ export class RestService {
       Object.assign({}, this.authJsonOptions, { body: body })
     )
       .toPromise()
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
 
@@ -247,7 +253,7 @@ export class RestService {
       .toPromise()
       .then(RestService.checkMessage)
       .then((categories: CategoryResponse[]) => categories.map(toCategory))
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   mergeCategories(categories: Category[]): Promise<void> {
@@ -259,7 +265,7 @@ export class RestService {
       this.authJsonOptions
     )
       .toPromise()
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   deleteCategories(categories: Category[]): Promise<void> {
@@ -271,7 +277,7 @@ export class RestService {
       Object.assign({}, this.authJsonOptions, { body: body })
     )
       .toPromise()
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
 
@@ -301,7 +307,7 @@ export class RestService {
       .toPromise()
       .then(RestService.checkMessage)
       .then((guest: GuestResponse) => toGuest(guest))
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   getGuestsPaginatedAndFiltered(
@@ -328,7 +334,7 @@ export class RestService {
         guests: response.guests.map(toGuest),
         guestsTotal: response.guestsTotal
       }))
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   getGuestsBySearch(field: string, search: string): Observable<Guest[]> {
@@ -338,7 +344,7 @@ export class RestService {
     )
       .map((response: Message<GuestResponse[]>) => response.data)
       .map((guests: GuestResponse[]) => guests.map(toGuest))
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   mergeGuests(guests: Guest[]): Promise<void> {
@@ -350,7 +356,7 @@ export class RestService {
       this.authJsonOptions
     )
       .toPromise()
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   deleteGuests(): Promise<void> {
@@ -359,7 +365,7 @@ export class RestService {
       this.authOptions
     )
       .toPromise()
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   addBalance(guest: Guest, value: number): Promise<number> {
@@ -370,7 +376,7 @@ export class RestService {
     )
       .toPromise()
       .then(RestService.checkMessage)
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   addBonus(guest: Guest, value: number): Promise<number> {
@@ -381,7 +387,7 @@ export class RestService {
     )
       .toPromise()
       .then(RestService.checkMessage)
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   registerCard(guest: Guest, card: string): Promise<void> {
@@ -391,7 +397,7 @@ export class RestService {
       this.authJsonOptions
     )
       .toPromise()
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   checkIn(guest: Guest): Promise<Date> {
@@ -403,7 +409,7 @@ export class RestService {
       .toPromise()
       .then(RestService.checkMessage)
       .then((checkInDate: number) => new Date(checkInDate))
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   private getOrdersRaw(guest: Guest): Promise<OrderResponse[]> {
@@ -413,7 +419,7 @@ export class RestService {
     )
       .toPromise()
       .then(RestService.checkMessage)
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   getOrders(guest: Guest): Promise<Order[]> {
@@ -430,7 +436,7 @@ export class RestService {
 
         return ordersResponse.map((orderResponse: OrderResponse) => toOrder(orderResponse, productsMap));
       })
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   // /statuses
@@ -443,7 +449,7 @@ export class RestService {
       .toPromise()
       .then(RestService.checkMessage)
       .then((statuses: StatusResponse[]) => statuses.map(toStatus))
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   mergeStatuses(statuses: Status[]): Promise<void> {
@@ -455,7 +461,7 @@ export class RestService {
       this.authJsonOptions
     )
       .toPromise()
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   deleteStatuses(statuses: Status[]): Promise<void> {
@@ -467,7 +473,7 @@ export class RestService {
       Object.assign({}, this.authJsonOptions, { body: body })
     )
       .toPromise()
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
 
@@ -482,7 +488,7 @@ export class RestService {
       this.authJsonOptions
     )
       .toPromise()
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   cancelOrderItem(orderItem: OrderItem): Promise<void> {
@@ -494,7 +500,7 @@ export class RestService {
       Object.assign({}, this.authJsonOptions, { body: body })
     )
       .toPromise()
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   cancelCustom(order: Order): Promise<void> {
@@ -506,7 +512,7 @@ export class RestService {
       Object.assign({}, this.authJsonOptions, { body: body })
     )
       .toPromise()
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
 
@@ -520,7 +526,7 @@ export class RestService {
       .toPromise()
       .then(RestService.checkMessage)
       .then((stats: StatisticsResponse) => toStatistics(stats))
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   // /users
@@ -532,7 +538,7 @@ export class RestService {
       .toPromise()
       .then(RestService.checkMessage)
       .then((users: UserResponse[]) => users.map(toUser))
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   mergeUsers(users: User[]): Promise<void> {
@@ -544,7 +550,7 @@ export class RestService {
       this.authJsonOptions
     )
       .toPromise()
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   deleteUsers(users: User[]): Promise<void> {
@@ -559,7 +565,7 @@ export class RestService {
       Object.assign({}, this.authJsonOptions, { body: body })
     )
       .toPromise()
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   getUser(): Promise<User> {
@@ -570,7 +576,7 @@ export class RestService {
       .toPromise()
       .then(RestService.checkMessage)
       .then(toUser)
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
 
@@ -583,7 +589,7 @@ export class RestService {
       .toPromise()
       .then(RestService.checkMessage)
       .then((config: ConfigResponse) => toConfig(config))
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
   setConfig(config: Config): Promise<void> {
@@ -593,7 +599,7 @@ export class RestService {
       this.authJsonOptions
     )
       .toPromise()
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 
 
@@ -621,6 +627,6 @@ export class RestService {
         this.updateToken();
         return token;
       })
-      .catch(RestService.handleError);
+      .catch((error: HttpErrorResponse) => this.handleError(error));
   }
 }

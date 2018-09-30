@@ -135,7 +135,7 @@ public class CategoryControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(body))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNoContent());
     }
 
     @Test
