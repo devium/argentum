@@ -30,10 +30,12 @@ export class MessageComponent implements OnInit {
   }
 
   error(message: string) {
+    console.error(message);
     this.messageStream.next({ message: message, type: 'danger' });
   }
 
   success(message: string) {
+    console.log(message);
     this.messageStream.next({ message: message, type: 'success' });
   }
 

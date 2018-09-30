@@ -81,13 +81,14 @@ export class OrderComponent implements OnInit {
           const products: Product[] = response[0];
           const categories: Category[] = response[1];
 
-          this.categories.clear();
-          categories.forEach((category: Category) => this.categories[category.id] = category);
+          this.categories = new Map<number, Category>(categories.map(
+            (category: Category) => [category.id, category] as [number, Category]
+          ));
 
           this.products = products.filter(product => !product.legacy);
           this.products.sort((a: Product, b: Product) => {
-            const categoryA: string = a.categoryId === null ? '' : this.categories[a.categoryId].name;
-            const categoryB: string = b.categoryId === null ? '' : this.categories[b.categoryId].name;
+            const categoryA: string = a.categoryId === null ? '' : this.categories.get(a.categoryId).name;
+            const categoryB: string = b.categoryId === null ? '' : this.categories.get(b.categoryId).name;
             return categoryA.localeCompare(categoryB);
           });
         })

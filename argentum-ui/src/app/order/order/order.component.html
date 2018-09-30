@@ -41,8 +41,8 @@
             (click)="rangeProductClicked(product)"
             type="button"
             class="btn-product"
-            [style.background-color]="product.categoryId ? categories[product.categoryId].color : '#ffffff'"
-            [class.dark-bg]="product.categoryId && isDarkBackground(categories[product.categoryId].color)"
+            [style.background-color]="product.categoryId ? categories.get(product.categoryId).color : '#ffffff'"
+            [class.dark-bg]="product.categoryId && isDarkBackground(categories.get(product.categoryId).color)"
           >
             <div class="product-name">{{product.name}}</div>
             <div>
@@ -145,8 +145,8 @@
             (mouseup)="orderedProductClicked(productEntry.key)"
             type="button"
             class="btn btn-block btn-product"
-            [style.background-color]="productEntry.key.category ? productEntry.key.category.color : '#ffffff'"
-            [class.dark-bg]="productEntry.key.category && isDarkBackground(productEntry.key.category.color)"
+            [style.background-color]="productEntry.key.categoryId ? categories.get(productEntry.key.categoryId).color : '#ffffff'"
+            [class.dark-bg]="productEntry.key.categoryId && isDarkBackground(categories.get(productEntry.key.categoryId).color)"
             [class.btn-outline-primary]="productEntry.key.id == -1"
           >
             <div class="product-name">{{productEntry.key.name}}</div>
