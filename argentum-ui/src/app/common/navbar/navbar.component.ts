@@ -17,7 +17,7 @@ export class NavbarComponent extends RoleBasedComponent implements OnInit {
 
   refreshLinks() {
     this.links = [
-      [['COAT_CHECK'], '/coat_check', 'Coat check'],
+      // [['COAT_CHECK'], '/coat_check', 'Coat check'],
       [['ORDER'], '/order', 'Order'],
       [['CHECKIN', 'TRANSFER'], '/checkin', 'Check-in'],
       [['SCAN'], '/scan', 'Scan'],

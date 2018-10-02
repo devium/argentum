@@ -30,7 +30,7 @@ describe('AdminNavComponent', () => {
   });
 
   it('should create links for all admin sites', () => {
-    expect(fixture.debugElement.query(By.css('#adminLinks')).children.length).toBe(8);
+    expect(fixture.debugElement.query(By.css('#adminLinks')).children.length).toBe(9);
     expect(
       fixture.debugElement.query(By.css('#adminLinks :nth-child(1) > a')).nativeElement.textContent
     ).toBe('Dashboard');
