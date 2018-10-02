@@ -445,7 +445,21 @@
       "numProducts": 32,
       "numLegacyProducts": 3,
       "numRanges": 4,
-      "numCategories": 5
+      "numCategories": 5,
+      "quantitySales": [
+        {
+          "product": 7,
+          "quantity": 12
+        },
+        {
+          "product": 8,
+          "quantity": 6
+        },
+        {
+          "product": 5,
+          "quantity": 4
+        }
+      ]
     },
     "error": null
   },

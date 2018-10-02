@@ -13,10 +13,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.Date;
 
 import static org.hamcrest.Matchers.closeTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -53,7 +53,8 @@ public class StatisticsControllerTest {
                 productRangeRepository,
                 categoryRepository,
                 guestRepository,
-                balanceEventRepository
+                balanceEventRepository,
+                orderItemRepository
         );
         mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
     }
@@ -120,22 +121,30 @@ public class StatisticsControllerTest {
                 "someSixthProduct", new BigDecimal(6.75), category1, true, ImmutableSet.of(range1)
         ));
 
-        OrderEntity order1 = orderRepository.save(new OrderEntity(guest1, new Date(), new BigDecimal(22.50)));
-        OrderEntity order2 = orderRepository.save(new OrderEntity(guest2, new Date(), new BigDecimal(3.00)));
-        OrderEntity order3 = orderRepository.save(new OrderEntity(guest3, new Date(), new BigDecimal(14.50)));
+        OrderEntity order1 = orderRepository.save(new OrderEntity(guest1, new Date(), new BigDecimal(22.50))); // +1.50
+        OrderEntity order2 = orderRepository.save(new OrderEntity(guest2, new Date(), new BigDecimal(3.00)));  // +0.50
+        OrderEntity order3 = orderRepository.save(new OrderEntity(guest3, new Date(), new BigDecimal(17.00))); // +1.00
 
         OrderItemEntity orderItem1 = orderItemRepository.save(new OrderItemEntity(product2, 2, order1)); // 13.50
         OrderItemEntity orderItem2 = orderItemRepository.save(new OrderItemEntity(product1, 3, order1)); //  7.50
         OrderItemEntity orderItem3 = orderItemRepository.save(new OrderItemEntity(product5, 1, order2)); //  2.50
         OrderItemEntity orderItem4 = orderItemRepository.save(new OrderItemEntity(product6, 2, order3)); // 13.50
+        OrderItemEntity orderItem5 = orderItemRepository.save(new OrderItemEntity(product1, 1, order3)); //  2.50
 
         order1.setCustomCancelled(new BigDecimal(0.50));
+        orderRepository.save(order1);
         balanceEventRepository.save(new BalanceEventEntity(guest1, new Date(), new BigDecimal(0.50), "refund"));
+
         orderItem2.setCancelled(1); // 2.50
+        orderItemRepository.save(orderItem2);
         balanceEventRepository.save(new BalanceEventEntity(guest1, new Date(), new BigDecimal(2.50), "refund"));
+
         orderItem4.setCancelled(2); // 13.50
+        orderItemRepository.save(orderItem4);
         balanceEventRepository.save(new BalanceEventEntity(guest3, new Date(), new BigDecimal(13.50), "refund"));
+
         order3.setCustomCancelled(new BigDecimal(1.00));
+        orderRepository.save(order3);
         balanceEventRepository.save(new BalanceEventEntity(guest3, new Date(), new BigDecimal(1.00), "refund"));
 
         mockMvc.perform(get("/statistics"))
@@ -147,13 +156,20 @@ public class StatisticsControllerTest {
                 .andExpect(jsonPath("$.data.totalPositiveBalance", closeTo(4.70, 0.001)))
                 .andExpect(jsonPath("$.data.totalNegativeBalance", closeTo(0.50, 0.001)))
                 .andExpect(jsonPath("$.data.totalBonus", closeTo(12.00, 0.001)))
-                .andExpect(jsonPath("$.data.totalSpent", closeTo(40.00, 0.001)))
+                .andExpect(jsonPath("$.data.totalSpent", closeTo(42.50, 0.001)))
                 .andExpect(jsonPath("$.data.totalRefund", closeTo(17.50, 0.001)))
                 .andExpect(jsonPath("$.data.totalDeposited", closeTo(28.00, 0.001)))
                 .andExpect(jsonPath("$.data.totalWithdrawn", closeTo(8.00, 0.001)))
                 .andExpect(jsonPath("$.data.numProducts", is(6)))
                 .andExpect(jsonPath("$.data.numLegacyProducts", is(2)))
                 .andExpect(jsonPath("$.data.numRanges", is(4)))
-                .andExpect(jsonPath("$.data.numCategories", is(5)));
+                .andExpect(jsonPath("$.data.numCategories", is(5)))
+                .andExpect(jsonPath("$.data.quantitySales", hasSize(3)))
+                .andExpect(jsonPath("$.data.quantitySales[0].product", is((int)product1.getId())))
+                .andExpect(jsonPath("$.data.quantitySales[0].quantity", is(3)))
+                .andExpect(jsonPath("$.data.quantitySales[1].product", is((int)product2.getId())))
+                .andExpect(jsonPath("$.data.quantitySales[1].quantity", is(2)))
+                .andExpect(jsonPath("$.data.quantitySales[2].product", is((int)product5.getId())))
+                .andExpect(jsonPath("$.data.quantitySales[2].quantity", is(1)));
     }
 }

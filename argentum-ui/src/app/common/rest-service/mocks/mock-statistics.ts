@@ -14,5 +14,6 @@ export const STATISTICS: Statistics = {
   numProducts: 32,
   numLegacyProducts: 3,
   numRanges: 4,
-  numCategories: 5
+  numCategories: 5,
+  quantitySales: [[5, 4], [8, 6], [7, 12]]
 };

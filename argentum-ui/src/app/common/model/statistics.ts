@@ -13,4 +13,5 @@ export class Statistics {
   numLegacyProducts: number;
   numRanges: number;
   numCategories: number;
+  quantitySales: [number, number][];
 }

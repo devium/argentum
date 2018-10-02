@@ -1,8 +1,11 @@
 package net.devium.argentum.rest.model.response;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class StatisticsResponse {
+    ;
+
     private final long guestsTotal;
     private final long guestsCheckedIn;
     private final long cardsTotal;
@@ -17,6 +20,7 @@ public class StatisticsResponse {
     private final long numLegacyProducts;
     private final long numRanges;
     private final long numCategories;
+    private final List<QuantitySalesResponse> quantitySales;
 
     public StatisticsResponse(
             long guestsTotal,
@@ -32,7 +36,8 @@ public class StatisticsResponse {
             long numProducts,
             long numLegacyProducts,
             long numRanges,
-            long numCategories
+            long numCategories,
+            List<QuantitySalesResponse> quantitySales
     ) {
         this.guestsTotal = guestsTotal;
         this.guestsCheckedIn = guestsCheckedIn;
@@ -48,6 +53,7 @@ public class StatisticsResponse {
         this.numLegacyProducts = numLegacyProducts;
         this.numRanges = numRanges;
         this.numCategories = numCategories;
+        this.quantitySales = quantitySales;
     }
 
     public long getGuestsTotal() {
@@ -104,5 +110,9 @@ public class StatisticsResponse {
 
     public long getNumCategories() {
         return numCategories;
+    }
+
+    public List<QuantitySalesResponse> getQuantitySales() {
+        return quantitySales;
     }
 }

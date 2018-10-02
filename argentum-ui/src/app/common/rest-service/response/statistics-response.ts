@@ -1,4 +1,5 @@
 import { Statistics } from '../../model/statistics';
+import { QuantitySalesResponse } from './quantity-sales-response';
 export class StatisticsResponse {
   guestsTotal: number;
   guestsCheckedIn: number;
@@ -14,6 +15,7 @@ export class StatisticsResponse {
   numLegacyProducts: number;
   numRanges: number;
   numCategories: number;
+  quantitySales: QuantitySalesResponse[];
 }
 
 export function toStatistics(response: StatisticsResponse): Statistics {
@@ -31,6 +33,9 @@ export function toStatistics(response: StatisticsResponse): Statistics {
     numProducts: response.numProducts,
     numLegacyProducts: response.numLegacyProducts,
     numRanges: response.numRanges,
-    numCategories: response.numCategories
+    numCategories: response.numCategories,
+    quantitySales: response.quantitySales.map(
+      (sales: QuantitySalesResponse) => [sales.product, sales.quantity] as [number, number]
+    ).sort((a: [number, number], b: [number, number]) => a[1] - b[1])
   };
 }

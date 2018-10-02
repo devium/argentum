@@ -1,6 +1,7 @@
 package net.devium.argentum.rest;
 
 import net.devium.argentum.jpa.*;
+import net.devium.argentum.rest.model.response.QuantitySalesResponse;
 import net.devium.argentum.rest.model.response.Response;
 import net.devium.argentum.rest.model.response.StatisticsResponse;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/statistics")
@@ -25,6 +27,7 @@ public class StatisticsController {
     private CategoryRepository categoryRepository;
     private GuestRepository guestRepository;
     private BalanceEventRepository balanceEventRepository;
+    private OrderItemRepository orderItemRepository;
 
     @Autowired
     public StatisticsController(
@@ -33,7 +36,8 @@ public class StatisticsController {
             ProductRangeRepository productRangeRepository,
             CategoryRepository categoryRepository,
             GuestRepository guestRepository,
-            BalanceEventRepository balanceEventRepository
+            BalanceEventRepository balanceEventRepository,
+            OrderItemRepository orderItemRepository
     ) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
@@ -41,6 +45,7 @@ public class StatisticsController {
         this.categoryRepository = categoryRepository;
         this.guestRepository = guestRepository;
         this.balanceEventRepository = balanceEventRepository;
+        this.orderItemRepository = orderItemRepository;
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -68,6 +73,8 @@ public class StatisticsController {
         long numRanges = productRangeRepository.count();
         long numCategories = categoryRepository.count();
 
+        List<QuantitySalesResponse> quantitySales = orderItemRepository.sumQuantitySales();
+
         return Response.ok(new StatisticsResponse(
                 guestsTotal,
                 guestsCheckedIn,
@@ -82,7 +89,8 @@ public class StatisticsController {
                 numProducts,
                 numLegacyProducts,
                 numRanges,
-                numCategories
+                numCategories,
+                quantitySales
         ));
     }
 }

@@ -20,11 +20,11 @@
       <td>{{stats.cardsTotal}}</td>
     </tr>
     <tr>
-      <td><b>Guests total balance (positive only)</b></td>
+      <td><b>Guests remaining positive balance</b></td>
       <td><b>€{{stats.totalPositiveBalance | number:'1.2-2'}}</b></td>
     </tr>
     <tr>
-      <td><b>Guests total balance (negative only)</b></td>
+      <td><b>Guests remaining negative balance</b></td>
       <td><b>€{{stats.totalNegativeBalance | number:'1.2-2'}}</b></td>
     </tr>
     <tr>
@@ -40,7 +40,7 @@
       <td>€{{stats.totalRefund | number:'1.2-2'}}</td>
     </tr>
     <tr>
-      <td><b>Net sales (including refunds)</b></td>
+      <td><b>Net sales (accounting for refunds)</b></td>
       <td><b>€{{stats.totalSpent - stats.totalRefund | number:'1.2-2'}}</b></td>
     </tr>
     <tr>
@@ -70,7 +70,9 @@
     </tbody>
   </table>
 
-  <button (click)='refresh()' type="button" class="btn btn-block btn-primary">
+  <canvas #salesCanvas>{{salesChart}}</canvas>
+
+  <button (click)='refresh()' type="button" class="btn btn-block btn-primary mt-3">
     <i class="fa fa-refresh"></i>
   </button>
 
