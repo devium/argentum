@@ -1,4 +1,7 @@
-FROM arm32v7/openjdk
+FROM arm32v7/openjdk:slim
+
+# Note: build has to be performed on the host system.
+COPY qemu-arm-static /usr/bin/qemu-arm-static
 
 RUN mkdir argentum-api
 WORKDIR argentum-api

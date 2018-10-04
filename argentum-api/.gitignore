@@ -1,2 +1,3 @@
 gradle/
 /out/
+/qemu-arm-static
