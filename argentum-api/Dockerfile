@@ -3,7 +3,16 @@ FROM openjdk:alpine
 RUN mkdir argentum-api
 WORKDIR argentum-api
 
-COPY build/libs/argentum-*.jar argentum-api.jar
+RUN apk add --update gradle
+
+COPY src src
+COPY build.gradle .
+
+RUN gradle build
+RUN apk del gradle
+RUN mv build/libs/argentum-*.jar argentum-api.jar
+RUN rm -rf src build.gradle
+
 COPY production/application.yaml .
 COPY production/keystore.p12 .
 COPY start.sh .

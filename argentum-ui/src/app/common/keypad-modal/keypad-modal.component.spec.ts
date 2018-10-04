@@ -3,7 +3,6 @@ import { KeypadModalComponent } from './keypad-modal.component';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { By } from '@angular/platform-browser';
 import createSpyObj = jasmine.createSpyObj;
-import { SpyObject } from '@angular/core/testing/src/testing_internal';
 
 describe('KeypadModalComponent', () => {
   let component: KeypadModalComponent;
