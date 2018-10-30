@@ -7,3 +7,4 @@ mysql/
 postgres/
 keystore.p12
 *.pem
+.venv/
