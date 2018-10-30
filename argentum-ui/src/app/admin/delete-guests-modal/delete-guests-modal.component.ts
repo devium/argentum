@@ -1,26 +1,32 @@
-import { Component, OnInit } from '@angular/core';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Observable } from 'rxjs/Observable';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import 'rxjs/add/observable/timer';
 import 'rxjs/add/operator/take';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-delete-guests-modal',
   templateUrl: './delete-guests-modal.component.html',
   styleUrls: ['./delete-guests-modal.component.scss']
 })
-export class DeleteGuestsModalComponent implements OnInit {
-  countdown: number;
+export class DeleteGuestsModalComponent implements OnInit, OnDestroy {
+  readonly TIMEOUT_SECONDS = 5;
+  countdown = 5;
+  subscription: Subscription;
 
-  constructor(private modalService: NgbModal, public activeModal: NgbActiveModal) {
+  constructor(public activeModal: NgbActiveModal) {
   }
 
   ngOnInit() {
-    this.countdown = 5;
-    Observable
-      .timer(1000, 1000)
-      .take(5)
-      .subscribe(tick => this.countdown = 5 - tick - 1);
+    this.subscription = Observable
+      .timer(0, 1000)
+      .map((i: number) => this.TIMEOUT_SECONDS - i)
+      .take(this.TIMEOUT_SECONDS + 1)
+      .subscribe((tick: number) => this.countdown = tick);
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
 }

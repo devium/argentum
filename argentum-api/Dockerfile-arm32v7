@@ -1,4 +1,4 @@
-FROM arm32v7/openjdk:slim
+FROM arm32v7/openjdk
 
 # Note: build has to be performed on the host system.
 COPY qemu-arm-static /usr/bin/qemu-arm-static

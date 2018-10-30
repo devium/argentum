@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 import createSpyObj = jasmine.createSpyObj;
 import { RestService } from '../../common/rest-service/rest.service';
 import { STATUSES } from '../../common/rest-service/mocks/mock-statuses';
-import { By } from '@angular/platform-browser';
 
 describe('NewGuestModalComponent', () => {
   let component: NewGuestModalComponent;
