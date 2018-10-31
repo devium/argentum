@@ -79,7 +79,8 @@ DATABASES = {
         'NAME': 'argentum',
         'USER': 'postgres',
         'HOST': 'localhost',
-        'PASSWORD': os.environ['POSTGRES_PASSWORD']
+        'PASSWORD': os.environ['POSTGRES_PASSWORD'],
+        'ATOMIC_REQUESTS': True
     }
 }
 

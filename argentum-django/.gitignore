@@ -1,0 +1,2 @@
+api/migrations/
+!api/migrations/__init__.py
