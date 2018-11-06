@@ -1,0 +1,26 @@
+{
+  "GET/guests": [
+    {
+      "id": 1,
+      "code": "C-VVNORB",
+      "name": "Norbert the Waterbear",
+      "mail": "norby@smellywaterbear.com",
+      "status": "default",
+      "checked_in": null,
+      "card": "7951068",
+      "balance": "7.60",
+      "bonus": "0.00"
+    },
+    {
+      "id": 2,
+      "code": "C-VVJAMES",
+      "name": "James the Sunderer",
+      "mail": "jimmy@cherpcherp.com",
+      "status": "default",
+      "checked_in": "2018-12-31T22:00:00Z",
+      "card": "8102162",
+      "balance": "10.00",
+      "bonus": "5.00"
+    }
+  ]
+}

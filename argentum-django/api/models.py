@@ -14,7 +14,7 @@ class Guest(models.Model):
     bonus = models.DecimalField(default=0, **CURRENCY_CONFIG)
 
     def __str__(self):
-        return f'[{self.id}] {self.name} ({self.code})'
+        return f'Guest(id={self.id}, name=\'{self.name}\', code=\'{self.code})\''
 
 
 class Transaction(models.Model):
@@ -25,4 +25,7 @@ class Transaction(models.Model):
     pending = models.BooleanField(default=True)
 
     def __str__(self):
-        return f'[{self.id}@{self.time}] {self.guest} {self.value} ({self.description})'
+        return f'Transaction(' \
+               f'id={self.id}, time={self.time}, guest={self.guest},' \
+               f' value={self.value}, description=\'{self.description}\'' \
+               f')'
