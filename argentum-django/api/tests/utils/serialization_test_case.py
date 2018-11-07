@@ -1,5 +1,6 @@
 import json
 import os
+from functools import partial
 from typing import List
 
 from django.core.serializers import serialize
@@ -18,6 +19,12 @@ class SerializationTestCase(TestCase):
             cls.RESPONSES = json.load(responses_file)
         with open(os.path.join(cls.TEST_DATA_DIR, 'requests.json')) as requests_file:
             cls.REQUESTS = json.load(requests_file)
+
+    def setUp(self):
+        # For some reason 'application/json' is not the default content type in the Django client.
+        self.client.post = partial(self.client.post, content_type='application/json')
+        self.client.put = partial(self.client.put, content_type='application/json')
+        self.client.patch = partial(self.client.patch, content_type='application/json')
 
     def assertDeserialization(self, models1: List[models.Model], models2: List[models.Model]):
         self.assertEqual(

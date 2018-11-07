@@ -18,5 +18,13 @@
     "card": "8102162",
     "balance": "10.00",
     "bonus": "5.00"
+  },
+  "POST/transactions": {
+    "guest": 1,
+    "value": "5.00",
+    "description": "topup"
+  },
+  "PATCH/transactions/1": {
+    "pending": false
   }
 }

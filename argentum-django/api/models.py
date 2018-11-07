@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 CURRENCY_CONFIG = {'max_digits': 9, 'decimal_places': 2}
 
@@ -18,7 +19,7 @@ class Guest(models.Model):
 
 
 class Transaction(models.Model):
-    time = models.DateTimeField(auto_now_add=True)
+    time = models.DateTimeField(default=timezone.now)
     guest = models.ForeignKey(Guest, on_delete=models.CASCADE)
     value = models.DecimalField(**CURRENCY_CONFIG)
     description = models.CharField(max_length=64)

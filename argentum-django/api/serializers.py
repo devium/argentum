@@ -6,10 +6,17 @@ from rest_framework import serializers
 from api.models import Guest, Transaction
 
 
-class GuestSerializer(serializers.ModelSerializer):
+class GuestCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Guest
         fields = ['id', 'code', 'name', 'mail', 'status', 'checked_in', 'card', 'balance', 'bonus']
+
+
+class GuestUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Guest
+        fields = GuestCreateSerializer.Meta.fields
+        read_only_fields = ['code', 'name', 'mail', 'status', 'card', 'balance', 'bonus']
 
 
 class TransactionCreateSerializer(serializers.ModelSerializer):
@@ -22,13 +29,15 @@ class TransactionCreateSerializer(serializers.ModelSerializer):
 class TransactionUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
-        fields = ['id', 'time', 'guest', 'value', 'description', 'pending']
+        fields = TransactionCreateSerializer.Meta.fields
         read_only_fields = ['time']
 
-    def validate(self, attrs: Dict[str, Any]):
-        if not self.instance.pending:
-            raise serializers.ValidationError('Transaction has already been committed.')
-        return attrs
+    def get_fields(self):
+        if self.instance.pending:
+            self.Meta.read_only_fields = ['time']
+        else:
+            self.Meta.read_only_fields = self.Meta.fields
+        return super().get_fields()
 
     def update(self, instance: Transaction, validated_data: Dict[str, Any]):
         self.instance.time = timezone.now()

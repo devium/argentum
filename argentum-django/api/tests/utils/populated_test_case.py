@@ -5,8 +5,9 @@ from django.contrib.auth.models import User, Group
 from django.db import models
 from django.test import TestCase
 
-from api.models import Guest
+from api.models import Guest, Transaction
 from api.tests.data.guests import GUESTS
+from api.tests.data.transactions import TRANSACTIONS
 from api.tests.data.users import USERS
 
 
@@ -14,13 +15,16 @@ class PopulatedTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        Guest.objects.bulk_create(GUESTS)
+
         for user in USERS:
             if user.username is 'admin':
                 continue
             groups = [Group.objects.get(name=group_name).id for group_name in user.groups]
             new_user = User.objects.create_user(user.username, '', user.password)
             new_user.groups.add(*groups)
+
+        Guest.objects.bulk_create(GUESTS)
+        Transaction.objects.bulk_create(TRANSACTIONS)
 
     def assertPks(self, http_data: OrderedDict, models: List[models.Model], *args, **kwargs):
         self.assertSequenceEqual(

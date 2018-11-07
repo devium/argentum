@@ -11,7 +11,6 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         self.login(RECEPTION)
 
         response = self.client.get('/guests')
-        print(response.data)
         self.assertEqual(response.status_code, 200)
         self.assertPks(response.data, GUESTS)
 
@@ -52,6 +51,24 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         response = self.client.post('/guests', self.REQUESTS['POSTexplicit/guests'])
         self.assertEqual(response.status_code, 201)
         self.assertDeserialization(Guest.objects.all(), [JIMMY_EXPLICIT])
+
+    def test_patch_readonly(self):
+        self.login(ADMIN)
+
+        data = {
+            'code': '123',
+            'name': 'Jimmy',
+            'mail': 'jimmy@cherpcherp.org',
+            'status': 'special',
+            'card': '1212',
+            'balance': '5.00',
+            'bonus': '3.00'
+        }
+        response = self.client.patch(f'/guests/{NORBERT.id}', data)
+        self.assertEqual(response.status_code, 200)
+        for field, value in data.items():
+            # Make sure no values have been adopted.
+            self.assertNotEqual(response.data[field], value, {field: value})
 
     def test_permissions(self):
         self.assertPermissions(
