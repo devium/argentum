@@ -26,5 +26,13 @@
   },
   "PATCH/transactions/1": {
     "pending": false
+  },
+  "POST/bonus_transactions": {
+    "guest": 1,
+    "value": "4.00",
+    "description": "staff bonus"
+  },
+  "PATCH/bonus_transactions/1": {
+    "pending": false
   }
 }

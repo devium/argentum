@@ -6,6 +6,8 @@ from django.db import models
 from django.test import TestCase
 
 from api.models import Guest, Transaction
+from api.models.bonus_transaction import BonusTransaction
+from api.tests.data.bonus_transactions import BONUS_TRANSACTIONS
 from api.tests.data.guests import GUESTS
 from api.tests.data.transactions import TRANSACTIONS
 from api.tests.data.users import USERS
@@ -25,6 +27,7 @@ class PopulatedTestCase(TestCase):
 
         Guest.objects.bulk_create(GUESTS)
         Transaction.objects.bulk_create(TRANSACTIONS)
+        BonusTransaction.objects.bulk_create(BONUS_TRANSACTIONS)
 
     def assertPks(self, http_data: OrderedDict, models: List[models.Model], *args, **kwargs):
         self.assertSequenceEqual(

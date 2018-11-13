@@ -11,7 +11,8 @@ def populate_db(sender, **kwargs):
 
     DEFAULT_PERMISSIONS = [
         # Note: Django creates basic model view/add/change/delete permissions.
-        ('Can view transaction by card', Transaction, 'view_card_transaction')
+        ('Can view transaction by card', Transaction, 'view_card_transaction'),
+        ('Can view bonus transaction by card', Transaction, 'view_card_bonustransaction')
     ]
 
     DEFAULT_GROUPS = [
@@ -22,13 +23,33 @@ def populate_db(sender, **kwargs):
             'delete_guest',
             'view_transaction',
             'add_transaction',
-            'change_transaction'
+            'change_transaction',
+            'view_bonustransaction',
+            'add_bonustransaction',
+            'change_bonustransaction'
         ]),
-        ('order', ['view_card_transaction']),
-        ('coat_check', ['view_card_transaction']),
-        ('check_in', ['view_guest', 'add_guest']),
-        ('transfer', ['add_transaction', 'change_transaction']),
-        ('scan', ['view_card_transaction'])
+        ('order', [
+            'view_card_transaction',
+            'view_card_bonustransaction'
+        ]),
+        ('coat_check', [
+            'view_card_transaction',
+            'view_card_bonustransaction'
+        ]),
+        ('check_in', [
+            'view_guest',
+            'add_guest'
+        ]),
+        ('transfer', [
+            'add_transaction',
+            'change_transaction',
+            'add_bonustransaction',
+            'change_bonustransaction'
+        ]),
+        ('scan', [
+            'view_card_transaction',
+            'view_card_bonustransaction'
+        ])
     ]
 
     for username, password in DEFAULT_USERS:

@@ -1,7 +1,9 @@
+from decimal import Decimal
+
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 
-from api.models import Transaction
+from api.models import Transaction, Guest
 from api.tests.data.guests import ROBY, SHEELAH
 from api.tests.data.transactions import TRANSACTIONS, TX2, TX3, TX1
 from api.tests.data.users import TOPUP, ADMIN, TERMINAL, BAR, WARDROBE
@@ -53,18 +55,95 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         TX3.time = response_time
         self.assertDeserialization(Transaction.objects.all(), [TX3])
 
+    def test_positive_crediting(self):
+        self.login(TOPUP)
+
+        roby = Guest.objects.get(pk=ROBY.id)
+        roby.balance = '3.00'
+        roby.bonus = '5.00'
+        roby.save()
+
+        data = {
+            'guest': ROBY.id,
+            'value': '3.00',
+            'ignore_bonus': True,
+            'description': 'withdrawal'
+        }
+        response = self.client.post('/transactions', data)
+        self.client.patch(f"/transactions/{response.data['id']}", {'pending': False})
+        roby.refresh_from_db()
+        self.assertEqual(roby.balance, Decimal('6.00'))
+        self.assertEqual(roby.bonus, Decimal('5.00'))
+
+        # Bonus is still ignored because value is deposited.
+        data['ignore_bonus'] = False
+        response = self.client.post('/transactions', data)
+        self.client.patch(f"/transactions/{response.data['id']}", {'pending': False})
+        roby.refresh_from_db()
+        self.assertEqual(roby.balance, Decimal('9.00'))
+        self.assertEqual(roby.bonus, Decimal('5.00'))
+
+    def test_negative_crediting(self):
+        self.login(TOPUP)
+
+        roby = Guest.objects.get(pk=ROBY.id)
+        roby.balance = '3.00'
+        roby.bonus = '5.00'
+        roby.save()
+
+        # Transaction ignoring bonus, e.g., a balance withdrawal.
+        data = {
+            'guest': ROBY.id,
+            'value': '-4.00',
+            'ignore_bonus': True,
+            'description': 'withdrawal'
+        }
+        response = self.client.post('/transactions', data)
+        self.client.patch(f"/transactions/{response.data['id']}", {'pending': False})
+        roby.refresh_from_db()
+        self.assertEqual(roby.balance, Decimal('-1.00'))
+        self.assertEqual(roby.bonus, Decimal('5.00'))
+
+        # Bonus can cover the complete value.
+        data['ignore_bonus'] = False
+        response = self.client.post('/transactions', data)
+        self.client.patch(f"/transactions/{response.data['id']}", {'pending': False})
+        roby.refresh_from_db()
+        self.assertEqual(roby.balance, Decimal('-1.00'))
+        self.assertEqual(roby.bonus, Decimal('1.00'))
+
+        # Bonus can exactly cover the complete value.
+        data['value'] = '-1.00'
+        response = self.client.post('/transactions', data)
+        self.client.patch(f"/transactions/{response.data['id']}", {'pending': False})
+        roby.refresh_from_db()
+        self.assertEqual(roby.balance, Decimal('-1.00'))
+        self.assertEqual(roby.bonus, Decimal('0.00'))
+
+        roby.bonus = '7.00'
+        roby.save()
+
+        # Bonus is exceed, remainder covered by balance.
+        data['value'] = '-8.00'
+        response = self.client.post('/transactions', data)
+        self.client.patch(f"/transactions/{response.data['id']}", {'pending': False})
+        roby.refresh_from_db()
+        self.assertEqual(roby.balance, Decimal('-2.00'))
+        self.assertEqual(roby.bonus, Decimal('0.00'))
+
     def test_patch_readonly(self):
         self.login(TOPUP)
 
         mutable_fields = {
             'guest': SHEELAH.id,
             'value': '2.50',
-            'description': 'topup'
+            'description': 'topup',
+            'ignore_bonus': False
         }
 
         # Before committing, time is readonly.
         immutable_fields = {
-            'time': '2018-12-31T22:10:10Z',
+            'time': '2019-12-31T22:10:10Z',
         }
 
         self.assertPatchReadonly(f'/transactions/{TX1.id}', mutable_fields, immutable_fields)
@@ -76,9 +155,10 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         # After committing, everything should be immutable.
         mutable_fields = {}
         immutable_fields = {
-            'time': '2018-12-31T22:10:10Z',
+            'time': '2019-12-31T22:10:10Z',
             'guest': ROBY.id,
             'value': '3.00',
+            'ignore_bonus': True,
             'description': 'initial'
         }
 
@@ -100,7 +180,7 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
             [ADMIN]
         )
         self.assertPermissions(
-            lambda: self.client.get('/transactions?guest__card={JIMMY.card}'),
+            lambda: self.client.get(f'/transactions?guest__card={ROBY.card}'),
             [BAR, WARDROBE, TERMINAL]
         )
         self.assertPermissions(

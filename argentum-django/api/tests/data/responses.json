@@ -26,18 +26,38 @@
   "GET/transactions": [
     {
       "id": 1,
-      "time": "2018-12-31T22:05:00Z",
+      "time": "2019-12-31T22:05:00Z",
       "guest": 1,
       "value": "3.00",
+      "ignore_bonus": false,
       "description": "initial",
       "pending": true
     },
     {
       "id": 2,
-      "time": "2018-12-31T22:07:30Z",
+      "time": "2019-12-31T22:07:30Z",
       "guest": 2,
       "value": "7.00",
+      "ignore_bonus": true,
       "description": "initial",
+      "pending": false
+    }
+  ],
+  "GET/bonus_transactions": [
+    {
+      "id": 1,
+      "time": "2019-12-31T22:01:00Z",
+      "guest": 1,
+      "value": "15.00",
+      "description": "staff bonus",
+      "pending": true
+    },
+    {
+      "id": 2,
+      "time": "2019-12-31T22:02:30Z",
+      "guest": 2,
+      "value": "3.00",
+      "description": "guest bonus",
       "pending": false
     }
   ]
