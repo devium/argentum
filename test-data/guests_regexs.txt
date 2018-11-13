@@ -1,0 +1,12 @@
+Expression:
+(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?),(.*?)\n
+
+to Python models:
+Guest(\n    id=$1,\n    code='$2',\n    name='$3',\n    mail='$4',\n    status='$5',\n    checked_in=parse_datetime('$6'),\n    card='$7',\n    balance='$8',\n    bonus='$9'\n),\n
+
+parse_datetime() to None
+
+to JSON:
+{\n  "id": $1,\n  "code": "$2",\n  "name": "$3",\n  "mail": "$4",\n  "status": "$5",\n  "checked_in": "$6",\n  "card": "$7",\n  "balance": "$8",\n  "bonus": "$9"\n},\n
+
+"checked_in": "" to "checked_in": null

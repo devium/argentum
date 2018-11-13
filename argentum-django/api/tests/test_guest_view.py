@@ -1,5 +1,5 @@
 from api.models import Guest
-from api.tests.data.guests import GUESTS, JIMMY, NORBERT, NORBERT_DEFAULT, JIMMY_EXPLICIT
+from api.tests.data.guests import GUESTS, ROBY, SHEELAH, ROBY_MIN, ROBY_MAX
 from api.tests.data.users import RECEPTION, ADMIN
 from api.tests.utils.authenticated_test_case import AuthenticatedTestCase
 from api.tests.utils.populated_test_case import PopulatedTestCase
@@ -17,21 +17,21 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
     def test_get_search(self):
         self.login(RECEPTION)
 
-        response = self.client.get('/guests?code=vvjames')
+        response = self.client.get('/guests?code=001')
         self.assertEqual(response.status_code, 200)
-        self.assertPks(response.data, [JIMMY])
+        self.assertPks(response.data, [ROBY])
 
-        response = self.client.get('/guests?name=james the')
-        self.assertPks(response.data, [JIMMY])
+        response = self.client.get('/guests?name=roby')
+        self.assertPks(response.data, [ROBY])
 
-        response = self.client.get('/guests?mail=jimmy')
-        self.assertPks(response.data, [JIMMY])
+        response = self.client.get('/guests?mail=rbrush')
+        self.assertPks(response.data, [ROBY])
 
-        response = self.client.get('/guests?status=default')
-        self.assertPks(response.data, [NORBERT, JIMMY])
+        response = self.client.get('/guests?status=staff')
+        self.assertPks(response.data, [ROBY])
 
-        response = self.client.get('/guests?name=the&mail=norby')
-        self.assertPks(response.data, [NORBERT])
+        response = self.client.get('/guests?code=DEMO-0000&mail=tuttocitta')
+        self.assertPks(response.data, [SHEELAH])
 
     def test_get_serialize(self):
         self.login(RECEPTION)
@@ -43,19 +43,19 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         self.login(RECEPTION)
 
         Guest.objects.all().delete()
-        response = self.client.post('/guests', self.REQUESTS['POSTdefault/guests'])
+        response = self.client.post('/guests', self.REQUESTS['POSTmin/guests'])
         self.assertEqual(response.status_code, 201)
-        self.assertDeserialization(Guest.objects.all(), [NORBERT_DEFAULT])
+        self.assertDeserialization(Guest.objects.all(), [ROBY_MIN])
 
         Guest.objects.all().delete()
-        response = self.client.post('/guests', self.REQUESTS['POSTexplicit/guests'])
+        response = self.client.post('/guests', self.REQUESTS['POSTmax/guests'])
         self.assertEqual(response.status_code, 201)
-        self.assertDeserialization(Guest.objects.all(), [JIMMY_EXPLICIT])
+        self.assertDeserialization(Guest.objects.all(), [ROBY_MAX])
 
     def test_patch_readonly(self):
         self.login(ADMIN)
 
-        data = {
+        immutable_fields = {
             'code': '123',
             'name': 'Jimmy',
             'mail': 'jimmy@cherpcherp.org',
@@ -64,11 +64,7 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
             'balance': '5.00',
             'bonus': '3.00'
         }
-        response = self.client.patch(f'/guests/{NORBERT.id}', data)
-        self.assertEqual(response.status_code, 200)
-        for field, value in data.items():
-            # Make sure no values have been adopted.
-            self.assertNotEqual(response.data[field], value, {field: value})
+        self.assertPatchReadonly(f'/guests/{ROBY.id}', {}, immutable_fields)
 
     def test_permissions(self):
         self.assertPermissions(
@@ -76,7 +72,7 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
             [ADMIN, RECEPTION]
         )
         self.assertPermissions(
-            lambda: self.client.post('/guests', self.REQUESTS['POSTexplicit/guests']),
+            lambda: self.client.post('/guests', self.REQUESTS['POSTmax/guests']),
             [ADMIN, RECEPTION],
             [Guest.objects.all()]
         )

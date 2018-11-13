@@ -3,21 +3,21 @@
     "username": "admin",
     "password": "argentum"
   },
-  "POSTdefault/guests": {
-    "code": "C-VVNORB",
-    "name": "Norbert the Waterbear",
-    "mail": "norby@smellywaterbear.com",
-    "status": "default"
+  "POSTmin/guests": {
+    "code": "DEMO-00001",
+    "name": "Roby Brushfield",
+    "mail": "rbrushfield0@sohu.com",
+    "status": "staff"
   },
-  "POSTexplicit/guests": {
-    "code": "C-VVJAMES",
-    "name": "James the Sunderer",
-    "mail": "jimmy@cherpcherp.com",
-    "status": "default",
-    "checked_in": "2018-12-31T22:00:00Z",
-    "card": "8102162",
-    "balance": "10.00",
-    "bonus": "5.00"
+  "POSTmax/guests": {
+    "code": "DEMO-00001",
+    "name": "Roby Brushfield",
+    "mail": "rbrushfield0@sohu.com",
+    "status": "staff",
+    "checked_in": "2019-12-31T22:55:44Z",
+    "card": "567a",
+    "balance": "-62.94",
+    "bonus": "-22.09"
   },
   "POST/transactions": {
     "guest": 1,

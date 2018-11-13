@@ -53,5 +53,5 @@ class AuthenticatedTestCase(TestCase):
             self.assertEqual(
                 response.status_code,
                 403,
-                f'Prohibition check failed for {user}: : {response.data}'
+                f'Prohibition check failed for {user}: {response.data}'
             )

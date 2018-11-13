@@ -1,55 +1,55 @@
-from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 
 from api.models import Guest
 
-NORBERT = Guest(
+ROBY = Guest(
     id=1,
-    code='C-VVNORB',
-    name='Norbert the Waterbear',
-    mail='norby@smellywaterbear.com',
-    status='default',
-    checked_in=None,
-    card='7951068',  # 12121212
-    balance='7.60',
-    bonus='0.00'
+    code='DEMO-00001',
+    name='Roby Brushfield',
+    mail='rbrushfield0@sohu.com',
+    status='staff',
+    checked_in=parse_datetime('2019-12-31T22:55:44Z'),
+    card='567a',
+    balance='-62.94',
+    bonus='-22.09'
 )
 
-JIMMY = Guest(
+SHEELAH = Guest(
     id=2,
-    code='C-VVJAMES',
-    name='James the Sunderer',
-    mail='jimmy@cherpcherp.com',
-    status='default',
-    checked_in=timezone.make_aware(timezone.datetime(2018, 12, 31, 22, 0, 0)),
-    card='8102162',  # 12341234
-    balance='10.00',
-    bonus='5.00'
+    code='DEMO-00002',
+    name='Sheelah Arnault',
+    mail='sarnault1@tuttocitta.it',
+    status='pending',
+    checked_in=None,
+    card='',
+    balance='-73.04',
+    bonus='54.82'
 )
 
-GUESTS = [NORBERT, JIMMY]
+GUESTS = [ROBY, SHEELAH]
 
 # Models below are not stored in the DB, but rather used for POST deserialization testing.
 
-NORBERT_DEFAULT = Guest(
+ROBY_MIN = Guest(
     id=3,
-    code='C-VVNORB',
-    name='Norbert the Waterbear',
-    mail='norby@smellywaterbear.com',
-    status='default',
+    code='DEMO-00001',
+    name='Roby Brushfield',
+    mail='rbrushfield0@sohu.com',
+    status='staff',
     checked_in=None,
     card='',
     balance='0.00',
     bonus='0.00'
 )
 
-JIMMY_EXPLICIT = Guest(
+ROBY_MAX = Guest(
     id=4,
-    code='C-VVJAMES',
-    name='James the Sunderer',
-    mail='jimmy@cherpcherp.com',
-    status='default',
-    checked_in=timezone.make_aware(timezone.datetime(2018, 12, 31, 22, 0, 0)),
-    card='8102162',  # 12341234
-    balance='10.00',
-    bonus='5.00'
+    code='DEMO-00001',
+    name='Roby Brushfield',
+    mail='rbrushfield0@sohu.com',
+    status='staff',
+    checked_in=parse_datetime('2019-12-31T22:55:44Z'),
+    card='567a',
+    balance='-62.94',
+    bonus='-22.09'
 )

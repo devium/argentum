@@ -131,3 +131,4 @@ REST_FRAMEWORK = {
         'argentum.permissions.StrictModelPermissions',
     )
 }
+CURRENCY_CONFIG = {'max_digits': 9, 'decimal_places': 2}

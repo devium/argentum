@@ -1,7 +1,7 @@
 import json
 import os
 from functools import partial
-from typing import List
+from typing import List, Dict, Any
 
 from django.core.serializers import serialize
 from django.db import models
@@ -31,3 +31,24 @@ class SerializationTestCase(TestCase):
             serialize('json', models1),
             serialize('json', models2)
         )
+
+    def assertPatchReadonly(
+            self,
+            endpoint: str,
+            mutable_fields: Dict[str, Any],
+            immutable_fields: Dict[str, Any]
+    ):
+        response = self.client.patch(endpoint, {**mutable_fields, **immutable_fields})
+        self.assertEqual(response.status_code, 200)
+        for field, value in mutable_fields.items():
+            self.assertEqual(
+                response.data[field],
+                value,
+                f'Mutability check failed for field {field}'
+            )
+        for field, value in immutable_fields.items():
+            self.assertNotEqual(
+                response.data[field],
+                value,
+                f'Immutability check failed for field {field}'
+            )

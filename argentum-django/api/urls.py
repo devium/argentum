@@ -3,11 +3,12 @@ from django.urls import include
 from rest_framework import routers
 from rest_framework.authtoken import views as tokenviews
 
-from . import views as apiviews
+import api.models.guest
+import api.models.transaction
 
 router = routers.DefaultRouter(trailing_slash=False)
-router.register('guests', apiviews.GuestViewSet)
-router.register('transactions', apiviews.TransactionViewSet)
+router.register('guests', api.models.guest.GuestViewSet)
+router.register('transactions', api.models.transaction.TransactionViewSet)
 
 urlpatterns = [
     url('^', include(router.urls)),

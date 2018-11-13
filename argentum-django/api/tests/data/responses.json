@@ -2,25 +2,25 @@
   "GET/guests": [
     {
       "id": 1,
-      "code": "C-VVNORB",
-      "name": "Norbert the Waterbear",
-      "mail": "norby@smellywaterbear.com",
-      "status": "default",
-      "checked_in": null,
-      "card": "7951068",
-      "balance": "7.60",
-      "bonus": "0.00"
+      "code": "DEMO-00001",
+      "name": "Roby Brushfield",
+      "mail": "rbrushfield0@sohu.com",
+      "status": "staff",
+      "checked_in": "2019-12-31T22:55:44Z",
+      "card": "567a",
+      "balance": "-62.94",
+      "bonus": "-22.09"
     },
     {
       "id": 2,
-      "code": "C-VVJAMES",
-      "name": "James the Sunderer",
-      "mail": "jimmy@cherpcherp.com",
-      "status": "default",
-      "checked_in": "2018-12-31T22:00:00Z",
-      "card": "8102162",
-      "balance": "10.00",
-      "bonus": "5.00"
+      "code": "DEMO-00002",
+      "name": "Sheelah Arnault",
+      "mail": "sarnault1@tuttocitta.it",
+      "status": "pending",
+      "checked_in": null,
+      "card": "",
+      "balance": "-73.04",
+      "bonus": "54.82"
     }
   ],
   "GET/transactions": [

@@ -2,7 +2,7 @@ from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 
 from api.models import Transaction
-from api.tests.data.guests import JIMMY, NORBERT
+from api.tests.data.guests import ROBY, SHEELAH
 from api.tests.data.transactions import TRANSACTIONS, TX2, TX3, TX1
 from api.tests.data.users import TOPUP, ADMIN, TERMINAL, BAR, WARDROBE
 from api.tests.utils.authenticated_test_case import AuthenticatedTestCase
@@ -21,9 +21,15 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
     def test_get_by_card(self):
         self.login(BAR)
 
-        response = self.client.get(f"/transactions?guest__card={JIMMY.card}")
+        response = self.client.get(f'/transactions?guest__card={ROBY.card}')
         self.assertEqual(response.status_code, 200)
-        self.assertPks(response.data, [TX2])
+        self.assertPks(response.data, [TX1])
+
+    def test_get_by_nocard(self):
+        self.login(BAR)
+
+        response = self.client.get(f'/transactions?guest__card=')
+        self.assertEqual(response.status_code, 403)
 
     def test_get_serialize(self):
         self.login(ADMIN)
@@ -50,46 +56,33 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
     def test_patch_readonly(self):
         self.login(TOPUP)
 
-        mutable_data1 = {
-            'guest': JIMMY.id,
+        mutable_fields = {
+            'guest': SHEELAH.id,
             'value': '2.50',
             'description': 'topup'
         }
 
         # Before committing, time is readonly.
-        immutable_data1 = {
+        immutable_fields = {
             'time': '2018-12-31T22:10:10Z',
         }
 
+        self.assertPatchReadonly(f'/transactions/{TX1.id}', mutable_fields, immutable_fields)
+
+        # Commit transaction.
+        response = self.client.patch(f'/transactions/{TX1.id}', {'pending': False})
+        self.assertEqual(response.status_code, 200)
+
         # After committing, everything should be immutable.
-        immutable_data2 = {
+        mutable_fields = {}
+        immutable_fields = {
             'time': '2018-12-31T22:10:10Z',
-            'guest': NORBERT.id,
+            'guest': ROBY.id,
             'value': '3.00',
             'description': 'initial'
         }
 
-        response = self.client.patch(
-            f'/transactions/{TX1.id}',
-            {**mutable_data1, **immutable_data1}
-        )
-        self.assertEqual(response.status_code, 200)
-        for field, value in mutable_data1.items():
-            # Mutable values should be adopted.
-            self.assertEqual(response.data[field], value, {field: value})
-        for field, value in immutable_data1.items():
-            # Immutable values should have been rejected.
-            self.assertNotEqual(response.data[field], value, {field: value})
-
-        # Commit transaction. Everything should be readonly now.
-        response = self.client.patch(f'/transactions/{TX1.id}', {'pending': False})
-        self.assertEqual(response.status_code, 200)
-
-        response = self.client.patch(f'/transactions/{TX1.id}', immutable_data2)
-        self.assertEqual(response.status_code, 200)
-
-        for field, value in immutable_data2.items():
-            self.assertNotEqual(response.data[field], value, {field: value})
+        self.assertPatchReadonly(f'/transactions/{TX1.id}', mutable_fields, immutable_fields)
 
     def test_patch_deserialize(self):
         self.login(TOPUP)
