@@ -1,3 +1,4 @@
+import logging
 from decimal import Decimal
 
 from django.utils import timezone
@@ -5,11 +6,13 @@ from django.utils.dateparse import parse_datetime
 
 from api.models import Transaction, Guest
 from api.tests.data.guests import ROBY, SHEELAH
-from api.tests.data.transactions import TRANSACTIONS, TX2, TX3, TX1
+from api.tests.data.transactions import TRANSACTIONS, TX3, TX1
 from api.tests.data.users import TOPUP, ADMIN, TERMINAL, BAR, WARDROBE
 from api.tests.utils.authenticated_test_case import AuthenticatedTestCase
 from api.tests.utils.populated_test_case import PopulatedTestCase
 from api.tests.utils.serialization_test_case import SerializationTestCase
+
+LOG = logging.getLogger(__name__)
 
 
 class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedTestCase):
@@ -39,21 +42,6 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         response = self.client.get('/transactions')
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, self.RESPONSES['GET/transactions'])
-
-    def test_post_deserialize(self):
-        self.login(TOPUP)
-
-        Transaction.objects.all().delete()
-        start = timezone.now()
-        response = self.client.post('/transactions', self.REQUESTS['POST/transactions'])
-        end = timezone.now()
-        self.assertEqual(response.status_code, 201)
-
-        response_time = parse_datetime(response.data['time'])
-        self.assertLess(start, response_time)
-        self.assertLess(response_time, end)
-        TX3.time = response_time
-        self.assertDeserialization(Transaction.objects.all(), [TX3])
 
     def test_positive_crediting(self):
         self.login(TOPUP)
@@ -164,7 +152,23 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
 
         self.assertPatchReadonly(f'/transactions/{TX1.id}', mutable_fields, immutable_fields)
 
+    def test_post_deserialize(self):
+        self.login(TOPUP)
+
+        Transaction.objects.all().delete()
+        start = timezone.now()
+        response = self.client.post('/transactions', self.REQUESTS['POST/transactions'])
+        end = timezone.now()
+        self.assertEqual(response.status_code, 201)
+
+        response_time = parse_datetime(response.data['time'])
+        self.assertLess(start, response_time)
+        self.assertLess(response_time, end)
+        TX3.time = response_time
+        self.assertValueEqual(Transaction.objects.all(), [TX3])
+
     def test_patch_deserialize(self):
+        # Since this field is read-only on creation, this requires a separate test.
         self.login(TOPUP)
 
         response = self.client.patch(
@@ -186,4 +190,11 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         self.assertPermissions(
             lambda: self.client.post('/transactions', self.REQUESTS['POST/transactions']),
             [ADMIN, TOPUP]
+        )
+
+    def test_str(self):
+        LOG.debug(TX1)
+        self.assertEqual(
+            str(TX1),
+            f'Transaction(id=1,time="2019-12-31 22:05:00+00:00",value=3.00,description="initial",guest={str(ROBY)})'
         )

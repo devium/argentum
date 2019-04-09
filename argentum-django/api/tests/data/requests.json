@@ -1,15 +1,15 @@
 {
-  "POSTadmin/token": {
+  "POST/token#admin": {
     "username": "admin",
     "password": "argentum"
   },
-  "POSTmin/guests": {
+  "POST/guests#min": {
     "code": "DEMO-00001",
     "name": "Roby Brushfield",
     "mail": "rbrushfield0@sohu.com",
     "status": "staff"
   },
-  "POSTmax/guests": {
+  "POST/guests#max": {
     "code": "DEMO-00001",
     "name": "Roby Brushfield",
     "mail": "rbrushfield0@sohu.com",
@@ -34,5 +34,18 @@
   },
   "PATCH/bonus_transactions/1": {
     "pending": false
+  },
+  "POST/categories": {
+    "name": "Soft drinks",
+    "color": "#00ffff"
+  },
+  "POST/products#min": {
+    "name": "Water",
+    "price": "2.40"
+  },
+  "POST/products#max": {
+    "name": "Water",
+    "price": "2.40",
+    "category": 1
   }
 }

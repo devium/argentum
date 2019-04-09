@@ -17,7 +17,7 @@ class Guest(models.Model):
     bonus = models.DecimalField(default=0, **CURRENCY_CONFIG)
 
     def __str__(self):
-        return f'Guest(id={self.id}, name=\'{self.name}\', code=\'{self.code})\''
+        return f'Guest(id={self.id},name="{self.name}",code="{self.code}")'
 
 
 class GuestCreateSerializer(serializers.ModelSerializer):

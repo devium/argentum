@@ -20,9 +20,12 @@ class BonusTransaction(models.Model):
 
     def __str__(self):
         return f'BonusTransaction(' \
-               f'id={self.id}, time={self.time}, guest={self.guest},' \
-               f' value={self.value}, description=\'{self.description}\'' \
-               f')'
+            f'id={self.id},' \
+            f'time="{self.time}",' \
+            f'value={self.value},' \
+            f'description="{self.description}",' \
+            f'guest={self.guest}' \
+            f')'
 
 
 class BonusTransactionCreateSerializer(serializers.ModelSerializer):
@@ -73,4 +76,3 @@ class BonusTransactionViewSet(viewsets.ModelViewSet):
             return StrictModelPermissions({'GET': ['%(app_label)s.view_card_%(model_name)s']}),
         else:
             return StrictModelPermissions(),
-

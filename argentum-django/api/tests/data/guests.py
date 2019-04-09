@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.utils.dateparse import parse_datetime
 
 from api.models import Guest
@@ -10,8 +12,8 @@ ROBY = Guest(
     status='staff',
     checked_in=parse_datetime('2019-12-31T22:55:44Z'),
     card='567a',
-    balance='-62.94',
-    bonus='-22.09'
+    balance=Decimal('-62.94'),
+    bonus=Decimal('-22.09')
 )
 
 SHEELAH = Guest(
@@ -22,8 +24,8 @@ SHEELAH = Guest(
     status='pending',
     checked_in=None,
     card='',
-    balance='-73.04',
-    bonus='54.82'
+    balance=Decimal('-73.04'),
+    bonus=Decimal('54.82')
 )
 
 GUESTS = [ROBY, SHEELAH]
@@ -38,8 +40,8 @@ ROBY_MIN = Guest(
     status='staff',
     checked_in=None,
     card='',
-    balance='0.00',
-    bonus='0.00'
+    balance=Decimal('0.00'),
+    bonus=Decimal('0.00')
 )
 
 ROBY_MAX = Guest(
@@ -50,6 +52,6 @@ ROBY_MAX = Guest(
     status='staff',
     checked_in=parse_datetime('2019-12-31T22:55:44Z'),
     card='567a',
-    balance='-62.94',
-    bonus='-22.09'
+    balance=Decimal('-62.94'),
+    bonus=Decimal('-22.09')
 )

@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.utils.dateparse import parse_datetime
 
 from api.models import Transaction
@@ -7,7 +9,7 @@ TX1 = Transaction(
     id=1,
     time=parse_datetime('2019-12-31T22:05:00Z'),
     guest=ROBY,
-    value='3.00',
+    value=Decimal('3.00'),
     ignore_bonus=False,
     description='initial'
 )
@@ -16,7 +18,7 @@ TX2 = Transaction(
     id=2,
     time=parse_datetime('2019-12-31T22:07:30Z'),
     guest=SHEELAH,
-    value='7.00',
+    value=Decimal('7.00'),
     ignore_bonus=True,
     description='initial',
     pending=False
@@ -24,10 +26,12 @@ TX2 = Transaction(
 
 TRANSACTIONS = [TX1, TX2]
 
+# Models below are not stored in the DB, but rather used for POST deserialization testing.
+
 TX3 = Transaction(
     id=3,
     guest=ROBY,
-    value='5.00',
+    value=Decimal('5.00'),
     ignore_bonus=False,
     description='topup',
     pending=True

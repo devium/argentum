@@ -1,3 +1,4 @@
+import logging
 from decimal import Decimal
 
 from django.utils import timezone
@@ -12,12 +13,10 @@ from api.tests.utils.authenticated_test_case import AuthenticatedTestCase
 from api.tests.utils.populated_test_case import PopulatedTestCase
 from api.tests.utils.serialization_test_case import SerializationTestCase
 
+LOG = logging.getLogger(__name__)
 
-class BonusTransactionViewTestCase(
-    PopulatedTestCase,
-    SerializationTestCase,
-    AuthenticatedTestCase
-):
+
+class BonusTransactionViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedTestCase):
     def test_get(self):
         self.login(ADMIN)
 
@@ -44,24 +43,6 @@ class BonusTransactionViewTestCase(
         response = self.client.get('/bonus_transactions')
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, self.RESPONSES['GET/bonus_transactions'])
-
-    def test_post_deserialize(self):
-        self.login(TOPUP)
-
-        BonusTransaction.objects.all().delete()
-        start = timezone.now()
-        response = self.client.post(
-            '/bonus_transactions',
-            self.REQUESTS['POST/bonus_transactions']
-        )
-        end = timezone.now()
-        self.assertEqual(response.status_code, 201)
-
-        response_time = parse_datetime(response.data['time'])
-        self.assertLess(start, response_time)
-        self.assertLess(response_time, end)
-        BTX3.time = response_time
-        self.assertDeserialization(BonusTransaction.objects.all(), [BTX3])
 
     def test_crediting(self):
         self.login(TOPUP)
@@ -128,7 +109,23 @@ class BonusTransactionViewTestCase(
             immutable_fields
         )
 
+    def test_post_deserialize(self):
+        self.login(TOPUP)
+
+        BonusTransaction.objects.all().delete()
+        start = timezone.now()
+        response = self.client.post('/bonus_transactions', self.REQUESTS['POST/bonus_transactions'])
+        end = timezone.now()
+        self.assertEqual(response.status_code, 201)
+
+        response_time = parse_datetime(response.data['time'])
+        self.assertLess(start, response_time)
+        self.assertLess(response_time, end)
+        BTX3.time = response_time
+        self.assertValueEqual(BonusTransaction.objects.all(), [BTX3])
+
     def test_patch_deserialize(self):
+        # Since this field is read-only on creation, this requires a separate test.
         self.login(TOPUP)
 
         response = self.client.patch(
@@ -148,9 +145,15 @@ class BonusTransactionViewTestCase(
             [BAR, WARDROBE, TERMINAL]
         )
         self.assertPermissions(
-            lambda: self.client.post(
-                '/bonus_transactions',
-                self.REQUESTS['POST/bonus_transactions']
-            ),
+            lambda: self.client.post('/bonus_transactions', self.REQUESTS['POST/bonus_transactions']),
             [ADMIN, TOPUP]
+        )
+
+    def test_str(self):
+        LOG.debug(BTX1)
+        self.assertEqual(
+            str(BTX1),
+            f'BonusTransaction('
+            f'id=1,time="2019-12-31 22:01:00+00:00",value=15.00,description="staff bonus",guest={str(ROBY)}'
+            f')'
         )

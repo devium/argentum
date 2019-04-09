@@ -60,5 +60,31 @@
       "description": "guest bonus",
       "pending": false
     }
+  ],
+  "GET/categories": [
+    {
+      "id": 1,
+      "name": "Soft drinks",
+      "color": "#00ffff"
+    },
+    {
+      "id": 2,
+      "name": "Hard drinks",
+      "color": "#ff0000"
+    }
+  ],
+  "GET/products": [
+    {
+      "id": 1,
+      "name": "Water",
+      "price": "2.40",
+      "category": 1
+    },
+    {
+      "id": 2,
+      "name": "Coke",
+      "price": "3.20",
+      "category": null
+    }
   ]
 }

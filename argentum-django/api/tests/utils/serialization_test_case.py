@@ -3,8 +3,8 @@ import os
 from functools import partial
 from typing import List, Dict, Any
 
-from django.core.serializers import serialize
 from django.db import models
+from django.forms import model_to_dict
 from django.test import TestCase
 
 from argentum.settings import BASE_DIR
@@ -26,11 +26,13 @@ class SerializationTestCase(TestCase):
         self.client.put = partial(self.client.put, content_type='application/json')
         self.client.patch = partial(self.client.patch, content_type='application/json')
 
-    def assertDeserialization(self, models1: List[models.Model], models2: List[models.Model]):
-        self.assertEqual(
-            serialize('json', models1),
-            serialize('json', models2)
-        )
+    def assertValueEqual(self, models1: List[models.Model], models2: List[models.Model], ignore_pks=True):
+        models1_dicts = [model_to_dict(model) for model in models1]
+        models2_dicts = [model_to_dict(model) for model in models2]
+        if ignore_pks:
+            for model in (*models1_dicts, *models2_dicts):
+                del model['id']
+        self.assertCountEqual(models1_dicts, models2_dicts)
 
     def assertPatchReadonly(
             self,

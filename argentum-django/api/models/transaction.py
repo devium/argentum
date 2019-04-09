@@ -21,9 +21,12 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f'Transaction(' \
-               f'id={self.id}, time={self.time}, guest={self.guest},' \
-               f' value={self.value}, description=\'{self.description}\'' \
-               f')'
+            f'id={self.id},' \
+            f'time="{self.time}",' \
+            f'value={self.value},' \
+            f'description="{self.description}",' \
+            f'guest={self.guest}' \
+            f')'
 
 
 class TransactionCreateSerializer(serializers.ModelSerializer):

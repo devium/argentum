@@ -1,9 +1,13 @@
+import logging
+
 from api.models import Guest
 from api.tests.data.guests import GUESTS, ROBY, SHEELAH, ROBY_MIN, ROBY_MAX
 from api.tests.data.users import RECEPTION, ADMIN
 from api.tests.utils.authenticated_test_case import AuthenticatedTestCase
 from api.tests.utils.populated_test_case import PopulatedTestCase
 from api.tests.utils.serialization_test_case import SerializationTestCase
+
+LOG = logging.getLogger(__name__)
 
 
 class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedTestCase):
@@ -39,18 +43,21 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         response = self.client.get('/guests')
         self.assertJSONEqual(response.content, self.RESPONSES['GET/guests'])
 
-    def test_post_deserialize(self):
+    def test_post_deserialize_min(self):
         self.login(RECEPTION)
 
         Guest.objects.all().delete()
-        response = self.client.post('/guests', self.REQUESTS['POSTmin/guests'])
+        response = self.client.post('/guests', self.REQUESTS['POST/guests#min'])
         self.assertEqual(response.status_code, 201)
-        self.assertDeserialization(Guest.objects.all(), [ROBY_MIN])
+        self.assertValueEqual(Guest.objects.all(), [ROBY_MIN])
+
+    def test_post_deserialize_max(self):
+        self.login(RECEPTION)
 
         Guest.objects.all().delete()
-        response = self.client.post('/guests', self.REQUESTS['POSTmax/guests'])
+        response = self.client.post('/guests', self.REQUESTS['POST/guests#max'])
         self.assertEqual(response.status_code, 201)
-        self.assertDeserialization(Guest.objects.all(), [ROBY_MAX])
+        self.assertValueEqual(Guest.objects.all(), [ROBY_MAX])
 
     def test_patch_readonly(self):
         self.login(ADMIN)
@@ -71,8 +78,33 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
             lambda: self.client.get('/guests'),
             [ADMIN, RECEPTION]
         )
+        # Codes and cards need to be unique.
+        body = {**self.REQUESTS['POST/guests#max'], **{'code': 'TEST', 'card': 'TEST'}}
         self.assertPermissions(
-            lambda: self.client.post('/guests', self.REQUESTS['POSTmax/guests']),
-            [ADMIN, RECEPTION],
-            [Guest.objects.all()]
+            lambda: self.client.post('/guests', body),
+            [ADMIN, RECEPTION]
+        )
+        self.assertPermissions(
+            lambda: self.client.patch('/guests/1', body),
+            [ADMIN]
+        )
+
+    def test_constraints(self):
+        self.login(ADMIN)
+
+        body = {**self.REQUESTS['POST/guests#max'], **{'card': 'TEST'}}
+        response = self.client.post('/guests', body)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()['code'][0], 'guest with this code already exists.')
+
+        body = {**self.REQUESTS['POST/guests#max'], **{'code': 'TEST'}}
+        response = self.client.post('/guests', body)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()['card'][0], 'guest with this card already exists.')
+
+    def test_str(self):
+        LOG.debug(ROBY)
+        self.assertEqual(
+            str(ROBY),
+            'Guest(id=1,name="Roby Brushfield",code="DEMO-00001")'
         )

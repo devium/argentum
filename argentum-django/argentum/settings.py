@@ -132,3 +132,20 @@ REST_FRAMEWORK = {
     )
 }
 CURRENCY_CONFIG = {'max_digits': 9, 'decimal_places': 2}
+
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'api.tests': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+        },
+    },
+}

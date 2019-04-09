@@ -6,13 +6,13 @@ from api.models import Transaction
 
 def populate_db(sender, **kwargs):
     DEFAULT_USERS = [
-        ('admin', 'argentum')
+        ('admin', 'argentum'),
     ]
 
     DEFAULT_PERMISSIONS = [
         # Note: Django creates basic model view/add/change/delete permissions.
         ('Can view transaction by card', Transaction, 'view_card_transaction'),
-        ('Can view bonus transaction by card', Transaction, 'view_card_bonustransaction')
+        ('Can view bonus transaction by card', Transaction, 'view_card_bonustransaction'),
     ]
 
     DEFAULT_GROUPS = [
@@ -26,29 +26,42 @@ def populate_db(sender, **kwargs):
             'change_transaction',
             'view_bonustransaction',
             'add_bonustransaction',
-            'change_bonustransaction'
+            'change_bonustransaction',
+            'view_category',
+            'add_category',
+            'change_category',
+            'delete_category',
+            'view_product',
+            'add_product',
+            'change_product',
         ]),
         ('order', [
             'view_card_transaction',
-            'view_card_bonustransaction'
+            'view_card_bonustransaction',
+            'view_category',
+            'view_product',
         ]),
         ('coat_check', [
             'view_card_transaction',
-            'view_card_bonustransaction'
+            'view_card_bonustransaction',
+            'view_category',
+            'view_product',
         ]),
         ('check_in', [
             'view_guest',
-            'add_guest'
+            'add_guest',
         ]),
         ('transfer', [
             'add_transaction',
             'change_transaction',
             'add_bonustransaction',
-            'change_bonustransaction'
+            'change_bonustransaction',
         ]),
         ('scan', [
             'view_card_transaction',
-            'view_card_bonustransaction'
+            'view_card_bonustransaction',
+            'view_category',
+            'view_product',
         ])
     ]
 
