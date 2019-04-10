@@ -12,12 +12,14 @@ def populate_db(sender, **kwargs):
 
     default_permissions = [
         # Note: Django creates basic model view/add/change/delete permissions.
+        ('Can view their own user information', User, 'view_me'),
         ('Can view transaction by card', Transaction, 'view_card_transaction'),
         ('Can view bonus transaction by card', BonusTransaction, 'view_card_bonustransaction'),
     ]
 
     default_groups = [
         ('admin', [
+            'view_me',
             'view_user',
             'add_user',
             'change_user',
@@ -46,6 +48,7 @@ def populate_db(sender, **kwargs):
             'delete_status'
         ]),
         ('order', [
+            'view_me',
             'view_card_transaction',
             'view_card_bonustransaction',
             'view_category',
@@ -53,6 +56,7 @@ def populate_db(sender, **kwargs):
             'view_status',
         ]),
         ('coat_check', [
+            'view_me',
             'view_card_transaction',
             'view_card_bonustransaction',
             'view_category',
@@ -60,12 +64,14 @@ def populate_db(sender, **kwargs):
             'view_status',
         ]),
         ('check_in', [
+            'view_me',
             'view_guest',
             'add_guest',
             'change_guest',
             'view_status',
         ]),
         ('transfer', [
+            'view_me',
             'add_transaction',
             'change_transaction',
             'add_bonustransaction',
@@ -73,6 +79,7 @@ def populate_db(sender, **kwargs):
             'view_status',
         ]),
         ('scan', [
+            'view_me',
             'view_card_transaction',
             'view_card_bonustransaction',
             'view_category',
