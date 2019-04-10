@@ -33,8 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
         if 'password' in validated_data:
             instance.set_password(validated_data['password'])
         if 'groups' in validated_data:
-            instance.groups.clear()
-            instance.groups.add(*validated_data['groups'])
+            instance.groups.set(validated_data['groups'])
         instance.save()
         return instance
 

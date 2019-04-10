@@ -1,21 +1,20 @@
 from collections import OrderedDict
-from typing import List
+from typing import List, Type, Iterable
 
 from django.db import models
 from django.test import TestCase
 
-from api.models.bonus_transaction import BonusTransaction
-from api.models.category import Category
-from api.models.guest import Guest
-from api.models.product import Product
-from api.models.status import Status
-from api.models.transaction import Transaction
-from api.tests.data.bonus_transactions import BONUS_TRANSACTIONS
-from api.tests.data.categories import CATEGORIES
-from api.tests.data.guests import GUESTS
-from api.tests.data.products import PRODUCTS
-from api.tests.data.statuses import STATUSES
-from api.tests.data.transactions import TRANSACTIONS
+from api.tests.data.bonus_transactions import TestBonusTransactions
+from api.tests.data.categories import TestCategories
+from api.tests.data.config import TestConfig
+from api.tests.data.groups import TestGroups
+from api.tests.data.guests import TestGuests
+from api.tests.data.product_ranges import TestProductRanges
+from api.tests.data.products import TestProducts
+from api.tests.data.statuses import TestStatuses
+from api.tests.data.transactions import TestTransactions
+from api.tests.data.users import TestUsers
+from api.tests.utils.test_objects import TestObjects
 
 
 class PopulatedTestCase(TestCase):
@@ -23,12 +22,29 @@ class PopulatedTestCase(TestCase):
     def setUpTestData(cls):
         super().setUpTestData()
 
-        Guest.objects.bulk_create(GUESTS)
-        Transaction.objects.bulk_create(TRANSACTIONS)
-        BonusTransaction.objects.bulk_create(BONUS_TRANSACTIONS)
-        Category.objects.bulk_create(CATEGORIES)
-        Product.objects.bulk_create(PRODUCTS)
-        Status.objects.bulk_create(STATUSES)
+        test_object_groups: Iterable[Type[TestObjects]] = [
+            TestUsers,
+            TestGroups,
+            TestConfig,
+            TestGuests,
+            TestTransactions,
+            TestBonusTransactions,
+            TestCategories,
+            TestProducts,
+            TestProductRanges,
+            TestStatuses
+        ]
+
+        for test_objects in test_object_groups:
+            test_objects.init()
+        for test_objects in test_object_groups:
+            test_objects.post_init()
+
+    @staticmethod
+    def bulk_create_and_refresh(model_class: Type[models.Model], models_: Iterable[models.Model]):
+        model_class.objects.bulk_create(models_)
+        for model_ in models_:
+            model_.refresh_from_db()
 
     def assertPksEqual(self, http_data: List[OrderedDict], models_: List[models.Model], pk='id', *args, **kwargs):
         self.assertSequenceEqual(

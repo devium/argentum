@@ -1,23 +1,28 @@
 from api.models.category import Category
+from api.tests.utils.test_objects import TestObjects
 
-SOFT_DRINKS = Category(
-    id=1,
-    name='Soft drinks',
-    color='#00ffff'
-)
 
-HARD_DRINKS = Category(
-    id=2,
-    name='Hard drinks',
-    color='#ff0000'
-)
+class TestCategories(TestObjects):
+    MODEL = Category
 
-CATEGORIES = [SOFT_DRINKS, HARD_DRINKS]
+    SOFT_DRINKS = MODEL(
+        id=1,
+        name='Soft drinks',
+        color='#00ffff'
+    )
 
-# Models below are not stored in the DB, but rather used for POST deserialization testing.
+    HARD_DRINKS = MODEL(
+        id=2,
+        name='Hard drinks',
+        color='#ff0000'
+    )
 
-SPIRITS = Category(
-    id=3,
-    name="Spirits",
-    color='#ff00ff',
-)
+    ALL = [SOFT_DRINKS, HARD_DRINKS]
+
+    # Models below are not stored in the DB, but rather used for POST deserialization testing.
+
+    SPIRITS = MODEL(
+        id=3,
+        name="Spirits",
+        color='#ff00ff',
+    )

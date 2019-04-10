@@ -45,6 +45,10 @@ def populate_db(sender, **kwargs):
             'view_product',
             'add_product',
             'change_product',
+            'view_productrange',
+            'add_productrange',
+            'change_productrange',
+            'delete_productrange',
             'view_status',
             'add_status',
             'change_status',
@@ -57,6 +61,7 @@ def populate_db(sender, **kwargs):
             'view_card_bonustransaction',
             'view_category',
             'view_product',
+            'view_productrange',
             'view_status',
         ]),
         ('coat_check', [
@@ -65,7 +70,6 @@ def populate_db(sender, **kwargs):
             'view_card_transaction',
             'view_card_bonustransaction',
             'view_category',
-            'view_product',
             'view_status',
         ]),
         ('check_in', [

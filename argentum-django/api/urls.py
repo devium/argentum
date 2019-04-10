@@ -4,6 +4,7 @@ from rest_framework import routers
 from rest_framework.authtoken import views as tokenviews
 
 from api.models.config import ConfigViewSet
+from api.models.product_range import ProductRangeViewSet
 from api.models.user import UserViewSet
 from api.models.group import GroupViewSet
 from api.models.bonus_transaction import BonusTransactionViewSet
@@ -22,6 +23,7 @@ router.register('transactions', TransactionViewSet)
 router.register('bonus_transactions', BonusTransactionViewSet)
 router.register('categories', CategoryViewSet)
 router.register('products', ProductViewSet)
+router.register('product_ranges', ProductRangeViewSet)
 router.register('statuses', StatusViewSet)
 
 urlpatterns = [

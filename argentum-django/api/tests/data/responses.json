@@ -173,6 +173,23 @@
       "category": null
     }
   ],
+  "GET/product_ranges": [
+    {
+      "id": 1,
+      "name": "Just water",
+      "products": [
+        1
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Everything",
+      "products": [
+        1,
+        2
+      ]
+    }
+  ],
   "GET/statuses": [
     {
       "id": 1,

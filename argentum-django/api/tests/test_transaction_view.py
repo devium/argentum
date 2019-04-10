@@ -6,9 +6,9 @@ from django.utils.dateparse import parse_datetime
 
 from api.models.guest import Guest
 from api.models.transaction import Transaction
-from api.tests.data.guests import ROBY, SHEELAH
-from api.tests.data.transactions import TRANSACTIONS, TX3, TX1
-from api.tests.data.users import TOPUP, ADMIN, TERMINAL, BAR, WARDROBE
+from api.tests.data.guests import TestGuests
+from api.tests.data.transactions import TestTransactions
+from api.tests.data.users import TestUsers
 from api.tests.utils.authenticated_test_case import AuthenticatedTestCase
 from api.tests.utils.populated_test_case import PopulatedTestCase
 from api.tests.utils.serialization_test_case import SerializationTestCase
@@ -18,42 +18,42 @@ LOG = logging.getLogger(__name__)
 
 class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedTestCase):
     def test_get(self):
-        self.login(ADMIN)
+        self.login(TestUsers.ADMIN)
 
         response = self.client.get('/transactions')
         self.assertEqual(response.status_code, 200)
-        self.assertPksEqual(response.data, TRANSACTIONS)
+        self.assertPksEqual(response.data, TestTransactions.ALL)
 
     def test_get_by_card(self):
-        self.login(BAR)
+        self.login(TestUsers.BAR)
 
-        response = self.client.get(f'/transactions?guest__card={ROBY.card}')
+        response = self.client.get(f'/transactions?guest__card={TestGuests.ROBY.card}')
         self.assertEqual(response.status_code, 200)
-        self.assertPksEqual(response.data, [TX1])
+        self.assertPksEqual(response.data, [TestTransactions.TX1])
 
     def test_get_by_nocard(self):
-        self.login(BAR)
+        self.login(TestUsers.BAR)
 
         response = self.client.get(f'/transactions?guest__card=')
         self.assertEqual(response.status_code, 403)
 
     def test_get_serialize(self):
-        self.login(ADMIN)
+        self.login(TestUsers.ADMIN)
 
         response = self.client.get('/transactions')
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, self.RESPONSES['GET/transactions'])
 
     def test_positive_crediting(self):
-        self.login(TOPUP)
+        self.login(TestUsers.TOPUP)
 
-        roby = Guest.objects.get(pk=ROBY.id)
+        roby = Guest.objects.get(pk=TestGuests.ROBY.id)
         roby.balance = '3.00'
         roby.bonus = '5.00'
         roby.save()
 
         data = {
-            'guest': ROBY.id,
+            'guest': TestGuests.ROBY.id,
             'value': '3.00',
             'ignore_bonus': True,
             'description': 'withdrawal'
@@ -73,16 +73,16 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         self.assertEqual(roby.bonus, Decimal('5.00'))
 
     def test_negative_crediting(self):
-        self.login(TOPUP)
+        self.login(TestUsers.TOPUP)
 
-        roby = Guest.objects.get(pk=ROBY.id)
+        roby = Guest.objects.get(pk=TestGuests.ROBY.id)
         roby.balance = '3.00'
         roby.bonus = '5.00'
         roby.save()
 
         # Transaction ignoring bonus, e.g., a balance withdrawal.
         data = {
-            'guest': ROBY.id,
+            'guest': TestGuests.ROBY.id,
             'value': '-4.00',
             'ignore_bonus': True,
             'description': 'withdrawal'
@@ -121,10 +121,10 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         self.assertEqual(roby.bonus, Decimal('0.00'))
 
     def test_patch_readonly(self):
-        self.login(TOPUP)
+        self.login(TestUsers.TOPUP)
 
         mutable_fields = {
-            'guest': SHEELAH.id,
+            'guest': TestGuests.SHEELAH.id,
             'value': '2.50',
             'description': 'topup',
             'ignore_bonus': False
@@ -135,26 +135,26 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
             'time': '2019-12-31T22:10:10Z',
         }
 
-        self.assertPatchReadonly(f'/transactions/{TX1.id}', mutable_fields, immutable_fields)
+        self.assertPatchReadonly(f'/transactions/{TestTransactions.TX1.id}', mutable_fields, immutable_fields)
 
         # Commit transaction.
-        response = self.client.patch(f'/transactions/{TX1.id}', {'pending': False})
+        response = self.client.patch(f'/transactions/{TestTransactions.TX1.id}', {'pending': False})
         self.assertEqual(response.status_code, 200)
 
         # After committing, everything should be immutable.
         mutable_fields = {}
         immutable_fields = {
             'time': '2019-12-31T22:10:10Z',
-            'guest': ROBY.id,
+            'guest': TestGuests.ROBY.id,
             'value': '3.00',
             'ignore_bonus': True,
             'description': 'initial'
         }
 
-        self.assertPatchReadonly(f'/transactions/{TX1.id}', mutable_fields, immutable_fields)
+        self.assertPatchReadonly(f'/transactions/{TestTransactions.TX1.id}', mutable_fields, immutable_fields)
 
     def test_post_deserialize(self):
-        self.login(TOPUP)
+        self.login(TestUsers.TOPUP)
 
         start = timezone.now()
         response = self.client.post('/transactions', self.REQUESTS['POST/transactions'])
@@ -164,37 +164,39 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         response_time = parse_datetime(response.data['time'])
         self.assertLess(start, response_time)
         self.assertLess(response_time, end)
-        TX3.time = response_time
-        self.assertValueEqual(Transaction.objects.all(), TRANSACTIONS + [TX3])
+        TestTransactions.TX3.time = response_time
+        self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX3])
 
     def test_patch_deserialize(self):
         # Since this field is read-only on creation, this requires a separate test.
-        self.login(TOPUP)
+        self.login(TestUsers.TOPUP)
 
         response = self.client.patch(
-            f'/transactions/{TX1.id}',
+            f'/transactions/{TestTransactions.TX1.id}',
             self.REQUESTS['PATCH/transactions/1']
         )
         self.assertEqual(response.status_code, 200)
-        self.assertFalse(Transaction.objects.get(id=TX1.id).pending)
+        self.assertFalse(Transaction.objects.get(id=TestTransactions.TX1.id).pending)
 
     def test_permissions(self):
         self.assertPermissions(
             lambda: self.client.get('/transactions'),
-            [ADMIN]
+            [TestUsers.ADMIN]
         )
         self.assertPermissions(
-            lambda: self.client.get(f'/transactions?guest__card={ROBY.card}'),
-            [BAR, WARDROBE, TERMINAL]
+            lambda: self.client.get(f'/transactions?guest__card={TestGuests.ROBY.card}'),
+            [TestUsers.BAR, TestUsers.WARDROBE, TestUsers.TERMINAL]
         )
         self.assertPermissions(
             lambda: self.client.post('/transactions', self.REQUESTS['POST/transactions']),
-            [ADMIN, TOPUP]
+            [TestUsers.ADMIN, TestUsers.TOPUP]
         )
 
     def test_str(self):
-        LOG.debug(TX1)
+        LOG.debug(TestTransactions.TX1)
         self.assertEqual(
-            str(TX1),
-            f'Transaction(id=1,time="2019-12-31 22:05:00+00:00",value=3.00,description="initial",guest={str(ROBY)})'
+            str(TestTransactions.TX1),
+            f'Transaction('
+            f'id=1,time="2019-12-31 22:05:00+00:00",value=3.00,description="initial",guest={str(TestGuests.ROBY)}'
+            f')'
         )

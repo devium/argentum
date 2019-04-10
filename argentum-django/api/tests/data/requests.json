@@ -6,12 +6,17 @@
   "POST/users": {
     "username": "buffet",
     "password": "buffet1",
-    "groups": [2]
+    "groups": [
+      2
+    ]
   },
   "PATCH/users/3": {
     "username": "giftshop",
     "password": "giftshop1",
-    "groups": [2,4]
+    "groups": [
+      2,
+      4
+    ]
   },
   "PATCH/config/1": {
     "value": "-10.00"
@@ -75,6 +80,12 @@
     "deprecated": "True",
     "price": "3.60",
     "category": 2
+  },
+  "POST/product_ranges": {
+    "name": "Just coke",
+    "products": [
+      2
+    ]
   },
   "POST/statuses": {
     "internal_name": "staff",
