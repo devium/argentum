@@ -1,4 +1,36 @@
 {
+  "GET/users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "groups": [1]
+    },
+    {
+      "id": 2,
+      "username": "bar",
+      "groups": [2]
+    },
+    {
+      "id": 3,
+      "username": "wardrobe",
+      "groups": [3]
+    },
+    {
+      "id": 4,
+      "username": "reception",
+      "groups": [4]
+    },
+    {
+      "id": 5,
+      "username": "topup",
+      "groups": [5]
+    },
+    {
+      "id": 6,
+      "username": "terminal",
+      "groups": [6]
+    }
+  ],
   "GET/guests": [
     {
       "id": 1,

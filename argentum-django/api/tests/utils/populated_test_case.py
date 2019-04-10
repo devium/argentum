@@ -30,10 +30,10 @@ class PopulatedTestCase(TestCase):
         Product.objects.bulk_create(PRODUCTS)
         Status.objects.bulk_create(STATUSES)
 
-    def assertPksEqual(self, http_data: OrderedDict, models_: List[models.Model], *args, **kwargs):
+    def assertPksEqual(self, http_data: List[OrderedDict], models_: List[models.Model], pk='id', *args, **kwargs):
         self.assertSequenceEqual(
-            [obj['id'] for obj in http_data],
-            [model.pk for model in models_],
+            [obj[pk] for obj in http_data],
+            [getattr(model, pk) for model in models_],
             *args,
             **kwargs
         )

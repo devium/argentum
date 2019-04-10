@@ -18,6 +18,10 @@ def populate_db(sender, **kwargs):
 
     default_groups = [
         ('admin', [
+            'view_user',
+            'add_user',
+            'change_user',
+            'delete_user',
             'view_guest',
             'add_guest',
             'change_guest',

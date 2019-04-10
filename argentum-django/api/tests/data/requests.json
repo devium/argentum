@@ -3,6 +3,16 @@
     "username": "admin",
     "password": "argentum"
   },
+  "POST/users": {
+    "username": "buffet",
+    "password": "buffet1",
+    "groups": [2]
+  },
+  "PATCH/users/3": {
+    "username": "giftshop",
+    "password": "giftshop1",
+    "groups": [2,4]
+  },
   "POST/guests#min": {
     "code": "DEMO-00003",
     "name": "Johanna Doe",

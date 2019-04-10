@@ -1,7 +1,7 @@
 import django_filters
 from django.db import models
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, serializers
+from rest_framework import viewsets, serializers, status
 from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -103,4 +103,13 @@ class GuestViewSet(viewsets.ModelViewSet):
         update_serializer.is_valid(raise_exception=True)
         self.perform_create(create_serializer)
         self.perform_update(update_serializer)
-        return Response(create_serializer.data + update_serializer.data)
+
+        if create_data:
+            headers = self.get_success_headers(create_serializer.data)
+            return Response(
+                create_serializer.data + update_serializer.data,
+                status=status.HTTP_201_CREATED,
+                headers=headers
+            )
+        else:
+            return Response(update_serializer.data)

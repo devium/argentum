@@ -87,8 +87,16 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
     def test_list_patch(self):
         self.login(RECEPTION)
         response = self.client.patch('/guests/list_update', self.REQUESTS['PATCH/guests/list_update'])
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
+        self.assertPksEqual(response.data, [JOHANNA_MIN, ROBY_PATCHED])
         self.assertValueEqual(Guest.objects.all(), [ROBY_PATCHED, SHEELAH, JOHANNA_MIN])
+
+    def test_list_patch_only(self):
+        self.login(RECEPTION)
+        response = self.client.patch('/guests/list_update', [self.REQUESTS['PATCH/guests/list_update'][0]])
+        self.assertEqual(response.status_code, 200)
+        self.assertPksEqual(response.data, [ROBY_PATCHED])
+        self.assertValueEqual(Guest.objects.all(), [ROBY_PATCHED, SHEELAH])
 
     def test_permissions(self):
         self.assertPermissions(
