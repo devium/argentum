@@ -2,7 +2,7 @@ from collections import namedtuple
 
 PlainGroup = namedtuple('PlainGroup', ['id', 'name'])
 
-# These groups are created in the initial Django signal, not from this data. These are just for easy handling.
+# These models are created in the initial Django signal, not from this data. These are just for easy handling.
 GROUP_ADMIN = PlainGroup(id=1, name='admin')
 GROUP_ORDER = PlainGroup(id=2, name='order')
 GROUP_COAT_CHECK = PlainGroup(id=3, name='coat_check')

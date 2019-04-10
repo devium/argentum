@@ -13,6 +13,9 @@
     "password": "giftshop1",
     "groups": [2,4]
   },
+  "PATCH/config/1": {
+    "value": "-10.00"
+  },
   "POST/guests#min": {
     "code": "DEMO-00003",
     "name": "Johanna Doe",

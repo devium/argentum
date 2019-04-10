@@ -76,6 +76,13 @@
       "name": "scan"
     }
   ],
+  "GET/config": [
+    {
+      "id": 1,
+      "key": "postpaid_limit",
+      "value": "0.00"
+    }
+  ],
   "GET/guests": [
     {
       "id": 1,

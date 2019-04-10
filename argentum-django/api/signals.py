@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
 
+from api.models.config import Config
 from api.models.transaction import Transaction
 from api.models.bonus_transaction import BonusTransaction
 
@@ -25,6 +26,8 @@ def populate_db(sender, **kwargs):
             'change_user',
             'delete_user',
             'view_group',
+            'view_config',
+            'change_config',
             'view_guest',
             'add_guest',
             'change_guest',
@@ -49,6 +52,7 @@ def populate_db(sender, **kwargs):
         ]),
         ('order', [
             'view_me',
+            'view_config',
             'view_card_transaction',
             'view_card_bonustransaction',
             'view_category',
@@ -57,6 +61,7 @@ def populate_db(sender, **kwargs):
         ]),
         ('coat_check', [
             'view_me',
+            'view_config',
             'view_card_transaction',
             'view_card_bonustransaction',
             'view_category',
@@ -65,6 +70,7 @@ def populate_db(sender, **kwargs):
         ]),
         ('check_in', [
             'view_me',
+            'view_config',
             'view_guest',
             'add_guest',
             'change_guest',
@@ -72,6 +78,7 @@ def populate_db(sender, **kwargs):
         ]),
         ('transfer', [
             'view_me',
+            'view_config',
             'add_transaction',
             'change_transaction',
             'add_bonustransaction',
@@ -80,6 +87,7 @@ def populate_db(sender, **kwargs):
         ]),
         ('scan', [
             'view_me',
+            'view_config',
             'view_card_transaction',
             'view_card_bonustransaction',
             'view_category',
@@ -110,3 +118,5 @@ def populate_db(sender, **kwargs):
             group.permissions.add(*permissions)
 
     User.objects.get(username='admin').groups.add(Group.objects.get(name='admin'))
+
+    Config.objects.create(key='postpaid_limit', value='0.00')
