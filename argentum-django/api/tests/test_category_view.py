@@ -1,7 +1,7 @@
 import logging
 
 from api.models.category import Category
-from api.tests.data.categories import SOFT_DRINKS, CATEGORIES
+from api.tests.data.categories import SOFT_DRINKS, CATEGORIES, SPIRITS
 from api.tests.data.users import BAR, ADMIN, WARDROBE, TERMINAL
 from api.tests.utils.authenticated_test_case import AuthenticatedTestCase
 from api.tests.utils.populated_test_case import PopulatedTestCase
@@ -27,10 +27,9 @@ class CategoryViewTestCase(PopulatedTestCase, SerializationTestCase, Authenticat
     def test_post_deserialize(self):
         self.login(ADMIN)
 
-        Category.objects.all().delete()
         response = self.client.post('/categories', self.REQUESTS['POST/categories'])
         self.assertEqual(response.status_code, 201)
-        self.assertValueEqual(Category.objects.all(), [SOFT_DRINKS])
+        self.assertValueEqual(Category.objects.all(), CATEGORIES + [SPIRITS])
 
     def test_permissions(self):
         self.assertPermissions(

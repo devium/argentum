@@ -26,7 +26,7 @@ class SerializationTestCase(TestCase):
         self.client.put = partial(self.client.put, content_type='application/json')
         self.client.patch = partial(self.client.patch, content_type='application/json')
 
-    def assertValueEqual(self, models1: List[models.Model], models2: List[models.Model], ignore_pks=True):
+    def assertValueEqual(self, models1: List[models.Model], models2: List[models.Model], ignore_pks=False):
         models1_dicts = [model_to_dict(model) for model in models1]
         models2_dicts = [model_to_dict(model) for model in models2]
         if ignore_pks:

@@ -50,6 +50,7 @@ def populate_db(sender, **kwargs):
         ('check_in', [
             'view_guest',
             'add_guest',
+            'change_guest',
         ]),
         ('transfer', [
             'add_transaction',

@@ -112,7 +112,6 @@ class BonusTransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Aut
     def test_post_deserialize(self):
         self.login(TOPUP)
 
-        BonusTransaction.objects.all().delete()
         start = timezone.now()
         response = self.client.post('/bonus_transactions', self.REQUESTS['POST/bonus_transactions'])
         end = timezone.now()
@@ -122,7 +121,7 @@ class BonusTransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Aut
         self.assertLess(start, response_time)
         self.assertLess(response_time, end)
         BTX3.time = response_time
-        self.assertValueEqual(BonusTransaction.objects.all(), [BTX3])
+        self.assertValueEqual(BonusTransaction.objects.all(), BONUS_TRANSACTIONS + [BTX3])
 
     def test_patch_deserialize(self):
         # Since this field is read-only on creation, this requires a separate test.

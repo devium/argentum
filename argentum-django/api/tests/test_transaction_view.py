@@ -155,7 +155,6 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
     def test_post_deserialize(self):
         self.login(TOPUP)
 
-        Transaction.objects.all().delete()
         start = timezone.now()
         response = self.client.post('/transactions', self.REQUESTS['POST/transactions'])
         end = timezone.now()
@@ -165,7 +164,7 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         self.assertLess(start, response_time)
         self.assertLess(response_time, end)
         TX3.time = response_time
-        self.assertValueEqual(Transaction.objects.all(), [TX3])
+        self.assertValueEqual(Transaction.objects.all(), TRANSACTIONS + [TX3])
 
     def test_patch_deserialize(self):
         # Since this field is read-only on creation, this requires a separate test.

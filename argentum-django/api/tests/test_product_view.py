@@ -2,7 +2,7 @@ import logging
 
 from api.models.product import Product
 from api.tests.data.categories import SOFT_DRINKS
-from api.tests.data.products import WATER, PRODUCTS, WATER_MAX, WATER_MIN
+from api.tests.data.products import WATER, PRODUCTS, BEER_MIN, BEER_MAX
 from api.tests.data.users import BAR, ADMIN, WARDROBE, TERMINAL
 from api.tests.utils.authenticated_test_case import AuthenticatedTestCase
 from api.tests.utils.populated_test_case import PopulatedTestCase
@@ -28,19 +28,16 @@ class ProductViewTestCase(PopulatedTestCase, SerializationTestCase, Authenticate
     def test_post_deserialize_min(self):
         self.login(ADMIN)
 
-        Product.objects.all().delete()
         response = self.client.post('/products', self.REQUESTS['POST/products#min'])
         self.assertEqual(response.status_code, 201)
-        self.assertValueEqual(Product.objects.all(), [WATER_MIN])
+        self.assertValueEqual(Product.objects.all(), PRODUCTS + [BEER_MIN])
 
     def test_post_deserialize_max(self):
         self.login(ADMIN)
 
-        Product.objects.all().delete()
-
         response = self.client.post('/products', self.REQUESTS['POST/products#max'])
         self.assertEqual(response.status_code, 201)
-        self.assertValueEqual(Product.objects.all(), [WATER_MAX])
+        self.assertValueEqual(Product.objects.all(), PRODUCTS + [BEER_MAX])
 
     def test_permissions(self):
         self.assertPermissions(

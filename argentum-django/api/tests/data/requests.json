@@ -4,21 +4,35 @@
     "password": "argentum"
   },
   "POST/guests#min": {
-    "code": "DEMO-00001",
-    "name": "Roby Brushfield",
-    "mail": "rbrushfield0@sohu.com",
-    "status": "staff"
+    "code": "DEMO-00003",
+    "name": "Johanna Doe",
+    "mail": "jdoe2@tinypic.com",
+    "status": "paid"
   },
   "POST/guests#max": {
-    "code": "DEMO-00001",
-    "name": "Roby Brushfield",
-    "mail": "rbrushfield0@sohu.com",
-    "status": "staff",
-    "checked_in": "2019-12-31T22:55:44Z",
-    "card": "567a",
-    "balance": "-62.94",
-    "bonus": "-22.09"
+    "code": "DEMO-00003",
+    "name": "Johanna Doe",
+    "mail": "jdoe2@tinypic.com",
+    "status": "paid",
+    "checked_in": "2019-12-31T23:13:52Z",
+    "card": "581a",
+    "balance": "81.62",
+    "bonus": "69.11"
   },
+  "PATCH/guests/list_update": [
+    {
+      "code": "DEMO-00001",
+      "name": "Toby Brushfield",
+      "mail": "tbrushfield0@sohu.com",
+      "status": "paid"
+    },
+    {
+      "code": "DEMO-00003",
+      "name": "Johanna Doe",
+      "mail": "jdoe2@tinypic.com",
+      "status": "paid"
+    }
+  ],
   "POST/transactions": {
     "guest": 1,
     "value": "5.00",
@@ -36,16 +50,16 @@
     "pending": false
   },
   "POST/categories": {
-    "name": "Soft drinks",
-    "color": "#00ffff"
+    "name": "Spirits",
+    "color": "#ff00ff"
   },
   "POST/products#min": {
-    "name": "Water",
-    "price": "2.40"
+    "name": "Beer",
+    "price": "3.60"
   },
   "POST/products#max": {
-    "name": "Water",
-    "price": "2.40",
-    "category": 1
+    "name": "Beer",
+    "price": "3.60",
+    "category": 2
   }
 }

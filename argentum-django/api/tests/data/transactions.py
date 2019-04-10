@@ -28,6 +28,7 @@ TRANSACTIONS = [TX1, TX2]
 
 # Models below are not stored in the DB, but rather used for POST deserialization testing.
 
+# Time is set by the server.
 TX3 = Transaction(
     id=3,
     guest=ROBY,

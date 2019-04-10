@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from api.models.product import Product
-from api.tests.data.categories import SOFT_DRINKS
+from api.tests.data.categories import SOFT_DRINKS, HARD_DRINKS
 
 WATER = Product(
     id=1,
@@ -21,16 +21,16 @@ PRODUCTS = [WATER, COKE]
 
 # Models below are not stored in the DB, but rather used for POST deserialization testing.
 
-WATER_MIN = Product(
+BEER_MIN = Product(
     id=3,
-    name="Water",
-    price=Decimal("2.40"),
+    name="Beer",
+    price=Decimal("3.60"),
     category=None
 )
 
-WATER_MAX = Product(
-    id=4,
-    name="Water",
-    price=Decimal("2.40"),
-    category=SOFT_DRINKS
+BEER_MAX = Product(
+    id=3,
+    name="Beer",
+    price=Decimal("3.60"),
+    category=HARD_DRINKS
 )
