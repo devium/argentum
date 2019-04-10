@@ -3,18 +3,20 @@ from django.urls import include
 from rest_framework import routers
 from rest_framework.authtoken import views as tokenviews
 
-import api.models.guest
-import api.models.transaction
-import api.models.bonus_transaction
-import api.models.category
-import api.models.product
+from api.models.bonus_transaction import BonusTransactionViewSet
+from api.models.category import CategoryViewSet
+from api.models.guest import GuestViewSet
+from api.models.product import ProductViewSet
+from api.models.status import StatusViewSet
+from api.models.transaction import TransactionViewSet
 
 router = routers.DefaultRouter(trailing_slash=False)
-router.register('guests', api.models.guest.GuestViewSet)
-router.register('transactions', api.models.transaction.TransactionViewSet)
-router.register('bonus_transactions', api.models.bonus_transaction.BonusTransactionViewSet)
-router.register('categories', api.models.category.CategoryViewSet)
-router.register('products', api.models.product.ProductViewSet)
+router.register('guests', GuestViewSet)
+router.register('transactions', TransactionViewSet)
+router.register('bonus_transactions', BonusTransactionViewSet)
+router.register('categories', CategoryViewSet)
+router.register('products', ProductViewSet)
+router.register('statuses', StatusViewSet)
 
 urlpatterns = [
     url('^', include(router.urls)),

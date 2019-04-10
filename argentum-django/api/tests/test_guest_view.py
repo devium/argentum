@@ -2,7 +2,7 @@ import logging
 
 from django.utils.dateparse import parse_datetime
 
-from api.models import Guest
+from api.models.guest import Guest
 from api.tests.data.guests import GUESTS, ROBY, SHEELAH, JOHANNA_MIN, JOHANNA_MAX, ROBY_PATCHED
 from api.tests.data.users import RECEPTION, ADMIN
 from api.tests.utils.authenticated_test_case import AuthenticatedTestCase
@@ -18,26 +18,26 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
 
         response = self.client.get('/guests')
         self.assertEqual(response.status_code, 200)
-        self.assertPks(response.data, GUESTS)
+        self.assertPksEqual(response.data, GUESTS)
 
     def test_get_search(self):
         self.login(RECEPTION)
 
         response = self.client.get('/guests?code=001')
         self.assertEqual(response.status_code, 200)
-        self.assertPks(response.data, [ROBY])
+        self.assertPksEqual(response.data, [ROBY])
 
         response = self.client.get('/guests?name=roby')
-        self.assertPks(response.data, [ROBY])
+        self.assertPksEqual(response.data, [ROBY])
 
         response = self.client.get('/guests?mail=rbrush')
-        self.assertPks(response.data, [ROBY])
+        self.assertPksEqual(response.data, [ROBY])
 
         response = self.client.get('/guests?status=staff')
-        self.assertPks(response.data, [ROBY])
+        self.assertPksEqual(response.data, [ROBY])
 
         response = self.client.get('/guests?code=DEMO-0000&mail=tuttocitta')
-        self.assertPks(response.data, [SHEELAH])
+        self.assertPksEqual(response.data, [SHEELAH])
 
     def test_get_serialize(self):
         self.login(RECEPTION)

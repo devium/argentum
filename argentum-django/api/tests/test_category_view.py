@@ -16,7 +16,7 @@ class CategoryViewTestCase(PopulatedTestCase, SerializationTestCase, Authenticat
 
         response = self.client.get('/categories')
         self.assertEqual(response.status_code, 200)
-        self.assertPks(response.data, CATEGORIES)
+        self.assertPksEqual(response.data, CATEGORIES)
 
     def test_get_serialize(self):
         self.login(BAR)

@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django.utils.dateparse import parse_datetime
 
-from api.models import Guest
+from api.models.guest import Guest
 
 ROBY = Guest(
     id=1,

@@ -4,8 +4,8 @@ from decimal import Decimal
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 
-from api.models import Guest
 from api.models.bonus_transaction import BonusTransaction
+from api.models.guest import Guest
 from api.tests.data.bonus_transactions import BTX1, BTX3, BONUS_TRANSACTIONS
 from api.tests.data.guests import ROBY, SHEELAH
 from api.tests.data.users import TOPUP, ADMIN, TERMINAL, BAR, WARDROBE
@@ -22,14 +22,14 @@ class BonusTransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Aut
 
         response = self.client.get('/bonus_transactions')
         self.assertEqual(response.status_code, 200)
-        self.assertPks(response.data, BONUS_TRANSACTIONS)
+        self.assertPksEqual(response.data, BONUS_TRANSACTIONS)
 
     def test_get_by_card(self):
         self.login(BAR)
 
         response = self.client.get(f'/bonus_transactions?guest__card={ROBY.card}')
         self.assertEqual(response.status_code, 200)
-        self.assertPks(response.data, [BTX1])
+        self.assertPksEqual(response.data, [BTX1])
 
     def test_get_by_nocard(self):
         self.login(BAR)

@@ -61,5 +61,10 @@
     "name": "Beer",
     "price": "3.60",
     "category": 2
+  },
+  "POST/statuses": {
+    "internal_name": "staff",
+    "display_name": "Staff",
+    "color": "#0000ff"
   }
 }

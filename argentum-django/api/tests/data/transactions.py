@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django.utils.dateparse import parse_datetime
 
-from api.models import Transaction
+from api.models.transaction import Transaction
 from api.tests.data.guests import ROBY, SHEELAH
 
 TX1 = Transaction(

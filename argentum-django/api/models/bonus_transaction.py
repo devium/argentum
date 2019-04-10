@@ -6,7 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import serializers, viewsets
 from rest_framework.permissions import BasePermission
 
-from api.models import Guest
+from api.models.guest import Guest
 from argentum.permissions import StrictModelPermissions
 from argentum.settings import CURRENCY_CONFIG
 

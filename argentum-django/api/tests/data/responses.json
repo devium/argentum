@@ -86,5 +86,19 @@
       "price": "3.20",
       "category": null
     }
+  ],
+  "GET/statuses": [
+    {
+      "id": 1,
+      "internal_name": "paid",
+      "display_name": "Paid",
+      "color": "#00ff00"
+    },
+    {
+      "id": 2,
+      "internal_name": "pending",
+      "display_name": "Pending",
+      "color": "#ff0000"
+    }
   ]
 }

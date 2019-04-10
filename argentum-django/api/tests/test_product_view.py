@@ -17,7 +17,7 @@ class ProductViewTestCase(PopulatedTestCase, SerializationTestCase, Authenticate
 
         response = self.client.get('/products')
         self.assertEqual(response.status_code, 200)
-        self.assertPks(response.data, PRODUCTS)
+        self.assertPksEqual(response.data, PRODUCTS)
 
     def test_get_serialize(self):
         self.login(BAR)
