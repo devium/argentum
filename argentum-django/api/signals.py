@@ -22,6 +22,7 @@ def populate_db(sender, **kwargs):
             'add_user',
             'change_user',
             'delete_user',
+            'view_group',
             'view_guest',
             'add_guest',
             'change_guest',

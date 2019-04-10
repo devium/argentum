@@ -31,6 +31,32 @@
       "groups": [6]
     }
   ],
+  "GET/groups": [
+    {
+      "id": 1,
+      "name": "admin"
+    },
+    {
+      "id": 2,
+      "name": "order"
+    },
+    {
+      "id": 3,
+      "name": "coat_check"
+    },
+    {
+      "id": 4,
+      "name": "check_in"
+    },
+    {
+      "id": 5,
+      "name": "transfer"
+    },
+    {
+      "id": 6,
+      "name": "scan"
+    }
+  ],
   "GET/guests": [
     {
       "id": 1,
