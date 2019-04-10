@@ -53,5 +53,5 @@ class ProductViewTestCase(PopulatedTestCase, SerializationTestCase, Authenticate
         LOG.debug(WATER)
         self.assertEqual(
             str(WATER),
-            f'Product(id=1,name="Water",price=2.40,category={str(SOFT_DRINKS)})'
+            f'Product(id=1,name="Water",deprecated=False,price=2.40,category={str(SOFT_DRINKS)})'
         )

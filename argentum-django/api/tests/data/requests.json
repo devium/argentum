@@ -59,6 +59,7 @@
   },
   "POST/products#max": {
     "name": "Beer",
+    "deprecated": "True",
     "price": "3.60",
     "category": 2
   },

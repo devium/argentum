@@ -7,6 +7,7 @@ from argentum.settings import CURRENCY_CONFIG
 
 class Product(models.Model):
     name = models.CharField(max_length=64)
+    deprecated = models.BooleanField(default=False)
     price = models.DecimalField(**CURRENCY_CONFIG)
     category = models.ForeignKey(Category, null=True, on_delete=models.SET_NULL)
 
@@ -14,6 +15,7 @@ class Product(models.Model):
         return f'Product(' \
             f'id={self.id},' \
             f'name="{self.name}",' \
+            f'deprecated={self.deprecated},' \
             f'price={self.price},' \
             f'category={self.category}' \
             f')'
@@ -22,7 +24,7 @@ class Product(models.Model):
 class ProductCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['id', 'name', 'price', 'category']
+        fields = ['id', 'name', 'deprecated', 'price', 'category']
 
 
 class ProductUpdateSerializer(serializers.ModelSerializer):

@@ -5,7 +5,7 @@ from api.models.transaction import Transaction
 from api.models.bonus_transaction import BonusTransaction
 
 
-def populate_db():
+def populate_db(sender, **kwargs):
     default_users = [
         ('admin', 'argentum'),
     ]

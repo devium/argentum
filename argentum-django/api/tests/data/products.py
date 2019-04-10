@@ -6,6 +6,7 @@ from api.tests.data.categories import SOFT_DRINKS, HARD_DRINKS
 WATER = Product(
     id=1,
     name="Water",
+    deprecated=False,
     price=Decimal("2.40"),
     category=SOFT_DRINKS
 )
@@ -13,6 +14,7 @@ WATER = Product(
 COKE = Product(
     id=2,
     name="Coke",
+    deprecated=True,
     price=Decimal("3.20"),
     category=None
 )
@@ -24,6 +26,7 @@ PRODUCTS = [WATER, COKE]
 BEER_MIN = Product(
     id=3,
     name="Beer",
+    deprecated=False,
     price=Decimal("3.60"),
     category=None
 )
@@ -31,6 +34,7 @@ BEER_MIN = Product(
 BEER_MAX = Product(
     id=3,
     name="Beer",
+    deprecated=True,
     price=Decimal("3.60"),
     category=HARD_DRINKS
 )

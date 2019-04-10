@@ -77,12 +77,14 @@
     {
       "id": 1,
       "name": "Water",
+      "deprecated": false,
       "price": "2.40",
       "category": 1
     },
     {
       "id": 2,
       "name": "Coke",
+      "deprecated": true,
       "price": "3.20",
       "category": null
     }
