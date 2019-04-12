@@ -1,6 +1,5 @@
 from typing import Callable, Iterable
 
-from django.contrib.auth.models import User, Group
 from django.test import TestCase
 from rest_framework.response import Response
 
@@ -13,13 +12,6 @@ class AuthenticatedTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-
-        for user in TestUsers.ALL:
-            if user.username is 'admin':
-                continue
-            groups = [Group.objects.get(name=group_name).id for group_name in user.groups]
-            new_user = User.objects.create_user(user.username, '', user.password)
-            new_user.groups.add(*groups)
 
     def login(self, user: TestUsers.PlainUser):
         self.logout()

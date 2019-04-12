@@ -26,6 +26,12 @@ class TestProductRanges(TestObjects):
     )
 
     @classmethod
+    def init(cls):
+        super().init()
+        for product_range in cls.ALL:
+            product_range.create_permission()
+
+    @classmethod
     def post_init(cls):
         cls.JUST_WATER.products.set([TestProducts.WATER])
         cls.EVERYTHING.products.set([TestProducts.WATER, TestProducts.COKE])

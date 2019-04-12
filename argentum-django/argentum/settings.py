@@ -76,7 +76,8 @@ WSGI_APPLICATION = 'argentum.wsgi.application'
 if 'test' in sys.argv:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3'
+            'ENGINE': 'django.db.backends.sqlite3',
+            'ATOMIC_REQUESTS': True,
         }
     }
 else:

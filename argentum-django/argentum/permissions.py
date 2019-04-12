@@ -4,7 +4,8 @@ from rest_framework.permissions import DjangoModelPermissions
 
 
 class StrictModelPermissions(DjangoModelPermissions):
-    def __init__(self, mods: Dict[str, List[str]]=None):
+    def __init__(self, mods: Dict[str, List[str]] = None):
+        # All conditions per method are required on a requesting user.
         self.perms_map = {
             'GET': ['%(app_label)s.view_%(model_name)s'],
             'OPTIONS': [],
