@@ -48,6 +48,10 @@ class ProductViewTestCase(PopulatedTestCase, SerializationTestCase, Authenticate
             lambda: self.client.post('/products', self.REQUESTS['POST/products#max']),
             [TestUsers.ADMIN]
         )
+        self.assertPermissions(
+            lambda: self.client.delete('/products/1'),
+            []
+        )
 
     def test_str(self):
         LOG.debug(TestProducts.WATER)

@@ -1,5 +1,5 @@
 from django.db import models
-from rest_framework import serializers, viewsets
+from rest_framework import serializers, viewsets, mixins
 
 from api.models.category import Category
 from argentum.settings import CURRENCY_CONFIG
@@ -34,7 +34,13 @@ class ProductUpdateSerializer(serializers.ModelSerializer):
         read_only_fields = ['price']
 
 
-class ProductViewSet(viewsets.ModelViewSet):
+class ProductViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Product.objects.all()
 
     def get_serializer_class(self):

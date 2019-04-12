@@ -27,3 +27,4 @@ class UserViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedTe
         self.assertPermissions(lambda: self.client.get('/groups'), [TestUsers.ADMIN])
         self.assertPermissions(lambda: self.client.post('/groups', {}), [])
         self.assertPermissions(lambda: self.client.patch('/groups/1', {}), [])
+        self.assertPermissions(lambda: self.client.delete('/groups/1'), [])

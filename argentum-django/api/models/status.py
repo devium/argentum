@@ -1,5 +1,5 @@
 from django.db import models
-from rest_framework import serializers, viewsets
+from rest_framework import serializers, viewsets, mixins
 
 
 class Status(models.Model):
@@ -22,6 +22,13 @@ class StatusSerializer(serializers.ModelSerializer):
         fields = ['id', 'internal_name', 'display_name', 'color']
 
 
-class StatusViewSet(viewsets.ModelViewSet):
+class StatusViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Status.objects.all()
     serializer_class = StatusSerializer

@@ -1,7 +1,7 @@
 import django_filters
 from django.db import models
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, serializers, status
+from rest_framework import viewsets, serializers, status, mixins
 from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -63,7 +63,13 @@ class GuestListUpdateSerializer(serializers.ModelSerializer):
             return super().create(validated_data)
 
 
-class GuestViewSet(viewsets.ModelViewSet):
+class GuestViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
     class SearchFilter(django_filters.FilterSet):
         code = django_filters.CharFilter(field_name='code', lookup_expr='icontains')
         name = django_filters.CharFilter(field_name='name', lookup_expr='icontains')

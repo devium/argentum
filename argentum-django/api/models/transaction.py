@@ -3,7 +3,7 @@ from typing import Iterable, Dict, Any
 from django.db import models
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, serializers
+from rest_framework import viewsets, serializers, mixins
 from rest_framework.permissions import BasePermission
 
 from api.models.guest import Guest
@@ -73,7 +73,13 @@ class TransactionUpdateSerializer(serializers.ModelSerializer):
         return instance
 
 
-class TransactionViewSet(viewsets.ModelViewSet):
+class TransactionViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Transaction.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('guest__card',)

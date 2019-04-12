@@ -118,6 +118,7 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
             lambda: self.client.patch('/guests/list_update', self.REQUESTS['PATCH/guests/list_update']),
             [TestUsers.ADMIN, TestUsers.RECEPTION]
         )
+        self.assertPermissions(lambda: self.client.delete('/guests/1'), [])
 
     def test_constraints(self):
         self.login(TestUsers.ADMIN)

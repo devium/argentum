@@ -50,6 +50,7 @@ class ConfigViewTestCase(PopulatedTestCase, SerializationTestCase, Authenticated
             lambda: self.client.patch('/config/1', self.REQUESTS['PATCH/config/1']),
             [TestUsers.ADMIN]
         )
+        self.assertPermissions(lambda: self.client.delete('/config/1'), [])
 
     def test_str(self):
         LOG.debug(TestConfig.POSTPAID_LIMIT)

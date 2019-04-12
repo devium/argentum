@@ -66,6 +66,10 @@ class UserViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedTe
             lambda: self.client.get('/users/me'),
             TestUsers.ALL
         )
+        self.assertPermissions(
+            lambda: self.client.delete('/users/1'),
+            [TestUsers.ADMIN]
+        )
         self.logout()
         response = self.client.get('/users/me')
         self.assertEqual(response.status_code, 401)

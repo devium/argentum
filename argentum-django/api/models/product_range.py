@@ -2,7 +2,7 @@
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from rest_framework import serializers, viewsets
+from rest_framework import serializers, viewsets, mixins
 from rest_framework.permissions import OR
 from rest_framework.request import Request
 
@@ -51,7 +51,14 @@ class ProductRangeSerializer(serializers.ModelSerializer):
         return instance
 
 
-class ProductRangeViewSet(viewsets.ModelViewSet):
+class ProductRangeViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = ProductRange.objects.all()
     serializer_class = ProductRangeSerializer
 

@@ -1,5 +1,5 @@
 from django.contrib.auth.models import Group
-from rest_framework import serializers, viewsets
+from rest_framework import serializers, viewsets, mixins
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -9,6 +9,10 @@ class GroupSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
-class GroupViewSet(viewsets.ModelViewSet):
+class GroupViewSet(
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer

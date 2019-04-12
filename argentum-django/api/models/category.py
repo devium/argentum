@@ -1,5 +1,5 @@
 from django.db import models
-from rest_framework import serializers, viewsets
+from rest_framework import serializers, viewsets, mixins
 
 
 class Category(models.Model):
@@ -16,6 +16,13 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'color']
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer

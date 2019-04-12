@@ -191,6 +191,10 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
             lambda: self.client.post('/transactions', self.REQUESTS['POST/transactions']),
             [TestUsers.ADMIN, TestUsers.TOPUP]
         )
+        self.assertPermissions(
+            lambda: self.client.delete('/transactions/1'),
+            []
+        )
 
     def test_str(self):
         LOG.debug(TestTransactions.TX1)

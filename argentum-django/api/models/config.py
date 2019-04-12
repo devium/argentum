@@ -1,5 +1,5 @@
 from django.db import models
-from rest_framework import serializers, viewsets
+from rest_framework import serializers, viewsets, mixins
 
 
 class Config(models.Model):
@@ -17,6 +17,12 @@ class ConfigSerializer(serializers.ModelSerializer):
         read_only_fields = ['key']
 
 
-class ConfigViewSet(viewsets.ModelViewSet):
+class ConfigViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Config.objects.all()
     serializer_class = ConfigSerializer

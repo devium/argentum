@@ -1,7 +1,7 @@
 from typing import Iterable
 
 from django.contrib.auth.models import User
-from rest_framework import serializers, viewsets
+from rest_framework import serializers, viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.permissions import BasePermission
 from rest_framework.request import Request
@@ -38,7 +38,14 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 

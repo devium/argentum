@@ -150,6 +150,10 @@ class BonusTransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Aut
             lambda: self.client.post('/bonus_transactions', self.REQUESTS['POST/bonus_transactions']),
             [TestUsers.ADMIN, TestUsers.TOPUP]
         )
+        self.assertPermissions(
+            lambda: self.client.delete('/bonus_transactions/1'),
+            []
+        )
 
     def test_str(self):
         LOG.debug(TestBonusTransactions.BTX1)

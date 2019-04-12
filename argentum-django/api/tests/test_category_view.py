@@ -40,6 +40,10 @@ class CategoryViewTestCase(PopulatedTestCase, SerializationTestCase, Authenticat
             lambda: self.client.post('/categories', self.REQUESTS['POST/categories']),
             [TestUsers.ADMIN]
         )
+        self.assertPermissions(
+            lambda: self.client.delete('/categories/1'),
+            [TestUsers.ADMIN]
+        )
 
     def test_str(self):
         LOG.debug(TestCategories.SOFT_DRINKS)

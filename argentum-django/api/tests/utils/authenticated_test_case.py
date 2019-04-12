@@ -31,19 +31,27 @@ class AuthenticatedTestCase(TestCase):
     def assertPermissions(
             self,
             request: Callable[[], Response],
-            allowed_users: Iterable[TestUsers.PlainUser]
+            allowed_users: Iterable[TestUsers.PlainUser],
+            expected_errors=None
     ):
         """
         Executes a given request for all users in USERS and asserts that only the specified users are allowed to do so.
         Database is rolled back after each request. Changes made to the database before this function is called will be
         lost. That includes valid login tokens.
         """
+        if expected_errors is None:
+            expected_errors = [403, 405]
+
         for user in allowed_users:
             self._fixture_teardown()
             self._fixture_setup()
             self.login(user)
             response = request()
-            self.assertLess(response.status_code, 300, f'Permission check failed for {user}: {response.data}')
+            self.assertLess(
+                response.status_code,
+                300,
+                f'Permission check failed for {user}: {response.data}'
+            )
 
         forbidden_users = [user for user in TestUsers.ALL if user not in allowed_users]
         for user in forbidden_users:
@@ -51,7 +59,11 @@ class AuthenticatedTestCase(TestCase):
             self._fixture_setup()
             self.login(user)
             response = request()
-            self.assertEqual(response.status_code, 403, f'Prohibition check failed for {user}: {response.data}')
+            self.assertIn(
+                response.status_code,
+                expected_errors,
+                f'Prohibition check failed for {user}: {response.data}'
+            )
 
         self._fixture_teardown()
         self._fixture_setup()
