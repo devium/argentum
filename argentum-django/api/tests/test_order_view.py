@@ -4,6 +4,7 @@ from decimal import Decimal
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 
+from api.models.config import Config
 from api.models.order import Order
 from api.models.order_item import OrderItem
 from api.models.transaction import Transaction
@@ -69,6 +70,27 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         self.assertEqual(TestGuests.SHEELAH.bonus, Decimal('0.00'))
         self.assertEqual(TestGuests.SHEELAH.balance, Decimal('2.00'))
         self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX_ORDER2])
+
+    def test_funds(self):
+        self.login(TestUsers.BAR)
+
+        postpaid_limit = Config.objects.get(key='postpaid_limit')
+        order = Order.objects.get(id=TestOrders.TWO_COKES_PLUS_TIP.id)
+
+        postpaid_limit.value = Decimal('-20.00')
+        postpaid_limit.save()
+        order.custom_current = order.custom_initial = Decimal('22.61')
+        order.save()
+
+        response = self.client.patch(f'/orders/{TestOrders.TWO_COKES_PLUS_TIP.id}', {'pending': False})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data['non_field_errors'][0], 'Insufficient funds.')
+
+        order.custom_current = order.custom_initial = Decimal('22.60')
+        order.save()
+
+        response = self.client.patch(f'/orders/{TestOrders.TWO_COKES_PLUS_TIP.id}', {'pending': False})
+        self.assertEqual(response.status_code, 200)
 
     def test_get_by_card(self):
         self.login(TestUsers.TERMINAL)

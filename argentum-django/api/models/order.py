@@ -1,10 +1,13 @@
+from decimal import Decimal
 from typing import Dict, Any
 
 from django.db import models
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets, serializers
+from rest_framework.exceptions import ValidationError
 
+from api.models.config import Config
 from api.models.guest import Guest
 from api.models.order_item import OrderItemCreateSerializer, OrderItem
 from api.models.transaction import Transaction, TransactionUpdateSerializer
@@ -22,6 +25,13 @@ class Order(models.Model):
     # Many-to-one fields specified in the other models:
     # transactions
     # items
+
+    @property
+    def total(self):
+        return self.custom_current + sum(
+            item.quantity_current * item.product.price
+            for item in self.items.all()
+        )
 
     def __str__(self):
         return f'Order(' \
@@ -65,6 +75,17 @@ class OrderUpdateSerializer(serializers.ModelSerializer):
             self.Meta.read_only_fields = ['time', 'guest', 'custom_initial', 'pending']
         return super().get_fields()
 
+    def validate(self, attrs):
+        committed = not self.instance.pending
+        commit = not committed and not attrs.get('pending', True)
+
+        if commit:
+            postpaid_limit = Decimal(Config.objects.get(key='postpaid_limit').value)
+            if self.instance.total > self.instance.guest.balance + self.instance.guest.bonus - postpaid_limit:
+                raise ValidationError({'non_field_errors': 'Insufficient funds.'})
+
+        return super().validate(attrs)
+
     def update(self, instance: Order, validated_data: Dict[str, Any]):
         self.instance.time = timezone.now()
         committed = not self.instance.pending
@@ -73,17 +94,14 @@ class OrderUpdateSerializer(serializers.ModelSerializer):
 
         if commit:
             # Order can only be committed once. This is where it is credited.
-            total = self.instance.custom_current + sum(
-                item.quantity_current * item.product.price
-                for item in self.instance.items.all()
-            )
             transaction = Transaction.objects.create(
                 guest=self.instance.guest,
-                value=-total,
+                value=-self.instance.total,
                 description='order',
                 order=self.instance
             )
             transaction_serializer = TransactionUpdateSerializer(transaction, data={'pending': False}, partial=True)
+            # Should always be valid. Leaving this in for tests to catch.
             transaction_serializer.is_valid(raise_exception=True)
             transaction_serializer.validated_data['time'] = self.instance.time
             transaction_serializer.save()
