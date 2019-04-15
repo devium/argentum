@@ -29,7 +29,7 @@ class BonusTransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Aut
 
         response = self.client.get(f'/bonus_transactions?guest__card={TestGuests.ROBY.card}')
         self.assertEqual(response.status_code, 200)
-        self.assertPksEqual(response.data, [TestBonusTransactions.BTX1])
+        self.assertPksEqual(response.data, [TestBonusTransactions.BTX1, TestBonusTransactions.BTX3])
 
     def test_get_by_nocard(self):
         self.login(TestUsers.BAR)
@@ -74,37 +74,37 @@ class BonusTransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Aut
         self.login(TestUsers.TOPUP)
 
         mutable_fields = {
-            'guest': TestGuests.SHEELAH.id,
-            'value': '2.50',
-            'description': 'loyalty'
         }
 
-        # Before committing, time is readonly.
+        # Before committing, most fields are immutable.
         immutable_fields = {
-            'time': '2019-12-31T22:10:10Z',
+            'time': '2019-12-31T22:03:10Z',
+            'guest': TestGuests.SHEELAH.id,
+            'value': '10.00',
+            'description': 'even more staff bonus'
         }
 
         self.assertPatchReadonly(
-            f'/bonus_transactions/{TestBonusTransactions.BTX1.id}',
+            f'/bonus_transactions/{TestBonusTransactions.BTX3.id}',
             mutable_fields,
             immutable_fields
         )
 
         # Commit transaction.
-        response = self.client.patch(f'/bonus_transactions/{TestBonusTransactions.BTX1.id}', {'pending': False})
+        response = self.client.patch(f'/bonus_transactions/{TestBonusTransactions.BTX3.id}', {'pending': False})
         self.assertEqual(response.status_code, 200)
 
         # After committing, everything should be immutable.
         mutable_fields = {}
         immutable_fields = {
-            'time': '2019-12-31T22:10:10Z',
-            'guest': TestGuests.ROBY.id,
-            'value': '3.00',
-            'description': 'guest bonus'
+            'time': '2019-12-31T22:03:10Z',
+            'guest': TestGuests.SHEELAH.id,
+            'value': '10.00',
+            'description': 'even more staff bonus'
         }
 
         self.assertPatchReadonly(
-            f'/bonus_transactions/{TestBonusTransactions.BTX1.id}',
+            f'/bonus_transactions/{TestBonusTransactions.BTX3.id}',
             mutable_fields,
             immutable_fields
         )
@@ -120,10 +120,10 @@ class BonusTransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Aut
         response_time = parse_datetime(response.data['time'])
         self.assertLess(start, response_time)
         self.assertLess(response_time, end)
-        TestBonusTransactions.BTX3.time = response_time
+        TestBonusTransactions.BTX4.time = response_time
         self.assertValueEqual(
             BonusTransaction.objects.all(),
-            TestBonusTransactions.ALL + [TestBonusTransactions.BTX3]
+            TestBonusTransactions.ALL + [TestBonusTransactions.BTX4]
         )
 
     def test_patch_deserialize(self):
@@ -144,7 +144,7 @@ class BonusTransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Aut
         )
         self.assertPermissions(
             lambda: self.client.get(f'/bonus_transactions?guest__card={TestGuests.ROBY.card}'),
-            [TestUsers.BAR, TestUsers.WARDROBE, TestUsers.TERMINAL]
+            [TestUsers.ADMIN, TestUsers.BAR, TestUsers.WARDROBE, TestUsers.TERMINAL]
         )
         self.assertPermissions(
             lambda: self.client.post('/bonus_transactions', self.REQUESTS['POST/bonus_transactions']),
@@ -162,7 +162,7 @@ class BonusTransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Aut
             f'BonusTransaction('
             f'id=1,'
             f'time="2019-12-31 22:01:00+00:00",'
-            f'value=15.00,'
+            f'value=2.50,'
             f'description="staff bonus",'
             f'guest={str(TestGuests.ROBY)}'
             f')'

@@ -7,6 +7,7 @@ from django.utils.dateparse import parse_datetime
 from api.models.guest import Guest
 from api.models.transaction import Transaction
 from api.tests.data.guests import TestGuests
+from api.tests.data.orders import TestOrders
 from api.tests.data.transactions import TestTransactions
 from api.tests.data.users import TestUsers
 from api.tests.utils.authenticated_test_case import AuthenticatedTestCase
@@ -29,7 +30,7 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
 
         response = self.client.get(f'/transactions?guest__card={TestGuests.ROBY.card}')
         self.assertEqual(response.status_code, 200)
-        self.assertPksEqual(response.data, [TestTransactions.TX1])
+        self.assertPksEqual(response.data, [TestTransactions.TX1, TestTransactions.TX_ORDER1])
 
     def test_get_by_nocard(self):
         self.login(TestUsers.BAR)
@@ -124,34 +125,35 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         self.login(TestUsers.TOPUP)
 
         mutable_fields = {
-            'guest': TestGuests.SHEELAH.id,
-            'value': '2.50',
-            'description': 'topup',
-            'ignore_bonus': False
         }
 
-        # Before committing, time is readonly.
+        # Before committing, most fields should be immutable.
         immutable_fields = {
-            'time': '2019-12-31T22:10:10Z',
+            'time': '2019-12-31T22:30:10Z',
+            'guest': TestGuests.ROBY.id,
+            'value': '-10.00',
+            'ignore_bonus': True,
+            'description': 'withdraw more'
         }
 
-        self.assertPatchReadonly(f'/transactions/{TestTransactions.TX1.id}', mutable_fields, immutable_fields)
+        self.assertPatchReadonly(f'/transactions/{TestTransactions.TX4.id}', mutable_fields, immutable_fields)
 
         # Commit transaction.
-        response = self.client.patch(f'/transactions/{TestTransactions.TX1.id}', {'pending': False})
+        response = self.client.patch(f'/transactions/{TestTransactions.TX4.id}', {'pending': False})
         self.assertEqual(response.status_code, 200)
 
         # After committing, everything should be immutable.
         mutable_fields = {}
         immutable_fields = {
-            'time': '2019-12-31T22:10:10Z',
+            'time': '2019-12-31T22:30:10Z',
             'guest': TestGuests.ROBY.id,
-            'value': '3.00',
+            'value': '-10.00',
             'ignore_bonus': True,
-            'description': 'initial'
+            'description': 'withdraw more',
+            'pending': True
         }
 
-        self.assertPatchReadonly(f'/transactions/{TestTransactions.TX1.id}', mutable_fields, immutable_fields)
+        self.assertPatchReadonly(f'/transactions/{TestTransactions.TX4.id}', mutable_fields, immutable_fields)
 
     def test_post_deserialize(self):
         self.login(TestUsers.TOPUP)
@@ -164,8 +166,8 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         response_time = parse_datetime(response.data['time'])
         self.assertLess(start, response_time)
         self.assertLess(response_time, end)
-        TestTransactions.TX3.time = response_time
-        self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX3])
+        TestTransactions.TX5.time = response_time
+        self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX5])
 
     def test_patch_deserialize(self):
         # Since this field is read-only on creation, this requires a separate test.
@@ -185,7 +187,7 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         )
         self.assertPermissions(
             lambda: self.client.get(f'/transactions?guest__card={TestGuests.ROBY.card}'),
-            [TestUsers.BAR, TestUsers.WARDROBE, TestUsers.TERMINAL]
+            [TestUsers.ADMIN, TestUsers.BAR, TestUsers.WARDROBE, TestUsers.TERMINAL]
         )
         self.assertPermissions(
             lambda: self.client.post('/transactions', self.REQUESTS['POST/transactions']),
@@ -197,10 +199,15 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         )
 
     def test_str(self):
-        LOG.debug(TestTransactions.TX1)
+        LOG.debug(TestTransactions.TX_ORDER1)
         self.assertEqual(
-            str(TestTransactions.TX1),
+            str(TestTransactions.TX_ORDER1),
             f'Transaction('
-            f'id=1,time="2019-12-31 22:05:00+00:00",value=3.00,description="initial",guest={str(TestGuests.ROBY)}'
+            f'id=3,'
+            f'time="2019-12-31 22:10:00+00:00",'
+            f'value=-3.00,'
+            f'description="order",'
+            f'order={TestOrders.ONE_WATER_PLUS_TIP},'
+            f'guest={str(TestGuests.ROBY)}'
             f')'
         )

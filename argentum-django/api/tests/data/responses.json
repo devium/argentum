@@ -105,8 +105,8 @@
       "status": "staff",
       "checked_in": "2019-12-31T22:55:44Z",
       "card": "567a",
-      "balance": "-62.94",
-      "bonus": "-22.09"
+      "balance": "4.50",
+      "bonus": "0.00"
     },
     {
       "id": 2,
@@ -116,8 +116,8 @@
       "status": "pending",
       "checked_in": null,
       "card": null,
-      "balance": "-73.04",
-      "bonus": "54.82"
+      "balance": "7.00",
+      "bonus": "2.00"
     }
   ],
   "GET/transactions": [
@@ -125,19 +125,37 @@
       "id": 1,
       "time": "2019-12-31T22:05:00Z",
       "guest": 1,
-      "value": "3.00",
+      "value": "5.00",
       "ignore_bonus": false,
       "description": "initial",
-      "pending": true
+      "pending": false
     },
     {
       "id": 2,
       "time": "2019-12-31T22:07:30Z",
       "guest": 2,
-      "value": "7.00",
+      "value": "10.00",
       "ignore_bonus": true,
       "description": "initial",
       "pending": false
+    },
+    {
+      "id": 3,
+      "time": "2019-12-31T22:10:00Z",
+      "guest": 1,
+      "value": "-3.00",
+      "ignore_bonus": false,
+      "description": "order",
+      "pending": false
+    },
+    {
+      "id": 4,
+      "time": "2019-12-31T22:30:00Z",
+      "guest": 2,
+      "value": "-5.00",
+      "ignore_bonus": false,
+      "description": "withdraw",
+      "pending": true
     }
   ],
   "GET/bonus_transactions": [
@@ -145,17 +163,25 @@
       "id": 1,
       "time": "2019-12-31T22:01:00Z",
       "guest": 1,
-      "value": "15.00",
+      "value": "2.50",
       "description": "staff bonus",
-      "pending": true
+      "pending": false
     },
     {
       "id": 2,
       "time": "2019-12-31T22:02:30Z",
       "guest": 2,
-      "value": "3.00",
+      "value": "2.00",
       "description": "guest bonus",
       "pending": false
+    },
+    {
+      "id": 3,
+      "time": "2019-12-31T22:03:00Z",
+      "guest": 1,
+      "value": "3.00",
+      "description": "more staff bonus",
+      "pending": true
     }
   ],
   "GET/categories": [
@@ -201,6 +227,40 @@
         1,
         2
       ]
+    }
+  ],
+  "GET/orders": [
+    {
+      "id": 1,
+      "time": "2019-12-31T22:10:00Z",
+      "guest": 1,
+      "custom_initial": "0.20",
+      "custom_current": "0.20",
+      "items": [
+        {
+          "id": 1,
+          "product": 1,
+          "quantity_initial": 1,
+          "quantity_current": 1
+        }
+      ],
+      "pending": false
+    },
+    {
+      "id": 2,
+      "time": "2019-12-31T22:14:00Z",
+      "guest": 2,
+      "custom_initial": "0.60",
+      "custom_current": "0.60",
+      "items": [
+        {
+          "id": 2,
+          "product": 2,
+          "quantity_initial": 2,
+          "quantity_current": 2
+        }
+      ],
+      "pending": true
     }
   ],
   "GET/statuses": [

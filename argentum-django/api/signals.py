@@ -17,6 +17,7 @@ def populate_db(sender, **kwargs):
         ('Can view their own user information', User, 'view_me'),
         ('Can view transaction by card', Transaction, 'view_card_transaction'),
         ('Can view bonus transaction by card', BonusTransaction, 'view_card_bonustransaction'),
+        ('Can view orders by card', Transaction, 'view_card_order'),
         ('Can view all product ranges', ProductRange, 'view_productrange_all')
     ]
 
@@ -35,9 +36,11 @@ def populate_db(sender, **kwargs):
             'change_guest',
             'delete_guest',
             'view_transaction',
+            'view_card_transaction',
             'add_transaction',
             'change_transaction',
             'view_bonustransaction',
+            'view_card_bonustransaction',
             'add_bonustransaction',
             'change_bonustransaction',
             'view_category',
@@ -51,6 +54,10 @@ def populate_db(sender, **kwargs):
             'add_productrange',
             'change_productrange',
             'delete_productrange',
+            'view_order',
+            'view_card_order',
+            'add_order',
+            'change_order',
             'view_status',
             'add_status',
             'change_status',
@@ -65,6 +72,9 @@ def populate_db(sender, **kwargs):
             'view_category',
             'view_product',
             'view_productrange',
+            'view_card_order',
+            'add_order',
+            'change_order',
             'view_status',
         ]),
         ('coat_check', [
@@ -99,6 +109,7 @@ def populate_db(sender, **kwargs):
             'view_card_bonustransaction',
             'view_category',
             'view_product',
+            'view_card_order',
             'view_status',
         ]),
         ('product_range_all', [

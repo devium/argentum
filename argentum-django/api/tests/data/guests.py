@@ -17,8 +17,8 @@ class TestGuests(TestObjects):
         status='staff',
         checked_in=parse_datetime('2019-12-31T22:55:44Z'),
         card='567a',
-        balance=Decimal('-62.94'),
-        bonus=Decimal('-22.09')
+        balance=Decimal('4.50'),
+        bonus=Decimal('0.00')
     )
 
     SHEELAH = MODEL(
@@ -29,8 +29,8 @@ class TestGuests(TestObjects):
         status='pending',
         checked_in=None,
         card=None,
-        balance=Decimal('-73.04'),
-        bonus=Decimal('54.82')
+        balance=Decimal('7.00'),
+        bonus=Decimal('2.00')
     )
 
     ALL = [ROBY, SHEELAH]
@@ -69,6 +69,6 @@ class TestGuests(TestObjects):
         status='paid',
         checked_in=parse_datetime('2019-12-31T22:55:44Z'),
         card='567a',
-        balance=Decimal('-62.94'),
-        bonus=Decimal('-22.09')
+        balance=Decimal('4.50'),
+        bonus=Decimal('0.00')
     )

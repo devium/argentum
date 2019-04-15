@@ -9,6 +9,8 @@ from api.tests.data.categories import TestCategories
 from api.tests.data.config import TestConfig
 from api.tests.data.groups import TestGroups
 from api.tests.data.guests import TestGuests
+from api.tests.data.order_items import TestOrderItems
+from api.tests.data.orders import TestOrders
 from api.tests.data.product_ranges import TestProductRanges
 from api.tests.data.products import TestProducts
 from api.tests.data.statuses import TestStatuses
@@ -32,6 +34,8 @@ class PopulatedTestCase(TestCase):
             TestCategories,
             TestProducts,
             TestProductRanges,
+            TestOrders,
+            TestOrderItems,
             TestStatuses
         ]
 
@@ -45,6 +49,10 @@ class PopulatedTestCase(TestCase):
         model_class.objects.bulk_create(models_)
         for model_ in models_:
             model_.refresh_from_db()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.maxDiff = None
 
     def assertPksEqual(self, http_data: List[OrderedDict], models_: List[models.Model], pk='id', *args, **kwargs):
         self.assertSequenceEqual(

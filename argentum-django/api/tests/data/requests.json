@@ -87,6 +87,20 @@
       2
     ]
   },
+  "POST/orders": {
+    "guest": 2,
+    "custom_initial": "0.40",
+    "items": [
+      {
+        "product": 1,
+        "quantity_initial": 1
+      },
+      {
+        "product": 2,
+        "quantity_initial": 1
+      }
+    ]
+  },
   "POST/statuses": {
     "internal_name": "staff",
     "display_name": "Staff",

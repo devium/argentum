@@ -1,10 +1,9 @@
-from typing import Iterable, Dict, Any
+from typing import Dict, Any
 
 from django.db import models
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, serializers, mixins
-from rest_framework.permissions import BasePermission
 
 from api.models.guest import Guest
 from argentum.permissions import StrictModelPermissions
@@ -17,6 +16,7 @@ class Transaction(models.Model):
     value = models.DecimalField(**CURRENCY_CONFIG)
     ignore_bonus = models.BooleanField(default=False)
     description = models.CharField(max_length=64)
+    order = models.ForeignKey('Order', related_name='transactions', null=True, default=None, on_delete=models.SET_NULL)
     pending = models.BooleanField(default=True)
 
     def __str__(self):
@@ -25,6 +25,7 @@ class Transaction(models.Model):
             f'time="{self.time}",' \
             f'value={self.value},' \
             f'description="{self.description}",' \
+            f'order={self.order},' \
             f'guest={self.guest}' \
             f')'
 
@@ -40,17 +41,18 @@ class TransactionUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
         fields = TransactionCreateSerializer.Meta.fields
-        read_only_fields = ['time']
 
     def get_fields(self):
         if self.instance.pending:
-            self.Meta.read_only_fields = ['time']
+            self.Meta.read_only_fields = ['time', 'guest', 'value', 'ignore_bonus', 'description']
         else:
             self.Meta.read_only_fields = self.Meta.fields
         return super().get_fields()
 
     def update(self, instance: Transaction, validated_data: Dict[str, Any]):
-        self.instance.time = timezone.now()
+        # Time may not be set externally but internal calls to the serializer may set the time manually, e.g. calls by
+        # the order serializer to end up with the same timestamps on both the order and the transaction.
+        self.instance.time = validated_data.pop('time', timezone.now())
         super().update(instance, validated_data)
 
         if not instance.pending:
@@ -90,7 +92,7 @@ class TransactionViewSet(
         else:
             return TransactionCreateSerializer
 
-    def get_permissions(self) -> Iterable[BasePermission]:
+    def get_permissions(self):
         if 'guest__card' in self.request.query_params and self.request.query_params['guest__card']:
             return StrictModelPermissions({'GET': ['%(app_label)s.view_card_%(model_name)s']}),
         else:

@@ -39,11 +39,10 @@ class BonusTransactionUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = BonusTransaction
         fields = BonusTransactionCreateSerializer.Meta.fields
-        read_only_fields = ['time']
 
     def get_fields(self):
         if self.instance.pending:
-            self.Meta.read_only_fields = ['time']
+            self.Meta.read_only_fields = ['time', 'guest', 'value', 'ignore_bonus', 'description']
         else:
             self.Meta.read_only_fields = self.Meta.fields
         return super().get_fields()
