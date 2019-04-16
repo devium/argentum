@@ -58,6 +58,7 @@ def populate_db(sender, **kwargs):
             'view_card_order',
             'add_order',
             'change_order',
+            'change_orderitem',
             'view_status',
             'add_status',
             'change_status',
@@ -75,6 +76,7 @@ def populate_db(sender, **kwargs):
             'view_card_order',
             'add_order',
             'change_order',
+            'change_orderitem',
             'view_status',
         ]),
         ('coat_check', [

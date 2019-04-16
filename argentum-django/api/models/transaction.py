@@ -42,6 +42,16 @@ class TransactionUpdateSerializer(serializers.ModelSerializer):
         model = Transaction
         fields = TransactionCreateSerializer.Meta.fields
 
+    @classmethod
+    def create_internal(cls, time=None, **transaction_kwargs):
+        transaction = Transaction.objects.create(**transaction_kwargs)
+        transaction_serializer = cls(transaction, data={'pending': False}, partial=True)
+        # Should always be valid. Leaving this in for tests to catch.
+        transaction_serializer.is_valid(raise_exception=True)
+        if time is not None:
+            transaction_serializer.validated_data['time'] = time
+        return transaction_serializer.save()
+
     def get_fields(self):
         if self.instance.pending:
             self.Meta.read_only_fields = ['time', 'guest', 'value', 'ignore_bonus', 'description']

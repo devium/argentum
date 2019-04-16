@@ -10,7 +10,7 @@ from rest_framework.exceptions import ValidationError
 from api.models.config import Config
 from api.models.guest import Guest
 from api.models.order_item import OrderItemCreateSerializer, OrderItem
-from api.models.transaction import Transaction, TransactionUpdateSerializer
+from api.models.transaction import TransactionUpdateSerializer
 from argentum.permissions import StrictModelPermissions
 from argentum.settings import CURRENCY_CONFIG
 
@@ -69,10 +69,11 @@ class OrderUpdateSerializer(serializers.ModelSerializer):
         fields = OrderCreateSerializer.Meta.fields
 
     def get_fields(self):
-        if self.instance.pending:
-            self.Meta.read_only_fields = ['time', 'guest', 'custom_initial', 'custom_current']
-        else:
+        committed = not self.instance.pending
+        if committed:
             self.Meta.read_only_fields = ['time', 'guest', 'custom_initial', 'pending']
+        else:
+            self.Meta.read_only_fields = ['time', 'guest', 'custom_initial', 'custom_current']
         return super().get_fields()
 
     def validate(self, attrs):
@@ -84,29 +85,43 @@ class OrderUpdateSerializer(serializers.ModelSerializer):
             if self.instance.total > self.instance.guest.balance + self.instance.guest.bonus - postpaid_limit:
                 raise ValidationError({'non_field_errors': 'Insufficient funds.'})
 
+        if committed:
+            custom_current = attrs.get('custom_current', None)
+            # Cancellations may only decrease the current custom value.
+            if custom_current is not None and (custom_current < 0 or custom_current >= self.instance.custom_current):
+                raise ValidationError(
+                    {'custom_current': 'Value needs to be a non-negative value lower than the current one.'}
+                )
+
         return super().validate(attrs)
 
     def update(self, instance: Order, validated_data: Dict[str, Any]):
-        self.instance.time = timezone.now()
         committed = not self.instance.pending
         commit = not committed and not validated_data.get('pending', True)
-        super().update(instance, validated_data)
 
         if commit:
+            self.instance.time = timezone.now()
             # Order can only be committed once. This is where it is credited.
-            transaction = Transaction.objects.create(
+            TransactionUpdateSerializer.create_internal(
                 guest=self.instance.guest,
                 value=-self.instance.total,
                 description='order',
-                order=self.instance
+                order=self.instance,
+                time=self.instance.time
             )
-            transaction_serializer = TransactionUpdateSerializer(transaction, data={'pending': False}, partial=True)
-            # Should always be valid. Leaving this in for tests to catch.
-            transaction_serializer.is_valid(raise_exception=True)
-            transaction_serializer.validated_data['time'] = self.instance.time
-            transaction_serializer.save()
 
-        return instance
+        if committed:
+            custom_current = validated_data.get('custom_current', None)
+            # Validation has already been performed. Just execute the transaction.
+            if custom_current is not None:
+                TransactionUpdateSerializer.create_internal(
+                    guest=self.instance.guest,
+                    value=self.instance.custom_current - custom_current,
+                    description='cancel',
+                    order=self.instance
+                )
+
+        return super().update(instance, validated_data)
 
 
 class OrderViewSet(

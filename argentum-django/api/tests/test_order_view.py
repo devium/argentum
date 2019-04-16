@@ -92,6 +92,50 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         response = self.client.patch(f'/orders/{TestOrders.TWO_COKES_PLUS_TIP.id}', {'pending': False})
         self.assertEqual(response.status_code, 200)
 
+    def test_cancel_custom(self):
+        self.login(TestUsers.BAR)
+
+        response = self.client.patch(f'/orders/{TestOrders.ONE_WATER_PLUS_TIP.id}', {'custom_current': 0.20})
+        self.assertEqual(response.status_code, 400)
+        self.assertIsNotNone(response.data['custom_current'][0])
+
+        response = self.client.patch(f'/orders/{TestOrders.ONE_WATER_PLUS_TIP.id}', {'custom_current': -0.10})
+        self.assertEqual(response.status_code, 400)
+        self.assertIsNotNone(response.data['custom_current'][0])
+
+        start = timezone.now()
+        response = self.client.patch(f'/orders/{TestOrders.ONE_WATER_PLUS_TIP.id}', {'custom_current': 0.05})
+        end = timezone.now()
+        self.assertEqual(response.status_code, 200)
+
+        transaction_time = Transaction.objects.get(id=TestTransactions.TX_CANCEL1.id).time
+        self.assertLess(start, transaction_time)
+        self.assertLess(transaction_time, end)
+        TestTransactions.TX_CANCEL1.time = transaction_time
+        self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX_CANCEL1])
+
+    def test_cancel_product(self):
+        self.login(TestUsers.ADMIN)
+
+        response = self.client.patch(f'/order_items/{TestOrderItems.ONE_WATER.id}', {'quantity_current': -1})
+        self.assertEqual(response.status_code, 400)
+        self.assertIsNotNone(response.data['quantity_current'][0])
+
+        response = self.client.patch(f'/order_items/{TestOrderItems.ONE_WATER.id}', {'quantity_current': 1})
+        self.assertEqual(response.status_code, 400)
+        self.assertIsNotNone(response.data['quantity_current'][0])
+
+        start = timezone.now()
+        response = self.client.patch(f'/order_items/{TestOrderItems.ONE_WATER.id}', {'quantity_current': 0})
+        end = timezone.now()
+        self.assertEqual(response.status_code, 200)
+
+        transaction_time = Transaction.objects.get(id=TestTransactions.TX_CANCEL2.id).time
+        self.assertLess(start, transaction_time)
+        self.assertLess(transaction_time, end)
+        TestTransactions.TX_CANCEL2.time = transaction_time
+        self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX_CANCEL2])
+
     def test_get_by_card(self):
         self.login(TestUsers.TERMINAL)
 
@@ -114,6 +158,13 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         )
         self.assertPermissions(
             lambda: self.client.patch(f'/orders/{TestOrders.TWO_COKES_PLUS_TIP.id}', {'pending': False}),
+            [TestUsers.ADMIN, TestUsers.BAR]
+        )
+        self.assertPermissions(lambda: self.client.get('/order_items', {}), [], [404])
+        self.assertPermissions(lambda: self.client.post('/order_items', {}), [], [404])
+        self.assertPermissions(lambda: self.client.get(f'/order_items/{TestOrderItems.ONE_WATER.id}', {}), [])
+        self.assertPermissions(
+            lambda: self.client.patch(f'/order_items/{TestOrderItems.ONE_WATER.id}', {}),
             [TestUsers.ADMIN, TestUsers.BAR]
         )
 

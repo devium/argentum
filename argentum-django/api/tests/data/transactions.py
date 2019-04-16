@@ -40,8 +40,7 @@ class TestTransactions(TestObjects):
         value=Decimal('-3.00'),
         ignore_bonus=False,
         description='order',
-        # Order is set in post init.
-        order=None,
+        order=TestOrders.ONE_WATER_PLUS_TIP,
         pending=False
     )
 
@@ -81,8 +80,22 @@ class TestTransactions(TestObjects):
         pending=False
     )
 
-    @classmethod
-    def post_init(cls):
-        super().post_init()
-        cls.TX_ORDER1.order = TestOrders.ONE_WATER_PLUS_TIP
-        cls.TX_ORDER1.save()
+    TX_CANCEL1 = MODEL(
+        id=5,
+        guest=TestGuests.ROBY,
+        value=Decimal('0.15'),
+        ignore_bonus=False,
+        description='cancel',
+        order=TestOrders.ONE_WATER_PLUS_TIP,
+        pending=False
+    )
+
+    TX_CANCEL2 = MODEL(
+        id=5,
+        guest=TestGuests.ROBY,
+        value=Decimal('2.40'),
+        ignore_bonus=False,
+        description='cancel',
+        order=TestOrders.ONE_WATER_PLUS_TIP,
+        pending=False
+    )

@@ -50,7 +50,7 @@ class AuthenticatedTestCase(TestCase):
             self.assertLess(
                 response.status_code,
                 300,
-                f'Permission check failed for {user}: {response.data}'
+                f'Permission check failed for {user}: {getattr(response, "data", None)}'
             )
 
         forbidden_users = [user for user in TestUsers.ALL if user not in allowed_users]
@@ -62,7 +62,7 @@ class AuthenticatedTestCase(TestCase):
             self.assertIn(
                 response.status_code,
                 expected_errors,
-                f'Prohibition check failed for {user}: {response.data}'
+                f'Prohibition check failed for {user}: {getattr(response, "data", None)}'
             )
 
         self._fixture_teardown()
