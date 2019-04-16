@@ -26,12 +26,23 @@ class SerializationTestCase(TestCase):
         self.client.put = partial(self.client.put, content_type='application/json')
         self.client.patch = partial(self.client.patch, content_type='application/json')
 
-    def assertValueEqual(self, models1: List[models.Model], models2: List[models.Model], ignore_pks=False):
+    def assertValueEqual(self, models1: List[models.Model], models2: List[models.Model], ignore_fields=None):
+        if ignore_fields is None:
+            ignore_fields = []
         models1_dicts = [model_to_dict(model) for model in models1]
         models2_dicts = [model_to_dict(model) for model in models2]
-        if ignore_pks:
-            for model in (*models1_dicts, *models2_dicts):
-                del model['id']
+        models1_dicts = {
+            key: value
+            for model_dict in models1_dicts
+            for key, value in model_dict.items()
+            if key not in ignore_fields
+        }
+        models2_dicts = {
+            key: value
+            for model_dict in models2_dicts
+            for key, value in model_dict.items()
+            if key not in ignore_fields
+        }
         self.assertCountEqual(models1_dicts, models2_dicts)
 
     def assertPatchReadonly(

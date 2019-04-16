@@ -56,11 +56,21 @@
     "value": "5.00",
     "description": "topup"
   },
+  "POST/transactions#card": {
+    "card": "567a",
+    "value": "5.00",
+    "description": "topup"
+  },
   "PATCH/transactions/1": {
     "pending": false
   },
   "POST/bonus_transactions": {
     "guest": 1,
+    "value": "4.00",
+    "description": "staff bonus"
+  },
+  "POST/bonus_transactions#card": {
+    "card": "567a",
     "value": "4.00",
     "description": "staff bonus"
   },
@@ -89,6 +99,20 @@
   },
   "POST/orders": {
     "guest": 2,
+    "custom_initial": "0.40",
+    "items": [
+      {
+        "product": 1,
+        "quantity_initial": 1
+      },
+      {
+        "product": 2,
+        "quantity_initial": 1
+      }
+    ]
+  },
+  "POST/orders#card": {
+    "card": "567a",
     "custom_initial": "0.40",
     "items": [
       {

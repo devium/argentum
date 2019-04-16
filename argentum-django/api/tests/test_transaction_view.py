@@ -180,6 +180,25 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         self.assertEqual(response.status_code, 200)
         self.assertFalse(Transaction.objects.get(id=TestTransactions.TX1.id).pending)
 
+    def test_post_by_card(self):
+        self.login(TestUsers.TOPUP)
+
+        response = self.client.post('/transactions', self.REQUESTS['POST/transactions#card'])
+        self.assertEqual(response.status_code, 201)
+
+        self.assertValueEqual(
+            Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX5],
+            ignore_fields=['time']
+        )
+
+    def test_post_by_card_fail(self):
+        self.login(TestUsers.TOPUP)
+
+        body = {**self.REQUESTS['POST/transactions#card'], **{'card': '567b'}}
+        response = self.client.post('/transactions', body)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data['card'][0], 'Card not registered.')
+
     def test_permissions(self):
         self.assertPermissions(
             lambda: self.client.get('/transactions'),

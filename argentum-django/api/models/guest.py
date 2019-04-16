@@ -71,6 +71,7 @@ class GuestViewSet(
     viewsets.GenericViewSet
 ):
     class SearchFilter(django_filters.FilterSet):
+        card = django_filters.CharFilter(field_name='card', lookup_expr='iexact')
         code = django_filters.CharFilter(field_name='code', lookup_expr='icontains')
         name = django_filters.CharFilter(field_name='name', lookup_expr='icontains')
         mail = django_filters.CharFilter(field_name='mail', lookup_expr='icontains')

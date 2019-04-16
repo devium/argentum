@@ -42,16 +42,35 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         end = timezone.now()
         self.assertEqual(response.status_code, 201)
 
-        response_time = parse_datetime(response.data['time'])
-        self.assertLess(start, response_time)
-        self.assertLess(response_time, end)
-        TestOrders.ONE_WATER_ONE_COKE_PLUS_TIP.time = response_time
+        server_time = parse_datetime(response.data['time'])
+        self.assertLess(start, server_time)
+        self.assertLess(server_time, end)
+        TestOrders.ONE_WATER_ONE_COKE_PLUS_TIP.time = server_time
 
         self.assertValueEqual(Order.objects.all(), TestOrders.ALL + [TestOrders.ONE_WATER_ONE_COKE_PLUS_TIP])
         self.assertValueEqual(
             OrderItem.objects.all(),
             TestOrderItems.ALL + [TestOrderItems.ONE_WATER2, TestOrderItems.ONE_COKE]
         )
+
+    def test_post_by_card(self):
+        self.login(TestUsers.BAR)
+
+        response = self.client.post('/orders', self.REQUESTS['POST/orders#card'])
+        self.assertEqual(response.status_code, 201)
+
+        self.assertValueEqual(
+            Order.objects.all(), TestOrders.ALL + [TestOrders.ONE_WATER_PLUS_TIP],
+            ignore_fields=['time']
+        )
+
+    def test_post_by_card_fail(self):
+        self.login(TestUsers.BAR)
+
+        body = {**self.REQUESTS['POST/orders#card'], **{'card': '567b'}}
+        response = self.client.post('/orders', body)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data['card'][0], 'Card not registered.')
 
     def test_commit(self):
         self.login(TestUsers.BAR)
@@ -61,10 +80,10 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         end = timezone.now()
         self.assertEqual(response.status_code, 200)
 
-        response_time = parse_datetime(response.data['time'])
-        self.assertLess(start, response_time)
-        self.assertLess(response_time, end)
-        TestTransactions.TX_ORDER2.time = response_time
+        server_time = parse_datetime(response.data['time'])
+        self.assertLess(start, server_time)
+        self.assertLess(server_time, end)
+        TestTransactions.TX_ORDER2.time = server_time
 
         TestGuests.SHEELAH.refresh_from_db()
         self.assertEqual(TestGuests.SHEELAH.bonus, Decimal('0.00'))

@@ -6,6 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, serializers, mixins
 
 from api.models.guest import Guest
+from api.models.utils import resolve_card
 from argentum.permissions import StrictModelPermissions
 from argentum.settings import CURRENCY_CONFIG
 
@@ -107,3 +108,7 @@ class TransactionViewSet(
             return StrictModelPermissions({'GET': ['%(app_label)s.view_card_%(model_name)s']}),
         else:
             return StrictModelPermissions(),
+
+    def create(self, request, *args, **kwargs):
+        resolve_card(request.data)
+        return super().create(request, *args, **kwargs)

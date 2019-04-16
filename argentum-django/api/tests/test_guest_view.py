@@ -39,6 +39,9 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         response = self.client.get('/guests?code=DEMO-0000&mail=tuttocitta')
         self.assertPksEqual(response.data, [TestGuests.SHEELAH])
 
+        response = self.client.get(f'/guests?card={TestGuests.ROBY.card}')
+        self.assertPksEqual(response.data, [TestGuests.ROBY])
+
     def test_get_serialize(self):
         self.login(TestUsers.RECEPTION)
 

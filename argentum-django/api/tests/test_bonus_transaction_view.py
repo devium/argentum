@@ -137,6 +137,25 @@ class BonusTransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Aut
         self.assertEqual(response.status_code, 200)
         self.assertFalse(BonusTransaction.objects.get(id=TestBonusTransactions.BTX1.id).pending)
 
+    def test_post_by_card(self):
+        self.login(TestUsers.TOPUP)
+
+        response = self.client.post('/bonus_transactions', self.REQUESTS['POST/bonus_transactions#card'])
+        self.assertEqual(response.status_code, 201)
+
+        self.assertValueEqual(
+            BonusTransaction.objects.all(), TestBonusTransactions.ALL + [TestBonusTransactions.BTX4],
+            ignore_fields=['time']
+        )
+
+    def test_post_by_card_fail(self):
+        self.login(TestUsers.TOPUP)
+
+        body = {**self.REQUESTS['POST/bonus_transactions#card'], **{'card': '567b'}}
+        response = self.client.post('/bonus_transactions', body)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data['card'][0], 'Card not registered.')
+
     def test_permissions(self):
         self.assertPermissions(
             lambda: self.client.get('/bonus_transactions'),
