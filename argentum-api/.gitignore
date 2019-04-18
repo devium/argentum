@@ -1,3 +1,2 @@
-gradle/
-/out/
-/qemu-arm-static
+__pycache__
+api/migrations/

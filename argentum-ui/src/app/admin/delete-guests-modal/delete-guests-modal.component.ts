@@ -1,8 +1,8 @@
+
+import {timer as observableTimer, Subscription } from 'rxjs';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import 'rxjs/add/observable/timer';
-import 'rxjs/add/operator/take';
-import { Observable, Subscription } from 'rxjs';
+import {map, take} from 'rxjs/operators';
 
 @Component({
   selector: 'app-delete-guests-modal',
@@ -18,11 +18,10 @@ export class DeleteGuestsModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.subscription = Observable
-      .timer(0, 1000)
-      .map((i: number) => this.TIMEOUT_SECONDS - i)
-      .take(this.TIMEOUT_SECONDS + 1)
-      .subscribe((tick: number) => this.countdown = tick);
+    this.subscription = observableTimer(0, 1000).pipe(
+        map((i: number) => this.TIMEOUT_SECONDS - i),
+        take(this.TIMEOUT_SECONDS + 1)
+      ).subscribe((tick: number) => this.countdown = tick);
   }
 
   ngOnDestroy() {

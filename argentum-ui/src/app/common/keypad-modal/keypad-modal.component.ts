@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription } from 'rxjs/Subscription';
-import { fromEvent } from 'rxjs';
+import { Subscription ,  fromEvent } from 'rxjs';
 
 @Component({
   selector: 'app-keypad',

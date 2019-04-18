@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  argentum-api:
+    build:
+      context: ..
+      dockerfile: docker/api.Dockerfile
+    image: argentum-api
+    image: 514036853215.dkr.ecr.eu-central-1.amazonaws.com/argentum-api:latest
+    environment:
+      - POSTGRES_PASSWORD
+      - POSTGRES_HOST=postgres
+    ports:
+      - '8443:8443'
+    depends_on:
+      - postgres
+
+  argentum-ui:
+    build:
+      context: ..
+      dockerfile: docker/ui.Dockerfile
+    image: argentum-ui
+    image: 514036853215.dkr.ecr.eu-central-1.amazonaws.com/argentum-ui:latest
+    ports:
+      - '80:80'
+      - '443:443'
+    depends_on:
+      - argentum-api
+
+  postgres:
+    image: postgres:9
+    volumes:
+      - ./postgres/:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB=argentum
+    ports:
+      - '5432:5432'

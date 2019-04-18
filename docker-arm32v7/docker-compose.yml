@@ -1,0 +1,44 @@
+version: '3'
+
+# When running this file on the development system, make sure to have QEMU
+# registered:
+# docker run --rm --privileged multiarch/qemu-user-static:register
+# When building on the production system, qemu-arm-static is not required and
+# can be replaced by an empty file.
+
+services:
+  argentum-api:
+    build:
+      context: ..
+      dockerfile: docker-arm32v7/api.Dockerfile
+    image: arm32v7/argentum-api
+    image: 514036853215.dkr.ecr.eu-central-1.amazonaws.com/arm32v7/argentum-api:latest
+    environment:
+      - POSTGRES_PASSWORD
+      - POSTGRES_HOST=postgres
+    ports:
+      - '8443:8443'
+    depends_on:
+      - postgres
+
+  argentum-ui:
+    build:
+      context: ..
+      dockerfile: docker-arm32v7/ui.Dockerfile
+    image: arm32v7/argentum-ui
+    image: 514036853215.dkr.ecr.eu-central-1.amazonaws.com/arm32v7/argentum-ui:latest
+    ports:
+      - '80:80'
+      - '443:443'
+    depends_on:
+      - argentum-api
+
+  postgres:
+    image: arm32v7/postgres:9
+    volumes:
+      - ./postgres/:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB=argentum
+    ports:
+      - '5432:5432'

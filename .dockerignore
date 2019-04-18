@@ -1,0 +1,9 @@
+**/.*
+**/postgres/
+**/__pycache__
+test-data/
+argentum-api/requirements-dev.txt
+argentum-api/api/tests/
+argentum-api/api/migrations/
+argentum-ui/node_modules/
+argentum-ui/package-lock.json

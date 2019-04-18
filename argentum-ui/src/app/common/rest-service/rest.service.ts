@@ -1,51 +1,53 @@
-import { Injectable } from '@angular/core';
-import { Product } from '../model/product';
-import 'rxjs/add/operator/toPromise';
-import 'rxjs/add/operator/map';
-import { ProductRange } from '../model/product-range';
-import { Category } from '../model/category';
-import { Guest } from '../model/guest';
-import { Statistics } from '../model/statistics';
-import { environment } from '../../../environments/environment';
-import { ProductResponse, toProduct } from './response/product-response';
-import { fromProduct } from './request/product-request';
-import { ProductRangeResponse, toProductRange } from './response/product-range-response';
-import { fromProductRange } from './request/product-range-request';
-import { CategoryResponse, toCategory } from './response/category-response';
-import { fromCategory } from './request/category-request';
-import { GuestResponse, toGuest } from './response/guest-response';
-import { GuestResponsePaginated } from './response/guest-response-paginated';
-import { fromGuest } from './request/guest-request';
-import { StatisticsResponse, toStatistics } from './response/statistics-response';
-import { OrderResponse, toOrder } from './response/order-response';
-import { fromItems } from './request/order-request';
-import { toUser, UserResponse } from './response/user-response';
-import { TokenResponse } from './response/token-response';
-import { User } from '../model/user';
-import { fromUser } from './request/user-request';
-import { ConfigResponse, toConfig } from './response/config-response';
-import { Config } from '../model/config';
-import { fromConfig } from './request/config-request';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/catch';
-import { fromStatus } from './request/status-request';
-import { Status } from '../model/status';
-import { StatusResponse, toStatus } from './response/status-response';
-import { Order } from '../model/order';
-import { OrderItem } from '../model/order-item';
-import { cancelFromOrder, cancelFromOrderItem } from './request/cancel-order-item-request';
-import { CoatCheckTagResponse, toCoatCheckTag } from './response/coat-check-tag-response';
-import { fromCoatCheckTagIds } from './request/coat-check-tags-request';
-import { CoatCheckTag } from '../model/coat-check-tag';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Message } from '../model/message';
-import { Router } from '@angular/router';
+import {catchError, map} from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {Product} from '../model/product';
+
+
+import {ProductRange} from '../model/product-range';
+import {Category} from '../model/category';
+import {Guest} from '../model/guest';
+import {Statistics} from '../model/statistics';
+import {environment} from '../../../environments/environment';
+import {ProductResponse, toProduct} from './response/product-response';
+import {fromProduct} from './request/product-request';
+import {ProductRangeResponse, toProductRange} from './response/product-range-response';
+import {fromProductRange} from './request/product-range-request';
+import {CategoryResponse, toCategory} from './response/category-response';
+import {fromCategory} from './request/category-request';
+import {GuestResponse, toGuest} from './response/guest-response';
+import {GuestResponsePaginated} from './response/guest-response-paginated';
+import {fromGuest} from './request/guest-request';
+import {StatisticsResponse, toStatistics} from './response/statistics-response';
+import {OrderResponse, toOrder} from './response/order-response';
+import {fromItems} from './request/order-request';
+import {toUser, UserResponse} from './response/user-response';
+import {TokenResponse} from './response/token-response';
+import {User} from '../model/user';
+import {fromUser} from './request/user-request';
+import {ConfigResponse, toConfig} from './response/config-response';
+import {Config} from '../model/config';
+import {fromConfig} from './request/config-request';
+import {Observable} from 'rxjs';
+
+import {fromStatus} from './request/status-request';
+import {Status} from '../model/status';
+import {StatusResponse, toStatus} from './response/status-response';
+import {Order} from '../model/order';
+import {OrderItem} from '../model/order-item';
+import {cancelFromOrder, cancelFromOrderItem} from './request/cancel-order-item-request';
+import {CoatCheckTagResponse, toCoatCheckTag} from './response/coat-check-tag-response';
+import {fromCoatCheckTagIds} from './request/coat-check-tags-request';
+import {CoatCheckTag} from '../model/coat-check-tag';
+import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
+import {Message} from '../model/message';
+import {Router} from '@angular/router';
 
 @Injectable()
 export class RestService {
 
   constructor(private http: HttpClient, private router: Router) {
   }
+
   // Note: requests that contain an empty array are OK. Backend is supposed to handle those.
   readonly apiUrl = environment.apiUrl;
 
@@ -68,7 +70,7 @@ export class RestService {
     if (message.data === null || message.error !== null) {
       // An erroneous response object that is not flagged as an HTTP error should not happen but just to be safe, we
       // wrap it in an HttpErrorResponse to be handled by the usual error handler.
-      return Promise.reject(new HttpErrorResponse({ error: message, status: 400 }));
+      return Promise.reject(new HttpErrorResponse({error: message, status: 400}));
     }
     return Promise.resolve(message.data);
   }
@@ -125,7 +127,7 @@ export class RestService {
     return this.http.request(
       'delete',
       `${this.apiUrl}/coat_check`,
-      Object.assign({}, this.authJsonOptions, { body: tagIds })
+      Object.assign({}, this.authJsonOptions, {body: tagIds})
     )
       .toPromise()
       .catch((error: HttpErrorResponse) => this.handleError(error));
@@ -187,7 +189,7 @@ export class RestService {
     return this.http.request(
       'delete',
       `${this.apiUrl}/products`,
-      Object.assign({}, this.authJsonOptions, { body: body })
+      Object.assign({}, this.authJsonOptions, {body: body})
     )
       .toPromise()
       .catch((error: HttpErrorResponse) => this.handleError(error));
@@ -236,7 +238,7 @@ export class RestService {
     return this.http.request(
       'delete',
       this.apiUrl + '/ranges',
-      Object.assign({}, this.authJsonOptions, { body: body })
+      Object.assign({}, this.authJsonOptions, {body: body})
     )
       .toPromise()
       .catch((error: HttpErrorResponse) => this.handleError(error));
@@ -274,7 +276,7 @@ export class RestService {
     return this.http.request(
       'delete',
       `${this.apiUrl}/categories`,
-      Object.assign({}, this.authJsonOptions, { body: body })
+      Object.assign({}, this.authJsonOptions, {body: body})
     )
       .toPromise()
       .catch((error: HttpErrorResponse) => this.handleError(error));
@@ -292,7 +294,7 @@ export class RestService {
         const ranges: ProductRange[] = values[1];
         const categories: Category[] = values[2];
 
-        return { products, ranges, categories };
+        return {products, ranges, categories};
       });
   }
 
@@ -319,7 +321,7 @@ export class RestService {
     statusLike: string,
     sort: string,
     direction: string
-  ): Promise<{guests: Guest[], guestsTotal: number}> {
+  ): Promise<{ guests: Guest[], guestsTotal: number }> {
     return this.http.get<Message<GuestResponsePaginated>>(
       `${this.apiUrl}/guests/?` +
       `size=${pageSize}&` +
@@ -345,10 +347,11 @@ export class RestService {
     return this.http.get<Message<GuestResponse[]>>(
       `${this.apiUrl}/guests/search/${field}/${search}`,
       this.authJsonOptions
-    )
-      .map((response: Message<GuestResponse[]>) => response.data)
-      .map((guests: GuestResponse[]) => guests.map(toGuest))
-      .catch((error: HttpErrorResponse) => this.handleError(error));
+    ).pipe(
+      map((response: Message<GuestResponse[]>) => response.data),
+      map((guests: GuestResponse[]) => guests.map(toGuest)),
+      catchError((error: HttpErrorResponse) => this.handleError(error)),
+    );
   }
 
   mergeGuests(guests: Guest[]): Promise<void> {
@@ -474,7 +477,7 @@ export class RestService {
     return this.http.request(
       'delete',
       `${this.apiUrl}/statuses`,
-      Object.assign({}, this.authJsonOptions, { body: body })
+      Object.assign({}, this.authJsonOptions, {body: body})
     )
       .toPromise()
       .catch((error: HttpErrorResponse) => this.handleError(error));
@@ -501,7 +504,7 @@ export class RestService {
     return this.http.request(
       'delete',
       `${this.apiUrl}/orders`,
-      Object.assign({}, this.authJsonOptions, { body: body })
+      Object.assign({}, this.authJsonOptions, {body: body})
     )
       .toPromise()
       .catch((error: HttpErrorResponse) => this.handleError(error));
@@ -513,7 +516,7 @@ export class RestService {
     return this.http.request(
       'delete',
       `${this.apiUrl}/orders`,
-      Object.assign({}, this.authJsonOptions, { body: body })
+      Object.assign({}, this.authJsonOptions, {body: body})
     )
       .toPromise()
       .catch((error: HttpErrorResponse) => this.handleError(error));
@@ -566,7 +569,7 @@ export class RestService {
     return this.http.request(
       'delete',
       `${this.apiUrl}/users`,
-      Object.assign({}, this.authJsonOptions, { body: body })
+      Object.assign({}, this.authJsonOptions, {body: body})
     )
       .toPromise()
       .catch((error: HttpErrorResponse) => this.handleError(error));

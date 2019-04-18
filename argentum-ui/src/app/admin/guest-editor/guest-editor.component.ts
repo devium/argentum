@@ -1,11 +1,13 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { RestService } from '../../common/rest-service/rest.service';
-import { Guest } from '../../common/model/guest';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.component';
-import { Subject } from 'rxjs/Subject';
-import { MessageComponent } from '../../common/message/message.component';
-import 'rxjs/add/operator/distinctUntilChanged';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {RestService} from '../../common/rest-service/rest.service';
+import {Guest} from '../../common/model/guest';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {KeypadModalComponent} from '../../common/keypad-modal/keypad-modal.component';
+import {Subject} from 'rxjs';
+import {MessageComponent} from '../../common/message/message.component';
+import {distinctUntilChanged} from 'rxjs/internal/operators/distinctUntilChanged';
+import {debounceTime} from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-guest-editor',
@@ -35,38 +37,39 @@ export class GuestEditorComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.codeStream
-      .debounceTime(300)
-      .distinctUntilChanged()
-      .subscribe(code => {
-        this.codeLike = code;
-        this.changePage(1);
-        this.page = 1;
-      });
-    this.nameStream
-      .debounceTime(300)
-      .distinctUntilChanged()
-      .subscribe(name => {
+    this.codeStream.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(code => {
+      this.codeLike = code;
+      this.changePage(1);
+      this.page = 1;
+    });
+    this.nameStream.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(name => {
         this.nameLike = name;
         this.changePage(1);
         this.page = 1;
-      });
-    this.mailStream
-      .debounceTime(300)
-      .distinctUntilChanged()
-      .subscribe(mail => {
-        this.mailLike = mail;
-        this.changePage(1);
-        this.page = 1;
-      });
-    this.statusStream
-      .debounceTime(300)
-      .distinctUntilChanged()
-      .subscribe(status => {
-        this.statusLike = status;
-        this.changePage(1);
-        this.page = 1;
-      });
+      }
+    );
+    this.mailStream.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(mail => {
+      this.mailLike = mail;
+      this.changePage(1);
+      this.page = 1;
+    });
+    this.statusStream.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(status => {
+      this.statusLike = status;
+      this.changePage(1);
+      this.page = 1;
+    });
     this.changePage(1);
   }
 
@@ -93,7 +96,7 @@ export class GuestEditorComponent implements OnInit {
   }
 
   addBalance(guest: Guest) {
-    const modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
 
     modal.result.then(result => {
@@ -105,11 +108,11 @@ export class GuestEditorComponent implements OnInit {
           );
         })
         .catch(reason => this.message.error(reason));
-    }, result => void(0));
+    }, result => void (0));
   }
 
   subBalance(guest: Guest) {
-    const modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
 
     modal.result.then(result => {
@@ -121,11 +124,11 @@ export class GuestEditorComponent implements OnInit {
           );
         })
         .catch(reason => this.message.error(reason));
-    }, result => void(0));
+    }, result => void (0));
   }
 
   addBonus(guest: Guest) {
-    const modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
 
     modal.result.then(result => {
@@ -137,11 +140,11 @@ export class GuestEditorComponent implements OnInit {
           );
         })
         .catch(reason => this.message.error(reason));
-    }, result => void(0));
+    }, result => void (0));
   }
 
   subBonus(guest: Guest) {
-    const modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
+    const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
 
     modal.result.then(result => {
@@ -153,7 +156,7 @@ export class GuestEditorComponent implements OnInit {
           );
         })
         .catch(reason => this.message.error(reason));
-    }, result => void(0));
+    }, result => void (0));
   }
 
   filterCode(code: string) {

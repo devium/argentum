@@ -1,26 +1,18 @@
+import {first, debounceTime, scan, mergeMap, filter, repeat, map} from 'rxjs/operators';
 import {
   Component,
   Input, OnDestroy,
   OnInit, ViewChild
 } from '@angular/core';
-import { RestService } from '../rest-service/rest.service';
-import { Guest } from '../model/guest';
-import { convertCard } from '../util/convert-card';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
-import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/mergeMap';
-import 'rxjs/add/operator/scan';
-import 'rxjs/add/operator/first';
-import 'rxjs/add/operator/repeat';
-import { AnimationEvent, animate, state, style, transition, trigger } from '@angular/animations';
-import { Status } from '../model/status';
-import { isDarkBackground } from '../util/is-dark-background';
-import { MessageComponent } from '../message/message.component';
-import { OrderHistoryComponent } from '../order-history/order-history.component';
-import { fromEvent } from 'rxjs';
+import {RestService} from '../rest-service/rest.service';
+import {Guest} from '../model/guest';
+import {convertCard} from '../util/convert-card';
+import {Observable, Subscription, Subject, fromEvent} from 'rxjs';
+import {AnimationEvent, animate, state, style, transition, trigger} from '@angular/animations';
+import {Status} from '../model/status';
+import {isDarkBackground} from '../util/is-dark-background';
+import {MessageComponent} from '../message/message.component';
+import {OrderHistoryComponent} from '../order-history/order-history.component';
 
 enum ScanState {
   Waiting,
@@ -78,24 +70,26 @@ export class CardBarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.cardStream = fromEvent(document, 'keydown')
-      .filter((event: KeyboardEvent) => '0123456789'.includes(event.key))
-      .flatMap((event: KeyboardEvent) => event.key)
-      .scan((acc, char) => acc + char)
-      .debounceTime(this.flushInputTimeout)
-      .first()
-      .map(card => convertCard(card))
-      .repeat();
+    this.cardStream = fromEvent(document, 'keydown').pipe(
+      filter((event: KeyboardEvent) => '0123456789'.includes(event.key)),
+      mergeMap((event: KeyboardEvent) => event.key),
+      scan((acc, char) => acc + char),
+      debounceTime(this.flushInputTimeout),
+      first(),
+    ).pipe(
+      map(card => convertCard(card)),
+      repeat()
+    );
 
     this.keyboardSub = this.cardStream.subscribe(result => this.newNumber(result));
 
-    this.countdownSub = this.countdownStream
-      .debounceTime(this.cardTimeout)
+    this.countdownSub = this.countdownStream.pipe(
+      debounceTime(this.cardTimeout))
       .subscribe(() => this.setState(ScanState.Waiting));
 
     this.restService.getStatuses()
       .then((statuses: Status[]) => this.statuses = statuses)
-      .catch(error => void(0));
+      .catch(error => void (0));
   }
 
   ngOnDestroy(): void {

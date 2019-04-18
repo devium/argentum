@@ -1,5 +1,7 @@
+
+import {debounceTime} from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-message',
@@ -26,7 +28,7 @@ export class MessageComponent implements OnInit {
       }
     });
 
-    this.timer.debounceTime(this.DEFAULT_MESSAGE_TIME).subscribe(() => this.message = null);
+    this.timer.pipe(debounceTime(this.DEFAULT_MESSAGE_TIME)).subscribe(() => this.message = null);
   }
 
   error(message: string) {

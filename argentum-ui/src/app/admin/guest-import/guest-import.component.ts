@@ -4,7 +4,7 @@ import { MessageComponent } from '../../common/message/message.component';
 import { DeleteGuestsModalComponent } from '../delete-guests-modal/delete-guests-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { PapaParseService } from 'ngx-papaparse';
+import { Papa } from 'ngx-papaparse';
 
 @Component({
   selector: 'app-guest-import',
@@ -23,7 +23,7 @@ export class GuestImportComponent implements OnInit {
   constructor(
     private restService: RestService,
     private modalService: NgbModal,
-    private papa: PapaParseService
+    private papa: Papa
   ) {
   }
 
@@ -36,7 +36,7 @@ export class GuestImportComponent implements OnInit {
       return;
     }
     const reader = new FileReader();
-    reader.onload = (event: ProgressEvent) => this.parse((<FileReader>event.target).result);
+    reader.onload = (event: ProgressEvent) => this.parse(<string>(<FileReader>event.target).result);
     reader.readAsText(file);
 
     // Reset value so onChange is triggered again on future uploads.

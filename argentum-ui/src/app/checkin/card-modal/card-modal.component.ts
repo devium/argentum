@@ -1,9 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Observable } from 'rxjs/Observable';
-import { convertCard } from '../../common/util/convert-card';
-import { Subscription } from 'rxjs/Subscription';
-import { fromEvent } from 'rxjs';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {Observable, Subscription, fromEvent} from 'rxjs';
+import {convertCard} from '../../common/util/convert-card';
+import {debounceTime, filter, flatMap, map, repeat} from 'rxjs/operators';
+import {scan} from 'rxjs/internal/operators/scan';
+import {first} from 'rxjs/internal/operators/first';
 
 @Component({
   selector: 'app-card-modal',
@@ -19,14 +20,15 @@ export class CardModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.cardStream = fromEvent(document, 'keydown')
-      .filter((event: KeyboardEvent) => '0123456789'.includes(event.key))
-      .flatMap((event: KeyboardEvent) => event.key)
-      .scan((acc, char) => acc + char)
-      .debounceTime(500)
-      .first()
-      .map(card => convertCard(card))
-      .repeat();
+    this.cardStream = fromEvent(document, 'keydown').pipe(
+      filter((event: KeyboardEvent) => '0123456789'.includes(event.key)),
+      flatMap((event: KeyboardEvent) => event.key),
+      scan((acc, char) => acc + char),
+      debounceTime(500),
+      first(),
+      map(card => convertCard(card)),
+      repeat()
+    );
 
     this.cardStreamSub = this.cardStream.subscribe(result => this.card = result);
   }
