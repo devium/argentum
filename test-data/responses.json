@@ -1,4 +1,12 @@
 {
+  "POST/token": {
+    "token": "ff1f8753fce92e46716abc6749d09ee3db73b9e8"
+  },
+  "POST/token#error": {
+    "non_field_errors": [
+      "Unable to log in with provided credentials."
+    ]
+  },
   "GET/users": [
     {
       "id": 1,

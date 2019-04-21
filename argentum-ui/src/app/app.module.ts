@@ -38,7 +38,8 @@ import { OrderHistoryModalComponent } from './order/order-history-modal/order-hi
 import { ConfirmModalComponent } from './common/confirm-modal/confirm-modal.component';
 import { PapaParseModule } from 'ngx-papaparse';
 import { CoatCheckComponent } from './coat-check/coat-check.component';
-import { HttpClientModule } from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {BaseInterceptor} from './common/rest-service/base-interceptor';
 
 @NgModule({
   declarations: [
@@ -85,7 +86,8 @@ import { HttpClientModule } from '@angular/common/http';
   ],
   providers: [
     RestService,
-    RouteGuard
+    RouteGuard,
+    { provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true },
   ],
   bootstrap: [
     AppComponent

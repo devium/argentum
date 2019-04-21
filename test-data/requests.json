@@ -1,7 +1,11 @@
 {
-  "POST/token#admin": {
+  "POST/token": {
     "username": "admin",
     "password": "argentum"
+  },
+  "POST/token#error": {
+    "username": "admin",
+    "password": "nogentum"
   },
   "POST/users": {
     "username": "buffet",

@@ -10,6 +10,12 @@ class AuthenticationTestCase(SerializationTestCase):
         self.assertEqual(admin.username, 'admin')
 
     def test_get_token(self):
-        response = self.client.post('/token', self.REQUESTS['POST/token#admin'])
+        response = self.client.post('/token', self.REQUESTS['POST/token'])
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.data['token'])
+        self.assertEqual(response.data.keys(), self.RESPONSES['POST/token'].keys())
+
+    def test_get_token_error(self):
+        response = self.client.post('/token', self.REQUESTS['POST/token#error'])
+        self.assertEqual(response.status_code, 400)
+        self.assertJSONEqual(response.content, self.RESPONSES['POST/token#error'])

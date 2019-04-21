@@ -1,8 +1,9 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { RestService } from '../common/rest-service/rest.service';
-import { TokenResponse } from '../common/rest-service/response/token-response';
-import { MessageComponent } from '../common/message/message.component';
-import { Router } from '@angular/router';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {RestService} from '../common/rest-service/rest.service';
+import {TokenResponse} from '../common/rest-service/response/token-response';
+import {MessageComponent} from '../common/message/message.component';
+import {Router} from '@angular/router';
+import {LoginService} from '../common/rest-service/login.service';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +19,7 @@ export class LoginComponent implements OnInit {
 
   waitingForLogin = false;
 
-  constructor(private restService: RestService, private router: Router) {
+  constructor(private loginService: LoginService, private router: Router) {
   }
 
   ngOnInit(): void {
@@ -27,14 +28,13 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     this.waitingForLogin = true;
 
-    this.restService.authenticate(this.username, this.password)
-      .then(((response: TokenResponse) => {
+    this.loginService.login(this.username, this.password)
+      .subscribe((token: string) => {
         this.router.navigate(['/home']);
         this.waitingForLogin = false;
-      }))
-      .catch((reason: string) => {
+      }, (err: any) => {
         this.waitingForLogin = false;
-        this.message.error(reason);
+        this.message.error(err);
       });
   }
 

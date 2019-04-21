@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'rest_framework.authtoken',
+    'corsheaders',
     'api.apps.ApiConfig'
 ]
 
@@ -47,6 +48,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'argentum.urls'
@@ -73,11 +75,17 @@ WSGI_APPLICATION = 'argentum.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 # We're likely not doing any real incremental migration, so might as well run them on an empty db.
-if any(arg in sys.argv for arg in ('test', 'makemigrations')):
+if 'makemigrations' in sys.argv:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.dummy',
-            'NAME': 'argentum',
+            'ATOMIC_REQUESTS': True,
+        }
+    }
+elif 'test' in sys.argv:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
             'ATOMIC_REQUESTS': True,
         }
     }
@@ -133,6 +141,9 @@ REST_FRAMEWORK = {
         'argentum.permissions.StrictModelPermissions',
     )
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
+
 CURRENCY_CONFIG = {'max_digits': 9, 'decimal_places': 2}
 
 # Logging
