@@ -28,6 +28,7 @@ class UserViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedTe
         self.login(TestUsers.ADMIN)
 
         response = self.client.post('/users', self.REQUESTS['POST/users'])
+        self.assertJSONEqual(response.content, self.RESPONSES['POST/users'])
         self.assertEqual(response.status_code, 201)
         self.assertPksEqual([response.data], [TestUsers.BUFFET])
         self.login(TestUsers.BUFFET)

@@ -3,7 +3,7 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.component';
 import { Guest } from '../../common/model/guest';
 import { CardModalComponent } from '../card-modal/card-modal.component';
-import { RoleBasedComponent } from '../../common/role-based/role-based.component';
+import { GroupBasedComponent } from '../../common/group-based/group-based.component';
 import { RestService } from '../../common/rest-service/rest.service';
 import { Status } from '../../common/model/status';
 import { MessageComponent } from '../../common/message/message.component';
@@ -14,7 +14,7 @@ import { isDarkBackground } from '../../common/util/is-dark-background';
   templateUrl: 'new-guest-modal.component.html',
   styleUrls: ['new-guest-modal.component.scss']
 })
-export class NewGuestModalComponent extends RoleBasedComponent implements OnInit {
+export class NewGuestModalComponent extends GroupBasedComponent implements OnInit {
   name = '';
   mail = '';
   status: Status = null;

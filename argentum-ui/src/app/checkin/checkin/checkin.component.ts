@@ -7,14 +7,14 @@ import { RestService } from '../../common/rest-service/rest.service';
 import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.component';
 import { MessageComponent } from '../../common/message/message.component';
 import { CardBarComponent } from '../../common/card-bar/card-bar.component';
-import { RoleBasedComponent } from '../../common/role-based/role-based.component';
+import { GroupBasedComponent } from '../../common/group-based/group-based.component';
 
 @Component({
   selector: 'app-checkin',
   templateUrl: 'checkin.component.html',
   styleUrls: ['checkin.component.scss']
 })
-export class CheckinComponent extends RoleBasedComponent implements OnInit {
+export class CheckinComponent extends GroupBasedComponent implements OnInit {
   @ViewChild(MessageComponent)
   message: MessageComponent;
   @ViewChild(CardBarComponent)

@@ -3,7 +3,7 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {catchError, map} from 'rxjs/operators';
 import {Observable, throwError} from 'rxjs';
 
-interface LoginResponse {
+interface TokenDto {
   token: string;
 }
 
@@ -15,8 +15,8 @@ export class LoginService {
   }
 
   login(username: string, password: string): Observable<string> {
-    return this.http.post<LoginResponse>('/token', {'username': username, 'password': password}).pipe(
-      map((res: LoginResponse) => {
+    return this.http.post<TokenDto>('/token', {'username': username, 'password': password}).pipe(
+      map((res: TokenDto) => {
         localStorage.setItem('token', res.token);
         return res.token;
       }),
@@ -31,5 +31,4 @@ export class LoginService {
       })
     );
   }
-
 }

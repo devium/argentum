@@ -36,49 +36,49 @@ describe('NavbarComponent', () => {
 
     const links = fixture.debugElement.query(By.css('#navLinks'));
 
-    component.roles = [];
+    component.groupNames = [];
     component.refreshLinks();
     fixture.detectChanges();
     expect(links.children.length).toBe(1, 'Logout');
     expect(links.children[0].nativeElement.textContent.trim()).toBe('Logout');
 
-    component.roles = ['ADMIN'];
+    component.groupNames = ['admin'];
     component.refreshLinks();
     fixture.detectChanges();
     expect(links.children.length).toBe(2, 'Admin & Logout');
     expect(links.children[0].nativeElement.textContent.trim()).toBe('Admin');
 
-    component.roles = ['ORDER'];
+    component.groupNames = ['order'];
     component.refreshLinks();
     fixture.detectChanges();
     expect(links.children.length).toBe(2, 'Order & Logout');
     expect(links.children[0].nativeElement.textContent.trim()).toBe('Order');
 
-    component.roles = ['TRANSFER'];
+    component.groupNames = ['transfer'];
     component.refreshLinks();
     fixture.detectChanges();
     expect(links.children.length).toBe(2, 'Check-in (Transfer) & Logout');
     expect(links.children[0].nativeElement.textContent.trim()).toBe('Check-in');
 
-    component.roles = ['CHECKIN'];
+    component.groupNames = ['checkin'];
     component.refreshLinks();
     fixture.detectChanges();
     expect(links.children.length).toBe(2, 'Check-in (Check-in) & Logout');
     expect(links.children[0].nativeElement.textContent.trim()).toBe('Check-in');
 
-    component.roles = ['SCAN'];
+    component.groupNames = ['scan'];
     component.refreshLinks();
     fixture.detectChanges();
     expect(links.children.length).toBe(2, 'Scan & Logout');
     expect(links.children[0].nativeElement.textContent.trim()).toBe('Scan');
 
-    // component.roles = ['COAT_CHECK'];
+    // component.groupNames = ['coat_check'];
     // component.refreshLinks();
     // fixture.detectChanges();
     // expect(links.children.length).toBe(2, 'Coat check & Logout');
     // expect(links.children[0].nativeElement.textContent.trim()).toBe('Coat check');
 
-    component.roles = ['TRANSFER', 'CHECKIN', 'SCAN', 'ORDER'];
+    component.groupNames = ['transfer', 'checkin', 'scan', 'order'];
     component.refreshLinks();
     fixture.detectChanges();
     // Transfer and checkin share a single site.

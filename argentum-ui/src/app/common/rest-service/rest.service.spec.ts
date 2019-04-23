@@ -17,7 +17,6 @@ import { DEFAULT, PAID } from './mocks/mock-statuses';
 import { Statistics } from '../model/statistics';
 import { STATISTICS } from './mocks/mock-statistics';
 import { User } from '../model/user';
-import { ADMIN, BARKEEPER, RECEPTION, USERS } from './mocks/mock-users';
 import { Config } from '../model/config';
 import { CONFIG } from './mocks/mock-config';
 import { TokenResponse } from './response/token-response';
@@ -25,6 +24,7 @@ import { TOKEN } from './mocks/mock-tokens';
 import { BAR, BUFFET, COATCHECK } from './mocks/mock-ranges';
 import { BEV_ALC, BEV_NONALC } from './mocks/mock-categories';
 import createSpyObj = jasmine.createSpyObj;
+import {USER_ADMIN, USER_BAR, USER_RECEPTION, USERS_ALL} from './test-data/users';
 
 describe('RestService', () => {
   let http: HttpClient;
@@ -596,7 +596,7 @@ describe('RestService', () => {
 
     restService.getUsers()
       .then((users: User[]) => {
-        const usersNullPws = JSON.parse(JSON.stringify(USERS));
+        const usersNullPws = JSON.parse(JSON.stringify(USERS_ALL));
         for (const user of usersNullPws) {
           user.password = null;
         }
@@ -613,7 +613,7 @@ describe('RestService', () => {
     const method = 'POST';
     const path = '/users';
 
-    restService.mergeUsers([BARKEEPER, RECEPTION])
+    restService.mergeUsers([USER_BAR, USER_RECEPTION])
       .then(() => resolved = true);
 
     const req = httpTestingController.expectOne(restService.apiUrl + path);
@@ -626,7 +626,7 @@ describe('RestService', () => {
     const method = 'DELETE';
     const path = '/users';
 
-    restService.deleteUsers([BARKEEPER, RECEPTION])
+    restService.deleteUsers([USER_BAR, USER_RECEPTION])
       .then(() => resolved = true);
 
     const req = httpTestingController.expectOne(restService.apiUrl + path);
@@ -641,7 +641,7 @@ describe('RestService', () => {
 
     restService.getUser()
       .then((user: User) => {
-        const adminNullPw = Object.assign({}, ADMIN, { password: null });
+        const adminNullPw = Object.assign({}, USER_ADMIN, { password: null });
         expect(user).toEqual(adminNullPw);
         resolved = true;
       });

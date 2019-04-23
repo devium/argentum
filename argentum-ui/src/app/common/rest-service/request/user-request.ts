@@ -7,10 +7,11 @@ export class UserRequest {
 }
 
 export function fromUser(user: User): UserRequest {
-  return {
-    id: user.id,
-    username: user.username,
-    password: user.password.length > 0 ? user.password : null,
-    roles: user.roles
-  };
+  return null;
+  // return {
+  //   id: user.id,
+  //   username: user.username,
+  //   password: user.password.length > 0 ? user.password : null,
+  //   roles: user.roles
+  // };
 }

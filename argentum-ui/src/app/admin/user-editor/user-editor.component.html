@@ -7,10 +7,10 @@
     <tr>
       <th rowspan="3">Username</th>
       <th rowspan="3">Password</th>
-      <th [colSpan]="ranges.length + (ROLES | iterable).length">Permissions</th>
+      <th [colSpan]="ranges.length + (GROUPS | iterable).length">Permissions</th>
     </tr>
     <tr>
-      <th *ngFor="let role of ROLES | iterable" rowspan="2" class="rotate">
+      <th *ngFor="let role of GROUPS | iterable" rowspan="2" class="rotate">
         <div>{{role.value}}</div>
       </th>
       <th [colSpan]="ranges.length">Product ranges</th>
@@ -45,7 +45,7 @@
         >
       </td>
 
-      <td *ngFor="let role of ROLES | iterable">
+      <td *ngFor="let role of GROUPS | iterable">
         <input
           type="checkbox"
           class="checkbox-lg"

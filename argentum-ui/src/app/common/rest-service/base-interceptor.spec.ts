@@ -4,7 +4,7 @@ import {fakeAsync, TestBed} from '@angular/core/testing';
 import {BaseInterceptor} from './base-interceptor';
 import {environment} from '../../../environments/environment';
 
-describe('BaseInterceptor', () => {
+fdescribe('BaseInterceptor', () => {
   let http: HttpClient;
   let httpTestingController: HttpTestingController;
   let resolved = false;
@@ -27,6 +27,15 @@ describe('BaseInterceptor', () => {
     http.get('/test').subscribe(() => resolved = true);
     const req = httpTestingController.expectOne(`${environment.apiUrl}/test`);
     expect(req.request.method).toBe('GET');
+    req.flush(null);
+  }));
+
+  it('should remove undefined values from its body', fakeAsync(() => {
+    http.post('/test', {'a': 1, 'b': undefined, 'c': {'d': undefined}}).subscribe(() => resolved = true);
+    const req = httpTestingController.expectOne(`${environment.apiUrl}/test`);
+    expect('a' in req.request.body).toBeTruthy();
+    expect('b' in req.request.body).toBeFalsy();
+    expect('d' in req.request.body['c']).toBeFalsy();
     req.flush(null);
   }));
 

@@ -7,10 +7,11 @@ export class UserResponse {
 }
 
 export function toUser(response: UserResponse): User {
-  return {
-    id: response.id,
-    username: response.username,
-    password: null,
-    roles: response.roles
-  };
+  return null;
+  // return {
+  //   id: response.id,
+  //   username: response.username,
+  //   password: null,
+  //   roles: response.roles
+  // };
 }

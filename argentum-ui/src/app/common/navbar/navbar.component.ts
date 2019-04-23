@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { RoleBasedComponent } from '../role-based/role-based.component';
+import { GroupBasedComponent } from '../group-based/group-based.component';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: 'navbar.component.html',
   styleUrls: ['navbar.component.scss']
 })
-export class NavbarComponent extends RoleBasedComponent implements OnInit {
+export class NavbarComponent extends GroupBasedComponent implements OnInit {
   navbarCollapsed = true;
 
   links: string[][] = [];
@@ -17,13 +17,13 @@ export class NavbarComponent extends RoleBasedComponent implements OnInit {
 
   refreshLinks() {
     this.links = [
-      // [['COAT_CHECK'], '/coat_check', 'Coat check'],
-      [['ORDER'], '/order', 'Order'],
-      [['CHECKIN', 'TRANSFER'], '/checkin', 'Check-in'],
-      [['SCAN'], '/scan', 'Scan'],
-      [['ADMIN'], '/admin', 'Admin'],
+      // [['coat_check'], '/coat_check', 'Coat check'],
+      [['order'], '/order', 'Order'],
+      [['check_in', 'TRANSFER'], '/checkin', 'Check-in'],
+      [['scan'], '/scan', 'Scan'],
+      [['admin'], '/admin', 'Admin'],
     ]
-      .filter((link: any) => this.hasRole(link[0]))
+      .filter((link: any) => this.hasGroup(link[0]))
       .map((link: string[]) => [link[1], link[2]]);
   }
 

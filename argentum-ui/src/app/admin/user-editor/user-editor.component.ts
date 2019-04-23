@@ -4,6 +4,7 @@ import { MessageComponent } from '../../common/message/message.component';
 import { ProductRange } from '../../common/model/product-range';
 import { RestService } from '../../common/rest-service/rest.service';
 import { NavbarComponent } from '../../common/navbar/navbar.component';
+import {Group} from '../../common/model/group';
 
 class EditorUser {
   original: User;
@@ -13,9 +14,9 @@ class EditorUser {
 
   constructor(original: User) {
     this.original = Object.assign({}, original);
-    this.original.roles = original.roles.slice();
+    this.original.groups = original.groups.slice();
     this.edited = Object.assign({}, original);
-    this.edited.roles = original.roles.slice();
+    this.edited.groups = original.groups.slice();
     this.displayed = this.edited;
     this.edited.password = '';
   }
@@ -28,16 +29,16 @@ class EditorUser {
     return !this.original || this.edited.password !== '';
   }
 
-  hasChangedRoles(): boolean {
+  hasChangedGroups(): boolean {
     if (!this.original) {
       return true;
     }
 
-    const allInOrig = this.original.roles
-      .map(role => this.edited.roles.includes(role))
+    const allInOrig = this.original.groups
+      .map(group => this.edited.groups.includes(group))
       .reduce((a, b) => a && b, true);
-    const allInEdit = this.edited.roles
-      .map(role => this.original.roles.includes(role))
+    const allInEdit = this.edited.groups
+      .map(group => this.original.groups.includes(group))
       .reduce((a, b) => a && b, true);
     return !(allInOrig && allInEdit);
   }
@@ -45,7 +46,7 @@ class EditorUser {
   updateChanged(): void {
     this.changed = this.hasChangedUsername()
       || this.hasChangedPassword()
-      || this.hasChangedRoles();
+      || this.hasChangedGroups();
   }
 }
 
@@ -58,7 +59,7 @@ class EditorUser {
 export class UserEditorComponent implements OnInit {
   users: EditorUser[] = [];
   ranges: ProductRange[] = [];
-  ROLES: { [id: string]: string } = {
+  GROUPS: { [id: string]: string } = {
     'ADMIN': 'Admin',
     'COAT_CHECK': 'Coat check',
     'ORDER': 'Order',
@@ -98,12 +99,12 @@ export class UserEditorComponent implements OnInit {
     user.updateChanged();
   }
 
-  toggleRole(user: EditorUser, role: string) {
-    const index = user.edited.roles.indexOf(role);
+  toggleGroup(user: EditorUser, group: Group) {
+    const index = user.edited.groups.indexOf(group);
     if (index > -1) {
-      user.edited.roles.splice(index, 1);
+      user.edited.groups.splice(index, 1);
     } else {
-      user.edited.roles.push(role);
+      user.edited.groups.push(group);
     }
 
     user.updateChanged();
@@ -112,7 +113,7 @@ export class UserEditorComponent implements OnInit {
   reset(user: EditorUser) {
     user.edited = Object.assign({}, user.original);
     user.edited.password = '';
-    user.edited.roles = user.original.roles.slice();
+    user.edited.groups = user.original.groups.slice();
     user.displayed = user.edited;
     user.updateChanged();
   }
@@ -127,12 +128,7 @@ export class UserEditorComponent implements OnInit {
   }
 
   newUser() {
-    const newUser = new EditorUser({
-      id: -1,
-      username: 'user',
-      password: '',
-      roles: []
-    });
+    const newUser = new EditorUser(new User(-1, 'user', '', []));
 
     newUser.original = null;
     newUser.updateChanged();
@@ -169,8 +165,8 @@ export class UserEditorComponent implements OnInit {
         this.loadUsers();
         this.restService.getUser()
           .then((user: User) => {
-            localStorage.setItem('roles', user.roles.join(','));
-            this.navbar.getRoles();
+            localStorage.setItem('groups', user.groups.join(','));
+            this.navbar.getGroups();
             this.navbar.refreshLinks();
           });
       })

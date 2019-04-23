@@ -10,7 +10,7 @@ import {KeypadModalComponent} from '../../common/keypad-modal/keypad-modal.compo
 import {MessageComponent} from '../../common/message/message.component';
 
 
-import {RoleBasedComponent} from '../../common/role-based/role-based.component';
+import {GroupBasedComponent} from '../../common/group-based/group-based.component';
 import {Status} from '../../common/model/status';
 import {isDarkBackground} from '../../common/util/is-dark-background';
 import {distinctUntilChanged} from 'rxjs/internal/operators/distinctUntilChanged';
@@ -20,7 +20,7 @@ import {distinctUntilChanged} from 'rxjs/internal/operators/distinctUntilChanged
   templateUrl: 'search-guest-modal.component.html',
   styleUrls: ['search-guest-modal.component.scss']
 })
-export class SearchGuestModalComponent extends RoleBasedComponent implements OnInit {
+export class SearchGuestModalComponent extends GroupBasedComponent implements OnInit {
   private inputSearchStream = new Subject<string>();
   private searchStream = new Subject<string>();
   statuses: Status[] = [];

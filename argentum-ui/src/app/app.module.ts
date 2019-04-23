@@ -31,7 +31,7 @@ import { LoginComponent } from './login/login.component';
 import { DummyComponent } from './dummy/dummy.component';
 import { UserEditorComponent } from './admin/user-editor/user-editor.component';
 import { ConfigEditorComponent } from './admin/config-editor/config-editor.component';
-import { RoleBasedComponent } from './common/role-based/role-based.component';
+import { GroupBasedComponent } from './common/group-based/group-based.component';
 import { StatusEditorComponent } from './admin/status-editor/status-editor.component';
 import { OrderHistoryComponent } from './common/order-history/order-history.component';
 import { OrderHistoryModalComponent } from './order/order-history-modal/order-history-modal.component';
@@ -69,7 +69,7 @@ import {BaseInterceptor} from './common/rest-service/base-interceptor';
     DummyComponent,
     UserEditorComponent,
     ConfigEditorComponent,
-    RoleBasedComponent,
+    GroupBasedComponent,
     StatusEditorComponent,
     OrderHistoryComponent,
     OrderHistoryModalComponent,

@@ -2,6 +2,7 @@ import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from
 import { Injectable } from '@angular/core';
 import { RestService } from '../common/rest-service/rest.service';
 import { User } from '../common/model/user';
+import {Group} from '../common/model/group';
 
 @Injectable()
 export class RouteGuard implements CanActivate {
@@ -20,25 +21,25 @@ export class RouteGuard implements CanActivate {
 
   // Allowed sites per role.
   // Note: the first path in the array will be considered the respective role's home page.
-  readonly ROLES_TO_PATH: { [role: string]: string[] } = {
-    'ADMIN': ['admin'].concat(this.ADMIN_SUBPATHS),
-    'COAT_CHECK': ['coat_check'],
-    'ORDER': ['order'],
-    'CHECKIN': ['checkin'],
-    'TRANSFER': ['checkin'],
-    'SCAN': ['scan']
+  readonly GROUPS_TO_PATH: { [role: string]: string[] } = {
+    'admin': ['admin'].concat(this.ADMIN_SUBPATHS),
+    'coat_check': ['coat_check'],
+    'order': ['order'],
+    'check_in': ['checkin'],
+    'transfer': ['checkin'],
+    'scan': ['scan']
   };
 
   static logout(): void {
     localStorage.clear();
   }
 
-  private resolveHome(roles: string[]): string {
-    for (const homeRole in this.ROLES_TO_PATH) {
-      if (this.ROLES_TO_PATH.hasOwnProperty(homeRole)) {
-        for (const role of roles) {
-          if (role === homeRole) {
-            return '/' + this.ROLES_TO_PATH[role][0];
+  private resolveHome(groups: Group[]): string {
+    for (const homeGroup in this.GROUPS_TO_PATH) {
+      if (this.GROUPS_TO_PATH.hasOwnProperty(homeGroup)) {
+        for (const group of groups) {
+          if (group.name === homeGroup) {
+            return '/' + this.GROUPS_TO_PATH[group.name][0];
           }
         }
       }
@@ -73,11 +74,11 @@ export class RouteGuard implements CanActivate {
     console.log('Getting user information from backend.');
     return this.restService.getUser()
       .then((user: User) => {
-        console.log(`Roles: ${user.roles}`);
-        localStorage.setItem('roles', user.roles.join(','));
+        console.log(`Roles: ${user.groups}`);
+        localStorage.setItem('roles', user.groups.join(','));
 
         if (path === 'home') {
-          const homePath = this.resolveHome(user.roles);
+          const homePath = this.resolveHome(user.groups);
 
           if (!homePath) {
             console.log(`No home for user roles. Logging out.`);
@@ -90,9 +91,9 @@ export class RouteGuard implements CanActivate {
         }
 
         // If role is allowed to access, return true.
-        for (const role in this.ROLES_TO_PATH) {
-          if (user.roles.includes(role)) {
-            if (this.ROLES_TO_PATH[role].includes(path)) {
+        for (const group in this.GROUPS_TO_PATH) {
+          if (user.groups.map((userGroup: Group) => userGroup.name).includes(group)) {
+            if (this.GROUPS_TO_PATH[group].includes(path)) {
               return Promise.resolve(true);
             }
           }
@@ -100,7 +101,7 @@ export class RouteGuard implements CanActivate {
 
         console.log(`User denied. Redirecting to home.`);
         // Not allowed, redirect to home.
-        const home: string = this.resolveHome(user.roles);
+        const home: string = this.resolveHome(user.groups);
         this.router.navigate([home]);
         return Promise.resolve(false);
       })

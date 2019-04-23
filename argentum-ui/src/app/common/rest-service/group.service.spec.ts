@@ -1,0 +1,48 @@
+import {fakeAsync, TestBed} from '@angular/core/testing';
+
+import {GroupService } from './group.service';
+import {HTTP_INTERCEPTORS, HttpClient} from '@angular/common/http';
+import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
+import {BaseInterceptor} from './base-interceptor';
+import {Group} from '../model/group';
+import {GROUPS_ALL} from './test-data/groups';
+import {testEndpoint} from './test-utils';
+
+fdescribe('GroupService', () => {
+  let service: GroupService;
+  let http: HttpClient;
+  let httpTestingController: HttpTestingController;
+  const requests: Object = require('./test-data/requests.json');
+  const responses: Object = require('./test-data/responses.json');
+  let resolved = false;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
+      providers: [{provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true}],
+    });
+    resolved = false;
+    http = TestBed.get(HttpClient);
+    httpTestingController = TestBed.get(HttpTestingController);
+    service = new GroupService(http);
+    resolved = false;
+  });
+
+  afterEach(() => {
+    expect(resolved).toBeTruthy('Request callback was not called.');
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+    resolved = true;
+  });
+
+  it('should list correctly', fakeAsync(() => {
+    service.list().subscribe((groups: Group[]) => {
+      expect(groups.length).toBe(GROUPS_ALL.length);
+      groups.forEach((group: Group, index: number) => expect(group.equals(GROUPS_ALL[index])).toBeTruthy(group.id));
+      resolved = true;
+    });
+    testEndpoint(httpTestingController, requests, responses, 'GET', '/groups');
+  }));
+});
