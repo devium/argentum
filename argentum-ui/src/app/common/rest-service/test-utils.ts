@@ -19,7 +19,5 @@ export function testEndpoint(
     expect(req.request.body).toEqual(requestBody);
   }
   const responseBody = responses[identifier];
-  if (responseBody) {
-    req.flush(responseBody);
-  }
+  req.flush(responseBody === undefined ? null : responseBody);
 }

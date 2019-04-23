@@ -9,7 +9,7 @@ import {GROUPS_ALL} from './test-data/groups';
 import {of} from 'rxjs/internal/observable/of';
 import createSpyObj = jasmine.createSpyObj;
 import {User} from '../model/user';
-import {USER_BUFFET, USER_RECEPTION, USERS_ALL} from './test-data/users';
+import {USER_BUFFET, USER_RECEPTION, USER_WARDROBE, USER_WARDROBE_PATCHED, USERS_ALL} from './test-data/users';
 import {testEndpoint} from './test-utils';
 
 fdescribe('UserService', () => {
@@ -79,5 +79,22 @@ fdescribe('UserService', () => {
       resolved = true;
     });
     testEndpoint(httpTestingController, requests, responses, 'POST', '/users');
+  }));
+
+  it('should update a user', fakeAsync(() => {
+    service.update(USER_WARDROBE_PATCHED, GROUPS_ALL).subscribe((user: User) => {
+      const userWithoutPw = <User>USER_WARDROBE_PATCHED.clone();
+      userWithoutPw.password = undefined;
+      expect(user.equals(userWithoutPw)).toBeTruthy();
+      resolved = true;
+    });
+    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/users/${USER_WARDROBE.id}`);
+  }));
+
+  it('should delete a user', fakeAsync(() => {
+    service.delete(USER_WARDROBE).subscribe(() => {
+      resolved = true;
+    });
+    testEndpoint(httpTestingController, requests, responses, 'DELETE', `/users/${USER_WARDROBE.id}`);
   }));
 });

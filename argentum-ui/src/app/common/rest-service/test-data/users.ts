@@ -18,3 +18,4 @@ export const USERS_ALL = [
 ];
 
 export const USER_BUFFET = new User(7, 'buffet', 'buffet1', [GROUP_ORDER]);
+export const USER_WARDROBE_PATCHED = new User(3, 'giftshop', 'giftshop1', [GROUP_ORDER, GROUP_CHECK_IN]);

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {User, UserDto} from '../model/user';
 import {map} from 'rxjs/operators';
@@ -40,5 +40,18 @@ export class UserService {
     ).pipe(
       map(([userDto, groupsDep]: [UserDto, Group[], {}, {}]) => User.fromDto(userDto, groupsDep))
     );
+  }
+
+  update(user: User, groups?: Group[]): Observable<User> {
+    return withDependencies(
+      this.http.patch<UserDto>(`/users/${user.id}`, user.toDto()),
+      [groups, this.groupService.list]
+    ).pipe(
+      map(([userDto, groupsDep]: [UserDto, Group[], {}, {}]) => User.fromDto(userDto, groupsDep))
+    );
+  }
+
+  delete(user: User): Observable<null> {
+    return this.http.delete<null>(`/users/${user.id}`);
   }
 }
