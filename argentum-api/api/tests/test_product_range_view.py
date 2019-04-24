@@ -20,21 +20,31 @@ class ProductRangeViewTestCase(PopulatedTestCase, SerializationTestCase, Authent
         response = self.client.get('/product_ranges')
         self.assertEqual(response.status_code, 200)
         self.assertPksEqual(response.data, TestProductRanges.ALL)
-
-    def test_get_serialize(self):
-        self.login(TestUsers.ADMIN)
-
-        response = self.client.get('/product_ranges')
         self.assertJSONEqual(response.content, self.RESPONSES['GET/product_ranges'])
 
-    def test_post_deserialize(self):
+    def test_post(self):
         self.login(TestUsers.ADMIN)
+        identifier = 'POST/product_ranges'
 
-        response = self.client.post('/product_ranges', self.REQUESTS['POST/product_ranges'])
+        response = self.client.post('/product_ranges', self.REQUESTS[identifier])
         self.assertEqual(response.status_code, 201)
         self.assertValueEqual(ProductRange.objects.all(), TestProductRanges.ALL + [TestProductRanges.JUST_COKE])
         # ManyToMany relationships need to be checked manually via their queryset (original one works).
         self.assertValueEqual(TestProductRanges.JUST_COKE.products.all(), [TestProducts.COKE])
+        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
+
+    def test_patch(self):
+        self.login(TestUsers.ADMIN)
+        identifier = f'PATCH/product_ranges/{TestProductRanges.JUST_WATER.id}'
+
+        response = self.client.patch(f'/product_ranges/{TestProductRanges.JUST_WATER.id}', self.REQUESTS[identifier])
+        self.assertEqual(response.status_code, 200)
+        self.assertValueEqual(
+            ProductRange.objects.all(),
+            [TestProductRanges.JUST_WATER_PATCHED, TestProductRanges.JUST_COKE]
+        )
+        self.assertValueEqual(TestProductRanges.JUST_WATER.products.all(), [TestProducts.WATER, TestProducts.COKE])
+        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
 
     def test_create_permissions(self):
         self.login(TestUsers.ADMIN)

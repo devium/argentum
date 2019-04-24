@@ -18,26 +18,25 @@ class ProductViewTestCase(PopulatedTestCase, SerializationTestCase, Authenticate
         response = self.client.get('/products')
         self.assertEqual(response.status_code, 200)
         self.assertPksEqual(response.data, TestProducts.ALL)
-
-    def test_get_serialize(self):
-        self.login(TestUsers.BAR)
-
-        response = self.client.get('/products')
         self.assertJSONEqual(response.content, self.RESPONSES['GET/products'])
 
-    def test_post_deserialize_min(self):
+    def test_post_min(self):
         self.login(TestUsers.ADMIN)
+        identifier = 'POST/products#min'
 
-        response = self.client.post('/products', self.REQUESTS['POST/products#min'])
+        response = self.client.post('/products', self.REQUESTS[identifier])
         self.assertEqual(response.status_code, 201)
         self.assertValueEqual(Product.objects.all(), TestProducts.ALL + [TestProducts.BEER_MIN])
+        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
 
-    def test_post_deserialize_max(self):
+    def test_post_max(self):
         self.login(TestUsers.ADMIN)
+        identifier = 'POST/products#max'
 
-        response = self.client.post('/products', self.REQUESTS['POST/products#max'])
+        response = self.client.post('/products', self.REQUESTS[identifier])
         self.assertEqual(response.status_code, 201)
         self.assertValueEqual(Product.objects.all(), TestProducts.ALL + [TestProducts.BEER_MAX])
+        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
 
     def test_permissions(self):
         self.assertPermissions(

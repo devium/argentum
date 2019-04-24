@@ -16,11 +16,6 @@ class UserViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedTe
         response = self.client.get('/groups')
         self.assertEqual(response.status_code, 200)
         self.assertPksEqual(response.data, TestGroups.ALL)
-
-    def test_get_serialize(self):
-        self.login(TestUsers.ADMIN)
-
-        response = self.client.get('/groups')
         self.assertJSONEqual(response.content, self.RESPONSES['GET/groups'])
 
     def test_permissions(self):

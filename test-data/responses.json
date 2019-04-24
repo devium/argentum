@@ -66,6 +66,14 @@
       2
     ]
   },
+  "PATCH/users/3": {
+    "id": 3,
+    "username": "giftshop",
+    "groups": [
+      2,
+      4
+    ]
+  },
   "GET/groups": [
     {
       "id": 1,
@@ -111,6 +119,11 @@
       "value": "0.00"
     }
   ],
+  "PATCH/config/1": {
+    "id": 1,
+    "key": "postpaid_limit",
+    "value": "-10.00"
+  },
   "GET/guests": [
     {
       "id": 1,
@@ -133,6 +146,63 @@
       "card": null,
       "balance": "7.00",
       "bonus": "2.00"
+    }
+  ],
+  "POST/guests#min": {
+    "id": 3,
+    "code": "DEMO-00003",
+    "name": "Johanna Doe",
+    "mail": "jdoe2@tinypic.com",
+    "status": "paid",
+    "checked_in": null,
+    "card": null,
+    "balance": "0.00",
+    "bonus": "0.00"
+  },
+  "POST/guests#max": {
+    "id": 3,
+    "code": "DEMO-00003",
+    "name": "Johanna Doe",
+    "mail": "jdoe2@tinypic.com",
+    "status": "paid",
+    "checked_in": "2019-12-31T23:13:52Z",
+    "card": "581a",
+    "balance": "81.62",
+    "bonus": "69.11"
+  },
+  "PATCH/guests/1": {
+    "id": 1,
+    "code": "DEMO-00001",
+    "name": "Roby Brushfield",
+    "mail": "rbrushfield0@sohu.com",
+    "status": "staff",
+    "checked_in": "2019-12-31T22:57:30Z",
+    "card": "567a",
+    "balance": "4.50",
+    "bonus": "0.00"
+  },
+  "PATCH/guests/list_update": [
+    {
+      "id": 3,
+      "code": "DEMO-00003",
+      "name": "Johanna Doe",
+      "mail": "jdoe2@tinypic.com",
+      "status": "paid",
+      "checked_in": null,
+      "card": null,
+      "balance": "0.00",
+      "bonus": "0.00"
+    },
+    {
+      "id": 1,
+      "code": "DEMO-00001",
+      "name": "Toby Brushfield",
+      "mail": "tbrushfield0@sohu.com",
+      "status": "paid",
+      "checked_in": "2019-12-31T22:55:44Z",
+      "card": "567a",
+      "balance": "4.50",
+      "bonus": "0.00"
     }
   ],
   "GET/transactions": [
@@ -173,6 +243,24 @@
       "pending": true
     }
   ],
+  "POST/transactions": {
+    "id": 5,
+    "time": null,
+    "guest": 1,
+    "value": "5.00",
+    "ignore_bonus": false,
+    "description": "topup",
+    "pending": true
+  },
+  "PATCH/transactions/4": {
+    "id": 4,
+    "time": "2019-12-31T22:30:00Z",
+    "guest": 2,
+    "value": "-5.00",
+    "ignore_bonus": false,
+    "description": "withdraw",
+    "pending": false
+  },
   "GET/bonus_transactions": [
     {
       "id": 1,
@@ -199,6 +287,22 @@
       "pending": true
     }
   ],
+  "POST/bonus_transactions": {
+    "id": 4,
+    "time": null,
+    "guest": 1,
+    "value": "4.00",
+    "description": "staff bonus",
+    "pending": true
+  },
+  "PATCH/bonus_transactions/3": {
+    "id": 3,
+    "time": null,
+    "guest": 1,
+    "value": "3.00",
+    "description": "more staff bonus",
+    "pending": false
+  },
   "GET/categories": [
     {
       "id": 1,
@@ -211,6 +315,16 @@
       "color": "#ff0000"
     }
   ],
+  "POST/categories": {
+    "id": 3,
+    "name": "Spirits",
+    "color": "#ff00ff"
+  },
+  "PATCH/categories/1": {
+    "id": 1,
+    "name": "Nonalcoholic",
+    "color": "#00ffff"
+  },
   "GET/products": [
     {
       "id": 1,
@@ -227,6 +341,20 @@
       "category": null
     }
   ],
+  "POST/products#min": {
+    "id": 3,
+    "name": "Beer",
+    "deprecated": false,
+    "price": "3.60",
+    "category": null
+  },
+  "POST/products#max": {
+    "id": 3,
+    "name": "Beer",
+    "deprecated": true,
+    "price": "3.60",
+    "category": 2
+  },
   "GET/product_ranges": [
     {
       "id": 1,
@@ -244,6 +372,21 @@
       ]
     }
   ],
+  "POST/product_ranges": {
+    "id": 3,
+    "name": "Just coke",
+    "products": [
+      2
+    ]
+  },
+  "PATCH/product_ranges/1": {
+    "id": 1,
+    "name": "Just water",
+    "products": [
+      1,
+      2
+    ]
+  },
   "GET/orders": [
     {
       "id": 1,
@@ -278,6 +421,66 @@
       "pending": true
     }
   ],
+  "POST/orders": {
+    "id": 3,
+    "time": null,
+    "guest": 2,
+    "custom_initial": "0.40",
+    "custom_current": "0.40",
+    "items": [
+      {
+        "id": 3,
+        "product": 1,
+        "quantity_initial": 1,
+        "quantity_current": 1
+      },
+      {
+        "id": 4,
+        "product": 2,
+        "quantity_initial": 1,
+        "quantity_current": 1
+      }
+    ],
+    "pending": true
+  },
+  "PATCH/orders/2#commit": {
+    "id": 2,
+    "time": null,
+    "guest": 2,
+    "custom_initial": "0.60",
+    "custom_current": "0.60",
+    "items": [
+      {
+        "id": 2,
+        "product": 2,
+        "quantity_initial": 2,
+        "quantity_current": 2
+      }
+    ],
+    "pending": false
+  },
+  "PATCH/orders/1#cancel": {
+    "id": 1,
+    "time": "2019-12-31T22:10:00Z",
+    "guest": 1,
+    "custom_initial": "0.20",
+    "custom_current": "0.05",
+    "items": [
+      {
+        "id": 1,
+        "product": 1,
+        "quantity_initial": 1,
+        "quantity_current": 1
+      }
+    ],
+    "pending": false
+  },
+  "PATCH/order_items/1#cancel": {
+    "id": 1,
+    "product": 1,
+    "quantity_initial": 1,
+    "quantity_current": 0
+  },
   "GET/statuses": [
     {
       "id": 1,
@@ -291,5 +494,17 @@
       "display_name": "Pending",
       "color": "#ff0000"
     }
-  ]
+  ],
+  "POST/statuses": {
+    "id": 3,
+    "internal_name": "staff",
+    "display_name": "Staff",
+    "color": "#0000ff"
+  },
+  "PATCH/statuses/2": {
+    "id": 2,
+    "internal_name": "pen",
+    "display_name": "Pending",
+    "color": "#ff0000"
+  }
 }

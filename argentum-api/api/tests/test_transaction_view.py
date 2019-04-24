@@ -13,6 +13,7 @@ from api.tests.data.users import TestUsers
 from api.tests.utils.authenticated_test_case import AuthenticatedTestCase
 from api.tests.utils.populated_test_case import PopulatedTestCase
 from api.tests.utils.serialization_test_case import SerializationTestCase
+from api.tests.utils.utils import to_iso_format
 
 LOG = logging.getLogger(__name__)
 
@@ -24,6 +25,7 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         response = self.client.get('/transactions')
         self.assertEqual(response.status_code, 200)
         self.assertPksEqual(response.data, TestTransactions.ALL)
+        self.assertJSONEqual(response.content, self.RESPONSES['GET/transactions'])
 
     def test_get_by_card(self):
         self.login(TestUsers.BAR)
@@ -38,12 +40,52 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         response = self.client.get(f'/transactions?guest__card=')
         self.assertEqual(response.status_code, 403)
 
-    def test_get_serialize(self):
-        self.login(TestUsers.ADMIN)
+    def test_post(self):
+        self.login(TestUsers.TOPUP)
+        identifier = 'POST/transactions'
 
-        response = self.client.get('/transactions')
+        response, server_time = self.time_constrained(
+            lambda: self.client.post('/transactions', self.REQUESTS[identifier])
+        )
+        self.assertEqual(response.status_code, 201)
+
+        TestTransactions.TX5.time = server_time
+        self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX5])
+        self.RESPONSES[identifier]['time'] = to_iso_format(server_time)
+        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
+
+    def test_patch(self):
+        # Since this field is read-only on creation, this requires a separate test.
+        self.login(TestUsers.TOPUP)
+        identifier = f'PATCH/transactions/{TestTransactions.TX4.id}'
+
+        response, server_time = self.time_constrained(
+            lambda: self.client.patch(f'/transactions/{TestTransactions.TX4.id}', self.REQUESTS[identifier])
+        )
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, self.RESPONSES['GET/transactions'])
+
+        self.assertFalse(Transaction.objects.get(id=TestTransactions.TX4.id).pending)
+        self.RESPONSES[identifier]['time'] = to_iso_format(server_time)
+        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
+
+    def test_post_by_card(self):
+        self.login(TestUsers.TOPUP)
+
+        response = self.client.post('/transactions', self.REQUESTS['POST/transactions#card'])
+        self.assertEqual(response.status_code, 201)
+
+        self.assertValueEqual(
+            Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX5],
+            ignore_fields=['time']
+        )
+
+    def test_post_by_card_fail(self):
+        self.login(TestUsers.TOPUP)
+
+        body = {**self.REQUESTS['POST/transactions#card'], **{'card': '567b'}}
+        response = self.client.post('/transactions', body)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data['card'][0], 'Card not registered.')
 
     def test_positive_crediting(self):
         self.login(TestUsers.TOPUP)
@@ -154,50 +196,6 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         }
 
         self.assertPatchReadonly(f'/transactions/{TestTransactions.TX4.id}', mutable_fields, immutable_fields)
-
-    def test_post_deserialize(self):
-        self.login(TestUsers.TOPUP)
-
-        start = timezone.now()
-        response = self.client.post('/transactions', self.REQUESTS['POST/transactions'])
-        end = timezone.now()
-        self.assertEqual(response.status_code, 201)
-
-        response_time = parse_datetime(response.data['time'])
-        self.assertLess(start, response_time)
-        self.assertLess(response_time, end)
-        TestTransactions.TX5.time = response_time
-        self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX5])
-
-    def test_patch_deserialize(self):
-        # Since this field is read-only on creation, this requires a separate test.
-        self.login(TestUsers.TOPUP)
-
-        response = self.client.patch(
-            f'/transactions/{TestTransactions.TX1.id}',
-            self.REQUESTS['PATCH/transactions/1']
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertFalse(Transaction.objects.get(id=TestTransactions.TX1.id).pending)
-
-    def test_post_by_card(self):
-        self.login(TestUsers.TOPUP)
-
-        response = self.client.post('/transactions', self.REQUESTS['POST/transactions#card'])
-        self.assertEqual(response.status_code, 201)
-
-        self.assertValueEqual(
-            Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX5],
-            ignore_fields=['time']
-        )
-
-    def test_post_by_card_fail(self):
-        self.login(TestUsers.TOPUP)
-
-        body = {**self.REQUESTS['POST/transactions#card'], **{'card': '567b'}}
-        response = self.client.post('/transactions', body)
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data['card'][0], 'Card not registered.')
 
     def test_permissions(self):
         self.assertPermissions(

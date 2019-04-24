@@ -17,19 +17,25 @@ class StatusViewTestCase(PopulatedTestCase, SerializationTestCase, Authenticated
         response = self.client.get('/statuses')
         self.assertEqual(response.status_code, 200)
         self.assertPksEqual(response.data, TestStatuses.ALL)
-
-    def test_get_serialize(self):
-        self.login(TestUsers.TERMINAL)
-
-        response = self.client.get('/statuses')
         self.assertJSONEqual(response.content, self.RESPONSES['GET/statuses'])
 
-    def test_post_deserialize(self):
+    def test_post(self):
         self.login(TestUsers.ADMIN)
+        identifier = 'POST/statuses'
 
-        response = self.client.post('/statuses', self.REQUESTS['POST/statuses'])
+        response = self.client.post('/statuses', self.REQUESTS[identifier])
         self.assertEqual(response.status_code, 201)
         self.assertValueEqual(Status.objects.all(), TestStatuses.ALL + [TestStatuses.STAFF])
+        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
+
+    def test_patch(self):
+        self.login(TestUsers.ADMIN)
+        identifier = f'PATCH/statuses/{TestStatuses.PENDING.id}'
+
+        response = self.client.patch(f'/statuses/{TestStatuses.PENDING.id}', self.REQUESTS[identifier])
+        self.assertEqual(response.status_code, 200)
+        self.assertValueEqual(Status.objects.all(), [TestStatuses.PAID, TestStatuses.PENDING_PATCHED])
+        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
 
     def test_permissions(self):
         self.assertPermissions(lambda: self.client.get('/statuses'), TestUsers.ALL)

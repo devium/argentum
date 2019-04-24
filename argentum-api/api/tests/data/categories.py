@@ -8,13 +8,13 @@ class TestCategories(TestObjects):
     SOFT_DRINKS = MODEL(
         id=1,
         name='Soft drinks',
-        color='#00ffff'
+        color='#00ffff',
     )
 
     HARD_DRINKS = MODEL(
         id=2,
         name='Hard drinks',
-        color='#ff0000'
+        color='#ff0000',
     )
 
     ALL = [SOFT_DRINKS, HARD_DRINKS]
@@ -25,4 +25,10 @@ class TestCategories(TestObjects):
         id=3,
         name="Spirits",
         color='#ff00ff',
+    )
+
+    SOFT_DRINKS_PATCHED = MODEL(
+        id=1,
+        name='Nonalcoholic',
+        color='#00ffff',
     )

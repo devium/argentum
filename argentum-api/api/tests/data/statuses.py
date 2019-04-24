@@ -29,3 +29,10 @@ class TestStatuses(TestObjects):
         display_name='Staff',
         color='#0000ff',
     )
+
+    PENDING_PATCHED = MODEL(
+        id=2,
+        internal_name='pen',
+        display_name='Pending',
+        color='#ff0000'
+    )

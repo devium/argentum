@@ -65,6 +65,8 @@ class OrderCreateSerializer(serializers.ModelSerializer):
 
 
 class OrderUpdateSerializer(serializers.ModelSerializer):
+    items = OrderItemCreateSerializer(many=True)
+
     class Meta:
         model = Order
         fields = OrderCreateSerializer.Meta.fields

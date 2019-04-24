@@ -17,31 +17,30 @@ class UserViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedTe
         response = self.client.get('/users')
         self.assertEqual(response.status_code, 200)
         self.assertPksEqual(response.data, TestUsers.ALL)
-
-    def test_get_serialize(self):
-        self.login(TestUsers.ADMIN)
-
-        response = self.client.get('/users')
         self.assertJSONEqual(response.content, self.RESPONSES['GET/users'])
 
-    def test_post_deserialize(self):
+    def test_post(self):
         self.login(TestUsers.ADMIN)
 
         response = self.client.post('/users', self.REQUESTS['POST/users'])
-        self.assertJSONEqual(response.content, self.RESPONSES['POST/users'])
         self.assertEqual(response.status_code, 201)
         self.assertPksEqual([response.data], [TestUsers.BUFFET])
+        self.assertJSONEqual(response.content, self.RESPONSES['POST/users'])
         self.login(TestUsers.BUFFET)
 
-    def test_patch_deserialize(self):
+    def test_patch(self):
         self.login(TestUsers.ADMIN)
 
-        response = self.client.patch('/users/3', self.REQUESTS['PATCH/users/3'])
+        response = self.client.patch(
+            f'/users/{TestUsers.WARDROBE.id}',
+            self.REQUESTS[f'PATCH/users/{TestUsers.WARDROBE.id}']
+        )
         self.assertEqual(response.status_code, 200)
         # Manual check necessary due to users and groups being special cases.
         wardrobe_groups = User.objects.get(pk=TestUsers.WARDROBE.id).groups.all()
         self.assertEqual(wardrobe_groups.count(), 2)
         self.assertEqual([group.id for group in wardrobe_groups], [2, 4])
+        self.assertJSONEqual(response.content, self.RESPONSES[f'PATCH/users/{TestUsers.WARDROBE.id}'])
         self.login(TestUsers.WARDROBE_PATCHED)
 
     def test_get_me(self):

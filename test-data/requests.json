@@ -41,6 +41,9 @@
     "balance": "81.62",
     "bonus": "69.11"
   },
+  "PATCH/guests/1": {
+    "checked_in": "2019-12-31T22:57:30Z"
+  },
   "PATCH/guests/list_update": [
     {
       "code": "DEMO-00001",
@@ -65,7 +68,7 @@
     "value": "5.00",
     "description": "topup"
   },
-  "PATCH/transactions/1": {
+  "PATCH/transactions/4": {
     "pending": false
   },
   "POST/bonus_transactions": {
@@ -78,12 +81,15 @@
     "value": "4.00",
     "description": "staff bonus"
   },
-  "PATCH/bonus_transactions/1": {
+  "PATCH/bonus_transactions/3": {
     "pending": false
   },
   "POST/categories": {
     "name": "Spirits",
     "color": "#ff00ff"
+  },
+  "PATCH/categories/1": {
+    "name": "Nonalcoholic"
   },
   "POST/products#min": {
     "name": "Beer",
@@ -98,6 +104,12 @@
   "POST/product_ranges": {
     "name": "Just coke",
     "products": [
+      2
+    ]
+  },
+  "PATCH/product_ranges/1": {
+    "products": [
+      1,
       2
     ]
   },
@@ -129,9 +141,33 @@
       }
     ]
   },
+  "PATCH/orders/2#commit": {
+    "pending": false
+  },
+  "PATCH/orders/1#cancel_exceed": {
+    "custom_current": 0.20
+  },
+  "PATCH/orders/1#cancel_negative": {
+    "custom_current": -0.10
+  },
+  "PATCH/orders/1#cancel": {
+    "custom_current": 0.05
+  },
+  "PATCH/order_items/1#cancel_exceed": {
+    "quantity_current": 1
+  },
+  "PATCH/order_items/1#cancel_negative": {
+    "quantity_current": -1
+  },
+  "PATCH/order_items/1#cancel": {
+    "quantity_current": 0
+  },
   "POST/statuses": {
     "internal_name": "staff",
     "display_name": "Staff",
     "color": "#0000ff"
+  },
+  "PATCH/statuses/2": {
+    "internal_name": "pen"
   }
 }

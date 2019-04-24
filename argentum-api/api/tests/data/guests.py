@@ -64,6 +64,18 @@ class TestGuests(TestObjects):
     ROBY_PATCHED = MODEL(
         id=1,
         code='DEMO-00001',
+        name='Roby Brushfield',
+        mail='rbrushfield0@sohu.com',
+        status='staff',
+        checked_in=parse_datetime('2019-12-31T22:57:30Z'),
+        card='567a',
+        balance=Decimal('4.50'),
+        bonus=Decimal('0.00')
+    )
+
+    ROBY_LIST_PATCHED = MODEL(
+        id=1,
+        code='DEMO-00001',
         name='Toby Brushfield',
         mail='tbrushfield0@sohu.com',
         status='paid',

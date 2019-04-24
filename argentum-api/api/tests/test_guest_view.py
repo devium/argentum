@@ -19,6 +19,7 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         response = self.client.get('/guests')
         self.assertEqual(response.status_code, 200)
         self.assertPksEqual(response.data, TestGuests.ALL)
+        self.assertJSONEqual(response.content, self.RESPONSES['GET/guests'])
 
     def test_get_search(self):
         self.login(TestUsers.RECEPTION)
@@ -42,25 +43,35 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         response = self.client.get(f'/guests?card={TestGuests.ROBY.card}')
         self.assertPksEqual(response.data, [TestGuests.ROBY])
 
-    def test_get_serialize(self):
+    def test_post_min(self):
         self.login(TestUsers.RECEPTION)
+        identifier = 'POST/guests#min'
 
-        response = self.client.get('/guests')
-        self.assertJSONEqual(response.content, self.RESPONSES['GET/guests'])
-
-    def test_post_deserialize_min(self):
-        self.login(TestUsers.RECEPTION)
-
-        response = self.client.post('/guests', self.REQUESTS['POST/guests#min'])
+        response = self.client.post('/guests', self.REQUESTS[identifier])
         self.assertEqual(response.status_code, 201)
         self.assertValueEqual(Guest.objects.all(), TestGuests.ALL + [TestGuests.JOHANNA_MIN])
+        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
 
-    def test_post_deserialize_max(self):
+    def test_post_max(self):
         self.login(TestUsers.RECEPTION)
+        identifier = 'POST/guests#max'
 
         response = self.client.post('/guests', self.REQUESTS['POST/guests#max'])
         self.assertEqual(response.status_code, 201)
         self.assertValueEqual(Guest.objects.all(), TestGuests.ALL + [TestGuests.JOHANNA_MAX])
+        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
+
+    def test_patch(self):
+        self.login(TestUsers.RECEPTION)
+        identifier = f'PATCH/guests/{TestGuests.ROBY.id}'
+
+        response = self.client.patch(f'/guests/{TestGuests.ROBY.id}', self.REQUESTS[identifier])
+        self.assertEqual(response.status_code, 200)
+        self.assertValueEqual(
+            Guest.objects.filter(id=TestGuests.ROBY.id),
+            [TestGuests.ROBY_PATCHED]
+        )
+        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
 
     def test_patch_readonly(self):
         self.login(TestUsers.ADMIN)
@@ -79,30 +90,26 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         }
         self.assertPatchReadonly(f'/guests/{TestGuests.ROBY.id}', mutable_fields, immutable_fields)
 
-    def test_patch_partial(self):
-        # Unsure if partial patches are allowed per default. Looks like they are but this test can stay.
-        self.login(TestUsers.RECEPTION)
-        time = '2019-12-31T22:01:00Z'
-        response = self.client.patch(f'/guests/{TestGuests.ROBY.id}', {'checked_in': time})
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(Guest.objects.get(pk=TestGuests.ROBY.id).checked_in, parse_datetime(time))
-
     def test_list_patch(self):
         self.login(TestUsers.RECEPTION)
-        response = self.client.patch('/guests/list_update', self.REQUESTS['PATCH/guests/list_update'])
+        identifier = 'PATCH/guests/list_update'
+
+        response = self.client.patch('/guests/list_update', self.REQUESTS[identifier])
         self.assertEqual(response.status_code, 201)
-        self.assertPksEqual(response.data, [TestGuests.JOHANNA_MIN, TestGuests.ROBY_PATCHED])
+        self.assertPksEqual(response.data, [TestGuests.JOHANNA_MIN, TestGuests.ROBY_LIST_PATCHED])
         self.assertValueEqual(
             Guest.objects.all(),
-            [TestGuests.ROBY_PATCHED, TestGuests.SHEELAH, TestGuests.JOHANNA_MIN]
+            [TestGuests.ROBY_LIST_PATCHED, TestGuests.SHEELAH, TestGuests.JOHANNA_MIN]
         )
+        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
 
     def test_list_patch_only(self):
+        # Don't remember why this test was added but better leave it in there.
         self.login(TestUsers.RECEPTION)
         response = self.client.patch('/guests/list_update', [self.REQUESTS['PATCH/guests/list_update'][0]])
         self.assertEqual(response.status_code, 200)
-        self.assertPksEqual(response.data, [TestGuests.ROBY_PATCHED])
-        self.assertValueEqual(Guest.objects.all(), [TestGuests.ROBY_PATCHED, TestGuests.SHEELAH])
+        self.assertPksEqual(response.data, [TestGuests.ROBY_LIST_PATCHED])
+        self.assertValueEqual(Guest.objects.all(), [TestGuests.ROBY_LIST_PATCHED, TestGuests.SHEELAH])
 
     def test_permissions(self):
         self.assertPermissions(

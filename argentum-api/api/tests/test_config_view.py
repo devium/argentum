@@ -17,19 +17,16 @@ class ConfigViewTestCase(PopulatedTestCase, SerializationTestCase, Authenticated
         response = self.client.get('/config')
         self.assertEqual(response.status_code, 200)
         self.assertPksEqual(response.data, TestConfig.ALL)
-
-    def test_get_serialize(self):
-        self.login(TestUsers.BAR)
-
-        response = self.client.get('/config')
         self.assertJSONEqual(response.content, self.RESPONSES['GET/config'])
 
-    def test_patch_deserialize(self):
+    def test_patch(self):
         self.login(TestUsers.ADMIN)
+        identifier = f'PATCH/config/{TestConfig.POSTPAID_LIMIT.id}'
 
-        response = self.client.patch('/config/1', self.REQUESTS['PATCH/config/1'])
+        response = self.client.patch(f'/config/{TestConfig.POSTPAID_LIMIT.id}', self.REQUESTS[identifier])
         self.assertEqual(response.status_code, 200)
         self.assertValueEqual(Config.objects.all(), [TestConfig.POSTPAID_LIMIT_PATCHED])
+        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
 
     def test_patch_readonly(self):
         self.login(TestUsers.ADMIN)

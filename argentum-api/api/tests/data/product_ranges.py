@@ -25,6 +25,11 @@ class TestProductRanges(TestObjects):
         name='Just coke'
     )
 
+    JUST_WATER_PATCHED = MODEL(
+        id=1,
+        name='Just water'
+    )
+
     @classmethod
     def init(cls):
         super().init()
@@ -35,3 +40,4 @@ class TestProductRanges(TestObjects):
     def post_init(cls):
         cls.JUST_WATER.products.set([TestProducts.WATER])
         cls.EVERYTHING.products.set([TestProducts.WATER, TestProducts.COKE])
+        # Cannot set many-to-many references of unsaved models. Many-to-many relations should be tested manually anyway.

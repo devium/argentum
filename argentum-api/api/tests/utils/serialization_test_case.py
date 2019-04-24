@@ -1,11 +1,15 @@
+import datetime
 import json
 import os
 from functools import partial
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Callable
 
 from django.db import models
 from django.forms import model_to_dict
 from django.test import TestCase
+from django.utils import timezone
+from django.utils.dateparse import parse_datetime
+from rest_framework.response import Response
 
 from argentum.settings import BASE_DIR
 
@@ -27,6 +31,11 @@ class SerializationTestCase(TestCase):
         self.client.patch = partial(self.client.patch, content_type='application/json')
 
     def assertValueEqual(self, models1: List[models.Model], models2: List[models.Model], ignore_fields=None):
+        """
+        Compares database-stored models against reference models by field values. Reference models should not be synced
+        with the database as that defeats the entire purpose. Many-to-many relations are not checked by this method, but
+        instead have to be checked manually via their querysets.
+        """
         if ignore_fields is None:
             ignore_fields = []
         models1_dicts = [model_to_dict(model) for model in models1]
@@ -65,3 +74,18 @@ class SerializationTestCase(TestCase):
                 value,
                 f'Immutability check failed for field {field}'
             )
+
+    def time_constrained(
+            self,
+            request: Callable[[], Response],
+            time_location: Callable[[Response], Any] = lambda response: parse_datetime(response.data['time'])
+    ) -> (Response, datetime.datetime):
+        start = timezone.now()
+        response = request()
+        end = timezone.now()
+
+        server_time = time_location(response)
+        self.assertLess(start, server_time)
+        self.assertLess(server_time, end)
+
+        return response, server_time
