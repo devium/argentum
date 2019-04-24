@@ -6,7 +6,7 @@ from rest_framework import serializers, viewsets, mixins
 from rest_framework.permissions import OR
 from rest_framework.request import Request
 
-from api.models.product import Product
+from api.models.product import Product, ProductCreateSerializer
 from argentum.permissions import StrictModelPermissions
 
 
@@ -51,6 +51,14 @@ class ProductRangeSerializer(serializers.ModelSerializer):
         return instance
 
 
+class ProductRangeRetrieveSerializer(serializers.ModelSerializer):
+    products = ProductCreateSerializer(many=True)
+
+    class Meta:
+        model = ProductRangeSerializer.Meta.model
+        fields = ProductRangeSerializer.Meta.fields
+
+
 class ProductRangeViewSet(
     mixins.CreateModelMixin,
     mixins.RetrieveModelMixin,
@@ -61,6 +69,12 @@ class ProductRangeViewSet(
 ):
     queryset = ProductRange.objects.all()
     serializer_class = ProductRangeSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return ProductRangeRetrieveSerializer
+        else:
+            return ProductRangeSerializer
 
     def get_permissions(self):
         if self.action == 'retrieve':

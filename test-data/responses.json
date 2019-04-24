@@ -372,6 +372,19 @@
       ]
     }
   ],
+  "GET/product_ranges/1": {
+    "id": 1,
+    "name": "Just water",
+    "products": [
+      {
+        "id": 1,
+        "name": "Water",
+        "deprecated": false,
+        "price": "2.40",
+        "category": 1
+      }
+    ]
+  },
   "POST/product_ranges": {
     "id": 3,
     "name": "Just coke",

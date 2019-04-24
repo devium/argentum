@@ -129,7 +129,6 @@ class OrderUpdateSerializer(serializers.ModelSerializer):
 
 class OrderViewSet(
     mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
     mixins.ListModelMixin,
     viewsets.GenericViewSet

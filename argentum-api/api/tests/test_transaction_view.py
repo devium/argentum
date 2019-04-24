@@ -198,14 +198,12 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         self.assertPatchReadonly(f'/transactions/{TestTransactions.TX4.id}', mutable_fields, immutable_fields)
 
     def test_permissions(self):
-        self.assertPermissions(
-            lambda: self.client.get('/transactions'),
-            [TestUsers.ADMIN]
-        )
+        self.assertPermissions(lambda: self.client.get('/transactions'), [TestUsers.ADMIN])
         self.assertPermissions(
             lambda: self.client.get(f'/transactions?guest__card={TestGuests.ROBY.card}'),
             [TestUsers.ADMIN, TestUsers.BAR, TestUsers.WARDROBE, TestUsers.TERMINAL]
         )
+        self.assertPermissions(lambda: self.client.get(f'/bonus_transactions/{TestTransactions.TX1.id}'), [])
         self.assertPermissions(
             lambda: self.client.post('/transactions', self.REQUESTS['POST/transactions']),
             [TestUsers.ADMIN, TestUsers.TOPUP]

@@ -39,6 +39,7 @@ class StatusViewTestCase(PopulatedTestCase, SerializationTestCase, Authenticated
 
     def test_permissions(self):
         self.assertPermissions(lambda: self.client.get('/statuses'), TestUsers.ALL)
+        self.assertPermissions(lambda: self.client.get(f'/statuses/{TestStatuses.PAID.id}'), [])
         self.assertPermissions(lambda: self.client.post('/statuses', self.REQUESTS['POST/statuses']), [TestUsers.ADMIN])
         self.assertPermissions(lambda: self.client.delete('/statuses/1'), [TestUsers.ADMIN])
 

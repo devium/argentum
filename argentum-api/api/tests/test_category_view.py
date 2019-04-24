@@ -46,6 +46,7 @@ class CategoryViewTestCase(PopulatedTestCase, SerializationTestCase, Authenticat
             lambda: self.client.get('/categories'),
             [TestUsers.ADMIN, TestUsers.BAR, TestUsers.WARDROBE, TestUsers.TERMINAL]
         )
+        self.assertPermissions(lambda: self.client.get(f'/categories/{TestCategories.SOFT_DRINKS.id}'), [])
         self.assertPermissions(
             lambda: self.client.post('/categories', self.REQUESTS['POST/categories']),
             [TestUsers.ADMIN]

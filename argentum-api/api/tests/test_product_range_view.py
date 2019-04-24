@@ -22,6 +22,13 @@ class ProductRangeViewTestCase(PopulatedTestCase, SerializationTestCase, Authent
         self.assertPksEqual(response.data, TestProductRanges.ALL)
         self.assertJSONEqual(response.content, self.RESPONSES['GET/product_ranges'])
 
+    def test_get_detail(self):
+        self.login(TestUsers.BAR)
+
+        response = self.client.get(f'/product_ranges/{TestProductRanges.JUST_WATER.id}')
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, self.RESPONSES[f'GET/product_ranges/{TestProductRanges.JUST_WATER.id}'])
+
     def test_post(self):
         self.login(TestUsers.ADMIN)
         identifier = 'POST/product_ranges'
@@ -81,11 +88,11 @@ class ProductRangeViewTestCase(PopulatedTestCase, SerializationTestCase, Authent
 
         # Individual access should be subject to individual permissions.
         self.assertPermissions(
-            lambda: self.client.get('/product_ranges/1'),
+            lambda: self.client.get(f'/product_ranges/{TestProductRanges.JUST_WATER.id}'),
             [TestUsers.ADMIN, TestUsers.BAR]
         )
         self.assertPermissions(
-            lambda: self.client.get('/product_ranges/2'),
+            lambda: self.client.get(f'/product_ranges/{TestProductRanges.EVERYTHING.id}'),
             [TestUsers.ADMIN]
         )
 

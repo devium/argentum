@@ -50,26 +50,12 @@ class UserViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedTe
         self.assertJSONEqual(response.content, self.RESPONSES['GET/users/me'])
 
     def test_permissions(self):
-        self.assertPermissions(
-            lambda: self.client.get('/users'),
-            [TestUsers.ADMIN]
-        )
-        self.assertPermissions(
-            lambda: self.client.post('/users', self.REQUESTS['POST/users']),
-            [TestUsers.ADMIN]
-        )
-        self.assertPermissions(
-            lambda: self.client.patch('/users/3', self.REQUESTS['PATCH/users/3']),
-            [TestUsers.ADMIN]
-        )
-        self.assertPermissions(
-            lambda: self.client.get('/users/me'),
-            TestUsers.ALL
-        )
-        self.assertPermissions(
-            lambda: self.client.delete('/users/1'),
-            [TestUsers.ADMIN]
-        )
+        self.assertPermissions(lambda: self.client.get('/users'), [TestUsers.ADMIN])
+        self.assertPermissions(lambda: self.client.get(f'/users/{TestUsers.ADMIN.id}'), [])
+        self.assertPermissions(lambda: self.client.post('/users', self.REQUESTS['POST/users']), [TestUsers.ADMIN])
+        self.assertPermissions(lambda: self.client.patch('/users/3', self.REQUESTS['PATCH/users/3']), [TestUsers.ADMIN])
+        self.assertPermissions(lambda: self.client.get('/users/me'), TestUsers.ALL)
+        self.assertPermissions(lambda: self.client.delete('/users/1'), [TestUsers.ADMIN])
         self.logout()
         response = self.client.get('/users/me')
         self.assertEqual(response.status_code, 401)

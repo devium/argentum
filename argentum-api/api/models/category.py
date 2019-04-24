@@ -18,7 +18,6 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class CategoryViewSet(
     mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
     mixins.ListModelMixin,

@@ -10,7 +10,6 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class GroupViewSet(
-    mixins.RetrieveModelMixin,
     mixins.ListModelMixin,
     viewsets.GenericViewSet
 ):

@@ -19,7 +19,6 @@ class ConfigSerializer(serializers.ModelSerializer):
 
 class ConfigViewSet(
     mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
     mixins.ListModelMixin,
     viewsets.GenericViewSet

@@ -19,7 +19,17 @@ class UserViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedTe
         self.assertJSONEqual(response.content, self.RESPONSES['GET/groups'])
 
     def test_permissions(self):
+        # Groups have neither retrieve, nor update, nor destroy, so detail urls are a 404 instead of a 405.
         self.assertPermissions(lambda: self.client.get('/groups'), [TestUsers.ADMIN])
+        self.assertPermissions(lambda: self.client.get(f'/groups/{TestGroups.ADMIN.id}'), [], expected_errors=[404])
         self.assertPermissions(lambda: self.client.post('/groups', {}), [])
-        self.assertPermissions(lambda: self.client.patch('/groups/1', {}), [])
-        self.assertPermissions(lambda: self.client.delete('/groups/1'), [])
+        self.assertPermissions(
+            lambda: self.client.patch(f'/groups/{TestGroups.ADMIN.id}', {}),
+            [],
+            expected_errors=[404]
+        )
+        self.assertPermissions(
+            lambda: self.client.delete(f'/groups/{TestGroups.ADMIN.id}'),
+            [],
+            expected_errors=[404]
+        )

@@ -62,7 +62,6 @@ class BonusTransactionUpdateSerializer(serializers.ModelSerializer):
 
 class BonusTransactionViewSet(
     mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
     mixins.ListModelMixin,
     viewsets.GenericViewSet

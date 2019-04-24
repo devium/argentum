@@ -1,6 +1,5 @@
 from typing import Dict, Any
 
-from django.apps import apps
 from django.db import models
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
@@ -95,7 +94,6 @@ class TransactionUpdateSerializer(serializers.ModelSerializer):
 
 class TransactionViewSet(
     mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
     mixins.ListModelMixin,
     viewsets.GenericViewSet

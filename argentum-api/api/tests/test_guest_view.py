@@ -120,6 +120,7 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
             lambda: self.client.post('/guests', self.REQUESTS['POST/guests#max']),
             [TestUsers.ADMIN, TestUsers.RECEPTION]
         )
+        self.assertPermissions(lambda: self.client.get(f'/guests/{TestGuests.ROBY.id}'), [])
         self.assertPermissions(
             lambda: self.client.patch(f'/guests/{TestGuests.ROBY.id}', self.REQUESTS['POST/guests#max']),
             [TestUsers.ADMIN, TestUsers.RECEPTION]

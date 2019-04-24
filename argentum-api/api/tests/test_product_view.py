@@ -43,6 +43,7 @@ class ProductViewTestCase(PopulatedTestCase, SerializationTestCase, Authenticate
             lambda: self.client.get('/products'),
             [TestUsers.ADMIN, TestUsers.BAR, TestUsers.TERMINAL]
         )
+        self.assertPermissions(lambda: self.client.get(f'/products/{TestProducts.WATER.id}'), [])
         self.assertPermissions(
             lambda: self.client.post('/products', self.REQUESTS['POST/products#max']),
             [TestUsers.ADMIN]

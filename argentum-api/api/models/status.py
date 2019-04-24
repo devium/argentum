@@ -24,7 +24,6 @@ class StatusSerializer(serializers.ModelSerializer):
 
 class StatusViewSet(
     mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
     mixins.ListModelMixin,

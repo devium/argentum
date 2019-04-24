@@ -42,6 +42,7 @@ class ConfigViewTestCase(PopulatedTestCase, SerializationTestCase, Authenticated
 
     def test_permissions(self):
         self.assertPermissions(lambda: self.client.get('/config'), TestUsers.ALL)
+        self.assertPermissions(lambda: self.client.get(f'/config/{TestConfig.POSTPAID_LIMIT.id}'), [])
         self.assertPermissions(lambda: self.client.post('/config', {}), [])
         self.assertPermissions(
             lambda: self.client.patch('/config/1', self.REQUESTS['PATCH/config/1']),

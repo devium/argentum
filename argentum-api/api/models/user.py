@@ -40,7 +40,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserViewSet(
     mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
     mixins.ListModelMixin,

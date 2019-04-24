@@ -155,10 +155,8 @@ class BonusTransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Aut
         )
 
     def test_permissions(self):
-        self.assertPermissions(
-            lambda: self.client.get('/bonus_transactions'),
-            [TestUsers.ADMIN]
-        )
+        self.assertPermissions(lambda: self.client.get('/bonus_transactions'), [TestUsers.ADMIN])
+        self.assertPermissions(lambda: self.client.get(f'/bonus_transactions/{TestBonusTransactions.BTX1.id}'), [])
         self.assertPermissions(
             lambda: self.client.get(f'/bonus_transactions?guest__card={TestGuests.ROBY.card}'),
             [TestUsers.ADMIN, TestUsers.BAR, TestUsers.WARDROBE, TestUsers.TERMINAL]

@@ -65,7 +65,6 @@ class GuestListUpdateSerializer(serializers.ModelSerializer):
 
 class GuestViewSet(
     mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
     mixins.ListModelMixin,
     viewsets.GenericViewSet
