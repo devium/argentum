@@ -36,8 +36,6 @@ class ProductRangeViewTestCase(PopulatedTestCase, SerializationTestCase, Authent
         response = self.client.post('/product_ranges', self.REQUESTS[identifier])
         self.assertEqual(response.status_code, 201)
         self.assertValueEqual(ProductRange.objects.all(), TestProductRanges.ALL + [TestProductRanges.JUST_COKE])
-        # ManyToMany relationships need to be checked manually via their queryset (original one works).
-        self.assertValueEqual(TestProductRanges.JUST_COKE.products.all(), [TestProducts.COKE])
         self.assertJSONEqual(response.content, self.RESPONSES[identifier])
 
     def test_patch(self):

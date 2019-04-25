@@ -97,21 +97,25 @@
   },
   "POST/products#max": {
     "name": "Beer",
-    "deprecated": "True",
+    "deprecated": true,
     "price": "3.60",
-    "category": 2
+    "category": 2,
+    "product_ranges": [
+      2
+    ]
+  },
+  "PATCH/products/1": {
+    "name": "Aqua",
+    "deprecated": true,
+    "product_ranges": [
+      1
+    ]
   },
   "POST/product_ranges": {
-    "name": "Just coke",
-    "products": [
-      2
-    ]
+    "name": "Just coke"
   },
   "PATCH/product_ranges/1": {
-    "products": [
-      1,
-      2
-    ]
+    "name": "Just aqua"
   },
   "POST/orders": {
     "guest": 2,

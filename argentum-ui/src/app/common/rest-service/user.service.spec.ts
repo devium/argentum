@@ -30,6 +30,7 @@ fdescribe('UserService', () => {
     http = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
     groupService = createSpyObj('GroupService', ['list']);
+    groupService.list.and.returnValue(of(GROUPS_ALL));
     service = new UserService(http, groupService);
     resolved = false;
   });
@@ -43,7 +44,7 @@ fdescribe('UserService', () => {
     resolved = true;
   });
 
-  it('should retrieve the current user', fakeAsync(() => {
+  it('should retrieve the current user but not groups when explicitly provided', fakeAsync(() => {
     service.me(GROUPS_ALL).subscribe((user: User) => {
       expect(user.equals(USER_RECEPTION));
       resolved = true;
@@ -53,7 +54,6 @@ fdescribe('UserService', () => {
   }));
 
   it('should retrieve the current user and groups if none are provided', fakeAsync(() => {
-    groupService.list.and.returnValue(of(GROUPS_ALL));
     service.me().subscribe((user: User) => {
       expect(user.equals(USER_RECEPTION));
       resolved = true;
@@ -63,7 +63,7 @@ fdescribe('UserService', () => {
   }));
 
   it('should list all users', fakeAsync(() => {
-    service.list(GROUPS_ALL).subscribe((users: User[]) => {
+    service.list().subscribe((users: User[]) => {
       expect(users.length).toBe(USERS_ALL.length);
       users.forEach((user: User, index: number) => expect(user.equals(USERS_ALL[index])).toBeTruthy(user.id));
       resolved = true;
@@ -72,7 +72,7 @@ fdescribe('UserService', () => {
   }));
 
   it('should create a user', fakeAsync(() => {
-    service.create(USER_BUFFET, GROUPS_ALL).subscribe((user: User) => {
+    service.create(USER_BUFFET).subscribe((user: User) => {
       const userWithoutPw = <User>USER_BUFFET.clone();
       userWithoutPw.password = undefined;
       expect(user.equals(userWithoutPw)).toBeTruthy();
@@ -82,7 +82,7 @@ fdescribe('UserService', () => {
   }));
 
   it('should update a user', fakeAsync(() => {
-    service.update(USER_WARDROBE_PATCHED, GROUPS_ALL).subscribe((user: User) => {
+    service.update(USER_WARDROBE_PATCHED).subscribe((user: User) => {
       const userWithoutPw = <User>USER_WARDROBE_PATCHED.clone();
       userWithoutPw.password = undefined;
       expect(user.equals(userWithoutPw)).toBeTruthy();

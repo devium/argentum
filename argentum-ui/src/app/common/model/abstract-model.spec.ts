@@ -76,6 +76,21 @@ fdescribe('AbstractModel', () => {
     expect(b.equals(c)).toBeFalsy();
   });
 
+  it('should compare equal by native arrays', () => {
+    class A extends AbstractModel {
+      constructor(public vs: number[]) {
+        super(1);
+      }
+    }
+    const a1 = new A([1, 2]);
+    const a2 = new A([1, 2]);
+    expect(a1.equals(a2)).toBeTruthy();
+
+    const b = new A([1, 2]);
+    const c = new A([2, 3]);
+    expect(b.equals(c)).toBeFalsy();
+  });
+
   it('should clone correctly', () => {
     class A extends AbstractModel {
       constructor(id: number, public value: number) {

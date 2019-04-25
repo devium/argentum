@@ -6,14 +6,16 @@ from rest_framework import serializers, viewsets, mixins
 from rest_framework.permissions import OR
 from rest_framework.request import Request
 
-from api.models.product import Product, ProductCreateSerializer
+from api.models.product import Product, ProductChildSerializer
 from argentum.permissions import StrictModelPermissions
 
 
 class ProductRange(models.Model):
     name = models.CharField(max_length=64)
-    products = models.ManyToManyField(Product)
     permission_codename_prefix = f'view_productrange_'
+
+    # Many-to-one fields specified in the other models:
+    # products
 
     def __str__(self):
         return f'ProductRange(id={self.id},name="{self.name}",num_products={self.products.count()})'
@@ -40,10 +42,10 @@ class ProductRange(models.Model):
         group.permissions.add(permission)
 
 
-class ProductRangeSerializer(serializers.ModelSerializer):
+class ProductRangeMetaSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductRange
-        fields = ['id', 'name', 'products']
+        fields = ['id', 'name']
 
     def create(self, validated_data):
         instance: ProductRange = super().create(validated_data)
@@ -52,11 +54,11 @@ class ProductRangeSerializer(serializers.ModelSerializer):
 
 
 class ProductRangeRetrieveSerializer(serializers.ModelSerializer):
-    products = ProductCreateSerializer(many=True)
+    products = ProductChildSerializer(many=True)
 
     class Meta:
-        model = ProductRangeSerializer.Meta.model
-        fields = ProductRangeSerializer.Meta.fields
+        model = ProductRangeMetaSerializer.Meta.model
+        fields = ProductRangeMetaSerializer.Meta.fields + ['products']
 
 
 class ProductRangeViewSet(
@@ -68,13 +70,13 @@ class ProductRangeViewSet(
     viewsets.GenericViewSet
 ):
     queryset = ProductRange.objects.all()
-    serializer_class = ProductRangeSerializer
+    serializer_class = ProductRangeMetaSerializer
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
             return ProductRangeRetrieveSerializer
         else:
-            return ProductRangeSerializer
+            return ProductRangeMetaSerializer
 
     def get_permissions(self):
         if self.action == 'retrieve':

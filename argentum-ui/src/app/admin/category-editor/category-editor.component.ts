@@ -76,11 +76,7 @@ export class CategoryEditorComponent implements OnInit {
   }
 
   newCategory() {
-    const newCategory = new EditorCategory({
-      id: -1,
-      name: 'New Category',
-      color: '#aaaaaa'
-    });
+    const newCategory = new EditorCategory(new Category(-1, 'New Category', '#aaaaaa'));
     newCategory.original = null;
     newCategory.updateChanged();
     this.categories.push(newCategory);

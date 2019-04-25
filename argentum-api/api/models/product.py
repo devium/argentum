@@ -10,6 +10,7 @@ class Product(models.Model):
     deprecated = models.BooleanField(default=False)
     price = models.DecimalField(**CURRENCY_CONFIG)
     category = models.ForeignKey(Category, null=True, on_delete=models.SET_NULL)
+    product_ranges = models.ManyToManyField('api.ProductRange', related_name='products', default=[])
 
     def __str__(self):
         return f'Product(' \
@@ -17,14 +18,15 @@ class Product(models.Model):
             f'name="{self.name}",' \
             f'deprecated={self.deprecated},' \
             f'price={self.price},' \
-            f'category={self.category}' \
+            f'category={self.category},' \
+            f'product_ranges=[{",".join(str(product_range) for product_range in self.product_ranges.all())}]' \
             f')'
 
 
 class ProductCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['id', 'name', 'deprecated', 'price', 'category']
+        fields = ['id', 'name', 'deprecated', 'price', 'category', 'product_ranges']
 
 
 class ProductUpdateSerializer(serializers.ModelSerializer):
@@ -32,6 +34,12 @@ class ProductUpdateSerializer(serializers.ModelSerializer):
         model = Product
         fields = ProductCreateSerializer.Meta.fields
         read_only_fields = ['price']
+
+
+class ProductChildSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'deprecated', 'price', 'category']
 
 
 class ProductViewSet(

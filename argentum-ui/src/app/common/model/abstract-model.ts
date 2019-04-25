@@ -26,16 +26,21 @@ export abstract class AbstractModel {
           return false;
         }
       } else if (value1 instanceof Array) {
-        // Compare model arrays by ID.
         if (value1.length !== value2.length) {
           return false;
         }
         for (let i = 0; i < value1.length; ++i) {
-          if (value1[i] instanceof AbstractModel && value1[i].id !== value2[i].id) {
+          if (value1[i] instanceof AbstractModel) {
+            // Compare model arrays by ID.
+            if (value1[i].id !== value2[i].id) {
+              return false;
+            }
+            // Compare other arrays.
+          } else if (value1[i] !== value2[i]) {
             return false;
           }
+          // Note: mixed arrays seem ok but are not part of the spec.
         }
-        // Ignore non-model arrays.
       } else if (value1 !== value2) {
         // Compare other types.
         return false;

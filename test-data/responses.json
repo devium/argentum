@@ -331,14 +331,21 @@
       "name": "Water",
       "deprecated": false,
       "price": "2.40",
-      "category": 1
+      "category": 1,
+      "product_ranges": [
+        1,
+        2
+      ]
     },
     {
       "id": 2,
       "name": "Coke",
       "deprecated": true,
       "price": "3.20",
-      "category": null
+      "category": null,
+      "product_ranges": [
+        2
+      ]
     }
   ],
   "POST/products#min": {
@@ -346,30 +353,37 @@
     "name": "Beer",
     "deprecated": false,
     "price": "3.60",
-    "category": null
+    "category": null,
+    "product_ranges": []
   },
   "POST/products#max": {
     "id": 3,
     "name": "Beer",
     "deprecated": true,
     "price": "3.60",
-    "category": 2
+    "category": 2,
+    "product_ranges": [
+      2
+    ]
+  },
+  "PATCH/products/1": {
+    "id": 1,
+    "name": "Aqua",
+    "deprecated": true,
+    "price": "2.40",
+    "category": 1,
+    "product_ranges": [
+      1
+    ]
   },
   "GET/product_ranges": [
     {
       "id": 1,
-      "name": "Just water",
-      "products": [
-        1
-      ]
+      "name": "Just water"
     },
     {
       "id": 2,
-      "name": "Everything",
-      "products": [
-        1,
-        2
-      ]
+      "name": "Everything"
     }
   ],
   "GET/product_ranges/1": {
@@ -387,18 +401,11 @@
   },
   "POST/product_ranges": {
     "id": 3,
-    "name": "Just coke",
-    "products": [
-      2
-    ]
+    "name": "Just coke"
   },
   "PATCH/product_ranges/1": {
     "id": 1,
-    "name": "Just water",
-    "products": [
-      1,
-      2
-    ]
+    "name": "Just aqua"
   },
   "GET/orders": [
     {

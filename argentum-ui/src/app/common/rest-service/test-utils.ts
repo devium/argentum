@@ -15,9 +15,7 @@ export function testEndpoint(
 
   const identifier = `${method}${url}${identifierSuffix}`;
   const requestBody = requests[identifier];
-  if (requestBody) {
-    expect(req.request.body).toEqual(requestBody);
-  }
+  expect(req.request.body).toEqual(requestBody === undefined ? null : requestBody);
   const responseBody = responses[identifier];
   req.flush(responseBody === undefined ? null : responseBody);
 }

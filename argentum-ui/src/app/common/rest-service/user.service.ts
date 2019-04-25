@@ -20,7 +20,7 @@ export class UserService {
       this.http.get<UserDto>('/users/me'),
       [groups, this.groupService.list]
     ).pipe(
-      map(([userDto, groupsDep]: [UserDto, Group[], {}, {}]) => User.fromDto(userDto, groupsDep))
+      map(([dto, groupsDep]: [UserDto, Group[], {}, {}]) => User.fromDto(dto, groupsDep))
     );
   }
 
@@ -29,7 +29,7 @@ export class UserService {
       this.http.get<UserDto[]>('/users'),
       [groups, this.groupService.list]
     ).pipe(
-      map(([userDtos, groupsDep]: [UserDto[], Group[], {}, {}]) => userDtos.map((userDto: UserDto) => User.fromDto(userDto, groupsDep)))
+      map(([dtos, groupsDep]: [UserDto[], Group[], {}, {}]) => dtos.map((dto: UserDto) => User.fromDto(dto, groupsDep)))
     );
   }
 
@@ -38,7 +38,7 @@ export class UserService {
       this.http.post<UserDto>('/users', user.toDto()),
       [groups, this.groupService.list]
     ).pipe(
-      map(([userDto, groupsDep]: [UserDto, Group[], {}, {}]) => User.fromDto(userDto, groupsDep))
+      map(([dto, groupsDep]: [UserDto, Group[], {}, {}]) => User.fromDto(dto, groupsDep))
     );
   }
 
@@ -47,7 +47,7 @@ export class UserService {
       this.http.patch<UserDto>(`/users/${user.id}`, user.toDto()),
       [groups, this.groupService.list]
     ).pipe(
-      map(([userDto, groupsDep]: [UserDto, Group[], {}, {}]) => User.fromDto(userDto, groupsDep))
+      map(([dto, groupsDep]: [UserDto, Group[], {}, {}]) => User.fromDto(dto, groupsDep))
     );
   }
 

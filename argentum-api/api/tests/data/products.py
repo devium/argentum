@@ -43,3 +43,11 @@ class TestProducts(TestObjects):
         price=Decimal("3.60"),
         category=TestCategories.HARD_DRINKS
     )
+
+    WATER_PATCHED = MODEL(
+        id=1,
+        name="Aqua",
+        deprecated=True,
+        price=Decimal("2.40"),
+        category=TestCategories.SOFT_DRINKS
+    )

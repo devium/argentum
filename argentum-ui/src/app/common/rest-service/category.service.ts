@@ -14,19 +14,19 @@ export class CategoryService {
 
   list(): Observable<Category[]> {
     return this.http.get<CategoryDto[]>('/categories').pipe(
-      map((categoryDtos: CategoryDto[]) => categoryDtos.map((categoryDto: CategoryDto) => Category.fromDto(categoryDto)))
+      map((dtos: CategoryDto[]) => dtos.map((dto: CategoryDto) => Category.fromDto(dto)))
     );
   }
 
   create(category: Category): Observable<Category> {
     return this.http.post<CategoryDto>('/categories', category.toDto()).pipe(
-      map((categoryDto: CategoryDto) => Category.fromDto(categoryDto))
+      map((dto: CategoryDto) => Category.fromDto(dto))
     );
   }
 
   update(category: Category): Observable<Category> {
     return this.http.patch<CategoryDto>(`/categories/${category.id}`, category.toDto()).pipe(
-      map((categoryDto: CategoryDto) => Category.fromDto(categoryDto))
+      map((dto: CategoryDto) => Category.fromDto(dto))
     );
   }
 

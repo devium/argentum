@@ -27,7 +27,7 @@ class TestProductRanges(TestObjects):
 
     JUST_WATER_PATCHED = MODEL(
         id=1,
-        name='Just water'
+        name='Just aqua'
     )
 
     @classmethod
