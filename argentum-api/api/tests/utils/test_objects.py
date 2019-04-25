@@ -1,4 +1,4 @@
-from typing import Type, Iterable
+from typing import Type
 
 from django.db import models
 
@@ -18,4 +18,3 @@ class TestObjects:
     @classmethod
     def post_init(cls):
         pass
-

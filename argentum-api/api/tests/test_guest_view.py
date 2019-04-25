@@ -1,7 +1,5 @@
 import logging
 
-from django.utils.dateparse import parse_datetime
-
 from api.models.guest import Guest
 from api.tests.data.guests import TestGuests
 from api.tests.data.users import TestUsers

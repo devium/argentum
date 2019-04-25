@@ -66,7 +66,8 @@ def populate_db(sender, **kwargs):
             'add_status',
             'change_status',
             'delete_status',
-            'view_productrange_all'
+            'view_productrange_all',
+            'view_statistics'
         ]),
         ('order', [
             'view_me',

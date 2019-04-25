@@ -519,5 +519,31 @@
     "internal_name": "pen",
     "display_name": "Pending",
     "color": "#ff0000"
+  },
+  "GET/statistics": {
+    "guests_total": 2,
+    "guests_checked_in": 1,
+    "cards_total": 1,
+    "total_positive_balance": "11.50",
+    "total_negative_balance": "0.00",
+    "total_bonus": "2.00",
+    "total_spent": "3.00",
+    "total_refund": "0.00",
+    "total_deposited": "0.00",
+    "total_withdrawn": "0.00",
+    "num_products": 1,
+    "num_legacy_products": 1,
+    "num_product_ranges": 2,
+    "num_categories": 2,
+    "quantity_sales": [
+      {
+        "product": 1,
+        "quantity": 1
+      },
+      {
+        "product": 2,
+        "quantity": 0
+      }
+    ]
   }
 }

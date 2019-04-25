@@ -1,9 +1,6 @@
 import logging
 from decimal import Decimal
 
-from django.utils import timezone
-from django.utils.dateparse import parse_datetime
-
 from api.models.guest import Guest
 from api.models.transaction import Transaction
 from api.tests.data.guests import TestGuests

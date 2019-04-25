@@ -1,9 +1,7 @@
 import logging
 from decimal import Decimal
 
-from django.utils import timezone
-from django.utils.dateparse import parse_datetime
-
+from api.models import Guest
 from api.models.config import Config
 from api.models.order import Order
 from api.models.order_item import OrderItem
@@ -75,9 +73,9 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         self.assertEqual(response.status_code, 200)
 
         TestTransactions.TX_ORDER2.time = server_time
-        TestGuests.SHEELAH.refresh_from_db()
-        self.assertEqual(TestGuests.SHEELAH.bonus, Decimal('0.00'))
-        self.assertEqual(TestGuests.SHEELAH.balance, Decimal('2.00'))
+        sheelah = Guest.objects.get(id=TestGuests.SHEELAH.id)
+        self.assertEqual(sheelah.bonus, Decimal('0.00'))
+        self.assertEqual(sheelah.balance, Decimal('2.00'))
         self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX_ORDER2])
         self.RESPONSES[identifier]['time'] = to_iso_format(server_time)
         self.assertJSONEqual(response.content, self.RESPONSES[identifier])

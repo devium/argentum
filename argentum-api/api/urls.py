@@ -7,6 +7,7 @@ from api.models.config import ConfigViewSet
 from api.models.order import OrderViewSet
 from api.models.order_item import OrderItemViewSet
 from api.models.product_range import ProductRangeViewSet
+from api.models.statistics import StatisticsViewSet
 from api.models.user import UserViewSet
 from api.models.group import GroupViewSet
 from api.models.bonus_transaction import BonusTransactionViewSet
@@ -29,6 +30,7 @@ router.register('product_ranges', ProductRangeViewSet)
 router.register('orders', OrderViewSet)
 router.register('order_items', OrderItemViewSet)
 router.register('statuses', StatusViewSet)
+router.register('statistics', StatisticsViewSet, basename='statistics')
 
 urlpatterns = [
     url('^', include(router.urls)),
