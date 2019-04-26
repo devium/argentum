@@ -5,12 +5,12 @@ import {GroupService} from './group.service';
 import {HTTP_INTERCEPTORS, HttpClient} from '@angular/common/http';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {BaseInterceptor} from './base-interceptor';
-import {GROUPS_ALL} from './test-data/groups';
 import {of} from 'rxjs/internal/observable/of';
 import createSpyObj = jasmine.createSpyObj;
 import {User} from '../model/user';
-import {USER_BUFFET, USER_RECEPTION, USER_WARDROBE, USER_WARDROBE_PATCHED, USERS_ALL} from './test-data/users';
-import {testEndpoint} from './test-utils';
+import {expectArraysEqual, testEndpoint} from './test-utils';
+import {Groups} from './test-data/groups';
+import {Users} from './test-data/users';
 
 fdescribe('UserService', () => {
   let service: UserService;
@@ -30,7 +30,7 @@ fdescribe('UserService', () => {
     http = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
     groupService = createSpyObj('GroupService', ['list']);
-    groupService.list.and.returnValue(of(GROUPS_ALL));
+    groupService.list.and.returnValue(of(Groups.ALL));
     service = new UserService(http, groupService);
     resolved = false;
   });
@@ -45,8 +45,8 @@ fdescribe('UserService', () => {
   });
 
   it('should retrieve the current user but not groups when explicitly provided', fakeAsync(() => {
-    service.me(GROUPS_ALL).subscribe((user: User) => {
-      expect(user.equals(USER_RECEPTION));
+    service.me(Groups.ALL).subscribe((user: User) => {
+      expect(user.equals(Users.RECEPTION));
       resolved = true;
     });
     testEndpoint(httpTestingController, requests, responses, 'GET', '/users/me');
@@ -55,7 +55,7 @@ fdescribe('UserService', () => {
 
   it('should retrieve the current user and groups if none are provided', fakeAsync(() => {
     service.me().subscribe((user: User) => {
-      expect(user.equals(USER_RECEPTION));
+      expect(user.equals(Users.RECEPTION));
       resolved = true;
     });
     testEndpoint(httpTestingController, requests, responses, 'GET', '/users/me');
@@ -64,16 +64,15 @@ fdescribe('UserService', () => {
 
   it('should list all users', fakeAsync(() => {
     service.list().subscribe((users: User[]) => {
-      expect(users.length).toBe(USERS_ALL.length);
-      users.forEach((user: User, index: number) => expect(user.equals(USERS_ALL[index])).toBeTruthy(user.id));
+      expectArraysEqual(users, Users.ALL);
       resolved = true;
     });
     testEndpoint(httpTestingController, requests, responses, 'GET', '/users');
   }));
 
   it('should create a user', fakeAsync(() => {
-    service.create(USER_BUFFET).subscribe((user: User) => {
-      const userWithoutPw = <User>USER_BUFFET.clone();
+    service.create(Users.BUFFET).subscribe((user: User) => {
+      const userWithoutPw = <User>Users.BUFFET.clone();
       userWithoutPw.password = undefined;
       expect(user.equals(userWithoutPw)).toBeTruthy();
       resolved = true;
@@ -82,19 +81,19 @@ fdescribe('UserService', () => {
   }));
 
   it('should update a user', fakeAsync(() => {
-    service.update(USER_WARDROBE_PATCHED).subscribe((user: User) => {
-      const userWithoutPw = <User>USER_WARDROBE_PATCHED.clone();
+    service.update(Users.WARDROBE_PATCHED).subscribe((user: User) => {
+      const userWithoutPw = <User>Users.WARDROBE_PATCHED.clone();
       userWithoutPw.password = undefined;
       expect(user.equals(userWithoutPw)).toBeTruthy();
       resolved = true;
     });
-    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/users/${USER_WARDROBE.id}`);
+    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/users/${Users.WARDROBE.id}`);
   }));
 
   it('should delete a user', fakeAsync(() => {
-    service.delete(USER_WARDROBE).subscribe(() => {
+    service.delete(Users.WARDROBE).subscribe(() => {
       resolved = true;
     });
-    testEndpoint(httpTestingController, requests, responses, 'DELETE', `/users/${USER_WARDROBE.id}`);
+    testEndpoint(httpTestingController, requests, responses, 'DELETE', `/users/${Users.WARDROBE.id}`);
   }));
 });

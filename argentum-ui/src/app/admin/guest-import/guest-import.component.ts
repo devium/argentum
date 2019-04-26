@@ -1,5 +1,4 @@
 import { Guest } from '../../common/model/guest';
-import { RestService } from '../../common/rest-service/rest.service';
 import { MessageComponent } from '../../common/message/message.component';
 import { DeleteGuestsModalComponent } from '../delete-guests-modal/delete-guests-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -21,7 +20,6 @@ export class GuestImportComponent implements OnInit {
   private message: MessageComponent;
 
   constructor(
-    private restService: RestService,
     private modalService: NgbModal,
     private papa: Papa
   ) {
@@ -62,15 +60,21 @@ export class GuestImportComponent implements OnInit {
             return;
           }
           guests.push(new Guest(
-            -1,
+            undefined,
             row[this.codeCol],
             row[this.nameCol],
             row[this.mailCol],
-            row[this.statusCol]
+            row[this.statusCol],
+            undefined,
+            undefined,
+            undefined,
+            undefined
           ));
         });
 
-        this.restService.mergeGuests(guests)
+        // TODO
+        // this.restService.mergeGuests(guests)
+        Promise.resolve()
           .then(() => this.message.success(`Successfully imported <b>${guests.length}</b> guests.`))
           .catch(reason => this.message.error(reason));
       }
@@ -80,7 +84,9 @@ export class GuestImportComponent implements OnInit {
   deleteGuests() {
     const modal = this.modalService.open(DeleteGuestsModalComponent, { backdrop: 'static' });
     modal.result.then(() => {
-      this.restService.deleteGuests()
+      // TODO
+      // this.restService.deleteGuests()
+      Promise.resolve()
         .then(() => this.message.success(`<b>Deleted all guests and orders.</b>`))
         .catch(reason => this.message.error(reason));
     }, () => void(0));

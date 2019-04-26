@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { RestService } from '../../common/rest-service/rest.service';
 import { ProductRange } from '../../common/model/product-range';
 import { MessageComponent } from '../../common/message/message.component';
 
@@ -35,7 +34,7 @@ export class RangeEditorComponent implements OnInit {
   @ViewChild(MessageComponent)
   private message: MessageComponent;
 
-  constructor(private restService: RestService) {
+  constructor() {
   }
 
   ngOnInit() {
@@ -43,7 +42,9 @@ export class RangeEditorComponent implements OnInit {
   }
 
   loadRanges() {
-    this.restService.getProductRanges()
+    // TODO
+    // this.restService.getProductRanges()
+    Promise.resolve([])
       .then((ranges: ProductRange[]) => this.productRanges = ranges.map(range => new EditorRange(range)))
       .catch(reason => this.message.error(reason));
   }
@@ -68,10 +69,7 @@ export class RangeEditorComponent implements OnInit {
   }
 
   newRange() {
-    const newRange = new EditorRange({
-      id: -1,
-      name: 'New Product Range'
-    });
+    const newRange = new EditorRange(new ProductRange(-1, 'New Product Range', undefined));
     newRange.original = null;
     newRange.updateChanged();
     this.productRanges.push(newRange);
@@ -94,8 +92,9 @@ export class RangeEditorComponent implements OnInit {
       .filter(range => !range.edited)
       .map(range => range.original);
 
-    const pCreate = this.restService.mergeProductRanges(mergedRanges);
-    const pDelete = this.restService.deleteProductRanges(deletedRanges);
+    // TODO
+    const pCreate = Promise.resolve();
+    const pDelete = Promise.resolve();
 
     Promise.all([pCreate, pDelete])
       .then(() => {

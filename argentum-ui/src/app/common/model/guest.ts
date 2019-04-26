@@ -1,34 +1,67 @@
-export class Guest {
-  id: number;
-  code: string;
-  name: string;
-  mail: string;
-  status: string;
-  checkedIn: Date;
-  card: string;
-  balance: number;
-  bonus: number;
+import {AbstractModel} from './abstract-model';
+import {formatCurrency, formatDate} from '../util/format';
 
+export namespace Guest {
+  export interface Filter {
+    code?: string;
+    name?: string;
+    mail?: string;
+    status?: string;
+  }
 
+  export interface Dto {
+    id: number;
+    code: string;
+    name: string;
+    mail: string;
+    status: string;
+    checked_in: string;
+    card: string;
+    balance: string;
+    bonus: string;
+  }
+}
+
+export class Guest extends AbstractModel {
   constructor(
     id: number,
-    code: string = '',
-    name: string = '',
-    mail: string = '',
-    status: string = null,
-    checkedIn: Date = null,
-    card: string = null,
-    balance: number = 0,
-    bonus: number = 0
+    public code: string,
+    public name: string,
+    public mail: string,
+    public status: string,
+    public checkedIn: Date,
+    public card: string,
+    public balance: number,
+    public bonus: number
   ) {
-    this.id = id;
-    this.code = code;
-    this.name = name;
-    this.mail = mail;
-    this.status = status;
-    this.checkedIn = checkedIn;
-    this.card = card;
-    this.balance = balance;
-    this.bonus = bonus;
+    super(id);
+  }
+
+  static fromDto(dto: Guest.Dto): Guest {
+    return new Guest(
+      dto.id,
+      dto.code,
+      dto.name,
+      dto.mail,
+      dto.status,
+      dto.checked_in === undefined ? undefined : dto.checked_in === null ? null : new Date(dto.checked_in),
+      dto.card,
+      parseFloat(dto.balance),
+      parseFloat(dto.bonus)
+    );
+  }
+
+  toDto(): Guest.Dto {
+    return {
+      id: undefined,
+      code: this.code,
+      name: this.name,
+      mail: this.mail,
+      status: this.status,
+      checked_in: formatDate(this.checkedIn),
+      card: this.card,
+      balance: formatCurrency(this.balance),
+      bonus: formatCurrency(this.bonus)
+    };
   }
 }

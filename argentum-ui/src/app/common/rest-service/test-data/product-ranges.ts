@@ -1,11 +1,15 @@
 import {ProductRange} from '../../model/product-range';
-import {PRODUCT_WATER} from './products';
+import {Products} from './products';
 
-export const PRODUCT_RANGE_JUST_WATER_META = new ProductRange(1, 'Just water', undefined);
-export const PRODUCT_RANGE_JUST_WATER = new ProductRange(1, 'Just water', [PRODUCT_WATER]);
-export const PRODUCT_RANGE_EVERYTHING_META = new ProductRange(2, 'Everything', undefined);
+export namespace ProductRanges {
+  export const JUST_WATER_META = new ProductRange(1, 'Just water', undefined);
+  export const JUST_WATER = new ProductRange(1, 'Just water', [Products.WATER]);
+  export const EVERYTHING_META = new ProductRange(2, 'Everything', undefined);
+  export const EVERYTHING = new ProductRange(2, 'Everything', [Products.WATER, Products.COKE]);
 
-export const PRODUCT_RANGES_ALL_META = [PRODUCT_RANGE_JUST_WATER_META, PRODUCT_RANGE_EVERYTHING_META];
+  export const ALL_META = [JUST_WATER_META, EVERYTHING_META];
+  export const ALL = [JUST_WATER, EVERYTHING];
 
-export const PRODUCT_RANGE_JUST_COKE_META = new ProductRange(3, 'Just coke', undefined);
-export const PRODUCT_RANGE_JUST_WATER_PATCHED_META = new ProductRange(1, 'Just aqua', undefined);
+  export const JUST_COKE_META = new ProductRange(3, 'Just coke', undefined);
+  export const JUST_WATER_PATCHED_META = new ProductRange(1, 'Just aqua', undefined);
+}

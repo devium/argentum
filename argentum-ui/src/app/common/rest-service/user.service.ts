@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {User, UserDto} from '../model/user';
+import {User} from '../model/user';
 import {map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {GroupService} from './group.service';
@@ -17,37 +17,37 @@ export class UserService {
 
   me(groups?: Group[]): Observable<User> {
     return withDependencies(
-      this.http.get<UserDto>('/users/me'),
+      this.http.get<User.Dto>('/users/me'),
       [groups, this.groupService.list]
     ).pipe(
-      map(([dto, groupsDep]: [UserDto, Group[], {}, {}]) => User.fromDto(dto, groupsDep))
+      map(([dto, groupsDep]: [User.Dto, Group[], {}, {}]) => User.fromDto(dto, groupsDep))
     );
   }
 
   list(groups?: Group[]): Observable<User[]> {
     return withDependencies(
-      this.http.get<UserDto[]>('/users'),
+      this.http.get<User.Dto[]>('/users'),
       [groups, this.groupService.list]
     ).pipe(
-      map(([dtos, groupsDep]: [UserDto[], Group[], {}, {}]) => dtos.map((dto: UserDto) => User.fromDto(dto, groupsDep)))
+      map(([dtos, groupsDep]: [User.Dto[], Group[], {}, {}]) => dtos.map((dto: User.Dto) => User.fromDto(dto, groupsDep)))
     );
   }
 
   create(user: User, groups?: Group[]): Observable<User> {
     return withDependencies(
-      this.http.post<UserDto>('/users', user.toDto()),
+      this.http.post<User.Dto>('/users', user.toDto()),
       [groups, this.groupService.list]
     ).pipe(
-      map(([dto, groupsDep]: [UserDto, Group[], {}, {}]) => User.fromDto(dto, groupsDep))
+      map(([dto, groupsDep]: [User.Dto, Group[], {}, {}]) => User.fromDto(dto, groupsDep))
     );
   }
 
   update(user: User, groups?: Group[]): Observable<User> {
     return withDependencies(
-      this.http.patch<UserDto>(`/users/${user.id}`, user.toDto()),
+      this.http.patch<User.Dto>(`/users/${user.id}`, user.toDto()),
       [groups, this.groupService.list]
     ).pipe(
-      map(([dto, groupsDep]: [UserDto, Group[], {}, {}]) => User.fromDto(dto, groupsDep))
+      map(([dto, groupsDep]: [User.Dto, Group[], {}, {}]) => User.fromDto(dto, groupsDep))
     );
   }
 

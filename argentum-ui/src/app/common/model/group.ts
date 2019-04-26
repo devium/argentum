@@ -1,8 +1,10 @@
 import {AbstractModel} from './abstract-model';
 
-export interface GroupDto {
-  id: number;
-  name: string;
+export namespace Group {
+  export interface Dto {
+    id: number;
+    name: string;
+  }
 }
 
 export class Group extends AbstractModel {
@@ -13,7 +15,7 @@ export class Group extends AbstractModel {
     super(id);
   }
 
-  static fromDto(dto: GroupDto): Group {
+  static fromDto(dto: Group.Dto): Group {
     return new Group(
       dto.id,
       dto.name

@@ -1,6 +1,4 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {RestService} from '../common/rest-service/rest.service';
-import {TokenResponse} from '../common/rest-service/response/token-response';
 import {MessageComponent} from '../common/message/message.component';
 import {Router} from '@angular/router';
 import {LoginService} from '../common/rest-service/login.service';

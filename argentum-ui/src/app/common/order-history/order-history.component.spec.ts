@@ -2,16 +2,15 @@ import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core
 
 import { OrderHistoryComponent } from './order-history.component';
 import createSpyObj = jasmine.createSpyObj;
-import { RestService } from '../rest-service/rest.service';
-import { GUESTS } from '../rest-service/mocks/mock-guests';
 import { Guest } from '../model/guest';
 import { Order } from '../model/order';
 import { OrderItem } from '../model/order-item';
-import { COFFEE, COKE, PEPSI } from '../rest-service/mocks/mock-products';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { By } from '@angular/platform-browser';
 import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component';
 import { KeypadModalComponent } from '../keypad-modal/keypad-modal.component';
+import {Guests} from '../rest-service/test-data/guests';
+import {Products} from '../rest-service/test-data/products';
 
 
 class ConfirmModalStubComponent {
@@ -40,7 +39,6 @@ describe('OrderHistoryComponent', () => {
     TestBed.configureTestingModule({
       declarations: [OrderHistoryComponent],
       providers: [
-        { provide: RestService, useValue: restService },
         { provide: NgbModal, useValue: modalService }
       ],
     })
@@ -56,23 +54,27 @@ describe('OrderHistoryComponent', () => {
 
     orders = [
       new Order(
-        7,
-        new Date(2018, 11, 31, 22, 30),
+        1,
+        new Date('2018-12-31T22:30'),
+        Guests.ROBY,
+        1.00,
+        0.40,
+        false,
         [
-          new OrderItem(11, COKE, 2, 1),
-          new OrderItem(12, PEPSI, 1, 0)
+          new OrderItem(1, Products.WATER, 2, 1),
+          new OrderItem(2, Products.COKE, 1, 1)
         ],
-        10.00,
-        0
       ),
       new Order(
-        23,
-        new Date(2018, 11, 31, 22, 45),
+        2,
+        new Date('2018-11-31T22:45'),
+        Guests.ROBY,
+        2.00,
+        2.00,
+        false,
         [
-          new OrderItem(36, COFFEE, 1, 0)
-        ],
-        5.50,
-        0.50
+          new OrderItem(3, Products.COKE, 1, 1)
+        ]
       )
     ];
 
@@ -82,7 +84,7 @@ describe('OrderHistoryComponent', () => {
 
     // Shared order history for all tests.
     restService.getOrders.and.callFake((guest: Guest): Promise<Order[]> => {
-      if (guest === GUESTS[1]) {
+      if (guest.equals(Guests.ROBY)) {
         return Promise.resolve(orders);
       } else {
         return Promise.resolve([]);
@@ -97,10 +99,10 @@ describe('OrderHistoryComponent', () => {
   });
 
   it('should correctly request a guest\'s order history', fakeAsync(() => {
-    component.getOrderHistory(GUESTS[1]);
+    component.getOrderHistory(Guests.ROBY);
     tick();
     fixture.detectChanges();
-    expect(component.guest).toBe(GUESTS[1]);
+    expect(component.guest).toBe(Guests.ROBY);
     expect(component.orders).toEqual(orders);
     expect(
       fixture.debugElement.query(By.css('#orderItem11Quantity > s')).nativeElement.textContent.trim()
@@ -123,7 +125,7 @@ describe('OrderHistoryComponent', () => {
   }));
 
   it('should be able to clear the order list', fakeAsync(() => {
-    component.getOrderHistory(GUESTS[1]);
+    component.getOrderHistory(Guests.ROBY);
     tick();
     component.clear();
     expect(component.guest).toBeNull();
@@ -132,7 +134,7 @@ describe('OrderHistoryComponent', () => {
 
   it('should not be able to cancel in view-only mode', fakeAsync(() => {
     component.allowCancel = false;
-    component.getOrderHistory(GUESTS[1]);
+    component.getOrderHistory(Guests.ROBY);
     tick();
     fixture.detectChanges();
 
@@ -142,7 +144,7 @@ describe('OrderHistoryComponent', () => {
 
   it('should be able to cancel individual order items', fakeAsync(() => {
     restService.cancelOrderItem.and.returnValue(Promise.resolve());
-    component.getOrderHistory(GUESTS[1]);
+    component.getOrderHistory(Guests.ROBY);
     tick();
     fixture.detectChanges();
 
@@ -173,15 +175,13 @@ describe('OrderHistoryComponent', () => {
     const successMessageTrimmed = messageComponent.success.calls.argsFor(0)[0].replace( /\s+/g, ' ').trim();
     expect(successMessageTrimmed).toBe('Refunded <b>James the Sunderer</b> with <b>€3.20</b> for one <b>Coke</b>.');
 
-    expect(order1item1.cancelled).toBe(2);
-    expect(order1item1.validate()).toBeTruthy();
-    expect(order1.validate()).toBeTruthy();
+    expect(order1item1.quantityCurrent).toBe(1);
     expect(restService.cancelOrderItem).toHaveBeenCalledWith(order1item1);
   }));
 
   it('should be able to cancel parts of a custom order', fakeAsync(() => {
     restService.cancelCustom.and.returnValue(Promise.resolve());
-    component.getOrderHistory(GUESTS[1]);
+    component.getOrderHistory(Guests.ROBY);
     tick();
     fixture.detectChanges();
 
@@ -220,8 +220,7 @@ describe('OrderHistoryComponent', () => {
     const successMessageTrimmed = messageComponent.success.calls.argsFor(0)[0].replace( /\s+/g, ' ').trim();
     expect(successMessageTrimmed).toBe('Refunded <b>James the Sunderer</b> with <b>€0.10</b> for a custom order.');
 
-    expect(order2.customCancelled).toBe(0.60);
-    expect(order2.validate()).toBeTruthy();
+    expect(order2.customCurrent).toBe(0.40);
     expect(restService.cancelCustom).toHaveBeenCalledWith(order2);
   }));
 });

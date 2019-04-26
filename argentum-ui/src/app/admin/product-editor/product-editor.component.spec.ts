@@ -1,15 +1,14 @@
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { ProductEditorComponent } from './product-editor.component';
-import { RestService } from '../../common/rest-service/rest.service';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {ProductEditorComponent} from './product-editor.component';
+import {NgbModal, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import createSpyObj = jasmine.createSpyObj;
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { PRODUCTS } from '../../common/rest-service/mocks/mock-products';
-import { CATEGORIES } from '../../common/rest-service/mocks/mock-categories';
-import { PRODUCT_RANGES } from '../../common/rest-service/mocks/mock-ranges';
-import { IterablePipe } from '../../common/pipes/iterable.pipe';
-import { By } from '@angular/platform-browser';
+import {Component} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {IterablePipe} from '../../common/pipes/iterable.pipe';
+import {By} from '@angular/platform-browser';
+import {ProductRanges} from '../../common/rest-service/test-data/product-ranges';
+import {Categories} from '../../common/rest-service/test-data/categories';
+import {Products} from '../../common/rest-service/test-data/products';
 
 @Component({selector: 'app-admin-nav', template: ''})
 class AdminNavStubComponent {
@@ -43,8 +42,7 @@ describe('ProductEditorComponent', () => {
         NgbModule
       ],
       providers: [
-        { provide: RestService, useValue: restService },
-        { provide: NgbModal, useValue: modalService }
+        {provide: NgbModal, useValue: modalService}
       ],
     })
       .compileComponents();
@@ -54,9 +52,9 @@ describe('ProductEditorComponent', () => {
     fixture = TestBed.createComponent(ProductEditorComponent);
     component = fixture.componentInstance;
     restService.getProductData.and.returnValue(Promise.resolve({
-      products: PRODUCTS,
-      categories: CATEGORIES,
-      ranges: PRODUCT_RANGES
+      products: Products.ALL,
+      categories: Categories.ALL,
+      ranges: ProductRanges.ALL_META
     }));
   });
 
@@ -69,8 +67,8 @@ describe('ProductEditorComponent', () => {
     fixture.detectChanges();
     tick();
     fixture.detectChanges();
-    expect(component.categories.size).toBe(CATEGORIES.length);
-    expect(component.products.length).toBe(PRODUCTS.length);
+    expect(component.categories.size).toBe(Categories.ALL.length);
+    expect(component.products.length).toBe(Products.ALL.length);
     expect(fixture.debugElement.query(By.css('#productsTable > tbody')).children.length).toBe(component.PAGE_SIZE);
   }));
 });

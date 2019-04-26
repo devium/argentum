@@ -1,5 +1,4 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { RestService } from '../../common/rest-service/rest.service';
 import { Statistics } from '../../common/model/statistics';
 import { MessageComponent } from '../../common/message/message.component';
 import { Product } from '../../common/model/product';
@@ -23,7 +22,7 @@ export class DashboardComponent implements OnInit {
 
   salesChart: Chart;
 
-  constructor(private restService: RestService) {
+  constructor() {
   }
 
   ngOnInit() {
@@ -31,8 +30,9 @@ export class DashboardComponent implements OnInit {
   }
 
   refresh(): void {
-    const pStats = this.restService.getStatistics();
-    const pProducts = this.restService.getAllProducts();
+    // TODO
+    const pStats = Promise.resolve({});
+    const pProducts = Promise.resolve([]);
 
     Promise.all([pStats, pProducts])
       .then((response: [Statistics, Product[]]) => {
@@ -99,7 +99,7 @@ export class DashboardComponent implements OnInit {
           }
         }
       }
-    })
+    });
   }
 
 }

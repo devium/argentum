@@ -1,11 +1,13 @@
 import {Group} from './group';
 import {AbstractModel} from './abstract-model';
 
-export interface UserDto {
-  id: number;
-  username: string;
-  password: string;
-  groups: number[];
+export namespace User {
+  export interface Dto {
+    id: number;
+    username: string;
+    password: string;
+    groups: number[];
+  }
 }
 
 export class User extends AbstractModel {
@@ -18,7 +20,7 @@ export class User extends AbstractModel {
     super(id);
   }
 
-  static fromDto(dto: UserDto, allGroups: Group[]): User {
+  static fromDto(dto: User.Dto, allGroups: Group[]): User {
     return new User(
       dto.id,
       dto.username,
@@ -27,7 +29,7 @@ export class User extends AbstractModel {
     );
   }
 
-  toDto(): UserDto {
+  toDto(): User.Dto {
     return {
       id: undefined,
       username: this.username,

@@ -4,16 +4,15 @@ import { IterablePipe } from '../../common/pipes/iterable.pipe';
 import { RangePipe } from '../../common/pipes/range.pipe';
 import { ProductRange } from '../../common/model/product-range';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { RestService } from '../../common/rest-service/rest.service';
-import { PRODUCT_RANGES } from '../../common/rest-service/mocks/mock-ranges';
+import {ProductRanges} from '../../common/rest-service/test-data/product-ranges';
 
 class RestServiceStub {
   getProductRangesMeta(): Promise<ProductRange[]> {
-    return Promise.resolve(PRODUCT_RANGES);
+    return Promise.resolve(ProductRanges.ALL_META);
   }
 
   getProductRangeEager(id: number): Promise<ProductRange> {
-    return Promise.resolve(PRODUCT_RANGES.find(range => range.id === id));
+    return Promise.resolve(ProductRanges.ALL.find((productRange: ProductRange) => productRange.id === id));
   }
 }
 
@@ -29,7 +28,7 @@ xdescribe('OrderComponent', () => {
         RangePipe
       ],
       imports: [NgbModule],
-      providers: [{ provide: RestService, useClass: RestServiceStub }]
+      providers: []
     })
       .compileComponents();
   }));

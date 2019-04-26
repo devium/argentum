@@ -1,9 +1,12 @@
 import {AbstractModel} from './abstract-model';
 
-export interface CategoryDto {
-  id: number;
-  name: string;
-  color: string;
+
+export namespace Category {
+  export interface Dto {
+    id: number;
+    name: string;
+    color: string;
+  }
 }
 
 export class Category extends AbstractModel {
@@ -15,7 +18,7 @@ export class Category extends AbstractModel {
     super(id);
   }
 
-  static fromDto(dto: CategoryDto): Category {
+  static fromDto(dto: Category.Dto): Category {
     return new Category(
       dto.id,
       dto.name,
@@ -23,7 +26,7 @@ export class Category extends AbstractModel {
     );
   }
 
-  toDto(): CategoryDto {
+  toDto(): Category.Dto {
     return {
       id: undefined,
       name: this.name,

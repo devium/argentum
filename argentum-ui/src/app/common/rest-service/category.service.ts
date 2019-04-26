@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Category, CategoryDto} from '../model/category';
+import {Category} from '../model/category';
 import {map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 
@@ -13,20 +13,20 @@ export class CategoryService {
   }
 
   list(): Observable<Category[]> {
-    return this.http.get<CategoryDto[]>('/categories').pipe(
-      map((dtos: CategoryDto[]) => dtos.map((dto: CategoryDto) => Category.fromDto(dto)))
+    return this.http.get<Category.Dto[]>('/categories').pipe(
+      map((dtos: Category.Dto[]) => dtos.map((dto: Category.Dto) => Category.fromDto(dto)))
     );
   }
 
   create(category: Category): Observable<Category> {
-    return this.http.post<CategoryDto>('/categories', category.toDto()).pipe(
-      map((dto: CategoryDto) => Category.fromDto(dto))
+    return this.http.post<Category.Dto>('/categories', category.toDto()).pipe(
+      map((dto: Category.Dto) => Category.fromDto(dto))
     );
   }
 
   update(category: Category): Observable<Category> {
-    return this.http.patch<CategoryDto>(`/categories/${category.id}`, category.toDto()).pipe(
-      map((dto: CategoryDto) => Category.fromDto(dto))
+    return this.http.patch<Category.Dto>(`/categories/${category.id}`, category.toDto()).pipe(
+      map((dto: Category.Dto) => Category.fromDto(dto))
     );
   }
 

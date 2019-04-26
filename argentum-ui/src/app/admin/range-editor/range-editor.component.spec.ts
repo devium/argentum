@@ -1,14 +1,13 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RangeEditorComponent } from './range-editor.component';
-import { RestService } from '../../common/rest-service/rest.service';
 import { ProductRange } from '../../common/model/product-range';
 import { AdminNavComponent } from '../admin-nav/admin-nav.component';
 import { NavbarComponent } from '../../common/navbar/navbar.component';
-import { PRODUCT_RANGES } from '../../common/rest-service/mocks/mock-ranges';
+import {ProductRanges} from '../../common/rest-service/test-data/product-ranges';
 
 class RestServiceStub {
   getProductRangesMeta(): Promise<ProductRange[]> {
-    return Promise.resolve(PRODUCT_RANGES);
+    return Promise.resolve(ProductRanges.ALL_META);
   }
 }
 
@@ -24,7 +23,7 @@ xdescribe('RangeEditorComponent', () => {
         AdminNavComponent,
         NavbarComponent
       ],
-      providers: [{ provide: RestService, useClass: RestServiceStub }]
+      providers: []
     })
       .compileComponents();
   }));

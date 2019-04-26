@@ -3,8 +3,6 @@ import { NewGuestModalComponent } from './new-guest-modal.component';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import createSpyObj = jasmine.createSpyObj;
-import { RestService } from '../../common/rest-service/rest.service';
-import { STATUSES } from '../../common/rest-service/mocks/mock-statuses';
 
 describe('NewGuestModalComponent', () => {
   let component: NewGuestModalComponent;
@@ -18,7 +16,6 @@ describe('NewGuestModalComponent', () => {
     TestBed.configureTestingModule({
       declarations: [NewGuestModalComponent],
       providers: [
-        { provide: RestService, useValue: restService },
         { provide: NgbActiveModal, useValue: activeModal }
       ],
       imports: [FormsModule]
@@ -29,7 +26,8 @@ describe('NewGuestModalComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(NewGuestModalComponent);
     component = fixture.componentInstance;
-    restService.getStatuses.and.returnValue(Promise.resolve(STATUSES));
+    // TODO
+    restService.getStatuses.and.returnValue(Promise.resolve([]));
   });
 
   it('should create', fakeAsync(() => {

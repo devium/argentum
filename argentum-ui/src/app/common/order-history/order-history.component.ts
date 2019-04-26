@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { RestService } from '../rest-service/rest.service';
 import { Guest } from '../model/guest';
 import { Order } from '../model/order';
 import { MessageComponent } from '../message/message.component';
@@ -24,7 +23,7 @@ export class OrderHistoryComponent implements OnInit {
   guest: Guest;
   orders: Order[];
 
-  constructor(private restService: RestService, private modalService: NgbModal) {
+  constructor(private modalService: NgbModal) {
   }
 
   ngOnInit() {
@@ -32,7 +31,9 @@ export class OrderHistoryComponent implements OnInit {
 
   getOrderHistory(guest: Guest) {
     this.guest = guest;
-    this.restService.getOrders(guest)
+    // TODO
+    // this.restService.getOrders(guest)
+    Promise.resolve([])
       .then((orders: Order[]) => this.orders = orders.sort(
         (order1: Order, order2: Order) => order2.time.getTime() - order1.time.getTime())
       )
@@ -62,9 +63,9 @@ export class OrderHistoryComponent implements OnInit {
 
     confirmModal.result
       .then(() => {
-        orderItem.cancelled += 1;
-        order.update();
-        this.restService.cancelOrderItem(orderItem)
+        // TODO
+        // this.restService.cancelOrderItem(orderItem)
+        Promise.resolve()
           .then(() => {
             this.message.success(`
                 Refunded <b>${this.guest.name}</b>
@@ -85,7 +86,8 @@ export class OrderHistoryComponent implements OnInit {
 
     keypadModal.result
       .then((customCancelled: number) => {
-        customCancelled = Math.min(customCancelled, order.customTotalEffective);
+        // TODO
+        // customCancelled = Math.min(customCancelled, order.customTotalEffective);
         const confirmModal = this.modalService.open(ConfirmModalComponent, { backdrop: 'static' });
         const confirmModalComponent = <ConfirmModalComponent>confirmModal.componentInstance;
 
@@ -97,9 +99,9 @@ export class OrderHistoryComponent implements OnInit {
 
         confirmModal.result
           .then(() => {
-            order.customCancelled += customCancelled;
-            order.update();
-            this.restService.cancelCustom(order)
+            // TODO
+            // this.restService.cancelCustom(order)
+            Promise.resolve()
               .then(() => {
                 this.message.success(`
                   Refunded <b>${this.guest.name}</b>

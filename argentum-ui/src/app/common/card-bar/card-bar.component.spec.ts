@@ -1,14 +1,13 @@
 import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { CardBarComponent } from './card-bar.component';
-import { RestService } from '../rest-service/rest.service';
-import { GUESTS } from '../rest-service/mocks/mock-guests';
 import { Component, Input } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { STATUSES } from '../rest-service/mocks/mock-statuses';
 import { By } from '@angular/platform-browser';
 import createSpyObj = jasmine.createSpyObj;
 import { MessageComponent } from '../message/message.component';
 import createSpy = jasmine.createSpy;
+import {Guests} from '../rest-service/test-data/guests';
+import {Statuses} from '../rest-service/test-data/statuses';
 
 @Component({selector: 'app-order-history', template: ''})
 class OrderHistoryStubComponent {
@@ -31,7 +30,6 @@ describe('CardBarComponent bar mode', () => {
         OrderHistoryStubComponent
       ],
       providers: [
-        { provide: RestService, useValue: restService }
       ],
       imports: [BrowserAnimationsModule]
     })
@@ -43,9 +41,9 @@ describe('CardBarComponent bar mode', () => {
     component = fixture.componentInstance;
     component.fullscreen = false;
     restService.getGuestByCard.and.callFake((card: string) => Promise.resolve(
-      GUESTS.find(guest => guest.card === card)
+      Guests.ALL.find(guest => guest.card === card)
     ));
-    restService.getStatuses.and.returnValue(Promise.resolve(STATUSES));
+    restService.getStatuses.and.returnValue(Promise.resolve(Statuses.ALL));
   });
 
   it('should create', () => {
@@ -69,7 +67,7 @@ describe('CardBarComponent bar mode', () => {
     expect(component.status).toBeNull();
     expect(component.active).toBeTruthy();
     expect(component.state).toBe(component.scanState.Waiting);
-    expect(component.statuses).toBe(STATUSES);
+    expect(component.statuses).toBe(Statuses.ALL);
     expect(fixture.debugElement.query(By.css('#stateWaiting')).nativeElement.textContent).toBe('Ready for scan.');
     expect(fixture.debugElement.query(By.css('#stateValid'))).toBeNull();
     expect(fixture.debugElement.query(By.css('#stateNotFound'))).toBeNull();
@@ -278,8 +276,8 @@ describe('CardBarComponent fullscreen mode', () => {
   let messageComponent: MessageStubComponent;
   let fixture: ComponentFixture<CardBarComponent>;
   const restService = createSpyObj('RestService', ['getGuestByCard', 'getStatuses']);
-  restService.getGuestByCard.and.callFake((card: string) => Promise.resolve(GUESTS.find(guest => guest.card === card)));
-  restService.getStatuses.and.returnValue(Promise.resolve(STATUSES));
+  restService.getGuestByCard.and.callFake((card: string) => Promise.resolve(Guests.ALL.find(guest => guest.card === card)));
+  restService.getStatuses.and.returnValue(Promise.resolve(Statuses.ALL));
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -289,7 +287,6 @@ describe('CardBarComponent fullscreen mode', () => {
         OrderHistoryStubComponent,
       ],
       providers: [
-        { provide: RestService, useValue: restService }
       ],
       imports: [BrowserAnimationsModule]
     })
@@ -304,9 +301,9 @@ describe('CardBarComponent fullscreen mode', () => {
     component.message = messageComponent as MessageComponent;
 
     restService.getGuestByCard.and.callFake((card: string) => Promise.resolve(
-      GUESTS.find(guest => guest.card === card)
+      Guests.ALL.find(guest => guest.card === card)
     ));
-    restService.getStatuses.and.returnValue(Promise.resolve(STATUSES));
+    restService.getStatuses.and.returnValue(Promise.resolve(Statuses.ALL));
   });
 
   it('should create', () => {
@@ -339,7 +336,7 @@ describe('CardBarComponent fullscreen mode', () => {
     tick(component.flushInputTimeout);
 
     expect(orderHistoryComponent.clear).not.toHaveBeenCalled();
-    expect(orderHistoryComponent.getOrderHistory).toHaveBeenCalledWith(GUESTS[1]);
+    expect(orderHistoryComponent.getOrderHistory).toHaveBeenCalledWith(Guests.ALL[1]);
 
     document.dispatchEvent(new KeyboardEvent('keydown', {'key': '5'}));
     tick(component.flushInputTimeout);

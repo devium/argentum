@@ -4,7 +4,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { OrderComponent } from './order/order/order.component';
-import { RestService } from './common/rest-service/rest.service';
 import { IterablePipe } from './common/pipes/iterable.pipe';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { KeypadModalComponent } from './common/keypad-modal/keypad-modal.component';
@@ -85,7 +84,6 @@ import {BaseInterceptor} from './common/rest-service/base-interceptor';
     PapaParseModule
   ],
   providers: [
-    RestService,
     RouteGuard,
     { provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true },
   ],

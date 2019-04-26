@@ -1,8 +1,8 @@
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Injectable } from '@angular/core';
-import { RestService } from '../common/rest-service/rest.service';
 import { User } from '../common/model/user';
 import {Group} from '../common/model/group';
+import {UserService} from '../common/rest-service/user.service';
 
 @Injectable()
 export class RouteGuard implements CanActivate {
@@ -47,7 +47,7 @@ export class RouteGuard implements CanActivate {
     return '';
   }
 
-  constructor(private restService: RestService, private router: Router) {
+  constructor(private userService: UserService, private router: Router) {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | Promise<boolean> {
@@ -72,7 +72,7 @@ export class RouteGuard implements CanActivate {
     }
 
     console.log('Getting user information from backend.');
-    return this.restService.getUser()
+    return this.userService.me().toPromise()
       .then((user: User) => {
         console.log(`Roles: ${user.groups}`);
         localStorage.setItem('roles', user.groups.join(','));
@@ -104,8 +104,7 @@ export class RouteGuard implements CanActivate {
         const home: string = this.resolveHome(user.groups);
         this.router.navigate([home]);
         return Promise.resolve(false);
-      })
-      .catch(() => {
+      }).catch(() => {
         this.router.navigate(['/login']);
         return Promise.resolve(false);
       });

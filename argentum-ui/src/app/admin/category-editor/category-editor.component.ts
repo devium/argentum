@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { RestService } from '../../common/rest-service/rest.service';
 import { Category } from '../../common/model/category';
 import { MessageComponent } from '../../common/message/message.component';
 
@@ -39,7 +38,7 @@ export class CategoryEditorComponent implements OnInit {
   @ViewChild(MessageComponent)
   private message: MessageComponent;
 
-  constructor(private restService: RestService) {
+  constructor() {
   }
 
   ngOnInit() {
@@ -47,7 +46,8 @@ export class CategoryEditorComponent implements OnInit {
   }
 
   loadCategories() {
-    this.restService.getCategories()
+    // TODO
+    Promise.resolve([])
       .then((categories: Category[]) => this.categories = categories.map(category => new EditorCategory(category)))
       .catch(reason => this.message.error(reason));
   }
@@ -99,8 +99,9 @@ export class CategoryEditorComponent implements OnInit {
       .filter(category => !category.edited)
       .map(category => category.original);
 
-    const pCreate = this.restService.mergeCategories(updatedCategories);
-    const pDelete = this.restService.deleteCategories(deletedCategories);
+    // TODO
+    const pCreate = Promise.resolve('TODO');
+    const pDelete = Promise.resolve('TODO');
 
     Promise.all([pCreate, pDelete])
       .then(result => {

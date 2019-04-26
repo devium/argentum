@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CardBarComponent } from '../common/card-bar/card-bar.component';
 import { MessageComponent } from '../common/message/message.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { RestService } from '../common/rest-service/rest.service';
 import { CoatCheckTag } from '../common/model/coat-check-tag';
 import { Guest } from '../common/model/guest';
 
@@ -25,7 +24,7 @@ class EditorTag extends CoatCheckTag {
 })
 export class CoatCheckComponent implements OnInit {
 
-  constructor(private restService: RestService, private modalService: NgbModal) {
+  constructor(private modalService: NgbModal) {
   }
   readonly MAX_ID = 999;
 
@@ -101,7 +100,9 @@ export class CoatCheckComponent implements OnInit {
   }
 
   refreshTags() {
-    this.restService.getAllCoatCheckTags()
+    // TODO
+    // this.restService.getAllCoatCheckTags()
+    Promise.resolve([])
       .then((tagIds: number[]) => {
         // Integer range from 1 to this.MAX_ID.
         this.freeIds = Array.from({ length: this.MAX_ID }, (v, k) => k + 1);
@@ -137,7 +138,9 @@ export class CoatCheckComponent implements OnInit {
     }
 
     this.waitingForSave = true;
-    this.restService.getGuestCoatCheckTags(guest)
+    // TODO
+    // this.restService.getGuestCoatCheckTags(guest)
+    Promise.resolve([])
       .then((tags: CoatCheckTag[]) => {
         this.storedTags.push(...tags.map((tag: CoatCheckTag) => new EditorTag(tag)));
         this.waitingForSave = false;
@@ -245,13 +248,17 @@ export class CoatCheckComponent implements OnInit {
     // Deregister first.
     let pDelete: Promise<void> = Promise.resolve();
     if (deleteTagIds.length > 0) {
-      pDelete = this.restService.deregisterTags(deleteTagIds);
+      // TODO
+      // pDelete = this.restService.deregisterTags(deleteTagIds);
+      pDelete = Promise.resolve();
     }
 
     // Register new tags.
     let pRegister: Promise<CoatCheckTag[]> = Promise.resolve([]);
     if (newTagIds.length > 0) {
-      pRegister = this.restService.registerTags(newTagIds, guest, price);
+      // TODO
+      // pRegister = this.restService.registerTags(newTagIds, guest, price);
+      pRegister = Promise.resolve([]);
     }
 
     Promise.all([pDelete, pRegister])

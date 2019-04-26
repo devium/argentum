@@ -1,13 +1,11 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Product } from '../../common/model/product';
-import { RestService } from '../../common/rest-service/rest.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.component';
 import { isDarkBackground } from '../../common/util/is-dark-background';
 import { ProductRange } from '../../common/model/product-range';
 import { MessageComponent } from '../../common/message/message.component';
 import { CardBarComponent } from '../../common/card-bar/card-bar.component';
-import { OrderResponse } from '../../common/rest-service/response/order-response';
 import { OrderHistoryModalComponent } from '../order-history-modal/order-history-modal.component';
 import { Category } from '../../common/model/category';
 
@@ -36,7 +34,7 @@ export class OrderComponent implements OnInit {
   @ViewChild(CardBarComponent)
   cardBar: CardBarComponent;
 
-  constructor(private restService: RestService, private ngZone: NgZone, private modalService: NgbModal) {
+  constructor(private ngZone: NgZone, private modalService: NgbModal) {
   }
 
   ngOnInit() {
@@ -62,7 +60,9 @@ export class OrderComponent implements OnInit {
   }
 
   refreshRanges() {
-    this.restService.getProductRanges()
+    // TODO
+    // this.restService.getProductRanges()
+    Promise.resolve([])
       .then((ranges: ProductRange[]) => {
         this.productRanges = ranges;
         if (ranges.length === 1) {
@@ -74,9 +74,10 @@ export class OrderComponent implements OnInit {
 
   refreshProducts() {
     if (this.selectedRange) {
-      const pProducts = this.restService.getRangeProducts(this.selectedRange);
-      const pCategories = this.restService.getCategories();
-      Promise.all([pProducts, pCategories])
+      // TODO
+      // const pProducts = this.restService.getRangeProducts(this.selectedRange);
+      // const pCategories = this.restService.getCategories();
+      Promise.all([])
         .then((response: any[]) => {
           const products: Product[] = response[0];
           const categories: Category[] = response[1];
@@ -85,10 +86,10 @@ export class OrderComponent implements OnInit {
             (category: Category) => [category.id, category] as [number, Category]
           ));
 
-          this.products = products.filter(product => !product.legacy);
+          this.products = products.filter(product => !product.deprecated);
           this.products.sort((a: Product, b: Product) => {
-            const categoryA: string = a.categoryId === null ? '' : this.categories.get(a.categoryId).name;
-            const categoryB: string = b.categoryId === null ? '' : this.categories.get(b.categoryId).name;
+            const categoryA: string = a.category === null ? '' : this.categories.get(a.category.id).name;
+            const categoryB: string = b.category === null ? '' : this.categories.get(b.category.id).name;
             return categoryA.localeCompare(categoryB);
           });
         })
@@ -149,14 +150,7 @@ export class OrderComponent implements OnInit {
   }
 
   confirmKeypad(price: number) {
-    this.orderedProducts.set({
-      id: -1,
-      name: 'Custom',
-      price: price,
-      categoryId: null,
-      rangeIds: new Set(),
-      legacy: false
-    }, 1);
+    this.orderedProducts.set(new Product(undefined, 'Custom', false, price, null, []), 1);
     this.updateTotal();
   }
 
@@ -185,7 +179,9 @@ export class OrderComponent implements OnInit {
     this.waitingForOrder = true;
     this.cardBar.active = false;
     const guest = this.cardBar.guest;
-    this.restService.placeOrder(guest, this.orderedProducts)
+    // TODO
+    // this.restService.placeOrder(guest, this.orderedProducts)
+    Promise.resolve()
       .then(() => {
         this.message.success(`
           Order placed for <b>${guest.name}</b>.

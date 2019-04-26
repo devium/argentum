@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ProductRange } from '../../common/model/product-range';
-import { RestService } from '../../common/rest-service/rest.service';
 import { Category } from '../../common/model/category';
 import { Product } from '../../common/model/product';
 import { isDarkBackground } from '../../common/util/is-dark-background';
@@ -16,9 +15,9 @@ class EditorProduct {
 
   constructor(original: Product) {
     this.original = Object.assign({}, original);
-    this.original.rangeIds = new Set(original.rangeIds);
+    this.original.productRangeIds = [...original.productRangeIds];
     this.edited = Object.assign({}, original);
-    this.edited.rangeIds = new Set(original.rangeIds);
+    this.edited.productRangeIds = [...original.productRangeIds];
     this.displayed = this.edited;
   }
 
@@ -31,7 +30,7 @@ class EditorProduct {
   }
 
   hasChangedCategory(): boolean {
-    return !this.original || this.original.categoryId !== this.edited.categoryId;
+    return !this.original || this.original.category.id !== this.edited.category.id;
   }
 
   hasChangedRanges(): boolean {
@@ -40,8 +39,8 @@ class EditorProduct {
     }
 
     let equal = true;
-    this.original.rangeIds.forEach((rangeId: number) => equal = equal && this.edited.rangeIds.has(rangeId));
-    this.edited.rangeIds.forEach((rangeId: number) => equal = equal && this.original.rangeIds.has(rangeId));
+    this.original.productRangeIds.forEach((rangeId: number) => equal = equal && this.edited.productRangeIds.includes(rangeId));
+    this.edited.productRangeIds.forEach((rangeId: number) => equal = equal && this.original.productRangeIds.includes(rangeId));
     return !equal;
   }
 
@@ -68,7 +67,7 @@ export class ProductEditorComponent implements OnInit {
   @ViewChild(MessageComponent)
   message: MessageComponent;
 
-  constructor(private restService: RestService, private modalService: NgbModal) {
+  constructor(private modalService: NgbModal) {
   }
 
   ngOnInit(): void {
@@ -76,7 +75,9 @@ export class ProductEditorComponent implements OnInit {
   }
 
   loadProducts() {
-    this.restService.getProductData()
+    // TODO
+    // this.restService.getProductData()
+    Promise.resolve({})
       .then((productData: { products: Product[], categories: Category[], ranges: ProductRange[] }) => {
         this.categories = new Map(productData.categories.map(
           (category: Category) => [category.id, category] as [number, Category])
@@ -99,15 +100,16 @@ export class ProductEditorComponent implements OnInit {
   }
 
   setCategory(product: EditorProduct, categoryId: number) {
-    product.edited.categoryId = categoryId;
+    product.edited.category.id = categoryId;
     product.updateChanged();
   }
 
   toggleRange(product: EditorProduct, range: ProductRange) {
-    if (product.edited.rangeIds.has(range.id)) {
-      product.edited.rangeIds.delete(range.id);
+    const rangeIndex = product.edited.productRangeIds.indexOf(range.id);
+    if (rangeIndex !== -1) {
+      product.edited.productRangeIds.splice(rangeIndex, 1);
     } else {
-      product.edited.rangeIds.add(range.id);
+      product.edited.productRangeIds.push(range.id);
     }
     product.updateChanged();
   }
@@ -118,7 +120,7 @@ export class ProductEditorComponent implements OnInit {
 
   reset(product: EditorProduct) {
     product.edited = Object.assign({}, product.original);
-    product.edited.rangeIds = new Set(product.original.rangeIds);
+    product.edited.productRangeIds = [...product.original.productRangeIds];
     product.displayed = product.edited;
     product.updateChanged();
   }
@@ -146,14 +148,7 @@ export class ProductEditorComponent implements OnInit {
   }
 
   newProduct() {
-    const newProduct = new EditorProduct({
-      id: -1,
-      name: 'New Product',
-      price: 0.00,
-      categoryId: null,
-      rangeIds: new Set(),
-      legacy: false
-    });
+    const newProduct = new EditorProduct(new Product(-1, 'New Product', false, 0.00, null, []));
     newProduct.original = null;
     newProduct.updateChanged();
     this.products.unshift(newProduct);
@@ -177,8 +172,9 @@ export class ProductEditorComponent implements OnInit {
       .filter(product => !product.edited)
       .map(product => product.original);
 
-    const pCreate = this.restService.mergeProducts(mergedProducts);
-    const pDelete = this.restService.deleteProducts(deletedProducts);
+    // TODO
+    const pCreate = Promise.resolve();
+    const pDelete = Promise.resolve();
 
     Promise.all([pCreate, pDelete])
       .then(() => {

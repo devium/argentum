@@ -4,7 +4,6 @@ import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.com
 import { Guest } from '../../common/model/guest';
 import { CardModalComponent } from '../card-modal/card-modal.component';
 import { GroupBasedComponent } from '../../common/group-based/group-based.component';
-import { RestService } from '../../common/rest-service/rest.service';
 import { Status } from '../../common/model/status';
 import { MessageComponent } from '../../common/message/message.component';
 import { isDarkBackground } from '../../common/util/is-dark-background';
@@ -28,7 +27,7 @@ export class NewGuestModalComponent extends GroupBasedComponent implements OnIni
 
   message: MessageComponent;
 
-  constructor(private restService: RestService, private modalService: NgbModal, public activeModal: NgbActiveModal) {
+  constructor(private modalService: NgbModal, public activeModal: NgbActiveModal) {
     super();
   }
 
@@ -36,7 +35,9 @@ export class NewGuestModalComponent extends GroupBasedComponent implements OnIni
     super.ngOnInit();
     this.nameInput.nativeElement.focus();
 
-    this.restService.getStatuses()
+    // TODO
+    // this.restService.getStatuses()
+    Promise.resolve([])
       .then((statuses: Status[]) => this.statuses = statuses)
       .catch(reason => this.message.error(reason));
   }

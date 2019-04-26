@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {CategoryService} from './category.service';
-import {ProductRange, ProductRangeDto} from '../model/product-range';
+import {ProductRange} from '../model/product-range';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Category} from '../model/category';
@@ -16,32 +16,32 @@ export class ProductRangeService {
   }
 
   list(): Observable<ProductRange[]> {
-    return this.http.get<ProductRangeDto[]>('/product_ranges').pipe(
+    return this.http.get<ProductRange.Dto[]>('/product_ranges').pipe(
       // Only retrieve requests come with product lists that require category resolution.
-      map((dtos: ProductRangeDto[]) => dtos.map((dto: ProductRangeDto) => ProductRange.fromDto(dto, undefined)))
+      map((dtos: ProductRange.Dto[]) => dtos.map((dto: ProductRange.Dto) => ProductRange.fromDto(dto, undefined)))
     );
   }
 
   retrieve(productRangeId: number, categories?: Category[]): Observable<ProductRange> {
     return withDependencies(
-      this.http.get<ProductRangeDto>(`/product_ranges/${productRangeId}`),
+      this.http.get<ProductRange.Dto>(`/product_ranges/${productRangeId}`),
       [categories, this.categoryService.list]
     ).pipe(
-      map(([dto, categoriesDep]: [ProductRangeDto, Category[], {}, {}]) => ProductRange.fromDto(dto, categoriesDep))
+      map(([dto, categoriesDep]: [ProductRange.Dto, Category[], {}, {}]) => ProductRange.fromDto(dto, categoriesDep))
     );
   }
 
   create(productRange: ProductRange): Observable<ProductRange> {
-    return this.http.post<ProductRangeDto>('/product_ranges', productRange.toDto()).pipe(
+    return this.http.post<ProductRange.Dto>('/product_ranges', productRange.toDto()).pipe(
       // Only retrieve requests come with product lists that require category resolution.
-      map((dto: ProductRangeDto) => ProductRange.fromDto(dto, undefined))
+      map((dto: ProductRange.Dto) => ProductRange.fromDto(dto, undefined))
     );
   }
 
   update(productRange: ProductRange): Observable<ProductRange> {
-    return this.http.patch<ProductRangeDto>(`/product_ranges/${productRange.id}`, productRange.toDto()).pipe(
+    return this.http.patch<ProductRange.Dto>(`/product_ranges/${productRange.id}`, productRange.toDto()).pipe(
       // Only retrieve requests come with product lists that require category resolution.
-      map((dto: ProductRangeDto) => ProductRange.fromDto(dto, undefined))
+      map((dto: ProductRange.Dto) => ProductRange.fromDto(dto, undefined))
     );
   }
 

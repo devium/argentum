@@ -4,7 +4,6 @@ import {
   Input, OnDestroy,
   OnInit, ViewChild
 } from '@angular/core';
-import {RestService} from '../rest-service/rest.service';
 import {Guest} from '../model/guest';
 import {convertCard} from '../util/convert-card';
 import {Observable, Subscription, Subject, fromEvent} from 'rxjs';
@@ -66,7 +65,7 @@ export class CardBarComponent implements OnInit, OnDestroy {
   @ViewChild('orderHistory')
   orderHistory: OrderHistoryComponent;
 
-  constructor(private restService: RestService) {
+  constructor() {
   }
 
   ngOnInit(): void {
@@ -87,7 +86,9 @@ export class CardBarComponent implements OnInit, OnDestroy {
       debounceTime(this.cardTimeout))
       .subscribe(() => this.setState(ScanState.Waiting));
 
-    this.restService.getStatuses()
+    // TODO
+    // this.restService.getStatuses()
+    Promise.resolve([])
       .then((statuses: Status[]) => this.statuses = statuses)
       .catch(error => void (0));
   }
@@ -103,7 +104,9 @@ export class CardBarComponent implements OnInit, OnDestroy {
     }
 
     this.card = card.slice(-10);
-    this.restService.getGuestByCard(card)
+    // TODO
+    // this.restService.getGuestByCard(card)
+    Promise.resolve({})
       .then((guest: Guest) => {
         this.guest = guest;
         this.status = this.resolveStatus(guest);
@@ -125,12 +128,7 @@ export class CardBarComponent implements OnInit, OnDestroy {
     if (statusMapping) {
       return statusMapping;
     } else {
-      return {
-        id: -1,
-        internalName: guest.status,
-        displayName: guest.status,
-        color: '#ffffff'
-      };
+      return new Status(undefined, guest.status, guest.status, '#ffffff');
     }
   }
 

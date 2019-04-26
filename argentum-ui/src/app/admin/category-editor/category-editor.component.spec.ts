@@ -1,14 +1,13 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { CategoryEditorComponent } from './category-editor.component';
-import { Category } from '../../common/model/category';
-import { RestService } from '../../common/rest-service/rest.service';
-import { AdminNavComponent } from '../admin-nav/admin-nav.component';
-import { NavbarComponent } from '../../common/navbar/navbar.component';
-import { CATEGORIES } from '../../common/rest-service/mocks/mock-categories';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {CategoryEditorComponent} from './category-editor.component';
+import {Category} from '../../common/model/category';
+import {AdminNavComponent} from '../admin-nav/admin-nav.component';
+import {NavbarComponent} from '../../common/navbar/navbar.component';
+import {Categories} from '../../common/rest-service/test-data/categories';
 
 class RestServiceStub {
   getCategories(): Promise<Category[]> {
-    return Promise.resolve(CATEGORIES);
+    return Promise.resolve(Categories.ALL);
   }
 }
 
@@ -23,7 +22,7 @@ xdescribe('CategoryEditorComponent', () => {
         AdminNavComponent,
         NavbarComponent
       ],
-      providers: [{ provide: RestService, useClass: RestServiceStub }]
+      providers: []
     })
       .compileComponents();
   }));

@@ -1,5 +1,4 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {RestService} from '../../common/rest-service/rest.service';
 import {Guest} from '../../common/model/guest';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {KeypadModalComponent} from '../../common/keypad-modal/keypad-modal.component';
@@ -33,7 +32,7 @@ export class GuestEditorComponent implements OnInit {
   @ViewChild(MessageComponent)
   message: MessageComponent;
 
-  constructor(private restService: RestService, private modalService: NgbModal) {
+  constructor(private modalService: NgbModal) {
   }
 
   ngOnInit() {
@@ -74,16 +73,18 @@ export class GuestEditorComponent implements OnInit {
   }
 
   refresh() {
-    this.restService.getGuestsPaginatedAndFiltered(
-      this.PAGE_SIZE,
-      this.page - 1,
-      this.codeLike,
-      this.nameLike,
-      this.mailLike,
-      this.statusLike,
-      this.sort,
-      this.direction
-    )
+    // TODO
+    // this.restService.getGuestsPaginatedAndFiltered(
+    //   this.PAGE_SIZE,
+    //   this.page - 1,
+    //   this.codeLike,
+    //   this.nameLike,
+    //   this.mailLike,
+    //   this.statusLike,
+    //   this.sort,
+    //   this.direction
+    // )
+    Promise.resolve({})
       .then((result: { guests: Guest[], guestsTotal: number }) => {
         this.guests = result.guests;
         this.guestsTotal = result.guestsTotal;
@@ -100,7 +101,9 @@ export class GuestEditorComponent implements OnInit {
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
 
     modal.result.then(result => {
-      this.restService.addBalance(guest, result)
+      // TODO
+      // this.restService.addBalance(guest, result)
+      Promise.resolve(0)
         .then((newBalance: number) => {
           guest.balance = newBalance;
           this.message.success(
@@ -116,7 +119,9 @@ export class GuestEditorComponent implements OnInit {
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
 
     modal.result.then(result => {
-      this.restService.addBalance(guest, -result)
+      // TODO
+      // this.restService.addBalance(guest, -result)
+      Promise.resolve(0)
         .then((newBalance: number) => {
           guest.balance = newBalance;
           this.message.success(
@@ -132,7 +137,9 @@ export class GuestEditorComponent implements OnInit {
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
 
     modal.result.then(result => {
-      this.restService.addBonus(guest, result)
+      // TODO
+      // this.restService.addBonus(guest, result)
+      Promise.resolve(0)
         .then((newBonus: number) => {
           guest.bonus = newBonus;
           this.message.success(
@@ -148,7 +155,9 @@ export class GuestEditorComponent implements OnInit {
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
 
     modal.result.then(result => {
-      this.restService.addBonus(guest, -result)
+      // TODO
+      // this.restService.addBonus(guest, -result)
+      Promise.resolve(0)
         .then((newBonus: number) => {
           guest.bonus = newBonus;
           this.message.success(

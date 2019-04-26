@@ -5,17 +5,12 @@ import {HTTP_INTERCEPTORS, HttpClient} from '@angular/common/http';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {BaseInterceptor} from './base-interceptor';
 import {of} from 'rxjs';
-import {CATEGORIES_ALL} from './test-data/categories';
 import createSpyObj = jasmine.createSpyObj;
 import {ProductRange} from '../model/product-range';
-import {
-  PRODUCT_RANGE_JUST_COKE_META,
-  PRODUCT_RANGE_JUST_WATER, PRODUCT_RANGE_JUST_WATER_META,
-  PRODUCT_RANGE_JUST_WATER_PATCHED_META,
-  PRODUCT_RANGES_ALL_META
-} from './test-data/product-ranges';
-import {testEndpoint} from './test-utils';
-import {PRODUCT_WATER} from './test-data/products';
+import {expectArraysEqual, testEndpoint} from './test-utils';
+import {Categories} from './test-data/categories';
+import {Products} from './test-data/products';
+import {ProductRanges} from './test-data/product-ranges';
 
 fdescribe('ProductRangeService', () => {
   let service: ProductRangeService;
@@ -35,7 +30,7 @@ fdescribe('ProductRangeService', () => {
     http = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
     categoryService = createSpyObj('CategoryService', ['list']);
-    categoryService.list.and.returnValue(of(CATEGORIES_ALL));
+    categoryService.list.and.returnValue(of(Categories.ALL));
     service = new ProductRangeService(http, categoryService);
     resolved = false;
   });
@@ -51,46 +46,42 @@ fdescribe('ProductRangeService', () => {
 
   it('should list all product ranges', fakeAsync(() => {
     service.list().subscribe((productRanges: ProductRange[]) => {
-      expect(productRanges.length).toBe(PRODUCT_RANGES_ALL_META.length);
-      productRanges.forEach(
-        (productRange: ProductRange, index: number) =>
-          expect(productRange.equals(PRODUCT_RANGES_ALL_META[index])).toBeTruthy(productRange.id)
-      );
+      expectArraysEqual(productRanges, ProductRanges.ALL_META);
       resolved = true;
     });
     testEndpoint(httpTestingController, requests, responses, 'GET', '/product_ranges');
   }));
 
   it('should retrieve a product range including its products', fakeAsync(() => {
-    service.retrieve(PRODUCT_RANGE_JUST_WATER.id).subscribe((productRange: ProductRange) => {
-      expect(productRange.equals(PRODUCT_RANGE_JUST_WATER)).toBeTruthy();
+    service.retrieve(ProductRanges.JUST_WATER.id).subscribe((productRange: ProductRange) => {
+      expect(productRange.equals(ProductRanges.JUST_WATER)).toBeTruthy();
       // Manually check if all product fields have been parsed correctly.
-      expect(productRange.products[0].equals(PRODUCT_WATER));
+      expect(productRange.products[0].equals(Products.WATER));
       resolved = true;
     });
-    testEndpoint(httpTestingController, requests, responses, 'GET', `/product_ranges/${PRODUCT_RANGE_JUST_WATER.id}`);
+    testEndpoint(httpTestingController, requests, responses, 'GET', `/product_ranges/${ProductRanges.JUST_WATER.id}`);
   }));
 
   it('should create a product range', fakeAsync(() => {
-    service.create(PRODUCT_RANGE_JUST_COKE_META).subscribe((productRange: ProductRange) => {
-      expect(productRange.equals(PRODUCT_RANGE_JUST_COKE_META)).toBeTruthy();
+    service.create(ProductRanges.JUST_COKE_META).subscribe((productRange: ProductRange) => {
+      expect(productRange.equals(ProductRanges.JUST_COKE_META)).toBeTruthy();
       resolved = true;
     });
     testEndpoint(httpTestingController, requests, responses, 'POST', '/product_ranges');
   }));
 
   it('should update a product range', fakeAsync(() => {
-    service.update(PRODUCT_RANGE_JUST_WATER_PATCHED_META).subscribe((productRange: ProductRange) => {
-      expect(productRange.equals(PRODUCT_RANGE_JUST_WATER_PATCHED_META)).toBeTruthy();
+    service.update(ProductRanges.JUST_WATER_PATCHED_META).subscribe((productRange: ProductRange) => {
+      expect(productRange.equals(ProductRanges.JUST_WATER_PATCHED_META)).toBeTruthy();
       resolved = true;
     });
-    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/product_ranges/${PRODUCT_RANGE_JUST_WATER_META.id}`);
+    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/product_ranges/${ProductRanges.JUST_WATER_META.id}`);
   }));
 
   it('should delete a product range', fakeAsync(() => {
-    service.delete(PRODUCT_RANGE_JUST_WATER_META).subscribe(() => {
+    service.delete(ProductRanges.JUST_WATER_META).subscribe(() => {
       resolved = true;
     });
-    testEndpoint(httpTestingController, requests, responses, 'DELETE', `/product_ranges/${PRODUCT_RANGE_JUST_WATER_META.id}`);
+    testEndpoint(httpTestingController, requests, responses, 'DELETE', `/product_ranges/${ProductRanges.JUST_WATER_META.id}`);
   }));
 });

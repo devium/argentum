@@ -3,7 +3,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NewGuestModalComponent } from '../new-guest-modal/new-guest-modal.component';
 import { SearchGuestModalComponent } from '../search-guest-modal/search-guest-modal.component';
 import { Guest } from '../../common/model/guest';
-import { RestService } from '../../common/rest-service/rest.service';
 import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.component';
 import { MessageComponent } from '../../common/message/message.component';
 import { CardBarComponent } from '../../common/card-bar/card-bar.component';
@@ -20,7 +19,7 @@ export class CheckinComponent extends GroupBasedComponent implements OnInit {
   @ViewChild(CardBarComponent)
   cardBar: CardBarComponent;
 
-  constructor(private restService: RestService, private modalService: NgbModal) {
+  constructor(private modalService: NgbModal) {
     super();
   }
 
@@ -29,7 +28,9 @@ export class CheckinComponent extends GroupBasedComponent implements OnInit {
     const modal = this.modalService.open(NewGuestModalComponent, { backdrop: 'static' });
     (<SearchGuestModalComponent>modal.componentInstance).message = this.message;
     modal.result.then((guest: Guest) => {
-      this.restService.mergeGuests([guest])
+      // TODO
+      // this.restService.mergeGuests([guest])
+      Promise.resolve()
         .then(() => {
           this.message.success(`Created guest <b>${guest.name}</b>.`);
         })
@@ -65,7 +66,9 @@ export class CheckinComponent extends GroupBasedComponent implements OnInit {
         value = -value;
       }
 
-      this.restService.addBalance(guest, value)
+      // TODO
+      // this.restService.addBalance(guest, value)
+      Promise.resolve(0)
         .then((newBalance: number) => {
           this.enableCardBar(true);
 

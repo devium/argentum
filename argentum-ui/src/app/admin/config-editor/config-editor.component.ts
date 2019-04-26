@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Config } from '../../common/model/config';
-import { RestService } from '../../common/rest-service/rest.service';
 import { MessageComponent } from '../../common/message/message.component';
 import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {formatCurrency} from '../../common/util/format';
 
 class EditorConfig {
   original: Config;
@@ -14,8 +14,8 @@ class EditorConfig {
     this.edited = Object.assign({}, original);
   }
 
-  hasChangedPostpaidLimit(): boolean {
-    return this.original.postpaidLimit !== this.edited.postpaidLimit;
+  hasChangedValue(): boolean {
+    return this.original.value !== this.edited.value;
   }
 }
 
@@ -30,7 +30,7 @@ export class ConfigEditorComponent implements OnInit {
   @ViewChild(MessageComponent)
   private message: MessageComponent;
 
-  constructor(private restService: RestService, private modalService: NgbModal) {
+  constructor(private modalService: NgbModal) {
   }
 
   ngOnInit() {
@@ -38,7 +38,8 @@ export class ConfigEditorComponent implements OnInit {
   }
 
   loadConfig(): void {
-    this.restService.getConfig()
+    // TODO
+    Promise.resolve({})
       .then((config: Config) => this.config = new EditorConfig(config))
       .catch(reason => this.message.error(reason));
   }
@@ -51,12 +52,13 @@ export class ConfigEditorComponent implements OnInit {
     const modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
     modal.result.then((result: number) => {
-      this.config.edited.postpaidLimit = result;
+      this.config.edited.value = formatCurrency(result);
     }, result => void(0));
   }
 
   save() {
-    this.restService.setConfig(this.config.edited)
+    // TODO
+    Promise.resolve()
       .then(() => {
         this.message.success('Config saved successfully.');
         this.loadConfig();

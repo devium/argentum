@@ -1,15 +1,15 @@
 import {fakeAsync, TestBed} from '@angular/core/testing';
 
-import {GroupService } from './group.service';
+import { ConfigService } from './config.service';
 import {HTTP_INTERCEPTORS, HttpClient} from '@angular/common/http';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {BaseInterceptor} from './base-interceptor';
-import {Group} from '../model/group';
+import {Config} from '../model/config';
 import {expectArraysEqual, testEndpoint} from './test-utils';
-import {Groups} from './test-data/groups';
+import {Configs} from './test-data/configs';
 
-fdescribe('GroupService', () => {
-  let service: GroupService;
+describe('ConfigService', () => {
+  let service: ConfigService;
   let http: HttpClient;
   let httpTestingController: HttpTestingController;
   const requests: Object = require('./test-data/requests.json');
@@ -24,7 +24,7 @@ fdescribe('GroupService', () => {
     resolved = false;
     http = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
-    service = new GroupService(http);
+    service = new ConfigService(http);
     resolved = false;
   });
 
@@ -37,11 +37,19 @@ fdescribe('GroupService', () => {
     resolved = true;
   });
 
-  it('should list correctly', fakeAsync(() => {
-    service.list().subscribe((groups: Group[]) => {
-      expectArraysEqual(groups, Groups.ALL);
+  it('should list all config entries', fakeAsync(() => {
+    service.list().subscribe((configs: Config[]) => {
+      expectArraysEqual(configs, Configs.ALL);
       resolved = true;
     });
-    testEndpoint(httpTestingController, requests, responses, 'GET', '/groups');
+    testEndpoint(httpTestingController, requests, responses, 'GET', '/config');
+  }));
+
+  it('should update a config entry', fakeAsync(() => {
+    service.update(Configs.POSTPAID_LIMIT_PATCHED).subscribe((config: Config) => {
+      expect(config.equals(Configs.POSTPAID_LIMIT_PATCHED)).toBeTruthy();
+    });
+    resolved = true;
+    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/config/${Configs.POSTPAID_LIMIT.id}`);
   }));
 });

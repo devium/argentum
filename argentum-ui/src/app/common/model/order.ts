@@ -1,47 +1,29 @@
-import { OrderItem } from './order-item';
+import {OrderItem} from './order-item';
+import {AbstractModel} from './abstract-model';
+import {Guest} from './guest';
 
-export class Order {
-  id: number;
-  time: Date;
-  orderItems: OrderItem[];
-  total: number;
-  customCancelled: number;
-  customTotal: number;
-  customTotalEffective: number;
-  totalEffective: number;
-
-  constructor(id: number, time: Date, orderItems: OrderItem[], total: number, customCancelled: number) {
-    this.id = id;
-    this.time = time;
-    this.orderItems = orderItems;
-    this.total = total;
-    this.customCancelled = customCancelled;
-
-    this.update();
+export namespace Order {
+  export interface Dto {
+    id: number;
+    time: Date;
+    guest: number;
+    custom_initial: number;
+    custom_current: number;
+    pending: boolean;
+    items: OrderItem.Dto[];
   }
+}
 
-  private recalculate(): { customTotal: number, customTotalEffective: number, totalEffective: number } {
-    const customTotal = this.total - this.orderItems.map((orderItem: OrderItem) => orderItem.total).reduce(
-      (totalA: number, totalB: number) => totalA + totalB, 0
-    );
-    const customTotalEffective = customTotal - this.customCancelled;
-    const totalEffective = customTotalEffective + this.orderItems.map(
-      (orderItem: OrderItem) => orderItem.totalEffective
-    ).reduce((totalA: number, totalB: number) => totalA + totalB, 0);
-    return { customTotal, customTotalEffective, totalEffective };
-  }
-
-  update() {
-    this.orderItems.forEach((orderItem: OrderItem) => orderItem.update());
-    Object.assign(this, this.recalculate());
-  }
-
-  validate(): boolean {
-    const expected = this.recalculate();
-    return (
-      this.customTotal === expected.customTotal &&
-      this.customTotalEffective === expected.customTotalEffective &&
-      this.totalEffective === expected.totalEffective
-    );
+export class Order extends AbstractModel {
+  constructor(
+    id: number,
+    public time: Date,
+    public guest: Guest,
+    public customInitial: number,
+    public customCurrent: number,
+    public pending: boolean,
+    public orderItems: OrderItem[]
+  ) {
+    super(id);
   }
 }

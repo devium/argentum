@@ -35,11 +35,16 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         response = self.client.get('/guests?status=staff')
         self.assertPksEqual(response.data, [TestGuests.ROBY])
 
-        response = self.client.get('/guests?code=DEMO-0000&mail=tuttocitta')
-        self.assertPksEqual(response.data, [TestGuests.SHEELAH])
+        response = self.client.get('/guests?code=DEMO&name=el&mail=sohu.com')
+        self.assertPksEqual(response.data, [TestGuests.ROBY])
+        self.assertJSONEqual(response.content, self.RESPONSES['GET/guests?code=DEMO&name=el&mail=sohu.com'])
 
         response = self.client.get(f'/guests?card={TestGuests.ROBY.card}')
-        self.assertPksEqual(response.data, [TestGuests.ROBY])
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, self.RESPONSES[f'GET/guests?card={TestGuests.ROBY.card}'])
+
+        response = self.client.get('f/guests?card=notfound')
+        self.assertEqual(response.status_code, 404)
 
     def test_post_min(self):
         self.login(TestUsers.RECEPTION)

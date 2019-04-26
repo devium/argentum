@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Status } from '../../common/model/status';
 import { MessageComponent } from '../../common/message/message.component';
-import { RestService } from '../../common/rest-service/rest.service';
 
 class EditorStatus {
   original: Status;
@@ -16,12 +15,7 @@ class EditorStatus {
       this.displayed = this.edited;
     } else {
       this.original = null;
-      this.edited = {
-        id: -1,
-        internalName: 'new_status',
-        displayName: 'New Status',
-        color: '#ffffff'
-      };
+      this.edited = new Status(undefined, 'new_status', 'New Status', '#ffffff');
       this.displayed = this.edited;
     }
     this.updateChanged();
@@ -63,7 +57,7 @@ export class StatusEditorComponent implements OnInit {
   @ViewChild(MessageComponent)
   private message: MessageComponent;
 
-  constructor(private restService: RestService) {
+  constructor() {
   }
 
   ngOnInit() {
@@ -71,7 +65,9 @@ export class StatusEditorComponent implements OnInit {
   }
 
   loadStatuses() {
-    this.restService.getStatuses()
+    // TODO
+    // this.restService.getStatuses()
+    Promise.resolve([])
       .then((statuses: Status[]) => this.statuses = statuses.map(status => new EditorStatus(status)))
       .catch(reason => this.message.error(reason));
   }
@@ -105,8 +101,9 @@ export class StatusEditorComponent implements OnInit {
       .filter(status => !status.edited)
       .map(status => status.original);
 
-    const pCreate = this.restService.mergeStatuses(updatedStatuses);
-    const pDelete = this.restService.deleteStatuses(deletedStatuses);
+    // TODO
+    const pCreate = Promise.resolve();
+    const pDelete = Promise.resolve();
 
     Promise.all([pCreate, pDelete])
       .then(() => {

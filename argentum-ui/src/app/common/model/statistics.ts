@@ -1,4 +1,4 @@
-export class Statistics {
+export interface Statistics {
   guestsTotal: number;
   guestsCheckedIn: number;
   cardsTotal: number;

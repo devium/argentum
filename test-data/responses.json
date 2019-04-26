@@ -148,6 +148,32 @@
       "bonus": "2.00"
     }
   ],
+  "GET/guests?code=DEMO&name=el&mail=sohu.com": [
+    {
+      "id": 1,
+      "code": "DEMO-00001",
+      "name": "Roby Brushfield",
+      "mail": "rbrushfield0@sohu.com",
+      "status": "staff",
+      "checked_in": "2019-12-31T22:55:44Z",
+      "card": "567a",
+      "balance": "4.50",
+      "bonus": "0.00"
+    }
+  ],
+  "GET/guests?card=567a": [
+    {
+      "id": 1,
+      "code": "DEMO-00001",
+      "name": "Roby Brushfield",
+      "mail": "rbrushfield0@sohu.com",
+      "status": "staff",
+      "checked_in": "2019-12-31T22:55:44Z",
+      "card": "567a",
+      "balance": "4.50",
+      "bonus": "0.00"
+    }
+  ],
   "POST/guests#min": {
     "id": 3,
     "code": "DEMO-00003",

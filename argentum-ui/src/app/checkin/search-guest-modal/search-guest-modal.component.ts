@@ -1,10 +1,9 @@
-import {of as observableOf, Observable, Subject} from 'rxjs';
+import {Observable, of, of as observableOf, Subject} from 'rxjs';
 
 import {debounceTime, switchMap} from 'rxjs/operators';
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Guest} from '../../common/model/guest';
-import {RestService} from '../../common/rest-service/rest.service';
 import {CardModalComponent} from '../card-modal/card-modal.component';
 import {KeypadModalComponent} from '../../common/keypad-modal/keypad-modal.component';
 import {MessageComponent} from '../../common/message/message.component';
@@ -34,7 +33,7 @@ export class SearchGuestModalComponent extends GroupBasedComponent implements On
 
   message: MessageComponent;
 
-  constructor(private restService: RestService, private modalService: NgbModal, public activeModal: NgbActiveModal) {
+  constructor(private modalService: NgbModal, public activeModal: NgbActiveModal) {
     super();
   }
 
@@ -50,16 +49,20 @@ export class SearchGuestModalComponent extends GroupBasedComponent implements On
 
     this.searchInput.nativeElement.focus();
 
-    this.restService.getStatuses()
+    // TODO
+    // this.restService.getStatuses()
+    Promise.resolve([])
       .then((statuses: Status[]) => this.statuses = statuses)
       .catch(reason => this.message.error(reason));
   }
 
-  requestSearch(search: string) {
+  requestSearch(search: string): Observable<Guest[]> {
     if (search) {
-      return this.restService.getGuestsBySearch(this.searchField, search);
+      // TODO
+      // return this.restService.getGuestsBySearch(this.searchField, search);
+      return of([]);
     } else {
-      return observableOf([]);
+      return of([]);
     }
   }
 
@@ -88,12 +91,7 @@ export class SearchGuestModalComponent extends GroupBasedComponent implements On
     if (statusMapping) {
       return statusMapping;
     } else {
-      return {
-        id: -1,
-        internalName: guest.status,
-        displayName: guest.status,
-        color: '#ffffff'
-      };
+      return new Status(undefined, guest.status, guest.status, '#ffffff');
     }
   }
 
@@ -102,7 +100,9 @@ export class SearchGuestModalComponent extends GroupBasedComponent implements On
   }
 
   checkIn() {
-    this.restService.checkIn(this.guest)
+    // TODO
+    // this.restService.checkIn(this.guest)
+    Promise.resolve(new Date())
       .then((date: Date) => {
         this.guest.checkedIn = date;
         this.message.success(`Guest <b>${this.guest.name}</b> checked in.`);
@@ -114,7 +114,9 @@ export class SearchGuestModalComponent extends GroupBasedComponent implements On
     const modal = this.modalService.open(CardModalComponent, {backdrop: 'static', size: 'sm'});
     modal.result.then(card => {
       this.guest.card = card;
-      this.restService.registerCard(this.guest, card)
+      // TODO
+      // this.restService.registerCard(this.guest, card)
+      Promise.resolve()
         .then(() => this.message.success(`Card <b>${card}</b> registered to <b>${this.guest.name}</b>`))
         .catch(reason => this.message.error(reason));
     }, result => void (0));
@@ -123,7 +125,9 @@ export class SearchGuestModalComponent extends GroupBasedComponent implements On
   addBalance() {
     const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
     modal.result.then(value => {
-      this.restService.addBalance(this.guest, value)
+      // TODO
+      // this.restService.addBalance(this.guest, value)
+      Promise.resolve(0)
         .then(newBalance => {
           this.guest.balance = newBalance;
           this.message.success(`
@@ -139,7 +143,9 @@ export class SearchGuestModalComponent extends GroupBasedComponent implements On
   subBalance() {
     const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
     modal.result.then(value => {
-      this.restService.addBalance(this.guest, -value)
+      // TODO
+      // this.restService.addBalance(this.guest, -value)
+      Promise.resolve(0)
         .then(newBalance => {
           this.guest.balance = newBalance;
           this.message.success(`
@@ -155,7 +161,9 @@ export class SearchGuestModalComponent extends GroupBasedComponent implements On
   addBonus() {
     const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
     modal.result.then(value => {
-      this.restService.addBonus(this.guest, value)
+      // TODO
+      // this.restService.addBonus(this.guest, value)
+      Promise.resolve(0)
         .then(newBonus => {
           this.guest.bonus = newBonus;
           this.message.success(`
@@ -171,7 +179,9 @@ export class SearchGuestModalComponent extends GroupBasedComponent implements On
   subBonus() {
     const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
     modal.result.then(value => {
-      this.restService.addBonus(this.guest, -value)
+      // TODO
+      // this.restService.addBonus(this.guest, -value)
+      Promise.resolve(0)
         .then(newBonus => {
           this.guest.bonus = newBonus;
           this.message.success(`

@@ -5,17 +5,11 @@ import {HTTP_INTERCEPTORS, HttpClient} from '@angular/common/http';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {BaseInterceptor} from './base-interceptor';
 import createSpyObj = jasmine.createSpyObj;
-import {CATEGORIES_ALL} from './test-data/categories';
-import {testEndpoint} from './test-utils';
+import {expectArraysEqual, testEndpoint} from './test-utils';
 import {Product} from '../model/product';
-import {
-  PRODUCT_BEER_MAX,
-  PRODUCT_BEER_MAX_REFERENCE,
-  PRODUCT_BEER_MIN,
-  PRODUCT_BEER_MIN_REFERENCE, PRODUCT_WATER, PRODUCT_WATER_PATCHED, PRODUCT_WATER_PATCHED_REFERENCE,
-  PRODUCTS_ALL
-} from './test-data/products';
+import {Products} from './test-data/products';
 import {of} from 'rxjs';
+import {Categories} from './test-data/categories';
 
 fdescribe('ProductService', () => {
   let service: ProductService;
@@ -34,8 +28,8 @@ fdescribe('ProductService', () => {
     resolved = false;
     http = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
-    categoryService = createSpyObj('CategoryService', ['list']);
-    categoryService.list.and.returnValue(of(CATEGORIES_ALL));
+    categoryService = createSpyObj('Categories.Service', ['list']);
+    categoryService.list.and.returnValue(of(Categories.ALL));
     service = new ProductService(http, categoryService);
     resolved = false;
   });
@@ -51,34 +45,33 @@ fdescribe('ProductService', () => {
 
   it('should list all products', fakeAsync(() => {
     service.list().subscribe((products: Product[]) => {
-      expect(products.length).toBe(PRODUCTS_ALL.length);
-      products.forEach((product: Product, index: number) => expect(product.equals(PRODUCTS_ALL[index])).toBeTruthy(product.id));
+      expectArraysEqual(products, Products.ALL);
       resolved = true;
     });
     testEndpoint(httpTestingController, requests, responses, 'GET', '/products');
   }));
 
   it('should create a product with minimal information', fakeAsync(() => {
-    service.create(PRODUCT_BEER_MIN).subscribe((product: Product) => {
-      expect(product.equals(PRODUCT_BEER_MIN_REFERENCE)).toBeTruthy();
+    service.create(Products.BEER_MIN).subscribe((product: Product) => {
+      expect(product.equals(Products.BEER_MIN_REFERENCE)).toBeTruthy();
       resolved = true;
     });
     testEndpoint(httpTestingController, requests, responses, 'POST', '/products', '#min');
   }));
 
   it('should create a product with full information', fakeAsync(() => {
-    service.create(PRODUCT_BEER_MAX).subscribe((product: Product) => {
-      expect(product.equals(PRODUCT_BEER_MAX_REFERENCE)).toBeTruthy();
+    service.create(Products.BEER_MAX).subscribe((product: Product) => {
+      expect(product.equals(Products.BEER_MAX_REFERENCE)).toBeTruthy();
       resolved = true;
     });
     testEndpoint(httpTestingController, requests, responses, 'POST', '/products', '#max');
   }));
 
   it('should update a product', fakeAsync(() => {
-    service.update(PRODUCT_WATER_PATCHED).subscribe((product: Product) => {
-      expect(product.equals(PRODUCT_WATER_PATCHED_REFERENCE)).toBeTruthy();
+    service.update(Products.WATER_PATCHED).subscribe((product: Product) => {
+      expect(product.equals(Products.WATER_PATCHED_REFERENCE)).toBeTruthy();
       resolved = true;
     });
-    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/products/${PRODUCT_WATER.id}`);
+    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/products/${Products.WATER.id}`);
   }));
 });

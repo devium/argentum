@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { User } from '../../common/model/user';
 import { MessageComponent } from '../../common/message/message.component';
 import { ProductRange } from '../../common/model/product-range';
-import { RestService } from '../../common/rest-service/rest.service';
 import { NavbarComponent } from '../../common/navbar/navbar.component';
 import {Group} from '../../common/model/group';
 
@@ -75,7 +74,7 @@ export class UserEditorComponent implements OnInit {
   @ViewChild(NavbarComponent)
   navbar: NavbarComponent;
 
-  constructor(private restService: RestService) {
+  constructor() {
   }
 
   ngOnInit() {
@@ -83,10 +82,14 @@ export class UserEditorComponent implements OnInit {
   }
 
   loadUsers() {
-    this.restService.getUsers()
+    // TODO
+    // this.restService.getUsers()
+    Promise.resolve([])
       .then((users: User[]) => this.users = users.map(user => new EditorUser(user)))
       .catch(reason => this.message.error(reason));
-    this.restService.getProductRanges()
+    // TODO
+    // this.restService.getProductRanges()
+    Promise.resolve([])
       .then((ranges: ProductRange[]) => this.ranges = ranges)
       .catch(reason => this.message.error(reason));
   }
@@ -152,8 +155,9 @@ export class UserEditorComponent implements OnInit {
       .filter(user => !user.edited)
       .map(user => user.original);
 
-    const pCreate = this.restService.mergeUsers(mergedUsers);
-    const pDelete = this.restService.deleteUsers(deletedUsers);
+    // TODO
+    const pCreate = Promise.resolve();
+    const pDelete = Promise.resolve();
 
     Promise.all([pCreate, pDelete])
       .then(() => {
@@ -163,7 +167,9 @@ export class UserEditorComponent implements OnInit {
           <b>${deletedUsers.length}</b> deleted)
         `);
         this.loadUsers();
-        this.restService.getUser()
+        // TODO
+        // this.restService.getUser()
+        Promise.resolve({})
           .then((user: User) => {
             localStorage.setItem('groups', user.groups.join(','));
             this.navbar.getGroups();

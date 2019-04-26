@@ -41,6 +41,11 @@ export abstract class AbstractModel {
           }
           // Note: mixed arrays seem ok but are not part of the spec.
         }
+      } else if (value1 instanceof Date) {
+        // Dates need special treatment.
+        if (!value2 || value1.getTime() !== value2.getTime()) {
+          return false;
+        }
       } else if (value1 !== value2) {
         // Compare other types.
         return false;

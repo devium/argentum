@@ -1,14 +1,16 @@
 import {AbstractModel} from './abstract-model';
 import {Category} from './category';
-import {format_currency} from '../util/currency';
+import {formatCurrency} from '../util/format';
 
-export interface ProductDto {
-  id: number;
-  name: string;
-  deprecated: boolean;
-  price: string;
-  category: number;
-  product_ranges: number[];
+export namespace Product {
+  export interface Dto {
+    id: number;
+    name: string;
+    deprecated: boolean;
+    price: string;
+    category: number;
+    product_ranges: number[];
+  }
 }
 
 export class Product extends AbstractModel {
@@ -20,12 +22,12 @@ export class Product extends AbstractModel {
     public deprecated: boolean,
     public price: number,
     public category: Category,
-    public product_range_ids: number[]
+    public productRangeIds: number[]
   ) {
     super(id);
   }
 
-  static fromDto(dto: ProductDto, categories: Category[]) {
+  static fromDto(dto: Product.Dto, categories: Category[]) {
     const category = categories.find((categoryDep: Category) => categoryDep.id === dto.category);
     return new Product(
       dto.id,
@@ -37,14 +39,14 @@ export class Product extends AbstractModel {
     );
   }
 
-  toDto(): ProductDto {
+  toDto(): Product.Dto {
     return {
       id: undefined,
       name: this.name,
       deprecated: this.deprecated,
-      price: format_currency(this.price),
+      price: formatCurrency(this.price),
       category: this.category ? this.category.id : this.category === undefined ? undefined : null,
-      product_ranges: this.product_range_ids
+      product_ranges: this.productRangeIds
     };
   }
 }
