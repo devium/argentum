@@ -1,9 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Statistics } from '../../common/model/statistics';
-import { MessageComponent } from '../../common/message/message.component';
-import { Product } from '../../common/model/product';
-import { Chart } from 'chart.js';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {QuantitySales, Statistics} from '../../common/model/statistics';
+import {MessageComponent} from '../../common/message/message.component';
+import {Product} from '../../common/model/product';
+import {Chart} from 'chart.js';
 import palette from 'google-palette';
+import {StatisticsService} from '../../common/rest-service/statistics.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,7 +12,7 @@ import palette from 'google-palette';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  stats: Statistics;
+  statistics: Statistics;
   products: Map<number, Product> = new Map<number, Product>();
 
   @ViewChild(MessageComponent)
@@ -22,7 +23,7 @@ export class DashboardComponent implements OnInit {
 
   salesChart: Chart;
 
-  constructor() {
+  constructor(private statisticsService: StatisticsService) {
   }
 
   ngOnInit() {
@@ -30,37 +31,24 @@ export class DashboardComponent implements OnInit {
   }
 
   refresh(): void {
-    // TODO
-    const pStats = Promise.resolve({});
-    const pProducts = Promise.resolve([]);
-
-    Promise.all([pStats, pProducts])
-      .then((response: [Statistics, Product[]]) => {
-        this.stats = response[0];
-        const products = response[1];
-        this.products = new Map<number, Product>(products.map(
-          (product: Product) => [product.id, product] as [number, Product]
-        ));
-
+    this.statisticsService.list().subscribe(
+      (statistics: Statistics) => {
+        this.statistics = statistics;
         this.redrawCharts();
-      })
-      .catch(reason => this.message.error(reason));
+      },
+      (error: any) => this.message.error(error)
+    );
   }
 
   redrawCharts() {
     const salesContext = this.salesCanvas.nativeElement.getContext('2d');
-    const quantitySalesData = this.stats.quantitySales.map(
-      (productQuantity: [number, number]) => productQuantity[1]
-    );
+    const quantitySalesSorted = this.statistics.quantitySales.sort((qs1: QuantitySales, qs2: QuantitySales) => qs1.quantity - qs2.quantity);
+    const quantitySalesData = quantitySalesSorted.map((qs: QuantitySales) => qs.quantity);
     const sumQuantitySales = quantitySalesData.reduce((a: number, b: number) => a + b, 0);
-    const valueSalesData = this.stats.quantitySales.map(
-      (productQuantity: [number, number]) => productQuantity[1] * this.products.get(productQuantity[0]).price
-    );
+    const valueSalesData = quantitySalesSorted.map((qs: QuantitySales) => qs.quantity * qs.product.price);
     const sumValueSales = valueSalesData.reduce((a: number, b: number) => a + b, 0);
-    const labels = this.stats.quantitySales.map(
-      (productQuantity: [number, number]) => this.products.get(productQuantity[0]).name
-    );
-    const colorPalette = palette('qualitative', this.stats.quantitySales.length).map((hex: string) => '#' + hex);
+    const labels = quantitySalesSorted.map((qs: QuantitySales) => qs.product.name);
+    const colorPalette = palette('qualitative', quantitySalesSorted.length).map((hex: string) => '#' + hex);
 
     this.salesChart = new Chart(salesContext, {
       type: 'doughnut',
