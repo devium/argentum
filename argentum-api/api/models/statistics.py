@@ -38,11 +38,13 @@ class StatisticsViewSet(viewsets.ViewSet):
                 pending=False
             ).aggregate(Sum('value'))['value__sum'],
             'total_deposited': Transaction.objects.filter(
-                description='deposit',
+                value__gt=0,
+                description='default',
                 pending=False
             ).aggregate(Sum('value'))['value__sum'],
             'total_withdrawn': Transaction.objects.filter(
-                description='withdraw',
+                value__lt=0,
+                description='default',
                 pending=False
             ).aggregate(Sum('value'))['value__sum'],
             'num_products': Product.objects.filter(deprecated=False).count(),

@@ -60,26 +60,26 @@
   ],
   "POST/transactions": {
     "guest": 1,
-    "value": "5.00",
-    "description": "topup"
+    "value": "5.00"
   },
   "POST/transactions#card": {
     "card": "567a",
     "value": "5.00",
-    "description": "topup"
+    "ignore_bonus": false
   },
   "PATCH/transactions/4": {
     "pending": false
   },
+  "PATCH/transactions/4#card": {
+    "pending": false
+  },
   "POST/bonus_transactions": {
     "guest": 1,
-    "value": "4.00",
-    "description": "staff bonus"
+    "value": "4.00"
   },
   "POST/bonus_transactions#card": {
     "card": "567a",
-    "value": "4.00",
-    "description": "staff bonus"
+    "value": "4.00"
   },
   "PATCH/bonus_transactions/3": {
     "pending": false

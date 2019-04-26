@@ -238,7 +238,8 @@
       "guest": 1,
       "value": "5.00",
       "ignore_bonus": false,
-      "description": "initial",
+      "description": "default",
+      "order": null,
       "pending": false
     },
     {
@@ -247,7 +248,8 @@
       "guest": 2,
       "value": "10.00",
       "ignore_bonus": true,
-      "description": "initial",
+      "description": "default",
+      "order": null,
       "pending": false
     },
     {
@@ -257,6 +259,7 @@
       "value": "-3.00",
       "ignore_bonus": false,
       "description": "order",
+      "order": 1,
       "pending": false
     },
     {
@@ -265,26 +268,65 @@
       "guest": 2,
       "value": "-5.00",
       "ignore_bonus": false,
-      "description": "withdraw",
+      "description": "default",
+      "order": null,
       "pending": true
+    }
+  ],
+  "GET/transactions?guest__card=567a": [
+    {
+      "id": 1,
+      "time": "2019-12-31T22:05:00Z",
+      "value": "5.00",
+      "ignore_bonus": false,
+      "description": "default",
+      "order": null,
+      "pending": false
+    },
+    {
+      "id": 3,
+      "time": "2019-12-31T22:10:00Z",
+      "value": "-3.00",
+      "ignore_bonus": false,
+      "description": "order",
+      "order": 1,
+      "pending": false
     }
   ],
   "POST/transactions": {
     "id": 5,
-    "time": null,
-    "guest": 1,
+    "time": "2019-12-31T22:35:30Z",
     "value": "5.00",
     "ignore_bonus": false,
-    "description": "topup",
+    "description": "default",
+    "order": null,
+    "pending": true
+  },
+  "POST/transactions#card": {
+    "id": 5,
+    "time": "2019-12-31T22:35:30Z",
+    "value": "5.00",
+    "ignore_bonus": false,
+    "description": "default",
+    "order": null,
     "pending": true
   },
   "PATCH/transactions/4": {
     "id": 4,
-    "time": "2019-12-31T22:30:00Z",
-    "guest": 2,
+    "time": "2019-12-31T22:30:05Z",
     "value": "-5.00",
     "ignore_bonus": false,
-    "description": "withdraw",
+    "description": "default",
+    "order": null,
+    "pending": false
+  },
+  "PATCH/transactions/4#card": {
+    "id": 4,
+    "time": "2019-12-31T22:30:05Z",
+    "value": "-5.00",
+    "ignore_bonus": false,
+    "description": "default",
+    "order": null,
     "pending": false
   },
   "GET/bonus_transactions": [
@@ -293,7 +335,7 @@
       "time": "2019-12-31T22:01:00Z",
       "guest": 1,
       "value": "2.50",
-      "description": "staff bonus",
+      "description": "default",
       "pending": false
     },
     {
@@ -301,7 +343,7 @@
       "time": "2019-12-31T22:02:30Z",
       "guest": 2,
       "value": "2.00",
-      "description": "guest bonus",
+      "description": "default",
       "pending": false
     },
     {
@@ -309,24 +351,38 @@
       "time": "2019-12-31T22:03:00Z",
       "guest": 1,
       "value": "3.00",
-      "description": "more staff bonus",
+      "description": "default",
+      "pending": true
+    }
+  ],
+  "GET/bonus_transactions?guest__card=567a": [
+    {
+      "id": 1,
+      "time": "2019-12-31T22:01:00Z",
+      "value": "2.50",
+      "description": "default",
+      "pending": false
+    },
+    {
+      "id": 3,
+      "time": "2019-12-31T22:03:00Z",
+      "value": "3.00",
+      "description": "default",
       "pending": true
     }
   ],
   "POST/bonus_transactions": {
     "id": 4,
-    "time": null,
-    "guest": 1,
+    "time": "2019-12-31T22:04:20Z",
     "value": "4.00",
-    "description": "staff bonus",
+    "description": "default",
     "pending": true
   },
   "PATCH/bonus_transactions/3": {
     "id": 3,
-    "time": null,
-    "guest": 1,
+    "time": "2019-12-31T22:03:05Z",
     "value": "3.00",
-    "description": "more staff bonus",
+    "description": "default",
     "pending": false
   },
   "GET/categories": [
@@ -607,7 +663,7 @@
     "total_bonus": "2.00",
     "total_spent": "3.00",
     "total_refund": "0.00",
-    "total_deposited": "0.00",
+    "total_deposited": "15.00",
     "total_withdrawn": "0.00",
     "num_products": 1,
     "num_legacy_products": 1,

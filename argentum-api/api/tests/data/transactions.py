@@ -17,7 +17,7 @@ class TestTransactions(TestObjects):
         guest=TestGuests.ROBY,
         value=Decimal('5.00'),
         ignore_bonus=False,
-        description='initial',
+        description='default',
         order=None,
         pending=False
     )
@@ -28,7 +28,7 @@ class TestTransactions(TestObjects):
         guest=TestGuests.SHEELAH,
         value=Decimal('10.00'),
         ignore_bonus=True,
-        description='initial',
+        description='default',
         order=None,
         pending=False
     )
@@ -50,7 +50,7 @@ class TestTransactions(TestObjects):
         guest=TestGuests.SHEELAH,
         value=Decimal('-5.00'),
         ignore_bonus=False,
-        description='withdraw',
+        description='default',
         order=None,
         pending=True
     )
@@ -65,7 +65,7 @@ class TestTransactions(TestObjects):
         guest=TestGuests.ROBY,
         value=Decimal('5.00'),
         ignore_bonus=False,
-        description='topup',
+        description='default',
         order=None,
         pending=True
     )

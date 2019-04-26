@@ -15,7 +15,7 @@ class TestBonusTransactions(TestObjects):
         time=parse_datetime('2019-12-31T22:01:00Z'),
         guest=TestGuests.ROBY,
         value=Decimal('2.50'),
-        description='staff bonus',
+        description='default',
         pending=False
     )
 
@@ -24,7 +24,7 @@ class TestBonusTransactions(TestObjects):
         time=parse_datetime('2019-12-31T22:02:30Z'),
         guest=TestGuests.SHEELAH,
         value=Decimal('2.00'),
-        description='guest bonus',
+        description='default',
         pending=False
     )
 
@@ -33,7 +33,7 @@ class TestBonusTransactions(TestObjects):
         time=parse_datetime('2019-12-31T22:03:00Z'),
         guest=TestGuests.ROBY,
         value=Decimal('3.00'),
-        description='more staff bonus',
+        description='default',
         pending=True
     )
 
@@ -45,6 +45,6 @@ class TestBonusTransactions(TestObjects):
         id=4,
         guest=TestGuests.ROBY,
         value=Decimal('4.00'),
-        description='staff bonus',
+        description='default',
         pending=True
     )

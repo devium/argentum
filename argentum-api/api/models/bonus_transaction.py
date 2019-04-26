@@ -16,7 +16,7 @@ class BonusTransaction(models.Model):
     time = models.DateTimeField(default=timezone.now)
     guest = models.ForeignKey(Guest, on_delete=models.CASCADE)
     value = models.DecimalField(**CURRENCY_CONFIG)
-    description = models.CharField(max_length=64)
+    description = models.CharField(max_length=64, default='default')
     pending = models.BooleanField(default=True)
 
     def __str__(self):
@@ -29,17 +29,33 @@ class BonusTransaction(models.Model):
             f')'
 
 
+class BonusTransactionListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BonusTransaction
+        fields = ['id', 'time', 'guest', 'value', 'description', 'pending']
+
+
+class BonusTransactionListByCardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BonusTransaction
+        fields = ['id', 'time', 'value', 'description', 'pending']
+
+
 class BonusTransactionCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = BonusTransaction
         fields = ['id', 'time', 'guest', 'value', 'description', 'pending']
-        read_only_fields = ['time', 'pending']
+        read_only_fields = ['time', 'description', 'pending']
+        extra_kwargs = {
+            # Don't expose the guest ID in case the transaction is submitted via card (which should be the default).
+            'guest': {'write_only': True}
+        }
 
 
 class BonusTransactionUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = BonusTransaction
-        fields = BonusTransactionCreateSerializer.Meta.fields
+        fields = ['id', 'time', 'value', 'description', 'pending']
 
     def get_fields(self):
         if self.instance.pending:
@@ -71,6 +87,13 @@ class BonusTransactionViewSet(
     filter_fields = ('guest__card',)
 
     def get_serializer_class(self):
+        if self.action == 'list':
+            if 'guest__card' in self.request.query_params and self.request.query_params['guest__card']:
+                # Admin or transfer request.
+                return BonusTransactionListByCardSerializer
+            else:
+                # Admin request.
+                return BonusTransactionListSerializer
         if self.action in ['update', 'partial_update']:
             return BonusTransactionUpdateSerializer
         else:

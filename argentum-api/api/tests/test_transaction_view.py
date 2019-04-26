@@ -30,6 +30,7 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         response = self.client.get(f'/transactions?guest__card={TestGuests.ROBY.card}')
         self.assertEqual(response.status_code, 200)
         self.assertPksEqual(response.data, [TestTransactions.TX1, TestTransactions.TX_ORDER1])
+        self.assertJSONEqual(response.content, self.RESPONSES[f'GET/transactions?guest__card={TestGuests.ROBY.card}'])
 
     def test_get_by_nocard(self):
         self.login(TestUsers.BAR)
@@ -169,7 +170,6 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         # Before committing, most fields should be immutable.
         immutable_fields = {
             'time': '2019-12-31T22:30:10Z',
-            'guest': TestGuests.ROBY.id,
             'value': '-10.00',
             'ignore_bonus': True,
             'description': 'withdraw more'
@@ -185,7 +185,6 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         mutable_fields = {}
         immutable_fields = {
             'time': '2019-12-31T22:30:10Z',
-            'guest': TestGuests.ROBY.id,
             'value': '-10.00',
             'ignore_bonus': True,
             'description': 'withdraw more',

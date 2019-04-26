@@ -24,5 +24,5 @@ export function testEndpoint(
 
 export function expectArraysEqual(array1: Array<AbstractModel>, array2: Array<AbstractModel>) {
   expect(array1.length).toBe(array2.length);
-  array1.forEach((model1: AbstractModel, index: number) => expect(model1.equals(array2[index])).toBeTruthy(index));
+  array1.forEach((model1: AbstractModel, index: number) => expect(model1.equals(array2[index])).toBeTruthy(model1.id));
 }

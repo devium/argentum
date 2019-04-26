@@ -11,7 +11,7 @@ export namespace TestStatistics {
     2.00,
     3.00,
     0.00,
-    0.00,
+    15.00,
     0.00,
     1,
     1,

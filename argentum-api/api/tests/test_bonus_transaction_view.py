@@ -29,6 +29,10 @@ class BonusTransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Aut
         response = self.client.get(f'/bonus_transactions?guest__card={TestGuests.ROBY.card}')
         self.assertEqual(response.status_code, 200)
         self.assertPksEqual(response.data, [TestBonusTransactions.BTX1, TestBonusTransactions.BTX3])
+        self.assertJSONEqual(
+            response.content,
+            self.RESPONSES[f'GET/bonus_transactions?guest__card={TestGuests.ROBY.card}']
+        )
 
     def test_get_by_nocard(self):
         self.login(TestUsers.BAR)
@@ -121,7 +125,6 @@ class BonusTransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Aut
         # Before committing, most fields are immutable.
         immutable_fields = {
             'time': '2019-12-31T22:03:10Z',
-            'guest': TestGuests.SHEELAH.id,
             'value': '10.00',
             'description': 'even more staff bonus'
         }
@@ -140,7 +143,6 @@ class BonusTransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Aut
         mutable_fields = {}
         immutable_fields = {
             'time': '2019-12-31T22:03:10Z',
-            'guest': TestGuests.SHEELAH.id,
             'value': '10.00',
             'description': 'even more staff bonus'
         }
@@ -175,7 +177,7 @@ class BonusTransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Aut
             f'id=1,'
             f'time="2019-12-31 22:01:00+00:00",'
             f'value=2.50,'
-            f'description="staff bonus",'
+            f'description="default",'
             f'guest={str(TestGuests.ROBY)}'
             f')'
         )

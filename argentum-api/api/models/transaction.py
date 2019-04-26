@@ -16,7 +16,7 @@ class Transaction(models.Model):
     guest = models.ForeignKey(Guest, on_delete=models.CASCADE)
     value = models.DecimalField(**CURRENCY_CONFIG)
     ignore_bonus = models.BooleanField(default=False)
-    description = models.CharField(max_length=64)
+    description = models.CharField(max_length=64, default='default')
     order = models.ForeignKey(
         'api.Order',
         related_name='transactions',
@@ -37,17 +37,33 @@ class Transaction(models.Model):
             f')'
 
 
+class TransactionListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = ['id', 'time', 'guest', 'value', 'ignore_bonus', 'description', 'order', 'pending']
+
+
+class TransactionListByCardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = ['id', 'time', 'value', 'ignore_bonus', 'description', 'order', 'pending']
+
+
 class TransactionCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
-        fields = ['id', 'time', 'guest', 'value', 'ignore_bonus', 'description', 'pending']
-        read_only_fields = ['time', 'pending']
+        fields = ['id', 'time', 'guest', 'value', 'ignore_bonus', 'description', 'order', 'pending']
+        read_only_fields = ['time', 'description', 'order', 'pending']
+        extra_kwargs = {
+            # Don't expose the guest ID in case the transaction is submitted via card (which should be the default).
+            'guest': {'write_only': True}
+        }
 
 
 class TransactionUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
-        fields = TransactionCreateSerializer.Meta.fields
+        fields = ['id', 'time', 'value', 'ignore_bonus', 'description', 'order', 'pending']
 
     @classmethod
     def create_internal(cls, time=None, **transaction_kwargs):
@@ -61,7 +77,7 @@ class TransactionUpdateSerializer(serializers.ModelSerializer):
 
     def get_fields(self):
         if self.instance.pending:
-            self.Meta.read_only_fields = ['time', 'guest', 'value', 'ignore_bonus', 'description']
+            self.Meta.read_only_fields = ['time', 'guest', 'value', 'ignore_bonus', 'order', 'description']
         else:
             self.Meta.read_only_fields = self.Meta.fields
         return super().get_fields()
@@ -103,7 +119,14 @@ class TransactionViewSet(
     filter_fields = ('guest__card',)
 
     def get_serializer_class(self):
-        if self.action in ['update', 'partial_update']:
+        if self.action == 'list':
+            if 'guest__card' in self.request.query_params and self.request.query_params['guest__card']:
+                # Admin or transfer request.
+                return TransactionListByCardSerializer
+            else:
+                # Admin request.
+                return TransactionListSerializer
+        elif self.action in ['update', 'partial_update']:
             return TransactionUpdateSerializer
         else:
             return TransactionCreateSerializer
