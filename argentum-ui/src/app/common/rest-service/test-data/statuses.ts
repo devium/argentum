@@ -7,5 +7,6 @@ export namespace Statuses {
   export const ALL = [PAID, PENDING];
 
   export const STAFF = new Status(3, 'staff', 'Staff', '#0000ff');
-  export const PENDING_PATCHED = new Status(2, 'pen', 'Pending', '#ff0000');
+  export const PENDING_PATCHED = new Status(2, 'pen', undefined, undefined);
+  export const PENDING_PATCHED_REFERENCE = new Status(2, 'pen', 'Pending', '#ff0000');
 }
