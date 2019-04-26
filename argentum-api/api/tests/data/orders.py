@@ -34,7 +34,7 @@ class TestOrders(TestObjects):
 
     ONE_WATER_ONE_COKE_PLUS_TIP = Order(
         id=3,
-        time=parse_datetime('2019-12-31T22:14:00Z'),
+        time=parse_datetime('2019-12-31T22:17:00Z'),
         guest=TestGuests.SHEELAH,
         custom_initial=Decimal('0.40'),
         custom_current=Decimal('0.40'),

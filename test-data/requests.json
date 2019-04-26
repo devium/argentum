@@ -149,13 +149,13 @@
     "pending": false
   },
   "PATCH/orders/1#cancel_exceed": {
-    "custom_current": 0.20
+    "custom_current": "0.20"
   },
   "PATCH/orders/1#cancel_negative": {
-    "custom_current": -0.10
+    "custom_current": "-0.10"
   },
   "PATCH/orders/1#cancel": {
-    "custom_current": 0.05
+    "custom_current": "0.05"
   },
   "PATCH/order_items/1#cancel_exceed": {
     "quantity_current": 1

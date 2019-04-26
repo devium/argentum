@@ -4,7 +4,7 @@ from django.db import models
 from rest_framework import mixins, viewsets, serializers
 from rest_framework.exceptions import ValidationError
 
-from api.models.product import Product
+from api.models.product import Product, ProductCreateSerializer
 from api.models.transaction import TransactionUpdateSerializer
 
 
@@ -21,6 +21,15 @@ class OrderItem(models.Model):
             f'quantity_initial={self.quantity_initial},' \
             f'quantity_current={self.quantity_current},' \
             f')'
+
+
+class OrderItemListByCardSerializer(serializers.ModelSerializer):
+    # Include a full serialization of the product since it may not be available to the user otherwise.
+    product = ProductCreateSerializer()
+
+    class Meta:
+        model = OrderItem
+        fields = ['id', 'product', 'quantity_initial', 'quantity_current']
 
 
 class OrderItemCreateSerializer(serializers.ModelSerializer):

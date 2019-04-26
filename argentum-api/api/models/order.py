@@ -9,7 +9,7 @@ from rest_framework.exceptions import ValidationError
 
 from api.models.config import Config
 from api.models.guest import Guest
-from api.models.order_item import OrderItemCreateSerializer, OrderItem
+from api.models.order_item import OrderItemCreateSerializer, OrderItem, OrderItemListByCardSerializer
 from api.models.transaction import TransactionUpdateSerializer
 from api.models.utils import resolve_card
 from argentum.permissions import StrictModelPermissions
@@ -45,6 +45,25 @@ class Order(models.Model):
             f')'
 
 
+class OrderListSerializer(serializers.ModelSerializer):
+    # Admin can resolve product references themselves because they have access to a complete product list.
+    items = OrderItemCreateSerializer(many=True)
+
+    class Meta:
+        model = Order
+        fields = ['id', 'time', 'guest', 'custom_initial', 'custom_current', 'items', 'pending']
+
+
+class OrderListByCardSerializer(serializers.ModelSerializer):
+    # When requesting the order history by card, products may include ranges that aren't accessible, so fully serialize
+    # them. Exclude any guest information.
+    items = OrderItemListByCardSerializer(many=True)
+
+    class Meta:
+        model = Order
+        fields = ['id', 'time', 'custom_initial', 'custom_current', 'items', 'pending']
+
+
 class OrderCreateSerializer(serializers.ModelSerializer):
     items = OrderItemCreateSerializer(many=True)
 
@@ -52,6 +71,10 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         model = Order
         fields = ['id', 'time', 'guest', 'custom_initial', 'custom_current', 'items', 'pending']
         read_only_fields = ['time', 'custom_current', 'pending']
+        extra_kwargs = {
+            # Don't expose the guest ID in case the order is submitted via card (which should be the default).
+            'guest': {'write_only': True}
+        }
 
     def create(self, validated_data):
         validated_data['custom_current'] = validated_data['custom_initial']
@@ -69,14 +92,15 @@ class OrderUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = OrderCreateSerializer.Meta.fields
+        # Make no guest information available. Only admins may get that via orders.
+        fields = ['id', 'time', 'custom_initial', 'custom_current', 'items', 'pending']
 
     def get_fields(self):
         committed = not self.instance.pending
         if committed:
-            self.Meta.read_only_fields = ['time', 'guest', 'custom_initial', 'pending']
+            self.Meta.read_only_fields = ['time', 'custom_initial', 'pending']
         else:
-            self.Meta.read_only_fields = ['time', 'guest', 'custom_initial', 'custom_current']
+            self.Meta.read_only_fields = ['time', 'custom_initial', 'custom_current']
         return super().get_fields()
 
     def validate(self, attrs):
@@ -138,9 +162,18 @@ class OrderViewSet(
     filter_fields = ('guest__card',)
 
     def get_serializer_class(self):
-        if self.action in ['update', 'partial_update']:
+        if self.action == 'list':
+            if 'guest__card' in self.request.query_params and self.request.query_params['guest__card']:
+                # Admin or order request.
+                return OrderListByCardSerializer
+            else:
+                # Admin request.
+                return OrderListSerializer
+        elif self.action in ['update', 'partial_update']:
+            # Commit or cancel request.
             return OrderUpdateSerializer
         else:
+            # Create request.
             return OrderCreateSerializer
 
     def get_permissions(self):

@@ -28,7 +28,7 @@ fdescribe('ProductService', () => {
     resolved = false;
     http = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
-    categoryService = createSpyObj('Categories.Service', ['list']);
+    categoryService = createSpyObj('CategoryService', ['list']);
     categoryService.list.and.returnValue(of(Categories.ALL));
     service = new ProductService(http, categoryService);
     resolved = false;

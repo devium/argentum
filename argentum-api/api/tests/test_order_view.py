@@ -28,6 +28,14 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         self.assertPksEqual(response.data, TestOrders.ALL)
         self.assertJSONEqual(response.content, self.RESPONSES['GET/orders'])
 
+    def test_get_by_card(self):
+        self.login(TestUsers.BAR)
+
+        response = self.client.get(f'/orders?guest__card={TestGuests.ROBY.card}')
+        self.assertEqual(response.status_code, 200)
+        self.assertPksEqual(response.data, [TestOrders.ONE_WATER_PLUS_TIP])
+        self.assertJSONEqual(response.content, self.RESPONSES[f'GET/orders?guest__card={TestGuests.ROBY.card}'])
+
     def test_post(self):
         self.login(TestUsers.BAR)
         identifier = 'POST/orders'

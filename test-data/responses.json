@@ -467,10 +467,57 @@
       "pending": true
     }
   ],
+  "GET/orders?guest__card=567a": [
+    {
+      "id": 1,
+      "time": "2019-12-31T22:10:00Z",
+      "custom_initial": "0.20",
+      "custom_current": "0.20",
+      "items": [
+        {
+          "id": 1,
+          "product": {
+            "id": 1,
+            "name": "Water",
+            "deprecated": false,
+            "price": "2.40",
+            "category": 1,
+            "product_ranges": [
+              1,
+              2
+            ]
+          },
+          "quantity_initial": 1,
+          "quantity_current": 1
+        }
+      ],
+      "pending": false
+    }
+  ],
   "POST/orders": {
     "id": 3,
-    "time": null,
-    "guest": 2,
+    "time": "2019-12-31T22:17:00Z",
+    "custom_initial": "0.40",
+    "custom_current": "0.40",
+    "items": [
+      {
+        "id": 3,
+        "product": 1,
+        "quantity_initial": 1,
+        "quantity_current": 1
+      },
+      {
+        "id": 4,
+        "product": 2,
+        "quantity_initial": 1,
+        "quantity_current": 1
+      }
+    ],
+    "pending": true
+  },
+  "POST/orders#card": {
+    "id": 3,
+    "time": "2019-12-31T22:17:00Z",
     "custom_initial": "0.40",
     "custom_current": "0.40",
     "items": [
@@ -491,8 +538,7 @@
   },
   "PATCH/orders/2#commit": {
     "id": 2,
-    "time": null,
-    "guest": 2,
+    "time": "2019-12-31T22:14:30Z",
     "custom_initial": "0.60",
     "custom_current": "0.60",
     "items": [
@@ -508,7 +554,6 @@
   "PATCH/orders/1#cancel": {
     "id": 1,
     "time": "2019-12-31T22:10:00Z",
-    "guest": 1,
     "custom_initial": "0.20",
     "custom_current": "0.05",
     "items": [

@@ -56,7 +56,8 @@ describe('OrderHistoryComponent', () => {
       new Order(
         1,
         new Date('2018-12-31T22:30'),
-        Guests.ROBY,
+        undefined,
+        Guests.ROBY.card,
         1.00,
         0.40,
         false,
@@ -68,7 +69,8 @@ describe('OrderHistoryComponent', () => {
       new Order(
         2,
         new Date('2018-11-31T22:45'),
-        Guests.ROBY,
+        undefined,
+        Guests.ROBY.card,
         2.00,
         2.00,
         false,
