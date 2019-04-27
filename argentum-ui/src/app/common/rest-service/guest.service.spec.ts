@@ -46,7 +46,7 @@ fdescribe('GuestService', () => {
   }));
 
   it('should retrieve a guest by card', fakeAsync(() => {
-    service.retrieveByCard(`${Guests.ROBY.card}`).subscribe((guest: Guest) => {
+    service.retrieveByCard(Guests.ROBY.card).subscribe((guest: Guest) => {
       expect(guest.equals(Guests.ROBY)).toBeTruthy();
       resolved = true;
     });

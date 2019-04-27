@@ -16,7 +16,7 @@ export function testEndpoint(
 
   const identifier = `${method}${url}${identifierSuffix}`;
   const requestBody = requests[identifier];
-  expect(req.request.body).toEqual(requestBody === undefined ? null : requestBody);
+  expect(req.request.body).toEqual(requestBody === undefined ? null : requestBody, `Request body mismatch for ${identifier}`);
   const responseBody = responses[identifier];
   req.flush(responseBody === undefined ? null : responseBody);
   return req;
@@ -24,5 +24,7 @@ export function testEndpoint(
 
 export function expectArraysEqual(array1: Array<AbstractModel>, array2: Array<AbstractModel>) {
   expect(array1.length).toBe(array2.length);
-  array1.forEach((model1: AbstractModel, index: number) => expect(model1.equals(array2[index])).toBeTruthy(model1.id));
+  array1.forEach((model1: AbstractModel, index: number) => expect(model1.equals(array2[index])).toBeTruthy(
+    `Mismatch between models with IDs ${model1.id} and ${array2[index].id}`
+  ));
 }

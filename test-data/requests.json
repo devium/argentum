@@ -70,9 +70,6 @@
   "PATCH/transactions/4": {
     "pending": false
   },
-  "PATCH/transactions/4#card": {
-    "pending": false
-  },
   "POST/bonus_transactions": {
     "guest": 1,
     "value": "4.00"

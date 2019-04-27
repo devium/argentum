@@ -320,15 +320,6 @@
     "order": null,
     "pending": false
   },
-  "PATCH/transactions/4#card": {
-    "id": 4,
-    "time": "2019-12-31T22:30:05Z",
-    "value": "-5.00",
-    "ignore_bonus": false,
-    "description": "default",
-    "order": null,
-    "pending": false
-  },
   "GET/bonus_transactions": [
     {
       "id": 1,
@@ -372,6 +363,13 @@
     }
   ],
   "POST/bonus_transactions": {
+    "id": 4,
+    "time": "2019-12-31T22:04:20Z",
+    "value": "4.00",
+    "description": "default",
+    "pending": true
+  },
+  "POST/bonus_transactions#card": {
     "id": 4,
     "time": "2019-12-31T22:04:20Z",
     "value": "4.00",

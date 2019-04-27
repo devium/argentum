@@ -39,7 +39,7 @@ export class OrderService {
 
   listByCard(card: string, categories?: Category[]): Observable<Order[]> {
     return withDependencies(
-      this.http.get<Order.Dto[]>(`/orders?guest__card=${card}`),
+      this.http.get<Order.Dto[]>('/orders', {params: {guest__card: card}}),
       [categories, this.categoryService.list]
     ).pipe(
       map(([dtos, categoriesDep]: [Order.Dto[], Category[], {}, {}]) => {

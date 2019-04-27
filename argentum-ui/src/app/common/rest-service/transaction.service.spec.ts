@@ -68,7 +68,7 @@ fdescribe('TransactionService', () => {
   }));
 
   it('should create a transaction', fakeAsync(() => {
-    service.create(Guests.ROBY.card, 5).subscribe((transaction: Transaction) => {
+    service.create(Guests.ROBY.card, Transactions.TX5_REFERENCE.value).subscribe((transaction: Transaction) => {
       expect(transaction.equals(Transactions.TX5_REFERENCE)).toBeTruthy();
       resolved = true;
     });
@@ -84,6 +84,6 @@ fdescribe('TransactionService', () => {
     });
     expect(guestService.list).toHaveBeenCalledTimes(0);
     expect(orderService.list).toHaveBeenCalledTimes(1);
-    testEndpoint(httpTestingController, requests, responses, 'PATCH', '/transactions/4', '#card');
+    testEndpoint(httpTestingController, requests, responses, 'PATCH', '/transactions/4');
   }));
 });

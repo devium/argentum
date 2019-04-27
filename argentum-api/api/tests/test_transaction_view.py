@@ -53,7 +53,6 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         self.assertJSONEqual(response.content, self.RESPONSES[identifier])
 
     def test_patch(self):
-        # Since this field is read-only on creation, this requires a separate test.
         self.login(TestUsers.TOPUP)
         identifier = f'PATCH/transactions/{TestTransactions.TX4.id}'
 
@@ -156,7 +155,7 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         # Bonus is exceed, remainder covered by balance.
         data['value'] = '-8.00'
         response = self.client.post('/transactions', data)
-        self.client.patch(f"/transactions/{response.data['id']}", {'pending': False})
+        self.client.patch(f'/transactions/{response.data["id"]}', {'pending': False})
         roby.refresh_from_db()
         self.assertEqual(roby.balance, Decimal('-2.00'))
         self.assertEqual(roby.bonus, Decimal('0.00'))

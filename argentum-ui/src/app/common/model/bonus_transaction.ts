@@ -47,7 +47,7 @@ export class BonusTransaction extends AbstractModel {
       card: card,
       value: formatCurrency(value),
       description: undefined,
-      pending: false
+      pending: undefined
     };
   }
 
