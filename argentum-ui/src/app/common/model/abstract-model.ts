@@ -55,11 +55,15 @@ export abstract class AbstractModel {
   }
 
   clone(): AbstractModel {
-    const clone = Object.assign({}, this);
-    for (const key of Object.keys(clone)) {
+    const clone = Object.create(this);
+    for (const key of Object.keys(this)) {
       // Copy arrays by value or the clones will share the same array reference.
       if (clone[key] instanceof Array) {
-        clone[key] = [...clone[key]];
+        clone[key] = [...this[key]];
+      } else if (clone[key] instanceof Date) {
+        clone[key] = new Date(this[key]);
+      } else {
+        clone[key] = this[key];
       }
     }
     return clone;

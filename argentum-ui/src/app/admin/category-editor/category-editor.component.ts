@@ -1,31 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { Category } from '../../common/model/category';
-import { MessageComponent } from '../../common/message/message.component';
-
-class EditorCategory {
-  original: Category;
-  edited: Category;
-  displayed: Category;
-  changed = false;
-
-  constructor(original: Category) {
-    this.original = Object.assign({}, original);
-    this.edited = Object.assign({}, original);
-    this.displayed = this.edited;
-  }
-
-  hasChangedName(): boolean {
-    return this.original.name !== this.edited.name;
-  }
-
-  hasChangedColor(): boolean {
-    return this.original.color !== this.edited.color;
-  }
-
-  updateChanged() {
-    this.changed = !this.original || this.hasChangedName() || this.hasChangedColor();
-  }
-}
+import {Component, OnInit} from '@angular/core';
+import {Editor} from '../../common/model/editor';
+import {CategoryService} from '../../common/rest-service/category.service';
+import {Category} from '../../common/model/category';
 
 @Component({
   selector: 'app-category-editor',
@@ -33,85 +9,28 @@ class EditorCategory {
   styleUrls: ['category-editor.component.scss']
 })
 export class CategoryEditorComponent implements OnInit {
-  categories: EditorCategory[] = [];
+  editorConfig: Editor.Config<Category>;
 
-  @ViewChild(MessageComponent)
-  private message: MessageComponent;
-
-  constructor() {
+  constructor(private categoryService: CategoryService) {
   }
 
   ngOnInit() {
-    this.loadCategories();
-  }
-
-  loadCategories() {
-    // TODO
-    Promise.resolve([])
-      .then((categories: Category[]) => this.categories = categories.map(category => new EditorCategory(category)))
-      .catch(reason => this.message.error(reason));
-  }
-
-  changeName(category: EditorCategory, value: string) {
-    category.updateChanged();
-  }
-
-  changeColor(category: EditorCategory, value: string) {
-    category.updateChanged();
-  }
-
-  reset(category: EditorCategory) {
-    category.edited = Object.assign({}, category.original);
-    category.displayed = category.edited;
-    category.updateChanged();
-  }
-
-  remove(category: EditorCategory) {
-    if (category.original) {
-      category.edited = null;
-      category.displayed = category.original;
-    } else {
-      this.categories.splice(this.categories.indexOf(category), 1);
-    }
-  }
-
-  newCategory() {
-    const newCategory = new EditorCategory(new Category(-1, 'New Category', '#aaaaaa'));
-    newCategory.original = null;
-    newCategory.updateChanged();
-    this.categories.push(newCategory);
-  }
-
-  resetAll() {
-    this.categories.forEach(category => {
-      if (category.original) {
-        this.reset(category);
-      }
-    });
-    this.categories = this.categories.filter(category => category.original);
-  }
-
-  save() {
-    const updatedCategories = this.categories
-      .filter(category => category.changed)
-      .map(category => category.edited);
-    const deletedCategories = this.categories
-      .filter(category => !category.edited)
-      .map(category => category.original);
-
-    // TODO
-    const pCreate = Promise.resolve('TODO');
-    const pDelete = Promise.resolve('TODO');
-
-    Promise.all([pCreate, pDelete])
-      .then(result => {
-        this.message.success(`
-          Categories saved successfully.
-          (<b>${updatedCategories.length}</b> created/updated,
-          <b>${deletedCategories.length}</b> deleted)
-        `);
-        this.loadCategories();
-      })
-      .catch(reason => this.message.error(reason));
+    this.editorConfig = new Editor.Config<Category>(
+      () => this.categoryService.list(),
+      (original: Category, active: Category) => {
+        if (active.id === undefined) {
+          return this.categoryService.create(active);
+        } else {
+          return this.categoryService.update(active);
+        }
+      },
+      (original: Category) => this.categoryService.delete(original),
+      new Category(undefined, 'New Category', '#ffffff'),
+      [
+        new Editor.FieldSpec<Category>('ID', Editor.FieldType.ReadOnlyField, 'id'),
+        new Editor.FieldSpec<Category>('Name', Editor.FieldType.StringField, 'name'),
+        new Editor.FieldSpec<Category>('Color', Editor.FieldType.ColorField, 'color')
+      ]
+    );
   }
 }

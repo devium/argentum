@@ -99,16 +99,20 @@ fdescribe('AbstractModel', () => {
     }
 
     class B extends AbstractModel {
-      constructor(public v1: number, public v2: string, public a: A, public as: A[]) {
+      constructor(public v1: Date, public v2: string, public a: A, public as: A[]) {
         super(1);
       }
+      doSomething() {
+      }
     }
-    const b1 = new B(1, 'test', new A(1, 2), [new A(2, 3), new A(3, 4)]);
+    const b1 = new B(new Date('2019-12-31T22:30'), 'test', new A(1, 2), [new A(2, 3), new A(3, 4)]);
     const b2 = <B>b1.clone();
     expect(b1.equals(b2)).toBeTruthy();
     expect(b1.as.length).toBe(2);
     b1.as.pop();
     expect(b1.as.length).toBe(1);
     expect(b2.as.length).toBe(2);
+    expect(b2.doSomething).toBeDefined();
+    expect(b1.v1).not.toBe(b2.v1);
   });
 });

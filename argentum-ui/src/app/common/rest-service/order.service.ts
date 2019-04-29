@@ -28,8 +28,8 @@ export class OrderService {
   list(guests?: Guest[], products?: Product[]): Observable<Order[]> {
     return withDependencies(
       this.http.get<Order.Dto[]>('/orders'),
-      [guests, this.guestService.list],
-      [products, this.productService.list]
+      [guests, () => this.guestService.list()],
+      [products, () => this.productService.list()]
     ).pipe(
       map(([dtos, guestsDep, productsDep]: [Order.Dto[], Guest[], Product[], {}]) => {
         return dtos.map((dto: Order.Dto) => Order.fromDto(dto, guestsDep, productsDep));
@@ -40,7 +40,7 @@ export class OrderService {
   listByCard(card: string, categories?: Category[]): Observable<Order[]> {
     return withDependencies(
       this.http.get<Order.Dto[]>('/orders', {params: {guest__card: card}}),
-      [categories, this.categoryService.list]
+      [categories, () => this.categoryService.list()]
     ).pipe(
       map(([dtos, categoriesDep]: [Order.Dto[], Category[], {}, {}]) => {
         return dtos.map((dto: Order.Dto) => Order.fromDto(dto, undefined, undefined, categoriesDep));
@@ -52,7 +52,7 @@ export class OrderService {
     // The caller should always have the products that need to be resolved in the response, so make sure to pass them.
     return withDependencies(
       this.http.post<Order.Dto>('/orders', order.toDto()),
-      [products, this.productService.list]
+      [products, () => this.productService.list()]
     ).pipe(
       map(([dto, productsDep]: [Order.Dto, Product[], {}, {}]) => Order.fromDto(dto, undefined, productsDep, undefined))
     );
@@ -62,7 +62,7 @@ export class OrderService {
     // The caller should always have the products that need to be resolved in the response, so make sure to pass them.
     return withDependencies(
       this.http.patch<Order.Dto>(`/orders/${order.id}`, Order.commitDto()),
-      [products, this.productService.list]
+      [products, () => this.productService.list()]
     ).pipe(
       map(([dto, productsDep]: [Order.Dto, Product[], {}, {}]) => Order.fromDto(dto, undefined, productsDep, undefined))
     );
@@ -72,7 +72,7 @@ export class OrderService {
     // The caller should always have the products that need to be resolved in the response, so make sure to pass them.
     return withDependencies(
       this.http.patch<Order.Dto>(`/orders/${order.id}`, Order.cancelDto(newCustom)),
-      [products, this.productService.list]
+      [products, () => this.productService.list()]
     ).pipe(
       map(([dto, productsDep]: [Order.Dto, Product[], {}, {}]) => Order.fromDto(dto, undefined, productsDep, undefined))
     );
@@ -82,7 +82,7 @@ export class OrderService {
     // The caller should always have the products that need to be resolved in the response, so make sure to pass them.
     return withDependencies(
       this.http.patch<OrderItem.Dto>(`/order_items/${orderItem.id}`, OrderItem.cancelDto(newQuantity)),
-      [products, this.productService.list]
+      [products, () => this.productService.list()]
     ).pipe(
       map(([dto, productsDep]: [OrderItem.Dto, Product[], {}, {}]) => OrderItem.fromDto(dto, productsDep, undefined))
     );

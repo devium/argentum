@@ -18,7 +18,7 @@ export class UserService {
   me(groups?: Group[]): Observable<User> {
     return withDependencies(
       this.http.get<User.Dto>('/users/me'),
-      [groups, this.groupService.list]
+      [groups, () => this.groupService.list()]
     ).pipe(
       map(([dto, groupsDep]: [User.Dto, Group[], {}, {}]) => User.fromDto(dto, groupsDep))
     );
@@ -27,7 +27,7 @@ export class UserService {
   list(groups?: Group[]): Observable<User[]> {
     return withDependencies(
       this.http.get<User.Dto[]>('/users'),
-      [groups, this.groupService.list]
+      [groups, () => this.groupService.list()]
     ).pipe(
       map(([dtos, groupsDep]: [User.Dto[], Group[], {}, {}]) => dtos.map((dto: User.Dto) => User.fromDto(dto, groupsDep)))
     );
@@ -36,7 +36,7 @@ export class UserService {
   create(user: User, groups?: Group[]): Observable<User> {
     return withDependencies(
       this.http.post<User.Dto>('/users', user.toDto()),
-      [groups, this.groupService.list]
+      [groups, () => this.groupService.list()]
     ).pipe(
       map(([dto, groupsDep]: [User.Dto, Group[], {}, {}]) => User.fromDto(dto, groupsDep))
     );
@@ -45,7 +45,7 @@ export class UserService {
   update(user: User, groups?: Group[]): Observable<User> {
     return withDependencies(
       this.http.patch<User.Dto>(`/users/${user.id}`, user.toDto()),
-      [groups, this.groupService.list]
+      [groups, () => this.groupService.list()]
     ).pipe(
       map(([dto, groupsDep]: [User.Dto, Group[], {}, {}]) => User.fromDto(dto, groupsDep))
     );

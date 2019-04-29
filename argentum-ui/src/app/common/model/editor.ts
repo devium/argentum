@@ -1,0 +1,131 @@
+import {AbstractModel} from './abstract-model';
+import {Observable} from 'rxjs';
+
+export namespace Editor {
+
+  export class Entry<T extends AbstractModel> {
+    public original: T;
+    public active: T;
+
+    constructor(
+      source: T,
+      private saveFun: ((original: T, active: T) => Observable<T>)
+    ) {
+      this.init(source);
+    }
+
+    init(source: T) {
+      this.original = source;
+      this.active = <T>source.clone();
+    }
+
+    changed(): boolean {
+      return !this.original.equals(this.active) || this.original.id === undefined;
+    }
+
+    activeOption(fieldSpec: FieldSpec<T>): OptionSpec {
+      if (this.active[fieldSpec.key] instanceof AbstractModel && this.active[fieldSpec.key] !== null) {
+        return fieldSpec.optionSpecs.find((optionSpec: OptionSpec) => optionSpec.value.id === this.active[fieldSpec.key]['id']);
+      } else {
+        return fieldSpec.optionSpecs.find((optionSpec: OptionSpec) => optionSpec.value === this.active[fieldSpec.key]);
+      }
+    }
+
+    save() {
+      if (!this.changed()) {
+        return;
+      }
+      this.saveFun(this.original, this.active).subscribe((model: T) => {
+        this.init(model);
+      });
+    }
+
+    reset() {
+      this.init(this.original);
+    }
+  }
+
+  export enum FieldType {
+    ReadOnlyField,
+    StringField,
+    ColorField,
+    CurrencyField,
+    MultiCheckboxField,
+    DropdownField
+  }
+
+  export class OptionSpec {
+    constructor(
+      public name: string,
+      public value: any,
+      public color?: string) {
+    }
+  }
+
+  export class FieldSpec<T extends AbstractModel> {
+    public colspan: number;
+
+    constructor(
+      public name: string,
+      public type: FieldType,
+      public key: keyof T,
+      public optionSpecs: OptionSpec[] = []
+    ) {
+    }
+  }
+
+  export class Config<T extends AbstractModel> {
+    public entries: Entry<T>[];
+    public numHeaderRows: number;
+    public numCols = 0;
+    public headerOptionSpecs: OptionSpec[] = [];
+
+    constructor(
+      private source: (() => Observable<T[]>),
+      public saveFun: ((original: T, active: T) => Observable<T>),
+      public removeFun: ((original: T) => Observable<null>),
+      public defaultModel: T,
+      public fieldSpecs: FieldSpec<T>[]
+    ) {
+      this.numHeaderRows = 1;
+      for (const fieldSpec of fieldSpecs) {
+        if (fieldSpec.type === FieldType.MultiCheckboxField) {
+          this.numHeaderRows = 2;
+          this.headerOptionSpecs = this.headerOptionSpecs.concat(fieldSpec.optionSpecs);
+          fieldSpec.colspan = fieldSpec.optionSpecs.length;
+        } else {
+          fieldSpec.colspan = 1;
+        }
+        this.numCols += fieldSpec.colspan;
+      }
+      this.reload();
+    }
+
+    reload() {
+      this.source().subscribe((models: T[]) => {
+        this.entries = models.map((model: T) => new Entry(model, this.saveFun));
+      });
+    }
+
+    reset() {
+      this.entries.forEach((entry: Entry<T>) => entry.reset());
+    }
+
+    create() {
+      this.entries.push(new Entry(<T>this.defaultModel.clone(), this.saveFun));
+    }
+
+    remove(entry: Entry<T>) {
+      if (entry.original.id === undefined) {
+        const index = this.entries.indexOf(entry);
+        this.entries.splice(index, 1);
+      } else {
+        this.removeFun(entry.original).subscribe(() => {
+          const index = this.entries.indexOf(entry);
+          this.entries.splice(index, 1);
+        });
+      }
+    }
+  }
+
+}

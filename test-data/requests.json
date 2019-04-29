@@ -101,12 +101,20 @@
       2
     ]
   },
+  "POST/products#empty_ranges": {
+    "name": "Beer",
+    "price": "3.60",
+    "product_ranges": []
+  },
   "PATCH/products/1": {
     "name": "Aqua",
     "deprecated": true,
     "product_ranges": [
       1
     ]
+  },
+  "PATCH/products/1#deprecate": {
+    "deprecated": true
   },
   "POST/product_ranges": {
     "name": "Just coke"

@@ -10,7 +10,7 @@ class Product(models.Model):
     deprecated = models.BooleanField(default=False)
     price = models.DecimalField(**CURRENCY_CONFIG)
     category = models.ForeignKey(Category, null=True, on_delete=models.SET_NULL)
-    product_ranges = models.ManyToManyField('api.ProductRange', related_name='products', default=[])
+    product_ranges = models.ManyToManyField('api.ProductRange', related_name='products', default=[], blank=True)
 
     def __str__(self):
         return f'Product(' \

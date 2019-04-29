@@ -20,8 +20,8 @@ export class TransactionService {
   list(guests?: Guest[], orders?: Order[]): Observable<Transaction[]> {
     return withDependencies(
       this.http.get<Transaction.Dto[]>('/transactions'),
-      [guests, this.guestService.list],
-      [orders, this.orderService.list]
+      [guests, () => this.guestService.list()],
+      [orders, () => this.orderService.list()]
     ).pipe(
       map(([dtos, guestsDep, ordersDep]: [Transaction.Dto[], Guest[], Order[], {}]) =>
         dtos.map((dto: Transaction.Dto) => Transaction.fromDto(dto, ordersDep, guestsDep))
@@ -32,7 +32,7 @@ export class TransactionService {
   listByCard(card: string, orders?: Order[]): Observable<Transaction[]> {
     return withDependencies(
       this.http.get<Transaction.Dto[]>('/transactions', {params: {guest__card: card}}),
-      [orders, this.orderService.list]
+      [orders, () => this.orderService.list()]
     ).pipe(
       map(([dtos, ordersDep]: [Transaction.Dto[], Order[], {}, {}]) =>
         dtos.map((dto: Transaction.Dto) => Transaction.fromDto(dto, ordersDep))
@@ -43,7 +43,7 @@ export class TransactionService {
   create(card: string, value: number, ignoreBonus: boolean = false, orders?: Order[]): Observable<Transaction> {
     return withDependencies(
       this.http.post<Transaction.Dto>('/transactions', Transaction.createDto(card, value, ignoreBonus)),
-      [orders, this.orderService.list]
+      [orders, () => this.orderService.list()]
     ).pipe(
       map(([dto, ordersDep]: [Transaction.Dto, Order[], {}, {}]) => Transaction.fromDto(dto, ordersDep))
     );
@@ -52,7 +52,7 @@ export class TransactionService {
   commit(transaction: Transaction, orders?: Order[]): Observable<Transaction> {
     return withDependencies(
       this.http.patch<Transaction.Dto>(`/transactions/${transaction.id}`, Transaction.commitDto()),
-      [orders, this.orderService.list]
+      [orders, () => this.orderService.list()]
     ).pipe(
       map(([dto, ordersDep]: [Transaction.Dto, Order[], {}, {}]) => Transaction.fromDto(dto, ordersDep))
     );

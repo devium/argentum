@@ -18,7 +18,7 @@ export class StatisticsService {
   list(products?: Product[]): Observable<Statistics> {
     return withDependencies(
       this.http.get<Statistics.Dto>('/statistics'),
-      [products, this.productService.list]
+      [products, () => this.productService.list()]
     ).pipe(
       map(([dto, productsDep]: [Statistics.Dto, Product[], {}, {}]) => Statistics.fromDto(dto, productsDep))
     );

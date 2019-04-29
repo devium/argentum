@@ -446,6 +446,14 @@
       2
     ]
   },
+  "POST/products#empty_ranges": {
+    "id": 3,
+    "name": "Beer",
+    "deprecated": false,
+    "price": "3.60",
+    "category": null,
+    "product_ranges": []
+  },
   "PATCH/products/1": {
     "id": 1,
     "name": "Aqua",
@@ -454,6 +462,17 @@
     "category": 1,
     "product_ranges": [
       1
+    ]
+  },
+  "PATCH/products/1#deprecate": {
+    "id": 1,
+    "name": "Water",
+    "deprecated": true,
+    "price": "2.40",
+    "category": 1,
+    "product_ranges": [
+      1,
+      2
     ]
   },
   "GET/product_ranges": [

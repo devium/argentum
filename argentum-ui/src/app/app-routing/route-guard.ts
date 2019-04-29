@@ -1,8 +1,10 @@
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
+import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree} from '@angular/router';
 import { Injectable } from '@angular/core';
 import { User } from '../common/model/user';
 import {Group} from '../common/model/group';
 import {UserService} from '../common/rest-service/user.service';
+import {Observable, of} from 'rxjs';
+import {catchError, map} from 'rxjs/operators';
 
 @Injectable()
 export class RouteGuard implements CanActivate {
@@ -50,7 +52,7 @@ export class RouteGuard implements CanActivate {
   constructor(private userService: UserService, private router: Router) {
   }
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | Promise<boolean> {
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree | Observable<boolean | UrlTree> {
     const path = route.url[0].path;
     console.log(`Checking permissions for route ${path}.`);
 
@@ -61,52 +63,45 @@ export class RouteGuard implements CanActivate {
     }
 
     if (path === 'logout') {
-      this.router.navigate(['/login']);
-      return false;
+      return this.router.parseUrl('/login');
     }
 
     if (!localStorage.getItem('token')) {
       console.log('No access token. Redirecting to login.');
-      this.router.navigate(['/login']);
-      return false;
+      return this.router.parseUrl('/login');
     }
 
     console.log('Getting user information from backend.');
-    return this.userService.me().toPromise()
-      .then((user: User) => {
+    return this.userService.me().pipe(
+      map((user: User) => {
         console.log(`Roles: ${user.groups}`);
         localStorage.setItem('roles', user.groups.join(','));
 
+        const home = this.resolveHome(user.groups);
         if (path === 'home') {
-          const homePath = this.resolveHome(user.groups);
-
-          if (!homePath) {
-            console.log(`No home for user roles. Logging out.`);
-            this.router.navigate(['/login']);
+          if (!home) {
+            console.log('No home for user roles. Logging out.');
+            return this.router.parseUrl('/login');
           } else {
-            console.log(`Redirecting to home ${homePath}`);
-            this.router.navigate([homePath]);
+            console.log(`Redirecting to home ${home}`);
+            return this.router.parseUrl(home);
           }
-          return false;
         }
-
         // If role is allowed to access, return true.
         for (const group in this.GROUPS_TO_PATH) {
           if (user.groups.map((userGroup: Group) => userGroup.name).includes(group)) {
             if (this.GROUPS_TO_PATH[group].includes(path)) {
-              return Promise.resolve(true);
+              return true;
             }
           }
         }
-
-        console.log(`User denied. Redirecting to home.`);
+        console.log(`User denied. Redirecting to home ${home}`);
         // Not allowed, redirect to home.
-        const home: string = this.resolveHome(user.groups);
-        this.router.navigate([home]);
-        return Promise.resolve(false);
-      }).catch(() => {
-        this.router.navigate(['/login']);
-        return Promise.resolve(false);
-      });
+        return this.router.parseUrl(home);
+      }),
+      catchError((err: any) => {
+        console.log('API error. Logging out.');
+        return of(this.router.parseUrl('/login'));
+      }));
   }
 }

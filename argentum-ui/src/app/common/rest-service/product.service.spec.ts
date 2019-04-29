@@ -67,6 +67,14 @@ fdescribe('ProductService', () => {
     testEndpoint(httpTestingController, requests, responses, 'POST', '/products', '#max');
   }));
 
+  it('should deprecate a product', fakeAsync(() => {
+    service.deprecate(Products.WATER).subscribe((product: Product) => {
+      expect(product.equals(Products.WATER_DEPRECATED_REFERENCE)).toBeTruthy();
+      resolved = true;
+    });
+    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/products/${Products.WATER.id}`, '#deprecate');
+  }));
+
   it('should update a product', fakeAsync(() => {
     service.update(Products.WATER_PATCHED).subscribe((product: Product) => {
       expect(product.equals(Products.WATER_PATCHED_REFERENCE)).toBeTruthy();

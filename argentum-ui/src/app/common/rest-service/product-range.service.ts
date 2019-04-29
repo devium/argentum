@@ -25,7 +25,7 @@ export class ProductRangeService {
   retrieve(productRangeId: number, categories?: Category[]): Observable<ProductRange> {
     return withDependencies(
       this.http.get<ProductRange.Dto>(`/product_ranges/${productRangeId}`),
-      [categories, this.categoryService.list]
+      [categories, () => this.categoryService.list()]
     ).pipe(
       map(([dto, categoriesDep]: [ProductRange.Dto, Category[], {}, {}]) => ProductRange.fromDto(dto, categoriesDep))
     );

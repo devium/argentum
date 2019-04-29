@@ -18,7 +18,7 @@ export class BonusTransactionService {
   list(guests?: Guest[]): Observable<BonusTransaction[]> {
     return withDependencies(
       this.http.get<BonusTransaction.Dto[]>('/bonus_transactions'),
-      [guests, this.guestService.list]
+      [guests, () => this.guestService.list()]
     ).pipe(
       map(([dtos, guestsDep]: [BonusTransaction.Dto[], Guest[], {}, {}]) => {
         return dtos.map((dto: BonusTransaction.Dto) => BonusTransaction.fromDto(dto, guestsDep));

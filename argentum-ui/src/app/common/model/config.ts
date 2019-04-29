@@ -1,4 +1,5 @@
 import {AbstractModel} from './abstract-model';
+import {formatCurrency} from '../util/format';
 
 export namespace Config {
   export interface Dto {
@@ -22,6 +23,9 @@ export class Config extends AbstractModel {
   }
 
   toDto(): Config.Dto {
+    if (this.key === 'postpaid_limit') {
+      this.value = formatCurrency(parseFloat(this.value));
+    }
     return {
       id: undefined,
       key: undefined,

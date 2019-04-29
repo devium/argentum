@@ -1,23 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { Config } from '../../common/model/config';
-import { MessageComponent } from '../../common/message/message.component';
-import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {formatCurrency} from '../../common/util/format';
-
-class EditorConfig {
-  original: Config;
-  edited: Config;
-
-  constructor(original: Config) {
-    this.original = Object.assign({}, original);
-    this.edited = Object.assign({}, original);
-  }
-
-  hasChangedValue(): boolean {
-    return this.original.value !== this.edited.value;
-  }
-}
+import {Component, OnInit} from '@angular/core';
+import {Editor} from '../../common/model/editor';
+import {Config} from '../../common/model/config';
+import {ConfigService} from '../../common/rest-service/config.service';
 
 @Component({
   selector: 'app-config',
@@ -25,45 +9,22 @@ class EditorConfig {
   styleUrls: ['./config-editor.component.scss']
 })
 export class ConfigEditorComponent implements OnInit {
-  config: EditorConfig = null;
+  editorConfig: Editor.Config<Config>;
 
-  @ViewChild(MessageComponent)
-  private message: MessageComponent;
-
-  constructor(private modalService: NgbModal) {
+  constructor(private configService: ConfigService) {
   }
 
   ngOnInit() {
-    this.loadConfig();
+    this.editorConfig = new Editor.Config<Config>(
+      () => this.configService.list(),
+      (original: Config, active: Config) => this.configService.update(active),
+      null,
+      null,
+      [
+        new Editor.FieldSpec<Config>('ID', Editor.FieldType.ReadOnlyField, 'id'),
+        new Editor.FieldSpec<Config>('Key', Editor.FieldType.ReadOnlyField, 'key'),
+        new Editor.FieldSpec<Config>('Value', Editor.FieldType.StringField, 'value')
+      ]
+    );
   }
-
-  loadConfig(): void {
-    // TODO
-    Promise.resolve({})
-      .then((config: Config) => this.config = new EditorConfig(config))
-      .catch(reason => this.message.error(reason));
-  }
-
-  resetAll() {
-    this.loadConfig();
-  }
-
-  setPostpaidLimit() {
-    const modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
-    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
-    modal.result.then((result: number) => {
-      this.config.edited.value = formatCurrency(result);
-    }, result => void(0));
-  }
-
-  save() {
-    // TODO
-    Promise.resolve()
-      .then(() => {
-        this.message.success('Config saved successfully.');
-        this.loadConfig();
-      })
-      .catch(reason => this.message.error(reason));
-  }
-
 }

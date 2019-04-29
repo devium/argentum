@@ -18,7 +18,7 @@ export class ProductService {
   list(categories?: Category[]): Observable<Product[]> {
     return withDependencies(
       this.http.get<Product.Dto[]>('/products'),
-      [categories, this.categoryService.list]
+      [categories, () => this.categoryService.list()]
     ).pipe(
       map(
         ([dtos, categoriesDep]: [Product.Dto[], Category[], {}, {}]) =>
@@ -30,7 +30,16 @@ export class ProductService {
   create(product: Product, categories?: Category[]): Observable<Product> {
     return withDependencies(
       this.http.post<Product.Dto>('/products', product.toDto()),
-      [categories, this.categoryService.list]
+      [categories, () => this.categoryService.list()]
+    ).pipe(
+      map(([dto, categoriesDep]: [Product.Dto, Category[], {}, {}]) => Product.fromDto(dto, categoriesDep))
+    );
+  }
+
+  deprecate(product: Product, categories?: Category[]): Observable<Product> {
+    return withDependencies(
+      this.http.patch<Product.Dto>(`/products/${product.id}`, Product.deprecateDto()),
+      [categories, () => this.categoryService.list()]
     ).pipe(
       map(([dto, categoriesDep]: [Product.Dto, Category[], {}, {}]) => Product.fromDto(dto, categoriesDep))
     );
@@ -39,7 +48,7 @@ export class ProductService {
   update(product: Product, categories?: Category[]): Observable<Product> {
     return withDependencies(
       this.http.patch<Product.Dto>(`/products/${product.id}`, product.toDto()),
-      [categories, this.categoryService.list]
+      [categories, () => this.categoryService.list()]
     ).pipe(
       map(([dto, categoriesDep]: [Product.Dto, Category[], {}, {}]) => Product.fromDto(dto, categoriesDep))
     );

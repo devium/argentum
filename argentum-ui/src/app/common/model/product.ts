@@ -29,14 +29,27 @@ export class Product extends AbstractModel {
 
   static fromDto(dto: Product.Dto, categories: Category[]) {
     const category = categories.find((categoryDep: Category) => categoryDep.id === dto.category);
+    // Sorting is used to provide a unique representation of a set of references for change detection in editors.
+    const productRangesSorted = dto.product_ranges.sort((a: number, b: number) => a - b);
     return new Product(
       dto.id,
       dto.name,
       dto.deprecated,
       parseFloat(dto.price),
       category ? category : null,
-      dto.product_ranges
+      productRangesSorted
     );
+  }
+
+  static deprecateDto(): Product.Dto {
+    return {
+      id: undefined,
+      name: undefined,
+      deprecated: true,
+      price: undefined,
+      category: undefined,
+      product_ranges: undefined
+    };
   }
 
   toDto(): Product.Dto {

@@ -1,0 +1,173 @@
+<app-admin-nav></app-admin-nav>
+
+<div *ngIf="editorConfig && editorConfig.entries" class="container mt-3">
+
+  <table
+    id="editorTable"
+    class="table table-sm table-responsive table-striped"
+  >
+    <thead *ngIf="editorConfig.entries.length > 0">
+    <tr>
+      <th
+        *ngFor="let fieldSpec of editorConfig.fieldSpecs"
+        [attr.rowspan]="fieldSpec.colspan > 1 ? 1 : 2"
+        [attr.colspan]="fieldSpec.colspan"
+      >
+        {{fieldSpec.name}}
+      </th>
+      <th [attr.rowspan]="editorConfig.numHeaderRows" colspan="3">
+        Controls
+      </th>
+    </tr>
+    <tr *ngIf="editorConfig.numHeaderRows === 2">
+      <th *ngFor="let optionSpec of editorConfig.headerOptionSpecs" class="rotate">
+        <div>
+          {{optionSpec.name}}
+        </div>
+      </th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr
+      *ngFor="let entry of editorConfig.entries.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize)"
+      [class.changed]="entry.changed()"
+    >
+      <ng-container *ngFor="let fieldSpec of editorConfig.fieldSpecs">
+        <td *ngIf="fieldSpec.type === Editor.FieldType.ReadOnlyField" class="text-right align-middle">
+          {{entry.active[fieldSpec.key]}}
+        </td>
+
+        <td *ngIf="fieldSpec.type === Editor.FieldType.StringField">
+          <input
+            [(ngModel)]="entry.active[fieldSpec.key]"
+            class="form-control p-1"
+          >
+        </td>
+
+        <td *ngIf="fieldSpec.type === Editor.FieldType.ColorField">
+          <input
+            [(ngModel)]="entry.active[fieldSpec.key]"
+            class="form-control h-100 color-picker"
+            type="color"
+            [style.background-color]="entry.active[fieldSpec.key]"
+          >
+        </td>
+
+        <td *ngIf="fieldSpec.type === Editor.FieldType.CurrencyField">
+          <button
+            (click)="promptCurrency(entry, fieldSpec.key)"
+            type="button"
+            class="btn btn-primary btn-sm"
+          >
+            {{entry.active[fieldSpec.key] | number: '1.2-2'}}
+          </button>
+        </td>
+
+        <td *ngIf="fieldSpec.type === Editor.FieldType.DropdownField">
+          <ng-container *ngIf="entry.activeOption(fieldSpec); let activeOption">
+            <div ngbDropdown placement="top-left">
+              <button
+                class="btn btn-sm text-black"
+                ngbDropdownToggle
+                [style.background-color]="activeOption.color"
+                [class.dark-bg]="isDarkBackground(activeOption.color)"
+              >
+                {{activeOption.name}}
+              </button>
+              <div ngbDropdownMenu>
+                <button
+                  *ngFor="let optionSpec of fieldSpec.optionSpecs"
+                  (click)="entry.active[fieldSpec.key] = optionSpec.value"
+                  class="dropdown-item"
+                  [style.background-color]="optionSpec.color"
+                  [class.dark-bg]="isDarkBackground(optionSpec.color)"
+                >
+                  {{optionSpec.name}}
+                </button>
+              </div>
+            </div>
+          </ng-container>
+        </td>
+
+        <ng-container *ngIf="fieldSpec.type === Editor.FieldType.MultiCheckboxField">
+          <td *ngFor="let optionSpec of fieldSpec.optionSpecs">
+            <input
+              type="checkbox"
+              class="checkbox-lg"
+              [checked]="entry.active[fieldSpec.key].includes(optionSpec.value)"
+              (change)="toggleCheckbox(entry, fieldSpec.key, optionSpec.value)"
+            >
+          </td>
+        </ng-container>
+      </ng-container>
+
+      <td class="text-center">
+        <button
+          (click)="editorConfig.remove(entry)"
+          class="btn btn-danger btn-sm"
+          [disabled]="!editorConfig.removeFun"
+        >
+          <i class="fa fa-trash"></i>
+        </button>
+      </td>
+      <td class="text-center">
+        <button
+          (click)="entry.reset()"
+          class="btn btn-primary btn-sm"
+          [class.disabled]="!entry.changed()"
+          [disabled]="!entry.changed()"
+        >
+          <i class="fa fa-undo"></i>
+        </button>
+      </td>
+      <td class="text-center">
+        <button
+          (click)="entry.save()"
+          class="btn btn-primary btn-sm"
+          [class.disabled]="!entry.changed()"
+          [disabled]="!entry.changed()"
+        >
+          <i class="fa fa-save"></i>
+        </button>
+      </td>
+
+    </tr>
+    <tr>
+      <td [attr.colspan]="editorConfig.numCols + 3">
+        <button
+          *ngIf="editorConfig.defaultModel"
+          (click)="editorConfig.create()"
+          class="btn btn-primary mx-1"
+        >
+          <i class="fa fa-plus"></i>
+        </button>
+        <button
+          (click)="editorConfig.reload()"
+          class="btn btn-primary mx-1"
+        >
+          <i class="fa fa-refresh"></i>
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="row mx-0 mb-1">
+    <ngb-pagination
+      [collectionSize]="editorConfig.entries.length"
+      [(page)]="page"
+      [pageSize]="pageSize"
+      [maxSize]="10"
+      [rotate]="true"
+    >
+    </ngb-pagination>
+  </div>
+
+  <div class="mt-3">
+    <app-message></app-message>
+  </div>
+
+</div>
+
+<app-navbar></app-navbar>
