@@ -48,11 +48,13 @@ export namespace Editor {
   export enum FieldType {
     ReadOnlyField,
     StringField,
+    PasswordField,
     ColorField,
     CurrencyField,
     CardField,
     BalanceField,
     MultiCheckboxField,
+    MultiModelCheckboxField,
     DropdownField
   }
 
@@ -74,7 +76,8 @@ export namespace Editor {
       public optionSpecs: OptionSpec[] = [],
       public filtered = false,
       public sortable = false,
-      public minWidth: number = 0
+      public minWidth: number = 0,
+      public disabled: (entry: Entry<T>) => boolean = (entry: Entry<T>) => false
     ) {
     }
   }
@@ -92,10 +95,11 @@ export namespace Editor {
       public saveFun: ((original: T, active: T) => Observable<T>),
       public removeFun: ((original: T) => Observable<null>),
       public defaultModel: T,
-      public fieldSpecs: FieldSpec<T>[]
+      public fieldSpecs: FieldSpec<T>[],
+      public deleteDisabled: ((entry: Entry<T>) => boolean) = (entry: Entry<T>) => false
     ) {
       for (const fieldSpec of fieldSpecs) {
-        if (fieldSpec.type === FieldType.MultiCheckboxField) {
+        if (fieldSpec.type === FieldType.MultiCheckboxField || fieldSpec.type === FieldType.MultiModelCheckboxField) {
           this.headerOptionRow = true;
           this.headerOptionSpecs = this.headerOptionSpecs.concat(fieldSpec.optionSpecs);
           fieldSpec.colspan = fieldSpec.optionSpecs.length;

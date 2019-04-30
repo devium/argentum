@@ -40,7 +40,7 @@
           *ngIf="fieldSpec.filtered"
           (input)="setFilter(fieldSpec.key, $event.target.value)"
           (focus)="$event.target.select()"
-          class="form-control p-1"
+          class="form-control form-control-sm"
         >
       </th>
     </tr>
@@ -65,16 +65,29 @@
           <input
             [(ngModel)]="entry.active[fieldSpec.key]"
             (focus)="$event.target.select()"
-            class="form-control p-1"
+            class="form-control form-control-sm"
+            [disabled]="fieldSpec.disabled(entry)"
+          >
+        </td>
+
+        <td *ngIf="fieldSpec.type === Editor.FieldType.PasswordField">
+          <input
+            (ngModelChange)="entry.active[fieldSpec.key] = $event"
+            [ngModel]="entry.active[fieldSpec.key] ? entry.active[fieldSpec.key] : '********'"
+            (focus)="$event.target.select()"
+            class="form-control form-control-sm"
+            [disabled]="fieldSpec.disabled(entry)"
+            type="password"
           >
         </td>
 
         <td *ngIf="fieldSpec.type === Editor.FieldType.ColorField">
           <input
             [(ngModel)]="entry.active[fieldSpec.key]"
-            class="form-control h-100 color-picker"
+            class="form-control form-control-sm color-picker"
             type="color"
             [style.background-color]="entry.active[fieldSpec.key]"
+            [disabled]="fieldSpec.disabled(entry)"
           >
         </td>
 
@@ -82,6 +95,7 @@
           <button
             (click)="promptCurrency(entry, fieldSpec.key)"
             class="btn btn-primary btn-sm"
+            [disabled]="fieldSpec.disabled(entry)"
           >
             {{entry.active[fieldSpec.key] | number: '1.2-2'}}
           </button>
@@ -92,6 +106,7 @@
             <button
               (click)="promptCard(entry, fieldSpec.key)"
               class="btn btn-primary btn-sm btn-card"
+              [disabled]="fieldSpec.disabled(entry)"
             >
               <i *ngIf="!entry.active[fieldSpec.key]" class="fa fa-credit-card px-3"></i>
               {{entry.active[fieldSpec.key]}}
@@ -99,7 +114,7 @@
             <button
               (click)="entry.active[fieldSpec.key] = null"
               class="btn btn-danger btn-sm"
-              [disabled]="entry.active[fieldSpec.key] === null"
+              [disabled]="entry.active[fieldSpec.key] === null || fieldSpec.disabled(entry)"
             >
               <i class="fa fa-times"></i>
             </button>
@@ -111,18 +126,21 @@
             <button
               (click)="addBalance(entry, fieldSpec.key, -1)"
               class="btn btn-primary btn-sm"
+              [disabled]="fieldSpec.disabled(entry)"
             >
               <i class="fa fa-minus"></i>
             </button>
             <button
               (click)="setBalance(entry, fieldSpec.key)"
               class="btn btn-primary btn-sm btn-balance"
+              [disabled]="fieldSpec.disabled(entry)"
             >
               {{formatCurrency(entry.active[fieldSpec.key])}}
             </button>
             <button
               (click)="addBalance(entry, fieldSpec.key, +1)"
               class="btn btn-primary btn-sm"
+              [disabled]="fieldSpec.disabled(entry)"
             >
               <i class="fa fa-plus"></i>
             </button>
@@ -137,6 +155,7 @@
                 ngbDropdownToggle
                 [style.background-color]="activeOption.color"
                 [class.dark-bg]="isDarkBackground(activeOption.color)"
+                [disabled]="fieldSpec.disabled(entry)"
               >
                 {{activeOption.name}}
               </button>
@@ -156,12 +175,25 @@
         </td>
 
         <ng-container *ngIf="fieldSpec.type === Editor.FieldType.MultiCheckboxField">
-          <td *ngFor="let optionSpec of fieldSpec.optionSpecs">
+          <td *ngFor="let optionSpec of fieldSpec.optionSpecs" class="text-center">
             <input
               type="checkbox"
-              class="checkbox-lg"
+              class="checkbox-lg align-middle"
               [checked]="entry.active[fieldSpec.key].includes(optionSpec.value)"
               (change)="toggleCheckbox(entry, fieldSpec.key, optionSpec.value)"
+              [disabled]="fieldSpec.disabled(entry)"
+            >
+          </td>
+        </ng-container>
+
+        <ng-container *ngIf="fieldSpec.type === Editor.FieldType.MultiModelCheckboxField">
+          <td *ngFor="let optionSpec of fieldSpec.optionSpecs" class="text-center">
+            <input
+              type="checkbox"
+              class="checkbox-lg align-middle"
+              [checked]="modelArrayContains(entry, fieldSpec.key, optionSpec.value)"
+              (change)="toggleModelCheckbox(entry, fieldSpec.key, optionSpec.value)"
+              [disabled]="fieldSpec.disabled(entry)"
             >
           </td>
         </ng-container>
@@ -171,7 +203,7 @@
         <button
           (click)="editorConfig.remove(entry)"
           class="btn btn-danger btn-sm"
-          [disabled]="!editorConfig.removeFun"
+          [disabled]="!editorConfig.removeFun || editorConfig.deleteDisabled(entry)"
         >
           <i class="fa fa-trash"></i>
         </button>

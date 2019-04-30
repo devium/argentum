@@ -24,7 +24,7 @@ export class User extends AbstractModel {
     return new User(
       dto.id,
       dto.username,
-      undefined,
+      '',
       allGroups.filter((group: Group) => dto.groups.includes(group.id))
     );
   }
@@ -33,7 +33,7 @@ export class User extends AbstractModel {
     return {
       id: undefined,
       username: this.username,
-      password: this.password,
+      password: this.password ? this.password : undefined,
       groups: this.groups.map((group: Group) => group.id)
     };
   }

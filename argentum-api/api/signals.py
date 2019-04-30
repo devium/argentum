@@ -135,16 +135,19 @@ def populate_db(sender, **kwargs):
                 codename=codename
             )
 
+    admin = User.objects.get(username='admin');
     for group_name, permission_names in default_groups:
-        if not Group.objects.filter(name=group_name):
+        groups = Group.objects.filter(name=group_name)
+        if not groups:
             permissions = [
                 Permission.objects.get(codename=permission_name).id
                 for permission_name in permission_names
             ]
             group = Group.objects.create(name=group_name)
             group.permissions.add(*permissions)
-
-    User.objects.get(username='admin').groups.add(Group.objects.get(name='admin'))
+            admin.groups.add(group)
+        else:
+            admin.groups.add(groups[0])
 
     if not Config.objects.filter(key='postpaid_limit'):
         Config.objects.create(key='postpaid_limit', value='0.00')

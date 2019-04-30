@@ -1,53 +1,14 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { User } from '../../common/model/user';
-import { MessageComponent } from '../../common/message/message.component';
-import { ProductRange } from '../../common/model/product-range';
-import { NavbarComponent } from '../../common/navbar/navbar.component';
+import {Component, OnInit} from '@angular/core';
+import {Editor} from '../../common/model/editor';
+import {User} from '../../common/model/user';
+import {StatusService} from '../../common/rest-service/status.service';
+import {UserService} from '../../common/rest-service/user.service';
+import {GroupService} from '../../common/rest-service/group.service';
 import {Group} from '../../common/model/group';
-
-class EditorUser {
-  original: User;
-  edited: User;
-  displayed: User;
-  changed = false;
-
-  constructor(original: User) {
-    this.original = Object.assign({}, original);
-    this.original.groups = original.groups.slice();
-    this.edited = Object.assign({}, original);
-    this.edited.groups = original.groups.slice();
-    this.displayed = this.edited;
-    this.edited.password = '';
-  }
-
-  hasChangedUsername(): boolean {
-    return !this.original || this.original.username !== this.edited.username;
-  }
-
-  hasChangedPassword(): boolean {
-    return !this.original || this.edited.password !== '';
-  }
-
-  hasChangedGroups(): boolean {
-    if (!this.original) {
-      return true;
-    }
-
-    const allInOrig = this.original.groups
-      .map(group => this.edited.groups.includes(group))
-      .reduce((a, b) => a && b, true);
-    const allInEdit = this.edited.groups
-      .map(group => this.original.groups.includes(group))
-      .reduce((a, b) => a && b, true);
-    return !(allInOrig && allInEdit);
-  }
-
-  updateChanged(): void {
-    this.changed = this.hasChangedUsername()
-      || this.hasChangedPassword()
-      || this.hasChangedGroups();
-  }
-}
+import OptionSpec = Editor.OptionSpec;
+import {ProductRangeService} from '../../common/rest-service/product-range.service';
+import {combineLatest} from 'rxjs';
+import {ProductRange} from '../../common/model/product-range';
 
 
 @Component({
@@ -56,126 +17,72 @@ class EditorUser {
   styleUrls: ['./user-editor.component.scss']
 })
 export class UserEditorComponent implements OnInit {
-  users: EditorUser[] = [];
-  ranges: ProductRange[] = [];
-  GROUPS: { [id: string]: string } = {
-    'ADMIN': 'Admin',
-    'COAT_CHECK': 'Coat check',
-    'ORDER': 'Order',
-    'CHECKIN': 'Check-in',
-    'TRANSFER': 'Transfer',
-    'SCAN': 'Scan',
-    'ALL_RANGES': 'All ranges'
-  };
+  editorConfig: Editor.Config<User>;
 
-  @ViewChild(MessageComponent)
-  private message: MessageComponent;
-
-  @ViewChild(NavbarComponent)
-  navbar: NavbarComponent;
-
-  constructor() {
+  constructor(private userService: UserService, private groupService: GroupService, private productRangeService: ProductRangeService) {
   }
 
   ngOnInit() {
-    this.loadUsers();
-  }
+    const groupNames = {
+      admin: 'Admin',
+      coat_check: 'Coat check',
+      order: 'Order',
+      check_in: 'Check-in',
+      transfer: 'Transfer',
+      scan: 'Scan',
+      product_range_all: 'All ranges'
+    };
 
-  loadUsers() {
-    // TODO
-    // this.restService.getUsers()
-    Promise.resolve([])
-      .then((users: User[]) => this.users = users.map(user => new EditorUser(user)))
-      .catch(reason => this.message.error(reason));
-    // TODO
-    // this.restService.getProductRanges()
-    Promise.resolve([])
-      .then((ranges: ProductRange[]) => this.ranges = ranges)
-      .catch(reason => this.message.error(reason));
-  }
+    const groups$ = this.groupService.list();
+    const productRanges$ = this.productRangeService.list();
 
-  changeUsername(user: EditorUser, value: string) {
-    user.updateChanged();
-  }
-
-  changePassword(user: EditorUser, value: string) {
-    user.updateChanged();
-  }
-
-  toggleGroup(user: EditorUser, group: Group) {
-    const index = user.edited.groups.indexOf(group);
-    if (index > -1) {
-      user.edited.groups.splice(index, 1);
-    } else {
-      user.edited.groups.push(group);
-    }
-
-    user.updateChanged();
-  }
-
-  reset(user: EditorUser) {
-    user.edited = Object.assign({}, user.original);
-    user.edited.password = '';
-    user.edited.groups = user.original.groups.slice();
-    user.displayed = user.edited;
-    user.updateChanged();
-  }
-
-  remove(user: EditorUser) {
-    if (user.original) {
-      user.edited = null;
-      user.displayed = user.original;
-    } else {
-      this.users.splice(this.users.indexOf(user), 1);
-    }
-  }
-
-  newUser() {
-    const newUser = new EditorUser(new User(-1, 'user', '', []));
-
-    newUser.original = null;
-    newUser.updateChanged();
-    this.users.push(newUser);
-  }
-
-  resetAll() {
-    this.users.forEach(product => {
-      if (product.original) {
-        this.reset(product);
-      }
+    combineLatest(groups$, productRanges$).subscribe(([groups, productRanges]: [Group[], ProductRange[]]) => {
+      this.editorConfig = new Editor.Config<User>(
+        () => this.userService.list(groups),
+        (original: User, active: User) => {
+          if (active.id === undefined) {
+            return this.userService.create(active);
+          } else {
+            return this.userService.update(active);
+          }
+        },
+        (original: User) => this.userService.delete(original),
+        new User(undefined, 'newuser', '', []),
+        [
+          new Editor.FieldSpec<User>('ID', Editor.FieldType.ReadOnlyField, 'id'),
+          new Editor.FieldSpec<User>(
+            'Name',
+            Editor.FieldType.StringField,
+            'username',
+            [],
+            false,
+            false,
+            0,
+            ((entry: Editor.Entry<User>) => entry.original.username === 'admin')
+          ),
+          new Editor.FieldSpec<User>('Password', Editor.FieldType.PasswordField, 'password'),
+          new Editor.FieldSpec<User>(
+            'Groups',
+            Editor.FieldType.MultiModelCheckboxField,
+            'groups',
+            groups.map((group: Group) => {
+              if (group.name.startsWith('product_range_') && group.name !== 'product_range_all') {
+                const productRangeId = parseInt(group.name.split('_')[2], 10);
+                return new OptionSpec(
+                  `Range "${productRanges.find((productRange: ProductRange) => productRange.id === productRangeId).name}"`,
+                  group
+                );
+              }
+              return new OptionSpec(groupNames[group.name], group);
+            }),
+            false,
+            false,
+            0,
+            ((entry: Editor.Entry<User>) => entry.original.username === 'admin')
+          )
+        ],
+        (entry: Editor.Entry<User>) => entry.original.username === 'admin'
+      );
     });
-    this.users = this.users.filter(product => product.original);
-  }
-
-  save() {
-    const mergedUsers = this.users
-      .filter(user => user.edited && user.changed)
-      .map(user => user.edited);
-    const deletedUsers = this.users
-      .filter(user => !user.edited)
-      .map(user => user.original);
-
-    // TODO
-    const pCreate = Promise.resolve();
-    const pDelete = Promise.resolve();
-
-    Promise.all([pCreate, pDelete])
-      .then(() => {
-        this.message.success(`
-          Users saved successfully.
-          (<b>${mergedUsers.length}</b> created/updated,
-          <b>${deletedUsers.length}</b> deleted)
-        `);
-        this.loadUsers();
-        // TODO
-        // this.restService.getUser()
-        Promise.resolve({})
-          .then((user: User) => {
-            localStorage.setItem('groups', user.groups.join(','));
-            this.navbar.getGroups();
-            this.navbar.refreshLinks();
-          });
-      })
-      .catch(reason => this.message.error(reason));
   }
 }

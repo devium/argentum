@@ -9,7 +9,9 @@ class TestUsers(TestObjects):
     PlainUser = namedtuple('PlainUser', ['id', 'username', 'password', 'groups'])
     MODEL = PlainUser
 
-    ADMIN = PlainUser(id=1, username='admin', password='argentum', groups=['admin'])
+    ADMIN = PlainUser(id=1, username='admin', password='argentum', groups=[
+        'admin', 'order', 'coat_check', 'check_in', 'transfer', 'scan', 'product_range_all',
+    ])
     BAR = PlainUser(id=2, username='bar', password='bar1', groups=['order', 'product_range_1'])
     WARDROBE = PlainUser(id=3, username='wardrobe', password='wardrobe1', groups=['coat_check'])
     RECEPTION = PlainUser(id=4, username='reception', password='reception1', groups=['check_in'])

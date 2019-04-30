@@ -73,7 +73,7 @@ fdescribe('UserService', () => {
   it('should create a user', fakeAsync(() => {
     service.create(Users.BUFFET).subscribe((user: User) => {
       const userWithoutPw = <User>Users.BUFFET.clone();
-      userWithoutPw.password = undefined;
+      userWithoutPw.password = '';
       expect(user.equals(userWithoutPw)).toBeTruthy();
       resolved = true;
     });
@@ -83,7 +83,7 @@ fdescribe('UserService', () => {
   it('should update a user', fakeAsync(() => {
     service.update(Users.WARDROBE_PATCHED).subscribe((user: User) => {
       const userWithoutPw = <User>Users.WARDROBE_PATCHED.clone();
-      userWithoutPw.password = undefined;
+      userWithoutPw.password = '';
       expect(user.equals(userWithoutPw)).toBeTruthy();
       resolved = true;
     });

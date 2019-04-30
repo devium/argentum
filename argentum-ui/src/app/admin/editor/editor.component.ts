@@ -4,9 +4,10 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {KeypadModalComponent} from '../../common/keypad-modal/keypad-modal.component';
 import {isDarkBackground} from '../../common/util/is-dark-background';
 import {Subject} from 'rxjs';
-import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
+import {debounceTime} from 'rxjs/operators';
 import {CardModalComponent} from '../../common/card-modal/card-modal.component';
 import {formatCurrency} from '../../common/util/format';
+import {AbstractModel} from '../../common/model/abstract-model';
 
 @Component({
   selector: 'app-editor',
@@ -107,6 +108,22 @@ export class EditorComponent implements OnInit {
     if (index === -1) {
       array.push(value);
       entry.active[key] = array.sort((a: number, b: number) => a - b);
+    } else {
+      array.splice(index, 1);
+    }
+  }
+
+  modelArrayContains(entry: Editor.Entry<any>, key: any, value: AbstractModel): boolean {
+    const array = <AbstractModel[]>entry.active[key];
+    return array.some((model: AbstractModel) => model.id === value.id);
+  }
+
+  toggleModelCheckbox(entry: Editor.Entry<any>, key: any, value: AbstractModel) {
+    const array = <AbstractModel[]>entry.active[key];
+    const index = array.findIndex((model: AbstractModel) => model.id === value.id);
+    if (index === -1) {
+      array.push(value);
+      entry.active[key] = array.sort((a: AbstractModel, b: AbstractModel) => a.id - b.id);
     } else {
       array.splice(index, 1);
     }
