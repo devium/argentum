@@ -193,8 +193,8 @@
     "status": "paid",
     "checked_in": "2019-12-31T23:13:52Z",
     "card": "581a",
-    "balance": "81.62",
-    "bonus": "69.11"
+    "balance": "0.00",
+    "bonus": "0.00"
   },
   "PATCH/guests/1": {
     "id": 1,

@@ -6,29 +6,45 @@
     id="editorTable"
     class="table table-sm table-responsive table-striped"
   >
-    <thead *ngIf="editorConfig.entries.length > 0">
+    <thead>
     <tr>
       <th
         *ngFor="let fieldSpec of editorConfig.fieldSpecs"
-        [attr.rowspan]="fieldSpec.colspan > 1 ? 1 : 2"
+        [attr.rowspan]="editorConfig.headerOptionRow ? fieldSpec.colspan > 1 ? 1 : 2 : 1"
         [attr.colspan]="fieldSpec.colspan"
+        [style.min-width]="fieldSpec.minWidth > 0 ? fieldSpec.minWidth + 'px': null"
       >
         {{fieldSpec.name}}
       </th>
-      <th [attr.rowspan]="editorConfig.numHeaderRows" colspan="3">
+      <th [attr.rowspan]="editorConfig.headerOptionRow ? 2 : 1" colspan="3">
         Controls
       </th>
     </tr>
-    <tr *ngIf="editorConfig.numHeaderRows === 2">
+    <tr *ngIf="editorConfig.headerOptionRow">
       <th *ngFor="let optionSpec of editorConfig.headerOptionSpecs" class="rotate">
         <div>
           {{optionSpec.name}}
         </div>
       </th>
     </tr>
+    <tr *ngIf="editorConfig.headerFilterRow">
+      <th *ngFor="let fieldSpec of editorConfig.fieldSpecs">
+        <input
+          *ngIf="fieldSpec.filtered"
+          (input)="setFilter(fieldSpec.key, $event.target.value)"
+          (focus)="$event.target.select()"
+          class="form-control p-1"
+        >
+      </th>
+    </tr>
     </thead>
 
     <tbody>
+    <tr *ngIf="editorConfig.entries.length === 0">
+      <td [attr.colspan]="editorConfig.numCols + 3">
+        No entries found.
+      </td>
+    </tr>
     <tr
       *ngFor="let entry of editorConfig.entries.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize)"
       [class.changed]="entry.changed()"
@@ -41,6 +57,7 @@
         <td *ngIf="fieldSpec.type === Editor.FieldType.StringField">
           <input
             [(ngModel)]="entry.active[fieldSpec.key]"
+            (focus)="$event.target.select()"
             class="form-control p-1"
           >
         </td>
@@ -57,11 +74,52 @@
         <td *ngIf="fieldSpec.type === Editor.FieldType.CurrencyField">
           <button
             (click)="promptCurrency(entry, fieldSpec.key)"
-            type="button"
             class="btn btn-primary btn-sm"
           >
             {{entry.active[fieldSpec.key] | number: '1.2-2'}}
           </button>
+        </td>
+
+        <td *ngIf="fieldSpec.type === Editor.FieldType.CardField">
+          <div class="btn-group" role="group">
+            <button
+              (click)="promptCard(entry, fieldSpec.key)"
+              class="btn btn-primary btn-sm btn-card"
+            >
+              <i *ngIf="!entry.active[fieldSpec.key]" class="fa fa-credit-card px-3"></i>
+              {{entry.active[fieldSpec.key]}}
+            </button>
+            <button
+              (click)="entry.active[fieldSpec.key] = null"
+              class="btn btn-danger btn-sm"
+              [disabled]="entry.active[fieldSpec.key] === null"
+            >
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+        </td>
+
+        <td *ngIf="fieldSpec.type === Editor.FieldType.BalanceField">
+          <div class="btn-group" role="group">
+            <button
+              (click)="addBalance(entry, fieldSpec.key, -1)"
+              class="btn btn-primary btn-sm"
+            >
+              <i class="fa fa-minus"></i>
+            </button>
+            <button
+              (click)="setBalance(entry, fieldSpec.key)"
+              class="btn btn-primary btn-sm btn-balance"
+            >
+              {{formatCurrency(entry.active[fieldSpec.key])}}
+            </button>
+            <button
+              (click)="addBalance(entry, fieldSpec.key, +1)"
+              class="btn btn-primary btn-sm"
+            >
+              <i class="fa fa-plus"></i>
+            </button>
+          </div>
         </td>
 
         <td *ngIf="fieldSpec.type === Editor.FieldType.DropdownField">
@@ -133,6 +191,8 @@
       </td>
 
     </tr>
+    </tbody>
+    <tfoot>
     <tr>
       <td [attr.colspan]="editorConfig.numCols + 3">
         <button
@@ -150,7 +210,7 @@
         </button>
       </td>
     </tr>
-    </tbody>
+    </tfoot>
   </table>
 
   <div class="row mx-0 mb-1">

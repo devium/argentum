@@ -27,13 +27,14 @@ class GuestCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Guest
         fields = ['id', 'code', 'name', 'mail', 'status', 'checked_in', 'card', 'balance', 'bonus']
+        read_only_fields = ['balance', 'bonus']
 
 
 class GuestUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Guest
         fields = GuestCreateSerializer.Meta.fields
-        read_only_fields = ['code', 'name', 'mail', 'status', 'card', 'balance', 'bonus']
+        read_only_fields = ['balance', 'bonus']
 
 
 class GuestListUpdateSerializer(serializers.ModelSerializer):
@@ -41,6 +42,7 @@ class GuestListUpdateSerializer(serializers.ModelSerializer):
     Serializer to be used when importing a guest list. Event-specific data is explicitly declared readonly. Merges are
     to be performed based on code. Guests without matching codes will be newly created.
     """
+
     class Meta:
         model = Guest
         fields = GuestCreateSerializer.Meta.fields
@@ -65,6 +67,7 @@ class GuestListUpdateSerializer(serializers.ModelSerializer):
 
 class GuestViewSet(
     mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
     mixins.ListModelMixin,
     viewsets.GenericViewSet

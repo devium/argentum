@@ -60,8 +60,8 @@ export class Guest extends AbstractModel {
       status: this.status,
       checked_in: formatDate(this.checkedIn),
       card: this.card,
-      balance: formatCurrency(this.balance),
-      bonus: formatCurrency(this.bonus)
+      balance: undefined,
+      bonus: undefined
     };
   }
 }

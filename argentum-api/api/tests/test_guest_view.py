@@ -80,14 +80,14 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         self.login(TestUsers.ADMIN)
 
         mutable_fields = {
-            'checked_in': "2019-12-31T22:01:00Z"
-        }
-        immutable_fields = {
+            'checked_in': "2019-12-31T22:01:00Z",
             'code': '123',
             'name': 'Jimmy',
             'mail': 'jimmy@cherpcherp.org',
             'status': 'special',
             'card': '1212',
+        }
+        immutable_fields = {
             'balance': '5.00',
             'bonus': '3.00'
         }
@@ -120,10 +120,13 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
             [TestUsers.ADMIN, TestUsers.RECEPTION]
         )
         self.assertPermissions(
+            lambda: self.client.get(f'/guests/{TestGuests.ROBY.id}'),
+            [TestUsers.ADMIN, TestUsers.RECEPTION]
+        )
+        self.assertPermissions(
             lambda: self.client.post('/guests', self.REQUESTS['POST/guests#max']),
             [TestUsers.ADMIN, TestUsers.RECEPTION]
         )
-        self.assertPermissions(lambda: self.client.get(f'/guests/{TestGuests.ROBY.id}'), [])
         self.assertPermissions(
             lambda: self.client.patch(f'/guests/{TestGuests.ROBY.id}', self.REQUESTS['POST/guests#max']),
             [TestUsers.ADMIN, TestUsers.RECEPTION]

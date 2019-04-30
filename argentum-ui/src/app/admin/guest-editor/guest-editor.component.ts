@@ -1,11 +1,14 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {Guest} from '../../common/model/guest';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {KeypadModalComponent} from '../../common/keypad-modal/keypad-modal.component';
-import {Subject} from 'rxjs';
-import {MessageComponent} from '../../common/message/message.component';
-import {distinctUntilChanged} from 'rxjs/internal/operators/distinctUntilChanged';
-import {debounceTime} from 'rxjs/operators';
+import {Editor} from '../../common/model/editor';
+import {GuestService} from '../../common/rest-service/guest.service';
+import {combineLatest, Observable, of} from 'rxjs';
+import {Transaction} from '../../common/model/transaction';
+import {BonusTransaction} from '../../common/model/bonus_transaction';
+import {BonusTransactionService} from '../../common/rest-service/bonus-transaction.service';
+import {TransactionService} from '../../common/rest-service/transaction.service';
+import {flatMap, map} from 'rxjs/operators';
 
 
 @Component({
@@ -14,190 +17,90 @@ import {debounceTime} from 'rxjs/operators';
   styleUrls: ['./guest-editor.component.scss']
 })
 export class GuestEditorComponent implements OnInit {
-  readonly PAGE_SIZE = 15;
-  page = 1;
-  guests: Guest[] = [];
-  guestsTotal = 0;
-  codeLike = '';
-  nameLike = '';
-  mailLike = '';
-  statusLike = '';
-  codeStream = new Subject<string>();
-  nameStream = new Subject<string>();
-  mailStream = new Subject<string>();
-  statusStream = new Subject<string>();
-  sort = '';
-  direction = 'asc';
+  editorConfig: Editor.Config<Guest>;
 
-  @ViewChild(MessageComponent)
-  message: MessageComponent;
-
-  constructor(private modalService: NgbModal) {
+  constructor(
+    private guestService: GuestService,
+    private transactionService: TransactionService,
+    private bonusTransactionService: BonusTransactionService
+  ) {
   }
 
   ngOnInit() {
-    this.codeStream.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(code => {
-      this.codeLike = code;
-      this.changePage(1);
-      this.page = 1;
-    });
-    this.nameStream.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(name => {
-        this.nameLike = name;
-        this.changePage(1);
-        this.page = 1;
-      }
+    this.editorConfig = new Editor.Config<Guest>(
+      (filters: Object) => this.guestService.listFiltered(filters),
+      (original: Guest, active: Guest) => {
+        let guest$: Observable<Guest>;
+        if (original.id) {
+          guest$ = this.guestService.update(active);
+        } else {
+          guest$ = this.guestService.create(active);
+        }
+        const dBalance = active.balance - original.balance;
+        const dBonus = active.bonus - original.bonus;
+
+        if (dBalance === 0 && dBonus === 0) {
+          return guest$;
+        }
+
+        return guest$.pipe(
+          flatMap((guest: Guest) => {
+              // Create and commit transactions, then retrieve the guest again.
+              let balance$: Observable<Transaction>;
+              let bonus$: Observable<BonusTransaction>;
+
+              if (dBalance !== 0) {
+                balance$ = this.transactionService.create(guest, dBalance, false, []);
+              } else {
+                balance$ = of(null);
+              }
+              if (dBonus !== 0) {
+                bonus$ = this.bonusTransactionService.create(guest, dBonus);
+              } else {
+                bonus$ = of(null);
+              }
+
+              balance$ = balance$.pipe(
+                flatMap((transaction: Transaction) => {
+                  if (transaction) {
+                    return this.transactionService.commit(transaction, []);
+                  } else {
+                    return of(null);
+                  }
+                })
+              );
+              bonus$ = bonus$.pipe(
+                flatMap((bonusTransaction: BonusTransaction) => {
+                  if (bonusTransaction) {
+                    return this.bonusTransactionService.commit(bonusTransaction);
+                  } else {
+                    return of(null);
+                  }
+                })
+              );
+
+              return combineLatest(balance$, bonus$).pipe(
+                flatMap(([balanceTransaction, bonusTransaction]: [Transaction, BonusTransaction]) => {
+                  return this.guestService.retrieve(guest);
+                })
+              );
+            }
+          )
+        );
+      },
+      null,
+      new Guest(undefined, 'CODE', 'New Guest', 'new@guest.com', 'status', null, null, 0, 0),
+      [
+        new Editor.FieldSpec<Guest>('ID', Editor.FieldType.ReadOnlyField, 'id'),
+        new Editor.FieldSpec<Guest>('Code', Editor.FieldType.StringField, 'code', undefined, true),
+        new Editor.FieldSpec<Guest>('Name', Editor.FieldType.StringField, 'name', undefined, true),
+        new Editor.FieldSpec<Guest>('Mail', Editor.FieldType.StringField, 'mail', undefined, true),
+        new Editor.FieldSpec<Guest>('Status', Editor.FieldType.StringField, 'status', undefined, true),
+        new Editor.FieldSpec<Guest>('Check-in', Editor.FieldType.ReadOnlyField, 'checkedIn', undefined, false, 80),
+        new Editor.FieldSpec<Guest>('Card', Editor.FieldType.CardField, 'card'),
+        new Editor.FieldSpec<Guest>('Balance', Editor.FieldType.BalanceField, 'balance'),
+        new Editor.FieldSpec<Guest>('Bonus', Editor.FieldType.BalanceField, 'bonus')
+      ]
     );
-    this.mailStream.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(mail => {
-      this.mailLike = mail;
-      this.changePage(1);
-      this.page = 1;
-    });
-    this.statusStream.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(status => {
-      this.statusLike = status;
-      this.changePage(1);
-      this.page = 1;
-    });
-    this.changePage(1);
   }
-
-  refresh() {
-    // TODO
-    // this.restService.getGuestsPaginatedAndFiltered(
-    //   this.PAGE_SIZE,
-    //   this.page - 1,
-    //   this.codeLike,
-    //   this.nameLike,
-    //   this.mailLike,
-    //   this.statusLike,
-    //   this.sort,
-    //   this.direction
-    // )
-    Promise.resolve({})
-      .then((result: { guests: Guest[], guestsTotal: number }) => {
-        this.guests = result.guests;
-        this.guestsTotal = result.guestsTotal;
-      });
-  }
-
-  changePage(newPage: number) {
-    this.page = newPage;
-    this.refresh();
-  }
-
-  addBalance(guest: Guest) {
-    const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
-    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
-
-    modal.result.then(result => {
-      // TODO
-      // this.restService.addBalance(guest, result)
-      Promise.resolve(0)
-        .then((newBalance: number) => {
-          guest.balance = newBalance;
-          this.message.success(
-            `Added €${result.toFixed(2)} to balance of "${guest.name}". New balance: €${newBalance.toFixed(2)}`
-          );
-        })
-        .catch(reason => this.message.error(reason));
-    }, result => void (0));
-  }
-
-  subBalance(guest: Guest) {
-    const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
-    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
-
-    modal.result.then(result => {
-      // TODO
-      // this.restService.addBalance(guest, -result)
-      Promise.resolve(0)
-        .then((newBalance: number) => {
-          guest.balance = newBalance;
-          this.message.success(
-            `Removed €${result.toFixed(2)} from balance of "${guest.name}". New balance: €${newBalance.toFixed(2)}`
-          );
-        })
-        .catch(reason => this.message.error(reason));
-    }, result => void (0));
-  }
-
-  addBonus(guest: Guest) {
-    const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
-    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
-
-    modal.result.then(result => {
-      // TODO
-      // this.restService.addBonus(guest, result)
-      Promise.resolve(0)
-        .then((newBonus: number) => {
-          guest.bonus = newBonus;
-          this.message.success(
-            `Added €${result.toFixed(2)} to bonus of "${guest.name}". New bonus: €${newBonus.toFixed(2)}`
-          );
-        })
-        .catch(reason => this.message.error(reason));
-    }, result => void (0));
-  }
-
-  subBonus(guest: Guest) {
-    const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
-    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
-
-    modal.result.then(result => {
-      // TODO
-      // this.restService.addBonus(guest, -result)
-      Promise.resolve(0)
-        .then((newBonus: number) => {
-          guest.bonus = newBonus;
-          this.message.success(
-            `Removed €${result.toFixed(2)} from bonus of "${guest.name}". New bonus: €${newBonus.toFixed(2)}`
-          );
-        })
-        .catch(reason => this.message.error(reason));
-    }, result => void (0));
-  }
-
-  filterCode(code: string) {
-    this.codeStream.next(code);
-  }
-
-  filterName(name: string) {
-    this.nameStream.next(name);
-  }
-
-  filterMail(mail: string) {
-    this.mailStream.next(mail);
-  }
-
-  filterStatus(status: string) {
-    this.statusStream.next(status);
-  }
-
-  cycleSort(field: string) {
-    if (this.sort === field) {
-      if (this.direction === 'asc') {
-        this.direction = 'desc';
-      } else if (this.direction === 'desc') {
-        this.direction = 'asc';
-        this.sort = 'id';
-      } else {
-        this.direction = 'asc';
-      }
-    } else {
-      this.sort = field;
-    }
-    this.refresh();
-  }
-
 }

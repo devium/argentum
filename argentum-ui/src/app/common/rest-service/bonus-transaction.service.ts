@@ -32,8 +32,14 @@ export class BonusTransactionService {
     );
   }
 
-  create(card: string, value: number): Observable<BonusTransaction> {
-    return this.http.post<BonusTransaction.Dto>('/bonus_transactions', BonusTransaction.createDto(card, value)).pipe(
+  create(guest: Guest, value: number): Observable<BonusTransaction> {
+    return this.http.post<BonusTransaction.Dto>('/bonus_transactions', BonusTransaction.createDto(guest, value)).pipe(
+      map((dto: BonusTransaction.Dto) => BonusTransaction.fromDto(dto))
+    );
+  }
+
+  createByCard(card: string, value: number): Observable<BonusTransaction> {
+    return this.http.post<BonusTransaction.Dto>('/bonus_transactions', BonusTransaction.createCardDto(card, value)).pipe(
       map((dto: BonusTransaction.Dto) => BonusTransaction.fromDto(dto))
     );
   }

@@ -19,10 +19,12 @@ fdescribe('Editor', () => {
       (original: Model) => of(null),
       new Model(undefined, 'New value 1', 'New value 2'),
       [
-        new Editor.FieldSpec<Model>('Field1', Editor.StringField, 'value1'),
-        new Editor.FieldSpec<Model>('Field2', Editor.StringField, 'value2')
+        new Editor.FieldSpec<Model>('Field1', Editor.FieldType.StringField, 'value1'),
+        new Editor.FieldSpec<Model>('Field2', Editor.FieldType.StringField, 'value2')
       ]
     );
+    expect(config.headerOptionRow).toBeFalsy();
+    expect(config.headerFilterRow).toBeFalsy();
     expect(config.fieldSpecs[0].colspan).toEqual(1);
     expect(config.fieldSpecs[1].colspan).toEqual(1);
 
@@ -35,7 +37,7 @@ fdescribe('Editor', () => {
       [
         new Editor.FieldSpec<Model>(
           'Field1',
-          Editor.MultiModelCheckboxField,
+          Editor.FieldType.MultiCheckboxField,
           'value1',
           [
             new Editor.OptionSpec('Option1', 'Option Value 1'),
@@ -43,10 +45,11 @@ fdescribe('Editor', () => {
             new Editor.OptionSpec('Option3', 'Option Value 3'),
           ]
         ),
-        new Editor.FieldSpec<Model>('Field2', Editor.StringField, 'value2')
+        new Editor.FieldSpec<Model>('Field2', Editor.FieldType.StringField, 'value2')
       ]
     );
-    expect(config.numHeaderRows).toBe(2);
+    expect(config.headerOptionRow).toBeTruthy();
+    expect(config.headerFilterRow).toBeFalsy();
     expect(config.fieldSpecs[0].colspan).toEqual(3);
     expect(config.fieldSpecs[1].colspan).toEqual(1);
   });

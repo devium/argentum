@@ -32,7 +32,21 @@ export class Transaction extends AbstractModel {
     );
   }
 
-  static createDto(card: string, value: number, ignoreBonus: boolean = false) {
+  static createDto(guest: Guest, value: number, ignoreBonus: boolean = false) {
+    return {
+      id: undefined,
+      time: undefined,
+      guest: guest.id,
+      card: undefined,
+      value: formatCurrency(value),
+      ignore_bonus: ignoreBonus,
+      description: undefined,
+      order: undefined,
+      pending: undefined
+    };
+  }
+
+  static createCardDto(card: string, value: number, ignoreBonus: boolean = false) {
     return {
       id: undefined,
       time: undefined,

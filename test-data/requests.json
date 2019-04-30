@@ -37,9 +37,7 @@
     "mail": "jdoe2@tinypic.com",
     "status": "paid",
     "checked_in": "2019-12-31T23:13:52Z",
-    "card": "581a",
-    "balance": "81.62",
-    "bonus": "69.11"
+    "card": "581a"
   },
   "PATCH/guests/1": {
     "checked_in": "2019-12-31T22:57:30Z"
@@ -60,7 +58,8 @@
   ],
   "POST/transactions": {
     "guest": 1,
-    "value": "5.00"
+    "value": "5.00",
+    "ignore_bonus": false
   },
   "POST/transactions#card": {
     "card": "567a",

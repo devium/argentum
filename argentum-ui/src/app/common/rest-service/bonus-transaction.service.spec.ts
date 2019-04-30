@@ -60,7 +60,15 @@ fdescribe('BonusTransactionService', () => {
   }));
 
   it('should create a bonus transaction', fakeAsync(() => {
-    service.create(Guests.ROBY.card, BonusTransactions.BTX4_REFERENCE.value).subscribe((bonusTransaction: BonusTransaction) => {
+    service.create(Guests.ROBY, BonusTransactions.BTX4_REFERENCE.value).subscribe((bonusTransaction: BonusTransaction) => {
+      expect(bonusTransaction.equals(BonusTransactions.BTX4_REFERENCE)).toBeTruthy();
+      resolved = true;
+    });
+    testEndpoint(httpTestingController, requests, responses, 'POST', '/bonus_transactions');
+  }));
+
+  it('should create a bonus transaction by card', fakeAsync(() => {
+    service.createByCard(Guests.ROBY.card, BonusTransactions.BTX4_REFERENCE.value).subscribe((bonusTransaction: BonusTransaction) => {
       expect(bonusTransaction.equals(BonusTransactions.BTX4_REFERENCE)).toBeTruthy();
       resolved = true;
     });

@@ -20,7 +20,7 @@ import {GuestImportComponent} from './admin/guest-import/guest-import.component'
 import {CheckinComponent} from './checkin/checkin/checkin.component';
 import {NewGuestModalComponent} from './checkin/new-guest-modal/new-guest-modal.component';
 import {SearchGuestModalComponent} from './checkin/search-guest-modal/search-guest-modal.component';
-import {CardModalComponent} from './checkin/card-modal/card-modal.component';
+import {CardModalComponent} from './common/card-modal/card-modal.component';
 import {MessageComponent} from './common/message/message.component';
 import {DashboardComponent} from './admin/dashboard/dashboard.component';
 import {DeleteGuestsModalComponent} from './admin/delete-guests-modal/delete-guests-modal.component';

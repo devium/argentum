@@ -40,9 +40,18 @@ export class TransactionService {
     );
   }
 
-  create(card: string, value: number, ignoreBonus: boolean = false, orders?: Order[]): Observable<Transaction> {
+  create(guest: Guest, value: number, ignoreBonus: boolean = false, orders?: Order[]): Observable<Transaction> {
     return withDependencies(
-      this.http.post<Transaction.Dto>('/transactions', Transaction.createDto(card, value, ignoreBonus)),
+      this.http.post<Transaction.Dto>('/transactions', Transaction.createDto(guest, value, ignoreBonus)),
+      [orders, () => this.orderService.list()]
+    ).pipe(
+      map(([dto, ordersDep]: [Transaction.Dto, Order[], {}, {}]) => Transaction.fromDto(dto, ordersDep))
+    );
+  }
+
+  createByCard(card: string, value: number, ignoreBonus: boolean = false, orders?: Order[]): Observable<Transaction> {
+    return withDependencies(
+      this.http.post<Transaction.Dto>('/transactions', Transaction.createCardDto(card, value, ignoreBonus)),
       [orders, () => this.orderService.list()]
     ).pipe(
       map(([dto, ordersDep]: [Transaction.Dto, Order[], {}, {}]) => Transaction.fromDto(dto, ordersDep))

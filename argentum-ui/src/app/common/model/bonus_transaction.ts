@@ -39,7 +39,19 @@ export class BonusTransaction extends AbstractModel {
     };
   }
 
-  static createDto(card: string, value: number): BonusTransaction.Dto {
+  static createDto(guest: Guest, value: number): BonusTransaction.Dto {
+    return {
+      id: undefined,
+      time: undefined,
+      guest: guest.id,
+      card: undefined,
+      value: formatCurrency(value),
+      description: undefined,
+      pending: undefined
+    };
+  }
+
+  static createCardDto(card: string, value: number): BonusTransaction.Dto {
     return {
       id: undefined,
       time: undefined,

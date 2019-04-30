@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Observable, Subscription, fromEvent} from 'rxjs';
-import {convertCard} from '../../common/util/convert-card';
+import {convertCard} from '../util/convert-card';
 import {debounceTime, filter, flatMap, map, repeat} from 'rxjs/operators';
 import {scan} from 'rxjs/internal/operators/scan';
 import {first} from 'rxjs/internal/operators/first';

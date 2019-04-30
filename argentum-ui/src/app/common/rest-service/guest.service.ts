@@ -18,6 +18,12 @@ export class GuestService {
     );
   }
 
+  retrieve(guest: Guest): Observable<Guest> {
+    return this.http.get<Guest.Dto>(`/guests/${guest.id}`).pipe(
+      map((dto: Guest.Dto) => Guest.fromDto(dto))
+    );
+  }
+
   retrieveByCard(card: string): Observable<Guest> {
     // If no guest is found, 404 is returned. Handle as an error.
     return this.http.get<Guest.Dto[]>('/guests', {params: {card: card}}).pipe(

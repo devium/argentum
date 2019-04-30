@@ -4,7 +4,7 @@ import {debounceTime, switchMap} from 'rxjs/operators';
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Guest} from '../../common/model/guest';
-import {CardModalComponent} from '../card-modal/card-modal.component';
+import {CardModalComponent} from '../../common/card-modal/card-modal.component';
 import {KeypadModalComponent} from '../../common/keypad-modal/keypad-modal.component';
 import {MessageComponent} from '../../common/message/message.component';
 

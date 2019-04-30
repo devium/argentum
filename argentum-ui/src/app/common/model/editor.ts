@@ -50,6 +50,8 @@ export namespace Editor {
     StringField,
     ColorField,
     CurrencyField,
+    CardField,
+    BalanceField,
     MultiCheckboxField,
     DropdownField
   }
@@ -69,32 +71,38 @@ export namespace Editor {
       public name: string,
       public type: FieldType,
       public key: keyof T,
-      public optionSpecs: OptionSpec[] = []
+      public optionSpecs: OptionSpec[] = [],
+      public filtered = false,
+      public minWidth: number = 0
     ) {
     }
   }
 
   export class Config<T extends AbstractModel> {
     public entries: Entry<T>[];
-    public numHeaderRows: number;
+    public headerOptionRow = false;
+    public headerFilterRow = false;
     public numCols = 0;
     public headerOptionSpecs: OptionSpec[] = [];
+    public filters: Object = {};
 
     constructor(
-      private source: (() => Observable<T[]>),
+      private source: ((filters?: Object) => Observable<T[]>),
       public saveFun: ((original: T, active: T) => Observable<T>),
       public removeFun: ((original: T) => Observable<null>),
       public defaultModel: T,
       public fieldSpecs: FieldSpec<T>[]
     ) {
-      this.numHeaderRows = 1;
       for (const fieldSpec of fieldSpecs) {
         if (fieldSpec.type === FieldType.MultiCheckboxField) {
-          this.numHeaderRows = 2;
+          this.headerOptionRow = true;
           this.headerOptionSpecs = this.headerOptionSpecs.concat(fieldSpec.optionSpecs);
           fieldSpec.colspan = fieldSpec.optionSpecs.length;
         } else {
           fieldSpec.colspan = 1;
+        }
+        if (fieldSpec.filtered) {
+          this.headerFilterRow = true;
         }
         this.numCols += fieldSpec.colspan;
       }
@@ -102,7 +110,13 @@ export namespace Editor {
     }
 
     reload() {
-      this.source().subscribe((models: T[]) => {
+      let source$: Observable<T[]>;
+      if (Object.values(this.filters)) {
+        source$ = this.source(this.filters);
+      } else {
+        source$ = this.source();
+      }
+      source$.subscribe((models: T[]) => {
         this.entries = models.map((model: T) => new Entry(model, this.saveFun));
       });
     }

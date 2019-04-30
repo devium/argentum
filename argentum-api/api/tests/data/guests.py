@@ -57,8 +57,8 @@ class TestGuests(TestObjects):
         status='paid',
         checked_in=parse_datetime('2019-12-31T23:13:52Z'),
         card='581a',
-        balance=Decimal('81.62'),
-        bonus=Decimal('69.11')
+        balance=Decimal('0.00'),
+        bonus=Decimal('0.00')
     )
 
     ROBY_PATCHED = MODEL(

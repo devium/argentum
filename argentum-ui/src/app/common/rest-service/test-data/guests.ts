@@ -59,8 +59,8 @@ export namespace Guests {
     'paid',
     new Date('2019-12-31T23:13:52Z'),
     '581a',
-    81.62,
-    69.11
+    undefined,
+    undefined
   );
 
   export const JOHANNA_MAX_REFERENCE = new Guest(
@@ -71,8 +71,8 @@ export namespace Guests {
     'paid',
     new Date('2019-12-31T23:13:52Z'),
     '581a',
-    81.62,
-    69.11
+    0.00,
+    0.00
   );
 
   export const ROBY_PATCHED = new Guest(
