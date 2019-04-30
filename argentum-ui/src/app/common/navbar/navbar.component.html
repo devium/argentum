@@ -17,11 +17,11 @@
       <li *ngFor="let link of links" class="nav-item">
         <a
           (focus)="$event.target.blur()"
-          [routerLink]="[link[0]]"
+          [routerLink]="[link.target]"
           routerLinkActive="active"
           class="nav-link"
         >
-          {{link[1]}}
+          {{link.name}}
         </a>
       </li>
       <li class="nav-item">

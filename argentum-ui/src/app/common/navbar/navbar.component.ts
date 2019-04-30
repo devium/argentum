@@ -1,5 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { GroupBasedComponent } from '../group-based/group-based.component';
+import {Component, OnInit} from '@angular/core';
+import {GroupBasedComponent} from '../group-based/group-based.component';
+
+interface LinkSpec {
+  groups: string[];
+  target: string;
+  name: string;
+}
 
 @Component({
   selector: 'app-navbar',
@@ -9,7 +15,7 @@ import { GroupBasedComponent } from '../group-based/group-based.component';
 export class NavbarComponent extends GroupBasedComponent implements OnInit {
   navbarCollapsed = true;
 
-  links: string[][] = [];
+  links: LinkSpec[] = [];
 
   constructor() {
     super();
@@ -17,14 +23,12 @@ export class NavbarComponent extends GroupBasedComponent implements OnInit {
 
   refreshLinks() {
     this.links = [
-      // [['coat_check'], '/coat_check', 'Coat check'],
-      [['order'], '/order', 'Order'],
-      [['check_in', 'TRANSFER'], '/checkin', 'Check-in'],
-      [['scan'], '/scan', 'Scan'],
-      [['admin'], '/admin', 'Admin'],
-    ]
-      .filter((link: any) => this.hasGroup(link[0]))
-      .map((link: string[]) => [link[1], link[2]]);
+      // {groups: ['coat_check'], target: '/coat_check', name: 'Coat check'},
+      {groups: ['order'], target: '/order', name: 'Order'},
+      {groups: ['check_in', 'transfer'], target: '/checkin', name: 'Check-in'},
+      {groups: ['scan'], target: '/scan', name: 'Scan'},
+      {groups: ['admin'], target: '/admin', name: 'Admin'},
+    ].filter((link: LinkSpec) => this.hasGroup(link.groups));
   }
 
   ngOnInit(): any {

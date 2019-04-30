@@ -74,8 +74,9 @@ export class RouteGuard implements CanActivate {
     console.log('Getting user information from backend.');
     return this.userService.me().pipe(
       map((user: User) => {
-        console.log(`Roles: ${user.groups}`);
-        localStorage.setItem('roles', user.groups.join(','));
+        const groups = user.groups.map((group: Group) => group.name);
+        console.log(`Groups: ${groups}`);
+        localStorage.setItem('groups', groups.join(','));
 
         const home = this.resolveHome(user.groups);
         if (path === 'home') {
@@ -102,6 +103,7 @@ export class RouteGuard implements CanActivate {
       catchError((err: any) => {
         console.log('API error. Logging out.');
         return of(this.router.parseUrl('/login'));
-      }));
+      })
+    );
   }
 }

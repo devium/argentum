@@ -27,13 +27,15 @@ export class LoginComponent implements OnInit {
     this.waitingForLogin = true;
 
     this.loginService.login(this.username, this.password)
-      .subscribe((token: string) => {
-        this.router.navigate(['/home']);
-        this.waitingForLogin = false;
-      }, (err: any) => {
-        this.waitingForLogin = false;
-        this.message.error(err);
-      });
+      .subscribe(
+        (token: string) => {
+          this.router.navigate(['/home']);
+          this.waitingForLogin = false;
+        }, (err: string) => {
+          this.waitingForLogin = false;
+          this.message.error(err);
+        }
+      );
   }
 
 }
