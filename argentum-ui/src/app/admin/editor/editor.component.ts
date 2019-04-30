@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Editor} from '../../common/model/editor';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {KeypadModalComponent} from '../../common/keypad-modal/keypad-modal.component';
@@ -8,6 +8,7 @@ import {debounceTime} from 'rxjs/operators';
 import {CardModalComponent} from '../../common/card-modal/card-modal.component';
 import {formatCurrency} from '../../common/util/format';
 import {AbstractModel} from '../../common/model/abstract-model';
+import {MessageComponent} from '../../common/message/message.component';
 
 @Component({
   selector: 'app-editor',
@@ -15,6 +16,8 @@ import {AbstractModel} from '../../common/model/abstract-model';
   styleUrls: ['./editor.component.scss']
 })
 export class EditorComponent implements OnInit {
+  @ViewChild(MessageComponent)
+  message: MessageComponent;
 
   @Input()
   editorConfig: Editor.Config<any>;

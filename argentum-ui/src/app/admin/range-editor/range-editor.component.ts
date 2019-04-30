@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Editor} from '../../common/model/editor';
 import {ProductRange} from '../../common/model/product-range';
 import {ProductRangeService} from '../../common/rest-service/product-range.service';
+import {MessageComponent} from '../../common/message/message.component';
+import {EditorComponent} from '../editor/editor.component';
 
 @Component({
   selector: 'app-range-editor',
@@ -9,13 +11,20 @@ import {ProductRangeService} from '../../common/rest-service/product-range.servi
   styleUrls: ['range-editor.component.scss']
 })
 export class RangeEditorComponent implements OnInit {
+  @ViewChild(EditorComponent)
+  editor: EditorComponent;
+  message: MessageComponent;
+
   editorConfig: Editor.Config<ProductRange>;
 
   constructor(private productRangeService: ProductRangeService) {
   }
 
   ngOnInit() {
+    this.message = this.editor.message;
+
     this.editorConfig = new Editor.Config<ProductRange>(
+      this.message,
       () => this.productRangeService.list(),
       (original: ProductRange, active: ProductRange) => {
         if (active.id === undefined) {

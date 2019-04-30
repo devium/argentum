@@ -1,7 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Editor} from '../../common/model/editor';
 import {CategoryService} from '../../common/rest-service/category.service';
 import {Category} from '../../common/model/category';
+import {MessageComponent} from '../../common/message/message.component';
+import {EditorComponent} from '../editor/editor.component';
 
 @Component({
   selector: 'app-category-editor',
@@ -9,13 +11,20 @@ import {Category} from '../../common/model/category';
   styleUrls: ['category-editor.component.scss']
 })
 export class CategoryEditorComponent implements OnInit {
+  @ViewChild(EditorComponent)
+  editor: EditorComponent;
+  message: MessageComponent;
+
   editorConfig: Editor.Config<Category>;
 
   constructor(private categoryService: CategoryService) {
   }
 
   ngOnInit() {
+    this.message = this.editor.message;
+
     this.editorConfig = new Editor.Config<Category>(
+      this.message,
       () => this.categoryService.list(),
       (original: Category, active: Category) => {
         if (active.id === undefined) {

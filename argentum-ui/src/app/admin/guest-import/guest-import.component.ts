@@ -1,9 +1,16 @@
-import { Guest } from '../../common/model/guest';
-import { MessageComponent } from '../../common/message/message.component';
-import { DeleteGuestsModalComponent } from '../delete-guests-modal/delete-guests-modal.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { Papa } from 'ngx-papaparse';
+import {Guest} from '../../common/model/guest';
+import {MessageComponent} from '../../common/message/message.component';
+import {DeleteGuestsModalComponent} from '../delete-guests-modal/delete-guests-modal.component';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {Papa, PapaParseResult} from 'ngx-papaparse';
+import {GuestService} from '../../common/rest-service/guest.service';
+
+interface FieldSpec {
+  key: string;
+  name: string;
+  value: string;
+}
 
 @Component({
   selector: 'app-guest-import',
@@ -11,15 +18,36 @@ import { Papa } from 'ngx-papaparse';
   styleUrls: ['guest-import.component.scss']
 })
 export class GuestImportComponent implements OnInit {
-  codeCol = '';
-  nameCol = '';
-  mailCol = '';
-  statusCol = '';
+  Object = Object;
+
+  fields: FieldSpec[] = [
+    {
+      key: 'code',
+      name: 'Code column',
+      value: ''
+    },
+    {
+      key: 'name',
+      name: 'Name column',
+      value: ''
+    },
+    {
+      key: 'mail',
+      name: 'Mail column',
+      value: ''
+    },
+    {
+      key: 'status',
+      name: 'Status column',
+      value: ''
+    }
+  ];
 
   @ViewChild(MessageComponent)
   private message: MessageComponent;
 
   constructor(
+    private guestService: GuestService,
     private modalService: NgbModal,
     private papa: Papa
   ) {
@@ -28,7 +56,7 @@ export class GuestImportComponent implements OnInit {
   ngOnInit() {
   }
 
-  import_csv(target: any) {
+  importCsv(target: any) {
     const file = target.files[0];
     if (!file) {
       return;
@@ -44,8 +72,13 @@ export class GuestImportComponent implements OnInit {
   parse(content: string) {
     this.papa.parse(content, {
       header: true,
-      complete: results => {
-        const requiredFields = [this.codeCol, this.nameCol, this.mailCol, this.statusCol];
+      complete: (results: PapaParseResult) => {
+        if (results.errors) {
+          console.error(results.errors);
+        }
+        const requiredFields = this.fields.map((field: FieldSpec) => field.value);
+        const fieldColumns = {};
+        this.fields.forEach((field: FieldSpec) => fieldColumns[field.key] = field.value);
         for (const field of requiredFields) {
           if (!results.meta.fields.includes(field)) {
             this.message.error(`Column <b>${field}</b> not found in imported file.`);
@@ -54,17 +87,20 @@ export class GuestImportComponent implements OnInit {
         }
 
         const guests: Guest[] = [];
-
         results.data.forEach(row => {
-          if (!row[this.codeCol] || !row[this.nameCol] || !row[this.statusCol]) {
-            return;
+          // Skip erroneous rows.
+          for (const field of this.fields) {
+            if (!row.hasOwnProperty(field.value)) {
+              return;
+            }
           }
+
           guests.push(new Guest(
             undefined,
-            row[this.codeCol],
-            row[this.nameCol],
-            row[this.mailCol],
-            row[this.statusCol],
+            row[fieldColumns['code']],
+            row[fieldColumns['name']],
+            row[fieldColumns['mail']],
+            row[fieldColumns['status']],
             undefined,
             undefined,
             undefined,
@@ -72,23 +108,21 @@ export class GuestImportComponent implements OnInit {
           ));
         });
 
-        // TODO
-        // this.restService.mergeGuests(guests)
-        Promise.resolve()
-          .then(() => this.message.success(`Successfully imported <b>${guests.length}</b> guests.`))
-          .catch(reason => this.message.error(reason));
+        this.guestService.listUpdate(guests).subscribe(
+          (guestsSaved: Guest[]) => this.message.success(`Successfully imported or updated <b>${guestsSaved.length}</b> guests.`),
+          error => this.message.error(error)
+        );
       }
     });
   }
 
   deleteGuests() {
-    const modal = this.modalService.open(DeleteGuestsModalComponent, { backdrop: 'static' });
+    const modal = this.modalService.open(DeleteGuestsModalComponent, {backdrop: 'static'});
     modal.result.then(() => {
-      // TODO
-      // this.restService.deleteGuests()
-      Promise.resolve()
-        .then(() => this.message.success(`<b>Deleted all guests and orders.</b>`))
-        .catch(reason => this.message.error(reason));
-    }, () => void(0));
+      this.guestService.deleteAll().subscribe(
+        () => this.message.success(`<b>Deleted all guests and orders.</b>`),
+        error => this.message.error(error)
+      );
+    }, () => void (0));
   }
 }

@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Order} from '../model/order';
 import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {catchError, map} from 'rxjs/operators';
 import {Product} from '../model/product';
 import {ProductService} from './product.service';
-import {withDependencies} from './utils';
+import {processErrors, withDependencies} from './utils';
 import {Guest} from '../model/guest';
 import {GuestService} from './guest.service';
 import {Category} from '../model/category';
@@ -33,7 +33,8 @@ export class OrderService {
     ).pipe(
       map(([dtos, guestsDep, productsDep]: [Order.Dto[], Guest[], Product[], {}]) => {
         return dtos.map((dto: Order.Dto) => Order.fromDto(dto, guestsDep, productsDep));
-      })
+      }),
+      catchError((err: HttpErrorResponse) => processErrors(err))
     );
   }
 
@@ -44,7 +45,8 @@ export class OrderService {
     ).pipe(
       map(([dtos, categoriesDep]: [Order.Dto[], Category[], {}, {}]) => {
         return dtos.map((dto: Order.Dto) => Order.fromDto(dto, undefined, undefined, categoriesDep));
-      })
+      }),
+      catchError((err: HttpErrorResponse) => processErrors(err))
     );
   }
 
@@ -54,7 +56,8 @@ export class OrderService {
       this.http.post<Order.Dto>('/orders', order.toDto()),
       [products, () => this.productService.list()]
     ).pipe(
-      map(([dto, productsDep]: [Order.Dto, Product[], {}, {}]) => Order.fromDto(dto, undefined, productsDep, undefined))
+      map(([dto, productsDep]: [Order.Dto, Product[], {}, {}]) => Order.fromDto(dto, undefined, productsDep, undefined)),
+      catchError((err: HttpErrorResponse) => processErrors(err))
     );
   }
 
@@ -64,7 +67,8 @@ export class OrderService {
       this.http.patch<Order.Dto>(`/orders/${order.id}`, Order.commitDto()),
       [products, () => this.productService.list()]
     ).pipe(
-      map(([dto, productsDep]: [Order.Dto, Product[], {}, {}]) => Order.fromDto(dto, undefined, productsDep, undefined))
+      map(([dto, productsDep]: [Order.Dto, Product[], {}, {}]) => Order.fromDto(dto, undefined, productsDep, undefined)),
+      catchError((err: HttpErrorResponse) => processErrors(err))
     );
   }
 
@@ -74,7 +78,8 @@ export class OrderService {
       this.http.patch<Order.Dto>(`/orders/${order.id}`, Order.cancelDto(newCustom)),
       [products, () => this.productService.list()]
     ).pipe(
-      map(([dto, productsDep]: [Order.Dto, Product[], {}, {}]) => Order.fromDto(dto, undefined, productsDep, undefined))
+      map(([dto, productsDep]: [Order.Dto, Product[], {}, {}]) => Order.fromDto(dto, undefined, productsDep, undefined)),
+      catchError((err: HttpErrorResponse) => processErrors(err))
     );
   }
 
@@ -84,7 +89,8 @@ export class OrderService {
       this.http.patch<OrderItem.Dto>(`/order_items/${orderItem.id}`, OrderItem.cancelDto(newQuantity)),
       [products, () => this.productService.list()]
     ).pipe(
-      map(([dto, productsDep]: [OrderItem.Dto, Product[], {}, {}]) => OrderItem.fromDto(dto, productsDep, undefined))
+      map(([dto, productsDep]: [OrderItem.Dto, Product[], {}, {}]) => OrderItem.fromDto(dto, productsDep, undefined)),
+      catchError((err: HttpErrorResponse) => processErrors(err))
     );
   }
 }

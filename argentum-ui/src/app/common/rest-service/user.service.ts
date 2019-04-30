@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {User} from '../model/user';
-import {map} from 'rxjs/operators';
+import {catchError, map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {GroupService} from './group.service';
 import {Group} from '../model/group';
-import {withDependencies} from './utils';
+import {processErrors, withDependencies} from './utils';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,8 @@ export class UserService {
       this.http.get<User.Dto>('/users/me'),
       [groups, () => this.groupService.list()]
     ).pipe(
-      map(([dto, groupsDep]: [User.Dto, Group[], {}, {}]) => User.fromDto(dto, groupsDep))
+      map(([dto, groupsDep]: [User.Dto, Group[], {}, {}]) => User.fromDto(dto, groupsDep)),
+      catchError((err: HttpErrorResponse) => processErrors(err))
     );
   }
 
@@ -29,7 +30,8 @@ export class UserService {
       this.http.get<User.Dto[]>('/users'),
       [groups, () => this.groupService.list()]
     ).pipe(
-      map(([dtos, groupsDep]: [User.Dto[], Group[], {}, {}]) => dtos.map((dto: User.Dto) => User.fromDto(dto, groupsDep)))
+      map(([dtos, groupsDep]: [User.Dto[], Group[], {}, {}]) => dtos.map((dto: User.Dto) => User.fromDto(dto, groupsDep))),
+      catchError((err: HttpErrorResponse) => processErrors(err))
     );
   }
 
@@ -38,7 +40,8 @@ export class UserService {
       this.http.post<User.Dto>('/users', user.toDto()),
       [groups, () => this.groupService.list()]
     ).pipe(
-      map(([dto, groupsDep]: [User.Dto, Group[], {}, {}]) => User.fromDto(dto, groupsDep))
+      map(([dto, groupsDep]: [User.Dto, Group[], {}, {}]) => User.fromDto(dto, groupsDep)),
+      catchError((err: HttpErrorResponse) => processErrors(err))
     );
   }
 
@@ -47,11 +50,14 @@ export class UserService {
       this.http.patch<User.Dto>(`/users/${user.id}`, user.toDto()),
       [groups, () => this.groupService.list()]
     ).pipe(
-      map(([dto, groupsDep]: [User.Dto, Group[], {}, {}]) => User.fromDto(dto, groupsDep))
+      map(([dto, groupsDep]: [User.Dto, Group[], {}, {}]) => User.fromDto(dto, groupsDep)),
+      catchError((err: HttpErrorResponse) => processErrors(err))
     );
   }
 
   delete(user: User): Observable<null> {
-    return this.http.delete<null>(`/users/${user.id}`);
+    return this.http.delete<null>(`/users/${user.id}`).pipe(
+      catchError((err: HttpErrorResponse) => processErrors(err))
+    );
   }
 }

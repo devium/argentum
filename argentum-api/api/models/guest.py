@@ -12,9 +12,9 @@ from argentum.settings import CURRENCY_CONFIG
 
 class Guest(models.Model):
     code = models.CharField(max_length=32, unique=True)
-    name = models.CharField(max_length=64)
-    mail = models.CharField(max_length=64)
-    status = models.CharField(max_length=32)
+    name = models.CharField(max_length=64, blank=True)
+    mail = models.CharField(max_length=64, blank=True)
+    status = models.CharField(max_length=32, blank=True)
     checked_in = models.DateTimeField(default=None, null=True)
     card = models.CharField(max_length=32, default=None, null=True, unique=True, blank=True)
     balance = models.DecimalField(default=0, **CURRENCY_CONFIG)
@@ -123,3 +123,8 @@ class GuestViewSet(
             )
         else:
             return Response(update_serializer.data)
+
+    @action(detail=False, methods=['delete'])
+    def delete_all(self, request: Request):
+        Guest.objects.all().delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -1,28 +1,18 @@
 <app-admin-nav></app-admin-nav>
 
 <div class="container mt-3">
-  <div class="form-group">
-    <label for="codeInput">Code column</label>
-    <input id="codeInput" class="form-control" type="text" [(ngModel)]="codeCol">
-  </div>
-
-  <div class="form-group">
-    <label for="nameInput">Name column</label>
-    <input id="nameInput" class="form-control" type="text" [(ngModel)]="nameCol">
-  </div>
-
-  <div class="form-group">
-    <label for="mailInput">E-Mail column</label>
-    <input id="mailInput" class="form-control" type="text" [(ngModel)]="mailCol">
-  </div>
-
-  <div class="form-group">
-    <label for="statusInput">Status column</label>
-    <input id="statusInput" class="form-control" type="text" [(ngModel)]="statusCol">
+  <div *ngFor="let field of fields" class="form-group row">
+    <label [for]="field.key + 'Input'" class="col-sm-4 col-form-label">{{field.name}}</label>
+    <div class="col-sm-8">
+      <input
+        [id]="field.key + 'Input'"
+        class="form-control"
+        [(ngModel)]="field.value">
+    </div>
   </div>
 
   <label class="custom-file btn btn-block btn-primary mt-5">
-    <input type="file" class="custom-file-input" (change)="import_csv($event.target)" hidden accept=".csv">
+    <input type="file" class="custom-file-input" (change)="importCsv($event.target)" hidden accept=".csv">
     <span class="custom-file-control text-white"><i class="fa fa-upload pr-1"></i>Upload file (.csv)</span>
   </label>
 

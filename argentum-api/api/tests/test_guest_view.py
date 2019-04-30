@@ -1,5 +1,6 @@
 import logging
 
+from api.models import Transaction, BonusTransaction, Order
 from api.models.guest import Guest
 from api.tests.data.guests import TestGuests
 from api.tests.data.users import TestUsers
@@ -123,6 +124,15 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         self.assertPksEqual(response.data, [TestGuests.ROBY_LIST_PATCHED])
         self.assertValueEqual(Guest.objects.all(), [TestGuests.ROBY_LIST_PATCHED, TestGuests.SHEELAH])
 
+    def test_delete_all(self):
+        self.login(TestUsers.ADMIN)
+        response = self.client.delete('/guests/delete_all')
+        self.assertEqual(response.status_code, 204)
+        self.assertValueEqual(Guest.objects.all(), [])
+        self.assertValueEqual(Transaction.objects.all(), [])
+        self.assertValueEqual(BonusTransaction.objects.all(), [])
+        self.assertValueEqual(Order.objects.all(), [])
+
     def test_permissions(self):
         self.assertPermissions(
             lambda: self.client.get('/guests'),
@@ -143,6 +153,10 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         self.assertPermissions(
             lambda: self.client.patch('/guests/list_update', self.REQUESTS['PATCH/guests/list_update']),
             [TestUsers.ADMIN, TestUsers.RECEPTION]
+        )
+        self.assertPermissions(
+            lambda: self.client.delete('/guests/delete_all'),
+            [TestUsers.ADMIN]
         )
         self.assertPermissions(lambda: self.client.delete('/guests/1'), [])
 

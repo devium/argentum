@@ -1,6 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {Guest} from '../../common/model/guest';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Editor} from '../../common/model/editor';
 import {GuestService} from '../../common/rest-service/guest.service';
 import {combineLatest, Observable, of} from 'rxjs';
@@ -8,7 +7,9 @@ import {Transaction} from '../../common/model/transaction';
 import {BonusTransaction} from '../../common/model/bonus_transaction';
 import {BonusTransactionService} from '../../common/rest-service/bonus-transaction.service';
 import {TransactionService} from '../../common/rest-service/transaction.service';
-import {flatMap, map} from 'rxjs/operators';
+import {flatMap} from 'rxjs/operators';
+import {MessageComponent} from '../../common/message/message.component';
+import {EditorComponent} from '../editor/editor.component';
 
 
 @Component({
@@ -17,6 +18,10 @@ import {flatMap, map} from 'rxjs/operators';
   styleUrls: ['./guest-editor.component.scss']
 })
 export class GuestEditorComponent implements OnInit {
+  @ViewChild(EditorComponent)
+  editor: EditorComponent;
+  message: MessageComponent;
+
   editorConfig: Editor.Config<Guest>;
 
   constructor(
@@ -27,7 +32,10 @@ export class GuestEditorComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.message = this.editor.message;
+
     this.editorConfig = new Editor.Config<Guest>(
+      this.message,
       (filters: Object) => this.guestService.listFiltered(filters),
       (original: Guest, active: Guest) => {
         let guest$: Observable<Guest>;

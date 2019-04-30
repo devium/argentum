@@ -1,8 +1,9 @@
 <app-admin-nav></app-admin-nav>
 
-<div *ngIf="editorConfig && editorConfig.entries" class="container mt-3">
+<div class="container mt-3">
 
   <table
+    *ngIf="editorConfig && editorConfig.entries"
     id="editorTable"
     class="table table-sm table-responsive table-striped"
   >
@@ -252,7 +253,7 @@
     </tfoot>
   </table>
 
-  <div class="row mx-0 mb-1">
+  <div *ngIf="editorConfig && editorConfig.entries" class="row mx-0 mb-1">
     <ngb-pagination
       [collectionSize]="editorConfig.entries.length"
       [(page)]="page"
@@ -266,7 +267,6 @@
   <div class="mt-3">
     <app-message></app-message>
   </div>
-
 </div>
 
 <app-navbar></app-navbar>

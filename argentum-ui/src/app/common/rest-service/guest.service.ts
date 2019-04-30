@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Guest} from '../model/guest';
 import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {catchError, map} from 'rxjs/operators';
+import {processErrors} from './utils';
 
 @Injectable({
   providedIn: 'root'
@@ -14,20 +15,23 @@ export class GuestService {
 
   list(): Observable<Guest[]> {
     return this.http.get<Guest.Dto[]>('/guests').pipe(
-      map((dtos: Guest.Dto[]) => dtos.map((dto: Guest.Dto) => Guest.fromDto(dto)))
+      map((dtos: Guest.Dto[]) => dtos.map((dto: Guest.Dto) => Guest.fromDto(dto))),
+      catchError((err: HttpErrorResponse) => processErrors(err))
     );
   }
 
   retrieve(guest: Guest): Observable<Guest> {
     return this.http.get<Guest.Dto>(`/guests/${guest.id}`).pipe(
-      map((dto: Guest.Dto) => Guest.fromDto(dto))
+      map((dto: Guest.Dto) => Guest.fromDto(dto)),
+      catchError((err: HttpErrorResponse) => processErrors(err))
     );
   }
 
   retrieveByCard(card: string): Observable<Guest> {
     // If no guest is found, 404 is returned. Handle as an error.
     return this.http.get<Guest.Dto[]>('/guests', {params: {card: card}}).pipe(
-      map((dtos: Guest.Dto[]) => Guest.fromDto(dtos[0]))
+      map((dtos: Guest.Dto[]) => Guest.fromDto(dtos[0])),
+      catchError((err: HttpErrorResponse) => processErrors(err))
     );
   }
 
@@ -38,25 +42,35 @@ export class GuestService {
         params[key] = filter[key];
     }
     return this.http.get<Guest.Dto[]>('/guests', {params: params}).pipe(
-      map((dtos: Guest.Dto[]) => dtos.map((dto: Guest.Dto) => Guest.fromDto(dto)))
+      map((dtos: Guest.Dto[]) => dtos.map((dto: Guest.Dto) => Guest.fromDto(dto))),
+      catchError((err: HttpErrorResponse) => processErrors(err))
     );
   }
 
   create(guest: Guest): Observable<Guest> {
     return this.http.post<Guest.Dto>('/guests', guest.toDto()).pipe(
-      map((dto: Guest.Dto) => Guest.fromDto(dto))
+      map((dto: Guest.Dto) => Guest.fromDto(dto)),
+      catchError((err: HttpErrorResponse) => processErrors(err))
     );
   }
 
   update(guest: Guest): Observable<Guest> {
     return this.http.patch<Guest.Dto>(`/guests/${guest.id}`, guest.toDto()).pipe(
-      map((dto: Guest.Dto) => Guest.fromDto(dto))
+      map((dto: Guest.Dto) => Guest.fromDto(dto)),
+      catchError((err: HttpErrorResponse) => processErrors(err))
     );
   }
 
   listUpdate(guests: Guest[]): Observable<Guest[]> {
     return this.http.patch<Guest.Dto[]>('/guests/list_update', guests.map((guest: Guest) => guest.toDto())).pipe(
-      map((dtos: Guest.Dto[]) => dtos.map((dto: Guest.Dto) => Guest.fromDto(dto)))
+      map((dtos: Guest.Dto[]) => dtos.map((dto: Guest.Dto) => Guest.fromDto(dto))),
+      catchError((err: HttpErrorResponse) => processErrors(err))
+    );
+  }
+
+  deleteAll(): Observable<null> {
+    return this.http.delete<null>('/guests/delete_all').pipe(
+      catchError((err: HttpErrorResponse) => processErrors(err))
     );
   }
 }

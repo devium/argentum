@@ -1,13 +1,13 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {GuestService} from './guest.service';
 import {Observable} from 'rxjs';
 import {Transaction} from '../model/transaction';
 import {Guest} from '../model/guest';
 import {Order} from '../model/order';
-import {withDependencies} from './utils';
+import {processErrors, withDependencies} from './utils';
 import {OrderService} from './order.service';
-import {map} from 'rxjs/operators';
+import {catchError, map} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +25,8 @@ export class TransactionService {
     ).pipe(
       map(([dtos, guestsDep, ordersDep]: [Transaction.Dto[], Guest[], Order[], {}]) =>
         dtos.map((dto: Transaction.Dto) => Transaction.fromDto(dto, ordersDep, guestsDep))
-      )
+      ),
+      catchError((err: HttpErrorResponse) => processErrors(err))
     );
   }
 
@@ -36,7 +37,8 @@ export class TransactionService {
     ).pipe(
       map(([dtos, ordersDep]: [Transaction.Dto[], Order[], {}, {}]) =>
         dtos.map((dto: Transaction.Dto) => Transaction.fromDto(dto, ordersDep))
-      )
+      ),
+      catchError((err: HttpErrorResponse) => processErrors(err))
     );
   }
 
@@ -45,7 +47,8 @@ export class TransactionService {
       this.http.post<Transaction.Dto>('/transactions', Transaction.createDto(guest, value, ignoreBonus)),
       [orders, () => this.orderService.list()]
     ).pipe(
-      map(([dto, ordersDep]: [Transaction.Dto, Order[], {}, {}]) => Transaction.fromDto(dto, ordersDep))
+      map(([dto, ordersDep]: [Transaction.Dto, Order[], {}, {}]) => Transaction.fromDto(dto, ordersDep)),
+      catchError((err: HttpErrorResponse) => processErrors(err))
     );
   }
 
@@ -54,7 +57,8 @@ export class TransactionService {
       this.http.post<Transaction.Dto>('/transactions', Transaction.createCardDto(card, value, ignoreBonus)),
       [orders, () => this.orderService.list()]
     ).pipe(
-      map(([dto, ordersDep]: [Transaction.Dto, Order[], {}, {}]) => Transaction.fromDto(dto, ordersDep))
+      map(([dto, ordersDep]: [Transaction.Dto, Order[], {}, {}]) => Transaction.fromDto(dto, ordersDep)),
+      catchError((err: HttpErrorResponse) => processErrors(err))
     );
   }
 
@@ -63,7 +67,8 @@ export class TransactionService {
       this.http.patch<Transaction.Dto>(`/transactions/${transaction.id}`, Transaction.commitDto()),
       [orders, () => this.orderService.list()]
     ).pipe(
-      map(([dto, ordersDep]: [Transaction.Dto, Order[], {}, {}]) => Transaction.fromDto(dto, ordersDep))
+      map(([dto, ordersDep]: [Transaction.Dto, Order[], {}, {}]) => Transaction.fromDto(dto, ordersDep)),
+      catchError((err: HttpErrorResponse) => processErrors(err))
     );
   }
 }

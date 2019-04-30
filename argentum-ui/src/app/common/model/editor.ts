@@ -1,5 +1,6 @@
 import {AbstractModel} from './abstract-model';
 import {Observable} from 'rxjs';
+import {MessageComponent} from '../message/message.component';
 
 export namespace Editor {
 
@@ -8,6 +9,7 @@ export namespace Editor {
     public active: T;
 
     constructor(
+      private message: MessageComponent,
       source: T,
       private saveFun: ((original: T, active: T) => Observable<T>)
     ) {
@@ -35,9 +37,10 @@ export namespace Editor {
       if (!this.changed()) {
         return;
       }
-      this.saveFun(this.original, this.active).subscribe((model: T) => {
-        this.init(model);
-      });
+      this.saveFun(this.original, this.active).subscribe(
+        (model: T) => this.init(model),
+        (error: string) => this.message.error(error)
+      );
     }
 
     reset() {
@@ -91,6 +94,7 @@ export namespace Editor {
     public filters: Object = {};
 
     constructor(
+      private message: MessageComponent,
       private source: ((filters?: Object) => Observable<T[]>),
       public saveFun: ((original: T, active: T) => Observable<T>),
       public removeFun: ((original: T) => Observable<null>),
@@ -121,9 +125,10 @@ export namespace Editor {
       } else {
         source$ = this.source();
       }
-      source$.subscribe((models: T[]) => {
-        this.entries = models.map((model: T) => new Entry(model, this.saveFun));
-      });
+      source$.subscribe(
+        (models: T[]) => this.entries = models.map((model: T) => new Entry(this.message, model, this.saveFun)),
+        (error: string) => this.message.error(error)
+      );
     }
 
     reset() {
@@ -131,7 +136,7 @@ export namespace Editor {
     }
 
     create() {
-      this.entries.push(new Entry(<T>this.defaultModel.clone(), this.saveFun));
+      this.entries.push(new Entry(this.message, <T>this.defaultModel.clone(), this.saveFun));
     }
 
     remove(entry: Entry<T>) {
@@ -139,10 +144,13 @@ export namespace Editor {
         const index = this.entries.indexOf(entry);
         this.entries.splice(index, 1);
       } else {
-        this.removeFun(entry.original).subscribe(() => {
-          const index = this.entries.indexOf(entry);
-          this.entries.splice(index, 1);
-        });
+        this.removeFun(entry.original).subscribe(
+          () => {
+            const index = this.entries.indexOf(entry);
+            this.entries.splice(index, 1);
+          },
+          (error: string) => this.message.error(error)
+        );
       }
     }
   }
