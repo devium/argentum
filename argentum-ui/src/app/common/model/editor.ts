@@ -73,6 +73,7 @@ export namespace Editor {
       public key: keyof T,
       public optionSpecs: OptionSpec[] = [],
       public filtered = false,
+      public sortable = false,
       public minWidth: number = 0
     ) {
     }

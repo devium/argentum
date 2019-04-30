@@ -14,7 +14,14 @@
         [attr.colspan]="fieldSpec.colspan"
         [style.min-width]="fieldSpec.minWidth > 0 ? fieldSpec.minWidth + 'px': null"
       >
-        {{fieldSpec.name}}
+        <span *ngIf="!fieldSpec.sortable">
+          {{fieldSpec.name}}
+        </span>
+        <a *ngIf="fieldSpec.sortable" (click)="cycleSort(fieldSpec.key)" class="filter">
+          {{fieldSpec.name}}
+          <i *ngIf="editorConfig.filters['ordering'] === fieldSpec.key" class="fa fa-sort-up"></i>
+          <i *ngIf="editorConfig.filters['ordering'] === '-' + fieldSpec.key" class="fa fa-sort-down"></i>
+        </a>
       </th>
       <th [attr.rowspan]="editorConfig.headerOptionRow ? 2 : 1" colspan="3">
         Controls

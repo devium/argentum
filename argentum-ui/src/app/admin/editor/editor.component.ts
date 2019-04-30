@@ -45,6 +45,19 @@ export class EditorComponent implements OnInit {
     this.filterStream.next();
   }
 
+  cycleSort(key: any) {
+    const currentSort = this.editorConfig.filters['ordering'];
+    const negKey = '-' + key;
+    if (currentSort === undefined || (currentSort !== key && currentSort !== negKey)) {
+      this.editorConfig.filters['ordering'] = key;
+    } else if (currentSort === key) {
+      this.editorConfig.filters['ordering'] = negKey;
+    } else if (currentSort === negKey) {
+      delete this.editorConfig.filters['ordering'];
+    }
+    this.editorConfig.reload();
+  }
+
   promptCurrency(entry: Editor.Entry<any>, key: any) {
     const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;

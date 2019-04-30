@@ -19,6 +19,15 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         self.assertPksEqual(response.data, TestGuests.ALL)
         self.assertJSONEqual(response.content, self.RESPONSES['GET/guests'])
 
+    def test_get_ordered(self):
+        self.login(TestUsers.RECEPTION)
+
+        response = self.client.get('/guests?ordering=-code')
+        self.assertPksEqual(response.data, [TestGuests.SHEELAH, TestGuests.ROBY])
+
+        response = self.client.get('/guests?ordering=-balance')
+        self.assertPksEqual(response.data, [TestGuests.SHEELAH, TestGuests.ROBY])
+
     def test_get_search(self):
         self.login(TestUsers.RECEPTION)
 

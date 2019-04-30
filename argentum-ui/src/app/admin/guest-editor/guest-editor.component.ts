@@ -92,14 +92,14 @@ export class GuestEditorComponent implements OnInit {
       new Guest(undefined, 'CODE', 'New Guest', 'new@guest.com', 'status', null, null, 0, 0),
       [
         new Editor.FieldSpec<Guest>('ID', Editor.FieldType.ReadOnlyField, 'id'),
-        new Editor.FieldSpec<Guest>('Code', Editor.FieldType.StringField, 'code', undefined, true),
-        new Editor.FieldSpec<Guest>('Name', Editor.FieldType.StringField, 'name', undefined, true),
-        new Editor.FieldSpec<Guest>('Mail', Editor.FieldType.StringField, 'mail', undefined, true),
-        new Editor.FieldSpec<Guest>('Status', Editor.FieldType.StringField, 'status', undefined, true),
-        new Editor.FieldSpec<Guest>('Check-in', Editor.FieldType.ReadOnlyField, 'checkedIn', undefined, false, 80),
+        new Editor.FieldSpec<Guest>('Code', Editor.FieldType.StringField, 'code', undefined, true, true),
+        new Editor.FieldSpec<Guest>('Name', Editor.FieldType.StringField, 'name', undefined, true, true),
+        new Editor.FieldSpec<Guest>('Mail', Editor.FieldType.StringField, 'mail', undefined, true, true),
+        new Editor.FieldSpec<Guest>('Status', Editor.FieldType.StringField, 'status', undefined, true, true),
+        new Editor.FieldSpec<Guest>('Check-in', Editor.FieldType.ReadOnlyField, 'checkedIn', undefined, false, true, 80),
         new Editor.FieldSpec<Guest>('Card', Editor.FieldType.CardField, 'card'),
-        new Editor.FieldSpec<Guest>('Balance', Editor.FieldType.BalanceField, 'balance'),
-        new Editor.FieldSpec<Guest>('Bonus', Editor.FieldType.BalanceField, 'bonus')
+        new Editor.FieldSpec<Guest>('Balance', Editor.FieldType.BalanceField, 'balance', undefined, false, true),
+        new Editor.FieldSpec<Guest>('Bonus', Editor.FieldType.BalanceField, 'bonus', undefined, false, true)
       ]
     );
   }

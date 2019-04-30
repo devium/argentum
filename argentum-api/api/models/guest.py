@@ -3,6 +3,7 @@ from django.db import models
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, serializers, status, mixins
 from rest_framework.decorators import action
+from rest_framework.filters import OrderingFilter
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -80,7 +81,7 @@ class GuestViewSet(
         status = django_filters.CharFilter(field_name='status', lookup_expr='icontains')
 
     queryset = Guest.objects.all()
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_class = SearchFilter
 
     def get_serializer_class(self):
