@@ -38,8 +38,8 @@ export class ProductEditorComponent implements OnInit {
 
     combineLatest(productRanges$, categories$).subscribe(
       ([productRanges, categories]: [ProductRange[], Category[]]) => {
+        categories.push(new Category(null, 'No Category', '#ffffff'));
         const categoryOptions = categories.map((category: Category) => new Editor.OptionSpec(category.name, category, category.color));
-        categoryOptions.push(new Editor.OptionSpec('No Category', null, '#ffffff'));
 
         this.editorConfig = new Editor.Config<Product>(
           this.message,
@@ -53,13 +53,13 @@ export class ProductEditorComponent implements OnInit {
             } else if (active.price !== original.price && original.id) {
               // Price is immutable. We need to create a new product.
               const deprecate$ = this.productService.deprecate(original);
-              const create$ = this.productService.create(active);
+              const create$ = this.productService.create(active, categories);
 
               return combineLatest(deprecate$, create$).pipe(
                 map(([deprecated, created]: [Product, Product]) => created)
               );
             } else {
-              return this.productService.update(active);
+              return this.productService.update(active, categories);
             }
           },
           (original: Product) => this.productService.deprecate(original).pipe(
@@ -70,12 +70,12 @@ export class ProductEditorComponent implements OnInit {
             new Editor.FieldSpec<Product>('ID', Editor.FieldType.ReadOnlyField, 'id'),
             new Editor.FieldSpec<Product>('Name', Editor.FieldType.StringField, 'name'),
             new Editor.FieldSpec<Product>('Price', Editor.FieldType.CurrencyField, 'price'),
-            new Editor.FieldSpec<Product>('Category', Editor.FieldType.DropdownField, 'category', categoryOptions),
+            new Editor.FieldSpec<Product>('Category', Editor.FieldType.DropdownField, 'category', {optionSpecs: categoryOptions}),
             new Editor.FieldSpec<Product>(
               'Product ranges',
               Editor.FieldType.MultiCheckboxField,
               'productRangeIds',
-              productRanges.map((productRange: ProductRange) => new Editor.OptionSpec(productRange.name, productRange.id))
+              {optionSpecs: productRanges.map((productRange: ProductRange) => new Editor.OptionSpec(productRange.name, productRange.id))}
             )
           ]
         );

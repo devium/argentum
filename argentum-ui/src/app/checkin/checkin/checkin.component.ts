@@ -5,8 +5,13 @@ import {SearchGuestModalComponent} from '../search-guest-modal/search-guest-moda
 import {Guest} from '../../common/model/guest';
 import {KeypadModalComponent} from '../../common/keypad-modal/keypad-modal.component';
 import {MessageComponent} from '../../common/message/message.component';
-import {CardBarComponent} from '../../common/card-bar/card-bar.component';
 import {GroupBasedComponent} from '../../common/group-based/group-based.component';
+import {GuestService} from '../../common/rest-service/guest.service';
+import {CardModalComponent} from '../../common/card-modal/card-modal.component';
+import {TransactionService} from '../../common/rest-service/transaction.service';
+import {Transaction} from '../../common/model/transaction';
+import {formatCurrency} from '../../common/utils';
+import {flatMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-checkin',
@@ -16,94 +21,71 @@ import {GroupBasedComponent} from '../../common/group-based/group-based.componen
 export class CheckinComponent extends GroupBasedComponent implements OnInit {
   @ViewChild(MessageComponent)
   message: MessageComponent;
-  @ViewChild(CardBarComponent)
-  cardBar: CardBarComponent;
 
-  constructor(private modalService: NgbModal) {
+  constructor(
+    private transactionService: TransactionService,
+    private guestService: GuestService,
+    private modalService: NgbModal
+  ) {
     super();
   }
 
   newGuest() {
-    this.enableCardBar(false);
     const modal = this.modalService.open(NewGuestModalComponent, {backdrop: 'static'});
     (<SearchGuestModalComponent>modal.componentInstance).message = this.message;
     modal.result.then(
       (guest: Guest) => {
-        // TODO
-        // this.restService.mergeGuests([guest])
-        Promise.resolve()
-          .then(() => {
-            this.message.success(`Created guest <b>${guest.name}</b>.`);
-          })
-          .catch(reason => {
-            this.message.error(reason);
-          });
-        this.enableCardBar(true);
+        this.guestService.create(guest).subscribe(
+          (createdGuest: Guest) => this.message.success(`Created guest <b>${guest.name}</b>.`),
+          (error: string) => this.message.error(error)
+        );
       },
-      result => this.enableCardBar(true)
+      (cancel: string) => void (0)
     );
   }
 
   searchGuest() {
-    this.enableCardBar(false);
     const modal = this.modalService.open(SearchGuestModalComponent, {backdrop: 'static'});
     (<SearchGuestModalComponent>modal.componentInstance).message = this.message;
-    modal.result.then(
-      () => this.enableCardBar(true),
-      () => this.enableCardBar(true)
-    );
   }
 
   deposit() {
-    this.transfer(false);
+    this.transfer(+1);
   }
 
   withdraw() {
-    this.transfer(true);
+    this.transfer(-1);
   }
 
-  private transfer(withdrawal: boolean) {
-    const guest = this.cardBar.guest;
-    this.enableCardBar(false);
-    const keypadModal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
-      (value: number) => {
-        if (withdrawal) {
-          value = -value;
-        }
-
-        // TODO
-        // this.restService.addBalance(guest, value)
-        Promise.resolve(0)
-          .then((newBalance: number) => {
-            this.enableCardBar(true);
-
-            if (withdrawal) {
-              this.message.success(`
-              Withdrew balance of <b>€${value.toFixed(2)}</b>
-              from <b>${guest.name}</b>.
-              New balance: <b>€${newBalance.toFixed(2)}</b>
-            `);
-            } else {
-              this.message.success(`
-              Deposited balance of <b>€${value.toFixed(2)}</b>
-              for <b>${guest.name}</b>.
-              New balance: <b>€${newBalance.toFixed(2)}</b>
-            `);
-            }
-
-            guest.balance = newBalance;
-          })
-          .catch(reason => {
-            this.enableCardBar(true);
-            this.message.error(reason);
-          });
+  private transfer(sign: number) {
+    this.modalService.open(CardModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
+      (card: string) => {
+        const keypadModal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
+          (value: number) => {
+            value *= sign;
+            this.transactionService.createByCard(card, value, false, []).pipe(
+              flatMap((transaction: Transaction) => this.transactionService.commit(transaction))
+            ).subscribe((transaction: Transaction) => {
+                if (sign < 0) {
+                  this.message.success(`
+                    Withdrew balance of <b>€${formatCurrency((value))}</b>
+                    from <b>card #${card}</b>.
+                  `);
+                } else {
+                  this.message.success(`
+                    Deposited balance of <b>€${formatCurrency((value))}</b>
+                    on <b>card #${card}</b>.
+                  `);
+                }
+              },
+              (error: string) => this.message.error(error)
+            );
+          },
+          (cancel: string) => void (0)
+        );
       },
-      () => this.enableCardBar(true)
+      (cancel: string) => void (0)
     );
-  }
-
-  enableCardBar(enable: boolean): void {
-    this.cardBar.active = enable;
   }
 
 }

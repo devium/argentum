@@ -7,7 +7,8 @@ import {debounceTime} from 'rxjs/operators';
 import {CardModalComponent} from '../../common/card-modal/card-modal.component';
 import {AbstractModel} from '../../common/model/abstract-model';
 import {MessageComponent} from '../../common/message/message.component';
-import {formatCurrency, isDarkBackground} from '../../common/utils';
+import {formatCurrency, formatDate, isDarkBackground} from '../../common/utils';
+import FieldSpec = Editor.FieldSpec;
 
 @Component({
   selector: 'app-editor',
@@ -15,6 +16,11 @@ import {formatCurrency, isDarkBackground} from '../../common/utils';
   styleUrls: ['./editor.component.scss']
 })
 export class EditorComponent implements OnInit {
+  Editor = Editor;
+  isDarkBackground = isDarkBackground;
+  formatCurrency = formatCurrency;
+  formatDate = formatDate;
+
   @ViewChild(MessageComponent)
   message: MessageComponent;
 
@@ -22,11 +28,6 @@ export class EditorComponent implements OnInit {
   editorConfig: Editor.Config<any>;
   @Input()
   pageSize: number;
-
-  // Expose Editor namespace to the HTML template.
-  Editor = Editor;
-  isDarkBackground = isDarkBackground;
-  formatCurrency = formatCurrency;
 
   filterStream = new Subject<null>();
   page = 1;
@@ -44,11 +45,13 @@ export class EditorComponent implements OnInit {
   }
 
   setFilter(fieldSpec: Editor.FieldSpec<any>, value: any) {
-    this.editorConfig.filters[fieldSpec.key] = fieldSpec.filterMap(value);
+    const key = fieldSpec.params.filterKey ? fieldSpec.params.filterKey : fieldSpec.key;
+    this.editorConfig.filters[key] = fieldSpec.params.filterMap ? fieldSpec.params.filterMap(value) : value;
     this.filterStream.next();
   }
 
-  cycleSort(key: any) {
+  cycleSort(fieldSpec: Editor.FieldSpec<any>) {
+    const key = fieldSpec.filterKey();
     const currentSort = this.editorConfig.filters['ordering'];
     const negKey = '-' + key;
     if (currentSort === undefined || (currentSort !== key && currentSort !== negKey)) {
@@ -121,6 +124,10 @@ export class EditorComponent implements OnInit {
     } else {
       array.splice(index, 1);
     }
+  }
+
+  disabled(fieldSpec: Editor.FieldSpec<any>, entry: Editor.Entry<any>): boolean {
+    return fieldSpec.params.disabled && fieldSpec.params.disabled(entry);
   }
 
 }

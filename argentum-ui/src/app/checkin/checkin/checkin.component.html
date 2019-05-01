@@ -1,6 +1,4 @@
 <div class="container-fluid h-100 d-flex flex-column m-0 justify-content-center">
-  <app-card-bar [fullscreen]="false" [message]="message"></app-card-bar>
-
   <div class="row p-2 my-0 grid-max mx-auto">
     <div *ngIf="hasGroup(['check_in'])" class="col-sm-6 p-1">
       <button (focus)="$event.target.blur()" (click)="newGuest()" class="btn btn-primary btn-block btn-huge">
@@ -17,8 +15,6 @@
         (focus)="$event.target.blur()"
         (click)="deposit()"
         class="btn btn-primary btn-block btn-huge"
-        [disabled]="!cardBar.guest"
-        [class.disabled]="!cardBar.guest"
       >
         <i class="fa fa-level-down fa-lg pr-1"></i>Deposit
       </button>
@@ -28,8 +24,6 @@
         (focus)="$event.target.blur()"
         (click)="withdraw()"
         class="btn btn-primary btn-block btn-huge"
-        [disabled]="!cardBar.guest"
-        [class.disabled]="!cardBar.guest"
       >
         <i class="fa fa-level-up fa-lg pr-1"></i>Withdraw
       </button>

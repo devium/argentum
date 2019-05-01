@@ -1,12 +1,12 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {KeypadModalComponent} from '../../common/keypad-modal/keypad-modal.component';
 import {Guest} from '../../common/model/guest';
 import {CardModalComponent} from '../../common/card-modal/card-modal.component';
 import {GroupBasedComponent} from '../../common/group-based/group-based.component';
 import {Status} from '../../common/model/status';
 import {MessageComponent} from '../../common/message/message.component';
-import {isDarkBackground} from '../../common/utils';
+import {formatTime, isDarkBackground, getRandomInt} from '../../common/utils';
+import {StatusService} from '../../common/rest-service/status.service';
 
 @Component({
   selector: 'app-new-guest',
@@ -14,6 +14,9 @@ import {isDarkBackground} from '../../common/utils';
   styleUrls: ['new-guest-modal.component.scss']
 })
 export class NewGuestModalComponent extends GroupBasedComponent implements OnInit {
+  isDarkBackground = isDarkBackground;
+
+  code = '';
   name = '';
   mail = '';
   status: Status = null;
@@ -27,7 +30,11 @@ export class NewGuestModalComponent extends GroupBasedComponent implements OnIni
 
   message: MessageComponent;
 
-  constructor(private modalService: NgbModal, public activeModal: NgbActiveModal) {
+  constructor(
+    private statusService: StatusService,
+    private modalService: NgbModal,
+    public activeModal: NgbActiveModal
+  ) {
     super();
   }
 
@@ -35,15 +42,12 @@ export class NewGuestModalComponent extends GroupBasedComponent implements OnIni
     super.ngOnInit();
     this.nameInput.nativeElement.focus();
 
-    // TODO
-    // this.restService.getStatuses()
-    Promise.resolve([])
-      .then((statuses: Status[]) => this.statuses = statuses)
-      .catch(reason => this.message.error(reason));
-  }
+    this.code = `BOX-${formatTime(new Date())}-${getRandomInt(2 ** 32).toString(16)}`;
 
-  isDarkBackground(color: string): boolean {
-    return isDarkBackground(color);
+    this.statusService.list().subscribe(
+      (statuses: Status[]) => this.statuses = statuses,
+      (error: string) => this.message.error(error)
+    );
   }
 
   setCard() {
@@ -53,45 +57,17 @@ export class NewGuestModalComponent extends GroupBasedComponent implements OnIni
     );
   }
 
-  addBalance() {
-    this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
-      (value: number) => this.balance += value,
-      (cancel: string) => void (0)
-    );
-  }
-
-  subBalance() {
-    this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
-      (value: number) => this.balance -= value,
-      (cancel: string) => void (0)
-    );
-  }
-
-  addBonus() {
-    this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
-      (value: number) => this.bonus += value,
-      (cancel: string) => void (0)
-    );
-  }
-
-  subBonus() {
-    this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
-      (value: number) => this.bonus -= value,
-      (cancel: string) => void (0)
-    );
-  }
-
   confirm(): void {
     const guest: Guest = new Guest(
-      -1,
-      null,
+      undefined,
+      this.code,
       this.name,
       this.mail,
       this.status ? this.status.internalName : '',
       new Date(),
       this.card,
-      this.balance,
-      this.bonus
+      undefined,
+      undefined
     );
     this.activeModal.close(guest);
   }

@@ -59,35 +59,24 @@ export class UserEditorComponent implements OnInit {
           new User(undefined, 'newuser', '', []),
           [
             new Editor.FieldSpec<User>('ID', Editor.FieldType.ReadOnlyField, 'id'),
-            new Editor.FieldSpec<User>(
-              'Name',
-              Editor.FieldType.StringField,
-              'username',
-              [],
-              false,
-              false,
-              0,
-              ((entry: Editor.Entry<User>) => entry.original.username === 'admin')
+            new Editor.FieldSpec<User>('Name', Editor.FieldType.StringField, 'username',
+              {disabled: ((entry: Editor.Entry<User>) => entry.original.username === 'admin')}
             ),
             new Editor.FieldSpec<User>('Password', Editor.FieldType.PasswordField, 'password'),
-            new Editor.FieldSpec<User>(
-              'Groups',
-              Editor.FieldType.MultiModelCheckboxField,
-              'groups',
-              groups.map((group: Group) => {
-                if (group.name.startsWith('product_range_') && group.name !== 'product_range_all') {
-                  const productRangeId = parseInt(group.name.split('_')[2], 10);
-                  return new OptionSpec(
-                    `Range "${productRanges.find((productRange: ProductRange) => productRange.id === productRangeId).name}"`,
-                    group
-                  );
-                }
-                return new OptionSpec(groupNames[group.name], group);
-              }),
-              false,
-              false,
-              0,
-              ((entry: Editor.Entry<User>) => entry.original.username === 'admin')
+            new Editor.FieldSpec<User>('Groups', Editor.FieldType.MultiModelCheckboxField, 'groups',
+              {
+                optionSpecs: groups.map((group: Group) => {
+                  if (group.name.startsWith('product_range_') && group.name !== 'product_range_all') {
+                    const productRangeId = parseInt(group.name.split('_')[2], 10);
+                    return new OptionSpec(
+                      `Range "${productRanges.find((productRange: ProductRange) => productRange.id === productRangeId).name}"`,
+                      group
+                    );
+                  }
+                  return new OptionSpec(groupNames[group.name], group);
+                }),
+                disabled: ((entry: Editor.Entry<User>) => entry.original.username === 'admin')
+              }
             )
           ],
           (entry: Editor.Entry<User>) => entry.original.username === 'admin'

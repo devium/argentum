@@ -1,6 +1,11 @@
 <div class="modal-body mx-4 my-3 p-0">
 
   <div class="form-group">
+    <label for="codeInput">Code</label>
+    <input #codeInput id="codeInput" type="text" class="form-control" [(ngModel)]="code">
+  </div>
+
+  <div class="form-group">
     <label for="nameInput">Name (optional)</label>
     <input #nameInput id="nameInput" type="text" class="form-control" [(ngModel)]="name">
   </div>
@@ -29,13 +34,13 @@
           No status
         </button>
         <button
-          *ngFor="let istatus of statuses"
-          (click)="status = istatus"
+          *ngFor="let statusOption of statuses"
+          (click)="status = statusOption"
           class="dropdown-item"
-          [style.background-color]="istatus.color"
-          [class.dark-bg]="isDarkBackground(istatus.color)"
+          [style.background-color]="statusOption.color"
+          [class.dark-bg]="isDarkBackground(statusOption.color)"
         >
-          {{istatus.displayName}}
+          {{statusOption.displayName}}
         </button>
       </div>
     </div>
@@ -52,79 +57,6 @@
     >
       {{card ? card : '-'}}
     </button>
-  </div>
-
-  <div *ngIf="hasRole(['TRANSFER'])" class="form-group">
-
-    <label for="balanceInput">Balance (requires card)</label>
-
-    <div class="d-flex">
-      <button
-        (focus)="$event.target.blur()"
-        (click)="subBalance()"
-        type="button"
-        class="btn btn-primary"
-        [disabled]="!card"
-        [class.disabled]="!card"
-      >
-          <i class="fa fa-minus"></i>
-        </button>
-
-      <input
-        id="balanceInput"
-        disabled class="disabled form-control text-center flex-grow-1"
-        [value]="balance | number:'1.2-2'"
-      >
-
-      <button
-        (focus)="$event.target.blur()"
-        (click)="addBalance()"
-        type="button"
-        class="btn btn-primary"
-        [disabled]="!card"
-        [class.disabled]="!card"
-      >
-          <i class="fa fa-plus"></i>
-        </button>
-    </div>
-
-  </div>
-
-  <div *ngIf="hasRole(['TRANSFER'])" class="form-group">
-
-    <label for="bonusInput">Bonus (requires card)</label>
-
-    <div class="d-flex">
-      <button
-        (focus)="$event.target.blur()"
-        (click)="subBonus()"
-        type="button"
-        class="btn btn-primary"
-        [disabled]="!card"
-        [class.disabled]="!card"
-      >
-        <i class="fa fa-minus"></i>
-      </button>
-
-      <input
-        id="bonusInput"
-        disabled
-        class="disabled form-control text-center d-inline-block flex-grow-1"
-        [value]="bonus | number:'1.2-2'"
-      >
-
-      <button
-        (focus)="$event.target.blur()"
-        (click)="addBonus()"
-        type="button"
-        class="btn btn-primary"
-        [disabled]="!card"
-        [class.disabled]="!card"
-      >
-        <i class="fa fa-plus"></i>
-      </button>
-    </div>
-
   </div>
 
   <div class="row mt-2">

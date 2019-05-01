@@ -85,10 +85,10 @@ export class OrderHistoryComponent implements OnInit {
       combineLatest(transactions$, bonusTransactions$).subscribe(
         ([transactions, bonusTransactions]: [Transaction[], BonusTransaction[]]) => {
           this.entries = [];
-          this.entries.push(...transactions.filter((transaction: Transaction) => transaction.order === null));
-          this.entries.push(...bonusTransactions);
+          this.entries.push(...transactions.filter((transaction: Transaction) => transaction.order === null && !transaction.pending));
+          this.entries.push(...bonusTransactions.filter((bonusTransaction: BonusTransaction) => !bonusTransaction.pending));
           this.entries.push(...transactions
-            .filter((transaction: Transaction) => transaction.order !== null)
+            .filter((transaction: Transaction) => transaction.order !== null && !transaction.pending)
             .map((transaction: Transaction) => transaction.order)
           );
           this.entries.sort((a: AbstractTimeModel, b: AbstractTimeModel) => b.time.getTime() - a.time.getTime());
@@ -103,7 +103,7 @@ export class OrderHistoryComponent implements OnInit {
     } else {
       this.orderService.listByCard(card).subscribe(
         (orders: Order[]) => {
-          this.entries = orders;
+          this.entries = orders.filter((order: Order) => !order.pending);
           this.entries.sort((a: AbstractTimeModel, b: AbstractTimeModel) => b.time.getTime() - a.time.getTime());
         },
         (error: string) => this.error(error, true)

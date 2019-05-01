@@ -67,3 +67,7 @@ export function isDarkBackground(color: string): boolean {
 
   return luminance < 128;
 }
+
+export function getRandomInt(max: number): number {
+  return Math.floor(Math.random() * Math.floor(max));
+}

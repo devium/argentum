@@ -27,9 +27,9 @@ export namespace Editor {
 
     activeOption(fieldSpec: FieldSpec<T>): OptionSpec {
       if (this.active[fieldSpec.key] instanceof AbstractModel && this.active[fieldSpec.key] !== null) {
-        return fieldSpec.optionSpecs.find((optionSpec: OptionSpec) => optionSpec.value.id === this.active[fieldSpec.key]['id']);
+        return fieldSpec.params.optionSpecs.find((optionSpec: OptionSpec) => optionSpec.value.id === this.active[fieldSpec.key]['id']);
       } else {
-        return fieldSpec.optionSpecs.find((optionSpec: OptionSpec) => optionSpec.value === this.active[fieldSpec.key]);
+        return fieldSpec.params.optionSpecs.find((optionSpec: OptionSpec) => optionSpec.value === this.active[fieldSpec.key]);
       }
     }
 
@@ -50,6 +50,7 @@ export namespace Editor {
 
   export enum FieldType {
     ReadOnlyField,
+    DateField,
     StringField,
     PasswordField,
     ColorField,
@@ -69,6 +70,16 @@ export namespace Editor {
     }
   }
 
+  export interface Params<T extends AbstractModel> {
+    optionSpecs?: OptionSpec[];
+    filtered?: boolean;
+    sortable?: boolean;
+    filterKey?: string;
+    minWidth?: number;
+    disabled?: (entry: Entry<T>) => boolean;
+    filterMap?: ((filter: string) => string);
+  }
+
   export class FieldSpec<T extends AbstractModel> {
     public colspan: number;
     public optionsHeader = false;
@@ -77,13 +88,12 @@ export namespace Editor {
       public name: string,
       public type: FieldType,
       public key: keyof T,
-      public optionSpecs: OptionSpec[] = [],
-      public filtered = false,
-      public sortable = false,
-      public minWidth: number = 0,
-      public disabled: (entry: Entry<T>) => boolean = (entry: Entry<T>) => false,
-      public filterMap: ((filter: string) => string) = (filter: string) => filter
+      public params: Params<T> = {}
     ) {
+    }
+
+    filterKey(): string {
+      return this.params.filterKey ? this.params.filterKey : <string>this.key;
     }
   }
 
@@ -107,13 +117,13 @@ export namespace Editor {
       for (const fieldSpec of fieldSpecs) {
         if (fieldSpec.type === FieldType.MultiCheckboxField || fieldSpec.type === FieldType.MultiModelCheckboxField) {
           this.headerOptionRow = true;
-          this.headerOptionSpecs = this.headerOptionSpecs.concat(fieldSpec.optionSpecs);
-          fieldSpec.colspan = fieldSpec.optionSpecs.length;
+          this.headerOptionSpecs = this.headerOptionSpecs.concat(fieldSpec.params.optionSpecs);
+          fieldSpec.colspan = fieldSpec.params.optionSpecs.length;
           fieldSpec.optionsHeader = true;
         } else {
           fieldSpec.colspan = 1;
         }
-        if (fieldSpec.filtered) {
+        if (fieldSpec.params.filtered) {
           this.headerFilterRow = true;
         }
         this.numCols += fieldSpec.colspan;
