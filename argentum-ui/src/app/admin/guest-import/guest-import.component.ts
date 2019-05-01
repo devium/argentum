@@ -117,12 +117,14 @@ export class GuestImportComponent implements OnInit {
   }
 
   deleteGuests() {
-    const modal = this.modalService.open(DeleteGuestsModalComponent, {backdrop: 'static'});
-    modal.result.then(() => {
-      this.guestService.deleteAll().subscribe(
-        () => this.message.success(`<b>Deleted all guests and orders.</b>`),
-        error => this.message.error(error)
-      );
-    }, () => void (0));
+    this.modalService.open(DeleteGuestsModalComponent, {backdrop: 'static'}).result.then(
+      () => {
+        this.guestService.deleteAll().subscribe(
+          () => this.message.success(`<b>Deleted all guests and orders.</b>`),
+          error => this.message.error(error)
+        );
+      },
+      (cancel: string) => void (0)
+    );
   }
 }

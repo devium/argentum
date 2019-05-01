@@ -34,6 +34,13 @@ class BonusTransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Aut
             self.RESPONSES[f'GET/bonus_transactions?guest__card={TestGuests.ROBY.card}']
         )
 
+    def test_get_by_card_not_found(self):
+        self.login(TestUsers.BAR)
+
+        response = self.client.get('/bonus_transactions?guest__card=NOTFOUND')
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.data['guest__card'][0], 'Card not registered.')
+
     def test_get_by_nocard(self):
         self.login(TestUsers.BAR)
 

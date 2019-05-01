@@ -7,7 +7,7 @@ from rest_framework import serializers, viewsets, mixins
 from rest_framework.permissions import BasePermission
 
 from api.models.guest import Guest
-from api.models.utils import resolve_card
+from api.models.utils import resolve_card, ListByCardModelMixin
 from argentum.permissions import StrictModelPermissions
 from argentum.settings import CURRENCY_CONFIG
 
@@ -79,7 +79,7 @@ class BonusTransactionUpdateSerializer(serializers.ModelSerializer):
 class BonusTransactionViewSet(
     mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
-    mixins.ListModelMixin,
+    ListByCardModelMixin,
     viewsets.GenericViewSet
 ):
     queryset = BonusTransaction.objects.all()

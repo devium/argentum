@@ -1,18 +1,18 @@
-import {AbstractModel} from './abstract-model';
+import {AbstractTimeModel} from './abstract-model';
 import {Guest} from './guest';
-import {formatCurrency} from '../util/format';
+import {formatCurrency} from '../utils';
 
-export class BonusTransaction extends AbstractModel {
+export class BonusTransaction extends AbstractTimeModel {
   constructor(
     id: number,
-    public time: Date,
+    time: Date,
     public guest: Guest,
     public card: string,
     public value: number,
     public description: string,
     public pending: boolean
   ) {
-    super(id);
+    super(id, time);
   }
 
   static fromDto(dto: BonusTransaction.Dto, guests?: Guest[]): BonusTransaction {

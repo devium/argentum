@@ -71,31 +71,6 @@ input:disabled {
   pointer-events: none;
 }
 
-.modal {
-  display: table !important;
-  height: 100%;
-  width: 100%;
-}
-
-.modal-dialog {
-  display: table-cell;
-  vertical-align: middle;
-}
-
-.modal-content {
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-.modal-sm .modal-content {
-  max-width: 300px;
-}
-
-.modal:nth-of-type(2),
-.modal-backdrop:nth-of-type(2) {
-  z-index: 2100;
-}
-
 .overflow-ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -120,18 +95,4 @@ input:disabled {
 .message-800 {
   display: block;
   max-width: 800px;
-}
-
-.history-modal > .modal-dialog > .modal-content {
-  max-width: 640px;
-}
-
-.color-picker {
-  cursor: pointer;
-  display: inline-block;
-}
-
-.checkbox-lg {
-  width: 20px;
-  height: 20px;
 }

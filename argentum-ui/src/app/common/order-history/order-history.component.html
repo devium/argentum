@@ -1,130 +1,181 @@
-<div
-  class="order-history px-3 text-center bg-white"
-  [class.flex-grow-1]="!modal"
-  [class.h-max-420]="modal"
-  [class.h-max-none]="!modal"
->
-  <span
-    *ngIf="orders && orders.length == 0"
-    class="h4"
-  >
+<div>
+  <span *ngIf="entries && entries.length === 0" class="h4">
     No orders.
   </span>
   <table
     id="orderTable"
-    *ngIf="orders && orders.length > 0"
-    class="table mb-0 text-right"
-    [class.table-sm]="!modal"
+    *ngIf="entries && entries.length > 0"
+    class="table mb-0"
+    [class.table-sm]="!activeModal"
   >
-    <thead>
-    <tr>
-      <th class="text-left">Product</th>
-      <th>Price</th>
-      <th>Qty</th>
-      <th>Total</th>
-      <th *ngIf="allowCancel">Cancel</th>
-    </tr>
-    </thead>
-
     <tbody class="px-2">
-    <ng-container *ngFor="let order of orders">
-
-      <tr class="order-row">
-        <td [id]="'order' + order.id + 'Time'" [attr.colspan]="3" class="text-left">
-          {{order.time.toLocaleTimeString()}}
-        </td>
-        <td class="text-right">
-          <span [id]="'order' + order.id + 'Total'" *ngIf="order.total !== order.totalEffective" class="text-danger">
-                <s>€{{order.total | number:'1.2-2'}}</s>
-          </span>
-          <span
-            [id]="'order' + order.id + 'TotalEffective'"
-            [class.text-success]="order.total !== order.totalEffective"
+    <tr *ngIf="guest" class="balance">
+      <td>
+        <b>Balance</b>
+      </td>
+      <td colspan="3">
+      </td>
+      <td class="text-right">
+        <b>€{{formatCurrency(guest.balance)}}</b>
+      </td>
+    </tr>
+    <tr *ngIf="guest && guest.bonus !== 0">
+      <td>
+        <b>Bonus</b>
+      </td>
+      <td colspan="3">
+      </td>
+      <td class="text-right">
+        <b>€{{formatCurrency(guest.bonus)}}</b>
+      </td>
+    </tr>
+    <ng-container *ngFor="let entry of entries">
+      <!-- Transaction row -->
+      <tr *ngIf="instanceOf(entry, Transaction)" class="transaction">
+        <ng-container *ngIf="toTransaction(entry); let transaction">
+          <td *ngIf="transaction.value >= 0">
+            Deposit
+          </td>
+          <td *ngIf="transaction.value < 0">
+            Withdrawal
+          </td>
+          <td>
+            <i class="fa fa-clock-o"></i> {{formatTime(transaction.time)}}
+          </td>
+          <td colspan="2">
+          </td>
+          <td
+            class="text-right"
+            [class.text-danger]="transaction.value < 0"
+            [class.text-success]="transaction.value > 0"
           >
-                €{{order.totalEffective | number:'1.2-2'}}
-          </span>
-        </td>
-        <td *ngIf="allowCancel"></td>
+            <b>€{{formatCurrency(transaction.value)}}</b>
+          </td>
+        </ng-container>
       </tr>
 
-      <tr *ngFor="let orderItem of order.orderItems">
-        <td [id]="'orderItem' + orderItem.id + 'Name'"class="text-left">{{orderItem.product.name}}</td>
-        <td [id]="'orderItem' + orderItem.id + 'Price'">€{{orderItem.product.price | number:'1.2-2'}}</td>
-        <td>
-          <span
-            [id]="'orderItem' + orderItem.id + 'Quantity'"
-            *ngIf="orderItem.cancelled !== 0"
-            class="text-danger"
+      <!-- Bonus transaction row -->
+      <tr *ngIf="instanceOf(entry, BonusTransaction)" class="transaction">
+        <ng-container *ngIf="toTransaction(entry); let bonusTransaction">
+          <td>
+            Bonus
+          </td>
+          <td>
+            <i class="fa fa-clock-o"></i> {{formatTime(bonusTransaction.time)}}
+          </td>
+          <td colspan="2">
+          </td>
+          <td
+            class="text-right"
+            [class.text-danger]="bonusTransaction.value < 0"
+            [class.text-success]="bonusTransaction.value > 0"
           >
-            <s>{{orderItem.quantity}}</s>
-          </span>
-          <span
-            [id]="'orderItem' + orderItem.id + 'QuantityEffective'"
-            [class.text-success]="orderItem.cancelled !== 0"
-          >
-            {{orderItem.quantity - orderItem.cancelled}}
-          </span>
-        </td>
-        <td>
-          <span
-            [id]="'orderItem' + orderItem.id + 'Total'"
-            *ngIf="orderItem.total !== orderItem.totalEffective" class="text-danger"
-          >
-            <s>€{{orderItem.total | number:'1.2-2'}}</s>
-          </span>
-          <span
-            [id]="'orderItem' + orderItem.id + 'TotalEffective'"
-            [class.text-success]="orderItem.total !== orderItem.totalEffective"
-          >
-            €{{orderItem.totalEffective | number:'1.2-2'}}
-          </span>
-        </td>
-        <td *ngIf="allowCancel" class="py-0 align-middle">
-          <button
-            [id]="'orderItem' + orderItem.id + 'Cancel'"
-            *ngIf="orderItem.cancelled !== orderItem.quantity"
-            (focus)="$event.target.blur()"
-            (click)="cancelOrderItem(order, orderItem)"
-            type="button"
-            class="btn btn-sm btn-primary"
-          >
-            Cancel
-          </button>
-        </td>
+            <b>€{{formatCurrency(bonusTransaction.value)}}</b>
+          </td>
+        </ng-container>
       </tr>
 
-      <tr *ngIf="order.customTotal !== 0">
-        <td colspan="3" class="text-left">Custom</td>
-        <td>
-          <span
-            [id]="'order' + order.id + 'CustomTotal'"
-            *ngIf="order.customTotal !== order.customTotalEffective" class="text-danger"
-          >
-            <s>€{{order.customTotal | number:'1.2-2'}}</s>
-          </span>
-          <span
-            [id]="'order' + order.id + 'CustomTotalEffective'"
-            [class.text-success]="order.customTotal !== order.customTotalEffective"
-          >
-            €{{order.customTotalEffective | number:'1.2-2'}}
-          </span>
-        </td>
-        <td *ngIf="allowCancel" class="py-0 align-middle">
-          <button
-            [id]="'order' + order.id + 'CustomCancel'"
-            *ngIf="order.customTotalEffective > 0.001"
-            (focus)="$event.target.blur()"
-            (click)="cancelCustom(order)"
-            type="button"
-            class="btn btn-sm btn-primary"
-          >
-            Cancel
-          </button>
-        </td>
-      </tr>
+      <!--Order block-->
+      <ng-container *ngIf="instanceOf(entry, Order)">
+        <ng-container *ngIf="toOrder(entry); let order">
+          <!--Order total row-->
+          <tr class="order">
+            <td>
+              Order
+            </td>
+            <td>
+              <i class="fa fa-clock-o"></i> {{formatTime(order.time)}}
+            </td>
+            <td colspan="2">
+            </td>
+            <td *ngIf="order.totalInitial(); let totalInitial" class="text-right">
+              <ng-container *ngIf="order.total(); let total">
+                <span *ngIf="total !== totalInitial">
+                  <s>€{{formatCurrency(-totalInitial)}}</s>
+                </span>
+                <span [class.text-danger]="total > 0" [class.text-success]="total < 0">
+                  <b> €{{formatCurrency(-total)}}</b>
+                </span>
+              </ng-container>
+            </td>
+            <td *ngIf="allowCancel"></td>
+          </tr>
 
+          <!--Order item rows-->
+          <tr *ngFor="let orderItem of order.orderItems">
+            <td>
+            </td>
+            <td>
+              {{orderItem.product.name}}
+            </td>
+            <td class="text-right">
+              €{{formatCurrency(orderItem.product.price)}}
+            </td>
+            <td class="text-right">
+              <span *ngIf="orderItem.quantityInitial !== orderItem.quantityCurrent">
+                <s>{{orderItem.quantityInitial}}</s>
+              </span>
+              <span>
+                {{orderItem.quantityCurrent}}
+              </span>
+            </td>
+            <td class="text-right">
+              <span *ngIf="orderItem.quantityInitial !== orderItem.quantityCurrent">
+                <s>€{{formatCurrency(-orderItem.totalInitial())}}</s>
+              </span>
+              <span>
+                €{{formatCurrency(-orderItem.total())}}
+              </span>
+            </td>
+
+            <td *ngIf="allowCancel" class="py-0 align-middle align-right">
+              <button
+                (focus)="$event.target.blur()"
+                (click)="cancelOrderItem(order, orderItem)"
+                type="button"
+                class="btn btn-sm btn-danger"
+                [disabled]="orderItem.quantityCurrent === 0"
+              >
+                <i class="fa fa-ban fa-lg"></i>
+              </button>
+            </td>
+          </tr>
+
+          <!--Custom row-->
+          <tr *ngIf="order.customInitial > 0">
+            <td>
+            </td>
+            <td>
+              Custom
+            </td>
+            <td colspan="2">
+            </td>
+            <td class="text-right">
+              <span *ngIf="order.customInitial !== order.customCurrent">
+                <s>€{{formatCurrency(-order.customInitial)}}</s>
+              </span>
+              <span>
+                €{{formatCurrency(-order.customCurrent)}}
+              </span>
+            </td>
+
+            <!--Cancel custom-->
+            <td *ngIf="allowCancel" class="py-0 align-middle align-right">
+              <button
+                [id]="'order' + order.id + 'CustomCancel'"
+                *ngIf="order.customCurrent > 0"
+                (focus)="$event.target.blur()"
+                (click)="cancelCustom(order)"
+                type="button"
+                class="btn btn-sm btn-danger"
+              >
+                <i class="fa fa-ban fa-lg"></i>
+              </button>
+            </td>
+          </tr>
+        </ng-container>
+      </ng-container>
     </ng-container>
-
     </tbody>
   </table>
 </div>

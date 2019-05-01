@@ -71,6 +71,7 @@ export namespace Editor {
 
   export class FieldSpec<T extends AbstractModel> {
     public colspan: number;
+    public optionsHeader = false;
 
     constructor(
       public name: string,
@@ -80,7 +81,8 @@ export namespace Editor {
       public filtered = false,
       public sortable = false,
       public minWidth: number = 0,
-      public disabled: (entry: Entry<T>) => boolean = (entry: Entry<T>) => false
+      public disabled: (entry: Entry<T>) => boolean = (entry: Entry<T>) => false,
+      public filterMap: ((filter: string) => string) = (filter: string) => filter
     ) {
     }
   }
@@ -107,6 +109,7 @@ export namespace Editor {
           this.headerOptionRow = true;
           this.headerOptionSpecs = this.headerOptionSpecs.concat(fieldSpec.optionSpecs);
           fieldSpec.colspan = fieldSpec.optionSpecs.length;
+          fieldSpec.optionsHeader = true;
         } else {
           fieldSpec.colspan = 1;
         }

@@ -30,7 +30,7 @@ export class GuestService {
   retrieveByCard(card: string): Observable<Guest> {
     // If no guest is found, 404 is returned. Handle as an error.
     return this.http.get<Guest.Dto[]>('/guests', {params: {card: card}}).pipe(
-      map((dtos: Guest.Dto[]) => Guest.fromDto(dtos[0])),
+      map((dtos: Guest.Dto[]) => dtos.length > 0 ? Guest.fromDto(dtos[0]) : null) ,
       catchError((err: HttpErrorResponse) => processErrors(err))
     );
   }

@@ -1,13 +1,19 @@
-import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
-import { Product } from '../../common/model/product';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.component';
-import { isDarkBackground } from '../../common/util/is-dark-background';
-import { ProductRange } from '../../common/model/product-range';
-import { MessageComponent } from '../../common/message/message.component';
-import { CardBarComponent } from '../../common/card-bar/card-bar.component';
-import { OrderHistoryModalComponent } from '../order-history-modal/order-history-modal.component';
-import { Category } from '../../common/model/category';
+import {Component, NgZone, OnInit, ViewChild} from '@angular/core';
+import {Product} from '../../common/model/product';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {KeypadModalComponent} from '../../common/keypad-modal/keypad-modal.component';
+import {ProductRange} from '../../common/model/product-range';
+import {MessageComponent} from '../../common/message/message.component';
+import {OrderHistoryModalComponent} from '../../common/order-history-modal/order-history-modal.component';
+import {Category} from '../../common/model/category';
+import {ProductRangeService} from '../../common/rest-service/product-range.service';
+import {OrderService} from '../../common/rest-service/order.service';
+import {CategoryService} from '../../common/rest-service/category.service';
+import {Order} from '../../common/model/order';
+import {OrderItem} from '../../common/model/order-item';
+import {CardModalComponent} from '../../common/card-modal/card-modal.component';
+import {formatCurrency, getPaginated, isDarkBackground} from '../../common/utils';
+import {flatMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-order',
@@ -15,26 +21,32 @@ import { Category } from '../../common/model/category';
   styleUrls: ['order.component.scss']
 })
 export class OrderComponent implements OnInit {
-  productRanges: ProductRange[] = [];
-  selectedRange: ProductRange = null;
+  isDarkBackground = isDarkBackground;
+  formatCurrency = formatCurrency;
+  getPaginated = getPaginated;
+
   rangeProductsPerPage: number;
   orderProductsPerPage: number;
   pagesShown: number;
   rangePage = 0;
   orderPage = 0;
-  categories = new Map<number, Category>();
-  products: Product[] = [];
-  orderedProducts = new Map<Product, number>();
+
+  productRanges: ProductRange[] = [];
+  selectedRange: ProductRange = null;
+  orderItems: OrderItem[] = [];
   total = 0;
   waitingForOrder = false;
 
   @ViewChild(MessageComponent)
   message: MessageComponent;
 
-  @ViewChild(CardBarComponent)
-  cardBar: CardBarComponent;
-
-  constructor(private ngZone: NgZone, private modalService: NgbModal) {
+  constructor(
+    private productRangeService: ProductRangeService,
+    private categoryService: CategoryService,
+    private orderService: OrderService,
+    private ngZone: NgZone,
+    private modalService: NgbModal
+  ) {
   }
 
   ngOnInit() {
@@ -60,46 +72,37 @@ export class OrderComponent implements OnInit {
   }
 
   refreshRanges() {
-    // TODO
-    // this.restService.getProductRanges()
-    Promise.resolve([])
-      .then((ranges: ProductRange[]) => {
+    this.productRangeService.list().subscribe(
+      (ranges: ProductRange[]) => {
         this.productRanges = ranges;
         if (ranges.length === 1) {
           this.setProductRange(ranges[0]);
         }
-      })
-      .catch(reason => this.message.error(reason));
+      },
+      (error: string) => this.message.error(error)
+    );
   }
 
   refreshProducts() {
     if (this.selectedRange) {
-      // TODO
-      // const pProducts = this.restService.getRangeProducts(this.selectedRange);
-      // const pCategories = this.restService.getCategories();
-      Promise.all([])
-        .then((response: any[]) => {
-          const products: Product[] = response[0];
-          const categories: Category[] = response[1];
-
-          this.categories = new Map<number, Category>(categories.map(
-            (category: Category) => [category.id, category] as [number, Category]
-          ));
-
-          this.products = products.filter(product => !product.deprecated);
-          this.products.sort((a: Product, b: Product) => {
-            const categoryA: string = a.category === null ? '' : this.categories.get(a.category.id).name;
-            const categoryB: string = b.category === null ? '' : this.categories.get(b.category.id).name;
-            return categoryA.localeCompare(categoryB);
-          });
-        })
-        .catch(reason => this.message.error(reason));
+      this.categoryService.list().subscribe(
+        (categories: Category[]) => {
+          this.productRangeService.retrieve(this.selectedRange.id, categories).subscribe(
+            (productRange: ProductRange) => {
+              this.selectedRange = productRange;
+            },
+            (error: string) => this.message.error(error)
+          );
+        },
+        (error: string) => this.message.error(error)
+      );
     }
   }
 
   updateTotal() {
-    this.total = 0;
-    this.orderedProducts.forEach((quantity: number, product: Product) => this.total += product.price * quantity);
+    this.total = this.orderItems
+      .map((orderItem: OrderItem) => orderItem.quantityInitial * orderItem.product.price)
+      .reduce((a: number, b: number) => a + b, 0);
   }
 
   setProductRange(range: ProductRange) {
@@ -108,26 +111,23 @@ export class OrderComponent implements OnInit {
   }
 
   rangeProductClicked(product: Product) {
-    if (this.orderedProducts.has(product)) {
-      this.orderedProducts.set(product, this.orderedProducts.get(product) + 1);
+    const existingItem = this.orderItems.find((orderItem: OrderItem) => orderItem.product.id === product.id);
+    if (existingItem) {
+      existingItem.quantityInitial += 1;
     } else {
-      this.orderedProducts.set(product, 1);
+      this.orderItems.push(new OrderItem(undefined, product, 1, undefined));
     }
     this.updateTotal();
   }
 
-  orderedProductClicked(product: Product) {
-    const count = this.orderedProducts.get(product);
-    if (count === 1) {
-      this.orderedProducts.delete(product);
+  orderItemClicked(orderItem: OrderItem) {
+    if (orderItem.quantityInitial === 1) {
+      const index = this.orderItems.indexOf(orderItem);
+      this.orderItems.splice(index, 1);
     } else {
-      this.orderedProducts.set(product, count - 1);
+      orderItem.quantityInitial -= 1;
     }
     this.updateTotal();
-  }
-
-  getPaginated(data: any[], pageSize: number, page: number): Product[] {
-    return data.slice(pageSize * (page - 1), pageSize * page);
   }
 
   getNumPadItems(count: number, pageSize: number, page: number): number {
@@ -140,71 +140,70 @@ export class OrderComponent implements OnInit {
     return 0;
   }
 
-  isDarkBackground(color: string): boolean {
-    return isDarkBackground(color);
-  }
-
   addCustomProduct(): void {
-    const modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
-    modal.result.then(result => this.confirmKeypad(result), result => void(0));
-  }
-
-  confirmKeypad(price: number) {
-    this.orderedProducts.set(new Product(undefined, 'Custom', false, price, null, []), 1);
-    this.updateTotal();
-  }
-
-  onRangeSwipeLeft() {
-    this.rangePage = Math.min(Math.ceil(this.products.length / this.rangeProductsPerPage), this.rangePage + 1);
-  }
-
-  onRangeSwipeRight() {
-    this.rangePage = Math.max(0, this.rangePage - 1);
-  }
-
-  onOrderSwipeLeft() {
-    this.orderPage = Math.min(Math.ceil(this.orderedProducts.size / this.orderProductsPerPage), this.orderPage + 1);
-  }
-
-  onOrderSwipeRight() {
-    this.orderPage = Math.max(0, this.rangePage - 1);
+    const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
+    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
+    modal.result.then(
+      (price: number) => {
+        this.orderItems.push(new OrderItem(undefined, new Product(undefined, 'Custom', false, price, null, []), 1, undefined));
+        this.updateTotal();
+      },
+      (cancel: string) => void (0)
+    );
   }
 
   clear(): void {
-    this.orderedProducts.clear();
+    this.orderItems = [];
     this.updateTotal();
   }
 
   placeOrder(): void {
     this.waitingForOrder = true;
-    this.cardBar.active = false;
-    const guest = this.cardBar.guest;
-    // TODO
-    // this.restService.placeOrder(guest, this.orderedProducts)
-    Promise.resolve()
-      .then(() => {
-        this.message.success(`
-          Order placed for <b>${guest.name}</b>.
-        `);
-        this.orderedProducts.clear();
-        this.updateTotal();
-        this.waitingForOrder = false;
-        this.cardBar.active = true;
-        this.cardBar.reset();
-      })
-      .catch(reason => {
-        this.message.error(reason);
-        this.waitingForOrder = false;
-        this.cardBar.active = true;
-      });
+    this.modalService.open(CardModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
+      (card: string) => {
+        const custom = this.orderItems
+          .filter((orderItem: OrderItem) => orderItem.product.id === undefined)
+          .map((orderItem: OrderItem) => orderItem.product.price * orderItem.quantityInitial)
+          .reduce((a: number, b: number) => a + b, 0);
+        const newOrder = new Order(
+          undefined,
+          undefined,
+          undefined,
+          card,
+          custom,
+          undefined,
+          undefined,
+          this.orderItems.filter((orderItem: OrderItem) => orderItem.product.id !== undefined)
+        );
+        this.orderService.create(newOrder).pipe(
+          flatMap((order: Order) => this.orderService.commit(order))
+        ).subscribe(
+          (committedOrder: Order) => {
+            this.message.success(`Order placed for <b>card #${card}</b>`);
+            this.clear();
+          },
+          (error: string) => {
+            this.waitingForOrder = false;
+            this.message.error(error);
+          }
+        );
+      },
+      (cancel: string) => this.waitingForOrder = false
+    );
   }
 
   showOrderHistory() {
-    const modal = this.modalService.open(
-      OrderHistoryModalComponent, { backdrop: 'static', windowClass: 'history-modal' }
+    this.modalService.open(CardModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
+      (card: string) => {
+        const orderHistoryModal = this.modalService.open(
+          OrderHistoryModalComponent, {backdrop: 'static'}
+        );
+        const orderHistoryModalComponent = <OrderHistoryModalComponent>orderHistoryModal.componentInstance;
+        orderHistoryModalComponent.orderHistory.message = this.message;
+        orderHistoryModalComponent.orderHistory.allowCancel = true;
+        orderHistoryModalComponent.orderHistory.getOrderHistory(card);
+      },
+      (cancel: string) => void(0)
     );
-    const orderHistoryModal = (<OrderHistoryModalComponent>modal.componentInstance);
-    orderHistoryModal.orderHistory.message = this.message;
-    orderHistoryModal.orderHistory.getOrderHistory(this.cardBar.guest);
   }
 }

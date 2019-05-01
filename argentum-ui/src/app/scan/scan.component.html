@@ -1,9 +1,13 @@
 <div class="container-fluid h-100 d-flex flex-column m-0 p-0 justify-content-center">
 
-  <app-card-bar [fullscreen]="true" [message]="message" class="flex-grow-1 d-flex flex-column"></app-card-bar>
+  <div class="container">
+    <app-card-entry></app-card-entry>
+  </div>
+
+  <div class="row mt-3">
+    <app-message class="col-auto m-auto"></app-message>
+  </div>
 
   <app-navbar></app-navbar>
-
-  <app-message #message></app-message>
 
 </div>

@@ -1,12 +1,12 @@
-import {AbstractModel} from './abstract-model';
+import {AbstractTimeModel} from './abstract-model';
 import {Guest} from './guest';
 import {Order} from './order';
-import {formatCurrency} from '../util/format';
+import {formatCurrency} from '../utils';
 
-export class Transaction extends AbstractModel {
+export class Transaction extends AbstractTimeModel {
   constructor(
     id: number,
-    public time: Date,
+    time: Date,
     public guest: Guest,
     public card: string,
     public value: number,
@@ -15,7 +15,7 @@ export class Transaction extends AbstractModel {
     public order: Order,
     public pending: boolean
   ) {
-    super(id);
+    super(id, time);
   }
 
   static fromDto(dto: Transaction.Dto, orders: Order[], guests?: Guest[]): Transaction {

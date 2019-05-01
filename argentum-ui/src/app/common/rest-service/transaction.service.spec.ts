@@ -34,6 +34,7 @@ fdescribe('TransactionService', () => {
     guestService.list.and.returnValue(of(Guests.ALL));
     orderService = createSpyObj('OrderService', ['list']);
     orderService.list.and.returnValue(of(Orders.ALL));
+    orderService.listByCard.and.returnValue(of(Orders.ALL));
     service = new TransactionService(http, guestService, orderService);
     resolved = false;
   });

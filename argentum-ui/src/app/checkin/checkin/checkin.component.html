@@ -2,17 +2,17 @@
   <app-card-bar [fullscreen]="false" [message]="message"></app-card-bar>
 
   <div class="row p-2 my-0 grid-max mx-auto">
-    <div *ngIf="hasRole(['CHECKIN'])" class="col-sm-6 p-1">
+    <div *ngIf="hasGroup(['check_in'])" class="col-sm-6 p-1">
       <button (focus)="$event.target.blur()" (click)="newGuest()" class="btn btn-primary btn-block btn-huge">
         <i class="fa fa-plus fa-lg pr-1"></i>New guest
       </button>
     </div>
-    <div *ngIf="hasRole(['CHECKIN'])" class="col-sm-6 p-1">
+    <div *ngIf="hasGroup(['check_in'])" class="col-sm-6 p-1">
       <button (focus)="$event.target.blur()" (click)="searchGuest()" class="btn btn-primary btn-block btn-huge">
         <i class="fa fa-search fa-lg pr-1"></i>Search guest
       </button>
     </div>
-    <div *ngIf="hasRole(['TRANSFER'])" class="col-sm-6 p-1">
+    <div *ngIf="hasGroup(['transfer'])" class="col-sm-6 p-1">
       <button
         (focus)="$event.target.blur()"
         (click)="deposit()"
@@ -23,7 +23,7 @@
         <i class="fa fa-level-down fa-lg pr-1"></i>Deposit
       </button>
     </div>
-    <div *ngIf="hasRole(['TRANSFER'])" class="col-sm-6 p-1">
+    <div *ngIf="hasGroup(['transfer'])" class="col-sm-6 p-1">
       <button
         (focus)="$event.target.blur()"
         (click)="withdraw()"

@@ -1,5 +1,6 @@
-<div class="modal-body mx-4 my-3 p-0">
-  <app-order-history [allowCancel]="true" [modal]="true"></app-order-history>
+<div class="p-2">
+  <app-order-history [activeModal]="activeModal">
+  </app-order-history>
 
   <button
     (focus)="$event.target.blur()"

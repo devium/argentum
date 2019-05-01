@@ -69,3 +69,9 @@ export abstract class AbstractModel {
     return clone;
   }
 }
+
+export class AbstractTimeModel extends AbstractModel {
+  protected constructor(id: number, public time: Date) {
+    super(id);
+  }
+}

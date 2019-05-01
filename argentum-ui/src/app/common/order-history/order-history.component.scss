@@ -17,3 +17,9 @@
 .pre-scrollable {
   overflow-x: scroll;
 }
+
+.order > td,
+.transaction > td,
+.balance > td {
+  border-top-width: 5px;
+}

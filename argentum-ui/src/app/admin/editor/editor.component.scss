@@ -13,10 +13,20 @@
   min-width: 64px;
 }
 
-.btn-card {
-  min-width: 80px;
-}
-
 .filter {
   cursor: pointer;
+}
+
+.btn-reset-card {
+  max-width: 30px;
+}
+
+.color-picker {
+  cursor: pointer;
+  display: inline-block;
+}
+
+.checkbox-lg {
+  width: 20px;
+  height: 20px;
 }

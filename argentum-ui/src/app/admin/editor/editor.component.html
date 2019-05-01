@@ -11,7 +11,7 @@
     <tr>
       <th
         *ngFor="let fieldSpec of editorConfig.fieldSpecs"
-        [attr.rowspan]="editorConfig.headerOptionRow ? fieldSpec.colspan > 1 ? 1 : 2 : 1"
+        [attr.rowspan]="editorConfig.headerOptionRow ? fieldSpec.optionsHeader ? 1 : 2 : 1"
         [attr.colspan]="fieldSpec.colspan"
         [style.min-width]="fieldSpec.minWidth > 0 ? fieldSpec.minWidth + 'px': null"
       >
@@ -30,7 +30,7 @@
     </tr>
     <tr *ngIf="editorConfig.headerOptionRow">
       <th *ngFor="let optionSpec of editorConfig.headerOptionSpecs" class="rotate">
-        <div>
+        <div class="m-auto">
           {{optionSpec.name}}
         </div>
       </th>
@@ -39,7 +39,7 @@
       <th *ngFor="let fieldSpec of editorConfig.fieldSpecs">
         <input
           *ngIf="fieldSpec.filtered"
-          (input)="setFilter(fieldSpec.key, $event.target.value)"
+          (input)="setFilter(fieldSpec, $event.target.value)"
           (focus)="$event.target.select()"
           class="form-control form-control-sm"
         >
@@ -103,10 +103,10 @@
         </td>
 
         <td *ngIf="fieldSpec.type === Editor.FieldType.CardField">
-          <div class="btn-group" role="group">
+          <div class="btn-group w-100" role="group">
             <button
               (click)="promptCard(entry, fieldSpec.key)"
-              class="btn btn-primary btn-sm btn-card"
+              class="btn btn-primary btn-sm"
               [disabled]="fieldSpec.disabled(entry)"
             >
               <i *ngIf="!entry.active[fieldSpec.key]" class="fa fa-credit-card px-3"></i>
@@ -114,7 +114,7 @@
             </button>
             <button
               (click)="entry.active[fieldSpec.key] = null"
-              class="btn btn-danger btn-sm"
+              class="btn btn-danger btn-sm btn-reset-card"
               [disabled]="entry.active[fieldSpec.key] === null || fieldSpec.disabled(entry)"
             >
               <i class="fa fa-times"></i>

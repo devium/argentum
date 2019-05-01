@@ -1,4 +1,4 @@
-import {Observable, of, of as observableOf, Subject} from 'rxjs';
+import {Observable, of, Subject} from 'rxjs';
 
 import {debounceTime, switchMap} from 'rxjs/operators';
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
@@ -11,8 +11,8 @@ import {MessageComponent} from '../../common/message/message.component';
 
 import {GroupBasedComponent} from '../../common/group-based/group-based.component';
 import {Status} from '../../common/model/status';
-import {isDarkBackground} from '../../common/util/is-dark-background';
 import {distinctUntilChanged} from 'rxjs/internal/operators/distinctUntilChanged';
+import {isDarkBackground} from '../../common/utils';
 
 @Component({
   selector: 'app-search-guest',
@@ -111,87 +111,96 @@ export class SearchGuestModalComponent extends GroupBasedComponent implements On
   }
 
   setCard() {
-    const modal = this.modalService.open(CardModalComponent, {backdrop: 'static', size: 'sm'});
-    modal.result.then(card => {
-      this.guest.card = card;
-      // TODO
-      // this.restService.registerCard(this.guest, card)
-      Promise.resolve()
-        .then(() => this.message.success(`Card <b>${card}</b> registered to <b>${this.guest.name}</b>`))
-        .catch(reason => this.message.error(reason));
-    }, result => void (0));
+    this.modalService.open(CardModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
+      (card: string) => {
+        this.guest.card = card;
+        // TODO
+        // this.restService.registerCard(this.guest, card)
+        Promise.resolve()
+          .then(() => this.message.success(`Card <b>${card}</b> registered to <b>${this.guest.name}</b>`))
+          .catch(reason => this.message.error(reason));
+      },
+      (cancel: string) => void (0)
+    );
   }
 
   addBalance() {
-    const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
-    modal.result.then(value => {
-      // TODO
-      // this.restService.addBalance(this.guest, value)
-      Promise.resolve(0)
-        .then(newBalance => {
-          this.guest.balance = newBalance;
-          this.message.success(`
+    this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
+      (value: number) => {
+        // TODO
+        // this.restService.addBalance(this.guest, value)
+        Promise.resolve(0)
+          .then(newBalance => {
+            this.guest.balance = newBalance;
+            this.message.success(`
             Added <b>€${value.toFixed(2)}</b>
             to balance of <b>${this.guest.name}</b>.
             New balance: <b>€${newBalance.toFixed(2)}</b>
           `);
-        })
-        .catch(reason => this.message.error(reason));
-    }, result => void (0));
+          })
+          .catch(reason => this.message.error(reason));
+      },
+      (cancel: string) => void (0)
+    );
   }
 
   subBalance() {
-    const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
-    modal.result.then(value => {
-      // TODO
-      // this.restService.addBalance(this.guest, -value)
-      Promise.resolve(0)
-        .then(newBalance => {
-          this.guest.balance = newBalance;
-          this.message.success(`
+    this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
+      (value: number) => {
+        // TODO
+        // this.restService.addBalance(this.guest, -value)
+        Promise.resolve(0)
+          .then(newBalance => {
+            this.guest.balance = newBalance;
+            this.message.success(`
             Removed <b>€${value.toFixed(2)}</b>
             from balance of <b>${this.guest.name}</b>.
             New balance: <b>€${newBalance.toFixed(2)}</b>
           `);
-        })
-        .catch(reason => this.message.error(reason));
-    }, result => void (0));
+          })
+          .catch(reason => this.message.error(reason));
+      },
+      (cancel: string) => void (0)
+    );
   }
 
   addBonus() {
-    const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
-    modal.result.then(value => {
-      // TODO
-      // this.restService.addBonus(this.guest, value)
-      Promise.resolve(0)
-        .then(newBonus => {
-          this.guest.bonus = newBonus;
-          this.message.success(`
+    this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
+      (value: number) => {
+        // TODO
+        // this.restService.addBonus(this.guest, value)
+        Promise.resolve(0)
+          .then(newBonus => {
+            this.guest.bonus = newBonus;
+            this.message.success(`
             Added <b>€${value.toFixed(2)}</b>
             to bonus of <b>${this.guest.name}</b>.
             New bonus: <b>€${newBonus.toFixed(2)}</b>
           `);
-        })
-        .catch(reason => this.message.error(reason));
-    }, result => void (0));
+          })
+          .catch(reason => this.message.error(reason));
+      },
+      (cancel: string) => void (0)
+    );
   }
 
   subBonus() {
-    const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
-    modal.result.then(value => {
-      // TODO
-      // this.restService.addBonus(this.guest, -value)
-      Promise.resolve(0)
-        .then(newBonus => {
-          this.guest.bonus = newBonus;
-          this.message.success(`
+    this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
+      (value: number) => {
+        // TODO
+        // this.restService.addBonus(this.guest, -value)
+        Promise.resolve(0)
+          .then(newBonus => {
+            this.guest.bonus = newBonus;
+            this.message.success(`
             Removed <b>€${value.toFixed(2)}</b>
             from bonus of <b>${this.guest.name}</b>.
             New bonus: <b>€${newBonus.toFixed(2)}</b>
           `);
-        })
-        .catch(reason => this.message.error(reason));
-    }, result => void (0));
+          })
+          .catch(reason => this.message.error(reason));
+      },
+      (cancel: string) => void (0));
   }
 
 }

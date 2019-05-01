@@ -29,5 +29,7 @@ export function processErrors(error: HttpErrorResponse) {
   if (error.error) {
     messages = traverseError(error.error);
   }
-  return throwError(messages.join('<br>\n'));
+  console.log(messages.join('\n'));
+  const pureMessages = messages.map((message: string) => message.substr(message.indexOf(']: ') + 3));
+  return throwError(pureMessages.join('\n'));
 }

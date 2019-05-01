@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { OrderHistoryComponent } from '../../common/order-history/order-history.component';
+import { OrderHistoryComponent } from '../order-history/order-history.component';
 
 @Component({
   selector: 'app-order-history-modal',

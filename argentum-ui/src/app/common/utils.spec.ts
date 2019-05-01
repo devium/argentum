@@ -1,4 +1,4 @@
-import { convertCard } from './convert-card';
+import {convertCard} from './utils';
 
 const TEST_CARDS_A: string[] = [
   '0004374727',
@@ -66,14 +66,14 @@ const TEST_CARDS_B: string[] = [
   '22544307'
 ];
 
-describe('convertCard', () => {
-  it('should convert some numbers correctly', () => {
+describe('utils', () => {
+  it('convertCard should convert some numbers correctly', () => {
     expect(convertCard('1234')).toBe('1234');
     expect(convertCard('' + 0x12345678)).toBe('' + 0x00345678);
     expect(convertCard('01234')).toBe('1234');
   });
 
-  it('should print warnings on cards that are out of major range', () => {
+  it('convertCard should print warnings on cards that are out of major range', () => {
     console.warn = jasmine.createSpy('log');
     convertCard('25600000');
     expect(console.warn).toHaveBeenCalledWith(
@@ -81,7 +81,7 @@ describe('convertCard', () => {
     );
   });
 
-  it('should print warnings on cards that are out of minor range', () => {
+  it('convertCard should print warnings on cards that are out of minor range', () => {
     console.warn = jasmine.createSpy('log');
     convertCard('25565537');
     expect(console.warn).toHaveBeenCalledWith(
@@ -89,7 +89,7 @@ describe('convertCard', () => {
     );
   });
 
-  it('should result in the same string for two different card-bar readers', () => {
+  it('convertCard should result in the same string for two different card readers', () => {
     for (let i = 0; i < TEST_CARDS_A.length; ++i) {
       expect(convertCard(TEST_CARDS_A[i])).toBe(convertCard(TEST_CARDS_B[i]));
     }

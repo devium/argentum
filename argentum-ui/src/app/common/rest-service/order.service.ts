@@ -39,6 +39,7 @@ export class OrderService {
   }
 
   listByCard(card: string, categories?: Category[]): Observable<Order[]> {
+    // Products are serialized in the response. No need to request them.
     return withDependencies(
       this.http.get<Order.Dto[]>('/orders', {params: {guest__card: card}}),
       [categories, () => this.categoryService.list()]

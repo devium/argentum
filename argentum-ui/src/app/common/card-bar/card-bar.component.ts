@@ -5,13 +5,12 @@ import {
   OnInit, ViewChild
 } from '@angular/core';
 import {Guest} from '../model/guest';
-import {convertCard} from '../util/convert-card';
 import {Observable, Subscription, Subject, fromEvent} from 'rxjs';
 import {AnimationEvent, animate, state, style, transition, trigger} from '@angular/animations';
 import {Status} from '../model/status';
-import {isDarkBackground} from '../util/is-dark-background';
 import {MessageComponent} from '../message/message.component';
 import {OrderHistoryComponent} from '../order-history/order-history.component';
+import {convertCard, isDarkBackground} from '../utils';
 
 enum ScanState {
   Waiting,
@@ -114,7 +113,7 @@ export class CardBarComponent implements OnInit, OnDestroy {
         this.startCountdown();
 
         if (this.orderHistory) {
-          this.orderHistory.getOrderHistory(guest);
+          this.orderHistory.getOrderHistory(guest.card);
         }
       })
       .catch(reason => {
@@ -157,7 +156,7 @@ export class CardBarComponent implements OnInit, OnDestroy {
     }
     if (this.orderHistory) {
       if (newState === ScanState.Valid) {
-        this.orderHistory.getOrderHistory(this.guest);
+        this.orderHistory.getOrderHistory(this.guest.card);
       } else {
         this.orderHistory.clear();
       }

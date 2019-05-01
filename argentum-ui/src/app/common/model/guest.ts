@@ -1,5 +1,5 @@
 import {AbstractModel} from './abstract-model';
-import {formatCurrency, formatDate} from '../util/format';
+import {formatCurrency, formatDate} from '../utils';
 
 export namespace Guest {
   export interface Filter {

@@ -1,6 +1,6 @@
 import {AbstractModel} from './abstract-model';
 import {Category} from './category';
-import {formatCurrency} from '../util/format';
+import {formatCurrency} from '../utils';
 
 export namespace Product {
   export interface Dto {

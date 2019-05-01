@@ -1,5 +1,5 @@
 import {AbstractModel} from './abstract-model';
-import {formatCurrency} from '../util/format';
+import {formatCurrency} from '../utils';
 
 export namespace Config {
   export interface Dto {

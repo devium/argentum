@@ -3,10 +3,12 @@ from typing import Dict, Any
 from django.db import models
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, serializers, mixins
+from rest_framework import viewsets, serializers, mixins, status
+from rest_framework.request import Request
+from rest_framework.response import Response
 
 from api.models.guest import Guest
-from api.models.utils import resolve_card
+from api.models.utils import resolve_card, ListByCardModelMixin
 from argentum.permissions import StrictModelPermissions
 from argentum.settings import CURRENCY_CONFIG
 
@@ -111,7 +113,7 @@ class TransactionUpdateSerializer(serializers.ModelSerializer):
 class TransactionViewSet(
     mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
-    mixins.ListModelMixin,
+    ListByCardModelMixin,
     viewsets.GenericViewSet
 ):
     queryset = Transaction.objects.all()

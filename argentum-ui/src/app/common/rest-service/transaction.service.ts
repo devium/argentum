@@ -33,7 +33,7 @@ export class TransactionService {
   listByCard(card: string, orders?: Order[]): Observable<Transaction[]> {
     return withDependencies(
       this.http.get<Transaction.Dto[]>('/transactions', {params: {guest__card: card}}),
-      [orders, () => this.orderService.list()]
+      [orders, () => this.orderService.listByCard(card)]
     ).pipe(
       map(([dtos, ordersDep]: [Transaction.Dto[], Order[], {}, {}]) =>
         dtos.map((dto: Transaction.Dto) => Transaction.fromDto(dto, ordersDep))

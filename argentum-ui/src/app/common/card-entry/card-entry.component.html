@@ -1,0 +1,43 @@
+<div class="row">
+  <div class="col-auto m-auto background-primary p-2 text-center">
+
+    <label for="cardInput">Please scan your card</label>
+    <input
+      id="cardInput"
+      (focus)="$event.target.select()"
+      class="form-control text-center"
+      [(ngModel)]="card"
+      autocomplete="off"
+    >
+    <input
+      id="cardAlternative"
+      disabled
+      class="form-control form-control-sm text-center mt-2"
+      [value]="convertCard(card)"
+    >
+
+    <div class="row mt-2">
+      <div *ngIf="activeModal" class="col-6 p-1">
+        <button
+          (click)="activeModal.dismiss('Cancel click')"
+          type="button"
+          class="btn btn-secondary btn-block btn-lg"
+        >
+          <i class="fa fa-close fa-lg"></i>
+        </button>
+      </div>
+      <div [class.col-6]="activeModal" [class.col-12]="!activeModal" class="p-1">
+        <button
+          id="confirm"
+          (click)="confirm()"
+          type="button"
+          class="btn btn-primary btn-block btn-lg"
+          [disabled]="!card"
+          [class.disabled]="!card"
+        >
+          <i class="fa fa-check fa-lg"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

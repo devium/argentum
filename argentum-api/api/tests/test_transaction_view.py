@@ -32,6 +32,13 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         self.assertPksEqual(response.data, [TestTransactions.TX1, TestTransactions.TX_ORDER1])
         self.assertJSONEqual(response.content, self.RESPONSES[f'GET/transactions?guest__card={TestGuests.ROBY.card}'])
 
+    def test_get_by_card_not_found(self):
+        self.login(TestUsers.BAR)
+
+        response = self.client.get('/transactions?guest__card=NOTFOUND')
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.data['guest__card'][0], 'Card not registered.')
+
     def test_get_by_nocard(self):
         self.login(TestUsers.BAR)
 

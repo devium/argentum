@@ -10,6 +10,7 @@ import {TransactionService} from '../../common/rest-service/transaction.service'
 import {flatMap} from 'rxjs/operators';
 import {MessageComponent} from '../../common/message/message.component';
 import {EditorComponent} from '../editor/editor.component';
+import {convertCard} from '../../common/utils';
 
 
 @Component({
@@ -105,7 +106,17 @@ export class GuestEditorComponent implements OnInit {
         new Editor.FieldSpec<Guest>('Mail', Editor.FieldType.StringField, 'mail', undefined, true, true),
         new Editor.FieldSpec<Guest>('Status', Editor.FieldType.StringField, 'status', undefined, true, true),
         new Editor.FieldSpec<Guest>('Check-in', Editor.FieldType.ReadOnlyField, 'checkedIn', undefined, false, true, 80),
-        new Editor.FieldSpec<Guest>('Card', Editor.FieldType.CardField, 'card'),
+        new Editor.FieldSpec<Guest>(
+          'Card',
+          Editor.FieldType.CardField,
+          'card',
+          undefined,
+          true,
+          false,
+          0,
+          (entry: Editor.Entry<Guest>) => false,
+          (card: string) => convertCard(card)
+        ),
         new Editor.FieldSpec<Guest>('Balance', Editor.FieldType.BalanceField, 'balance', undefined, false, true),
         new Editor.FieldSpec<Guest>('Bonus', Editor.FieldType.BalanceField, 'bonus', undefined, false, true)
       ]

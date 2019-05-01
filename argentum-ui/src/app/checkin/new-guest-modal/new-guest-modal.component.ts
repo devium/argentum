@@ -1,12 +1,12 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { KeypadModalComponent } from '../../common/keypad-modal/keypad-modal.component';
-import { Guest } from '../../common/model/guest';
-import { CardModalComponent } from '../../common/card-modal/card-modal.component';
-import { GroupBasedComponent } from '../../common/group-based/group-based.component';
-import { Status } from '../../common/model/status';
-import { MessageComponent } from '../../common/message/message.component';
-import { isDarkBackground } from '../../common/util/is-dark-background';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {KeypadModalComponent} from '../../common/keypad-modal/keypad-modal.component';
+import {Guest} from '../../common/model/guest';
+import {CardModalComponent} from '../../common/card-modal/card-modal.component';
+import {GroupBasedComponent} from '../../common/group-based/group-based.component';
+import {Status} from '../../common/model/status';
+import {MessageComponent} from '../../common/message/message.component';
+import {isDarkBackground} from '../../common/utils';
 
 @Component({
   selector: 'app-new-guest',
@@ -47,28 +47,38 @@ export class NewGuestModalComponent extends GroupBasedComponent implements OnIni
   }
 
   setCard() {
-    const modal = this.modalService.open(CardModalComponent, { backdrop: 'static', size: 'sm' });
-    modal.result.then(result => this.card = result, result => void(0));
+    this.modalService.open(CardModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
+      (card: string) => this.card = card,
+      (cancel: string) => void (0)
+    );
   }
 
   addBalance() {
-    const modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
-    modal.result.then(result => this.balance += result, result => void(0));
+    this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
+      (value: number) => this.balance += value,
+      (cancel: string) => void (0)
+    );
   }
 
   subBalance() {
-    const modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
-    modal.result.then(result => this.balance -= result, result => void(0));
+    this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
+      (value: number) => this.balance -= value,
+      (cancel: string) => void (0)
+    );
   }
 
   addBonus() {
-    const modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
-    modal.result.then(result => this.bonus += result, result => void(0));
+    this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
+      (value: number) => this.bonus += value,
+      (cancel: string) => void (0)
+    );
   }
 
   subBonus() {
-    const modal = this.modalService.open(KeypadModalComponent, { backdrop: 'static', size: 'sm' });
-    modal.result.then(result => this.bonus -= result, result => void(0));
+    this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
+      (value: number) => this.bonus -= value,
+      (cancel: string) => void (0)
+    );
   }
 
   confirm(): void {
@@ -82,7 +92,7 @@ export class NewGuestModalComponent extends GroupBasedComponent implements OnIni
       this.card,
       this.balance,
       this.bonus
-  );
+    );
     this.activeModal.close(guest);
   }
 

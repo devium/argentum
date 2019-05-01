@@ -49,4 +49,12 @@ export class OrderItem extends AbstractModel {
       quantity_current: undefined
     };
   }
+
+  total(): number {
+    return this.product.price * this.quantityCurrent;
+  }
+
+  totalInitial(): number {
+    return this.product.price * this.quantityInitial;
+  }
 }

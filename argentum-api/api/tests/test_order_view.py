@@ -36,6 +36,13 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         self.assertPksEqual(response.data, [TestOrders.ONE_WATER_PLUS_TIP])
         self.assertJSONEqual(response.content, self.RESPONSES[f'GET/orders?guest__card={TestGuests.ROBY.card}'])
 
+    def test_get_by_card_not_found(self):
+        self.login(TestUsers.BAR)
+
+        response = self.client.get('/orders?guest__card=NOTFOUND')
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.data['guest__card'][0], 'Card not registered.')
+
     def test_post(self):
         self.login(TestUsers.BAR)
         identifier = 'POST/orders'

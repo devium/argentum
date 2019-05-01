@@ -2,13 +2,12 @@ import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Editor} from '../../common/model/editor';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {KeypadModalComponent} from '../../common/keypad-modal/keypad-modal.component';
-import {isDarkBackground} from '../../common/util/is-dark-background';
 import {Subject} from 'rxjs';
 import {debounceTime} from 'rxjs/operators';
 import {CardModalComponent} from '../../common/card-modal/card-modal.component';
-import {formatCurrency} from '../../common/util/format';
 import {AbstractModel} from '../../common/model/abstract-model';
 import {MessageComponent} from '../../common/message/message.component';
+import {formatCurrency, isDarkBackground} from '../../common/utils';
 
 @Component({
   selector: 'app-editor',
@@ -44,8 +43,8 @@ export class EditorComponent implements OnInit {
     });
   }
 
-  setFilter(key: any, value: any) {
-    this.editorConfig.filters[key] = value;
+  setFilter(fieldSpec: Editor.FieldSpec<any>, value: any) {
+    this.editorConfig.filters[fieldSpec.key] = fieldSpec.filterMap(value);
     this.filterStream.next();
   }
 
@@ -66,20 +65,16 @@ export class EditorComponent implements OnInit {
     const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
     modal.result.then(
-      (result: number) => {
-        entry.active[key] = result;
-      },
-      result => void (0)
+      (result: number) => entry.active[key] = result,
+      (cancel: string) => void (0)
     );
   }
 
   promptCard(entry: Editor.Entry<any>, key: any) {
     this.modalService.open(CardModalComponent, {backdrop: 'static', size: 'sm'}).result
       .then(
-        (result: number) => {
-          entry.active[key] = result;
-        },
-        result => void (0)
+        (card: string) => entry.active[key] = card,
+        (cancel: string) => void (0)
       );
   }
 
@@ -87,10 +82,8 @@ export class EditorComponent implements OnInit {
     const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
     modal.result.then(
-      (result: number) => {
-        entry.active[key] += sign * result;
-      },
-      result => void (0)
+      (value: number) => entry.active[key] += sign * value,
+      (cancel: string) => void (0)
     );
   }
 
@@ -98,10 +91,8 @@ export class EditorComponent implements OnInit {
     const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
     modal.result.then(
-      (result: number) => {
-        entry.active[key] = result;
-      },
-      result => void (0)
+      (value: number) => entry.active[key] = value,
+      (cancel: string) => void (0)
     );
   }
 

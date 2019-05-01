@@ -1,9 +1,9 @@
 import {OrderItem} from './order-item';
-import {AbstractModel} from './abstract-model';
+import {AbstractTimeModel} from './abstract-model';
 import {Guest} from './guest';
 import {Product} from './product';
-import {formatCurrency} from '../util/format';
 import {Category} from './category';
+import {formatCurrency} from '../utils';
 
 export namespace Order {
   export interface Dto {
@@ -18,10 +18,10 @@ export namespace Order {
   }
 }
 
-export class Order extends AbstractModel {
+export class Order extends AbstractTimeModel {
   constructor(
     id: number,
-    public time: Date,
+    time: Date,
     public guest: Guest,
     public card: string,
     public customInitial: number,
@@ -29,7 +29,7 @@ export class Order extends AbstractModel {
     public pending: boolean,
     public orderItems: OrderItem[]
   ) {
-    super(id);
+    super(id, time);
   }
 
   static fromDto(dto: Order.Dto, guests?: Guest[], products?: Product[], categories?: Category[]) {
@@ -84,5 +84,17 @@ export class Order extends AbstractModel {
       pending: undefined,
       items: this.orderItems.map((orderItem: OrderItem) => orderItem.toDto())
     };
+  }
+
+  total(): number {
+    return this.customCurrent + this.orderItems
+      .map((orderItem: OrderItem) => orderItem.total())
+      .reduce((a: number, b: number) => a + b, 0);
+  }
+
+  totalInitial(): number {
+    return this.customInitial + this.orderItems
+      .map((orderItem: OrderItem) => orderItem.totalInitial())
+      .reduce((a: number, b: number) => a + b, 0);
   }
 }
