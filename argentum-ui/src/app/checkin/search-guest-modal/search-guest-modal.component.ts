@@ -12,7 +12,7 @@ import {MessageComponent} from '../../common/message/message.component';
 import {GroupBasedComponent} from '../../common/group-based/group-based.component';
 import {Status} from '../../common/model/status';
 import {distinctUntilChanged} from 'rxjs/internal/operators/distinctUntilChanged';
-import {isDarkBackground} from '../../common/utils';
+import {formatCurrency, isDarkBackground} from '../../common/utils';
 
 @Component({
   selector: 'app-search-guest',
@@ -133,9 +133,9 @@ export class SearchGuestModalComponent extends GroupBasedComponent implements On
           .then(newBalance => {
             this.guest.balance = newBalance;
             this.message.success(`
-            Added <b>€${value.toFixed(2)}</b>
+            Added <b>€${formatCurrency(value)}</b>
             to balance of <b>${this.guest.name}</b>.
-            New balance: <b>€${newBalance.toFixed(2)}</b>
+            New balance: <b>€${formatCurrency(newBalance)}</b>
           `);
           })
           .catch(reason => this.message.error(reason));
@@ -155,7 +155,7 @@ export class SearchGuestModalComponent extends GroupBasedComponent implements On
             this.message.success(`
             Removed <b>€${value.toFixed(2)}</b>
             from balance of <b>${this.guest.name}</b>.
-            New balance: <b>€${newBalance.toFixed(2)}</b>
+            New balance: <b>€${formatCurrency(newBalance)}</b>
           `);
           })
           .catch(reason => this.message.error(reason));
@@ -175,7 +175,7 @@ export class SearchGuestModalComponent extends GroupBasedComponent implements On
             this.message.success(`
             Added <b>€${value.toFixed(2)}</b>
             to bonus of <b>${this.guest.name}</b>.
-            New bonus: <b>€${newBonus.toFixed(2)}</b>
+            New bonus: <b>€${formatCurrency(newBonus)}</b>
           `);
           })
           .catch(reason => this.message.error(reason));
@@ -195,7 +195,7 @@ export class SearchGuestModalComponent extends GroupBasedComponent implements On
             this.message.success(`
             Removed <b>€${value.toFixed(2)}</b>
             from bonus of <b>${this.guest.name}</b>.
-            New bonus: <b>€${newBonus.toFixed(2)}</b>
+            New bonus: <b>€${formatCurrency(newBonus)}</b>
           `);
           })
           .catch(reason => this.message.error(reason));

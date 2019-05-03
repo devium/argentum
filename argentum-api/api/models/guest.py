@@ -83,6 +83,7 @@ class GuestViewSet(
     queryset = Guest.objects.all()
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_class = SearchFilter
+    ordering = ('id',)
 
     def get_serializer_class(self):
         if self.action in ['update', 'partial_update']:

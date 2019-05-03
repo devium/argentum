@@ -3,7 +3,6 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-primary p-0 fixed-bottom">
 
   <button
-    (focus)="$event.target.blur()"
     (click)="navbarCollapsed = !navbarCollapsed"
     class="navbar-toggler mx-auto my-1 w-100 border-0"
     type="button"
@@ -16,7 +15,6 @@
     <ul id="navLinks" class="navbar-nav mx-auto text-center">
       <li *ngFor="let link of links" class="nav-item">
         <a
-          (focus)="$event.target.blur()"
           [routerLink]="[link.target]"
           routerLinkActive="active"
           class="nav-link"
@@ -27,7 +25,6 @@
       <li class="nav-item">
         <a
           id="logout"
-          (focus)="$event.target.blur()"
           routerLink="/logout"
           class="nav-link"
         >

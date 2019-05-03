@@ -49,7 +49,6 @@
   <div class="form-group">
     <label for="cardButton">Card (optional)</label>
     <button
-      (focus)="$event.target.blur()"
       (click)="setCard()"
       id="cardButton"
       type="button"
@@ -62,7 +61,6 @@
   <div class="row mt-2">
     <div class="col-6 p-1">
       <button
-        (focus)="$event.target.blur()"
         (click)="activeModal.dismiss('Cancel click')"
         type="button"
         class="btn btn-secondary btn-block btn-lg"
@@ -72,7 +70,6 @@
     </div>
     <div class="col-6 p-1">
       <button
-        (focus)="$event.target.blur()"
         (click)="confirm()"
         type="button"
         class="btn btn-primary btn-block btn-lg"

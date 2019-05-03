@@ -28,7 +28,7 @@ export class CardEntryComponent implements OnInit, OnDestroy {
     ).subscribe(
       (event: KeyboardEvent) => {
         if (event.key === 'Enter') {
-          document.getElementById('confirm').focus();
+          document.getElementById('confirm').click();
         } else {
           document.getElementById('cardInput').focus();
         }

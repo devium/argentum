@@ -139,7 +139,7 @@ export class OrderHistoryComponent implements OnInit {
           (orderItemResponse: OrderItem) => {
             this.message.success(`
                 Refunded <b>card #${this.card}</b>
-                with <b>€${orderItem.product.price.toFixed(2)}</b>
+                with <b>€${formatCurrency(orderItem.product.price)}</b>
                 for one <b>${orderItem.product.name}</b>.
             `);
             const index = order.orderItems.findIndex((findOrderItem: OrderItem) => findOrderItem.id === orderItemResponse.id);

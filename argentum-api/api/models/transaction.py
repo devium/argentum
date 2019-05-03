@@ -4,6 +4,7 @@ from django.db import models
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, serializers, mixins, status
+from rest_framework.filters import OrderingFilter
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -117,8 +118,9 @@ class TransactionViewSet(
     viewsets.GenericViewSet
 ):
     queryset = Transaction.objects.all()
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_fields = ('guest__card',)
+    ordering = ('id',)
 
     def get_serializer_class(self):
         if self.action == 'list':

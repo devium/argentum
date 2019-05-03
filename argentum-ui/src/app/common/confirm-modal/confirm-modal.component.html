@@ -4,7 +4,6 @@
   <div class="row mt-2">
     <div class="col-6 p-1">
       <button
-        (focus)="$event.target.blur()"
         (click)="activeModal.dismiss()"
         type="button"
         class="btn btn-secondary btn-block btn-lg"
@@ -14,7 +13,6 @@
     </div>
     <div class="col-6 p-1">
       <button
-        (focus)="$event.target.blur()"
         (click)="activeModal.close()"
         type="button"
         class="btn btn-primary btn-block btn-lg"

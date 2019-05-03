@@ -101,12 +101,12 @@ export class GuestEditorComponent implements OnInit {
       new Guest(undefined, 'CODE', 'New Guest', 'new@guest.com', 'status', null, null, 0, 0),
       [
         new Editor.FieldSpec<Guest>('ID', Editor.FieldType.ReadOnlyField, 'id'),
-        new Editor.FieldSpec<Guest>('Code', Editor.FieldType.StringField, 'code', {filtered: true, sortable: true}),
-        new Editor.FieldSpec<Guest>('Name', Editor.FieldType.StringField, 'name', {filtered: true, sortable: true}),
-        new Editor.FieldSpec<Guest>('Mail', Editor.FieldType.StringField, 'mail', {filtered: true, sortable: true}),
-        new Editor.FieldSpec<Guest>('Status', Editor.FieldType.StringField, 'status', {filtered: true, sortable: true}),
+        new Editor.FieldSpec<Guest>('Code', Editor.FieldType.StringField, 'code', {filtered: true, sortable: true, minWidth: 150}),
+        new Editor.FieldSpec<Guest>('Name', Editor.FieldType.StringField, 'name', {filtered: true, sortable: true, minWidth: 150}),
+        new Editor.FieldSpec<Guest>('Mail', Editor.FieldType.StringField, 'mail', {filtered: true, sortable: true, minWidth: 150}),
+        new Editor.FieldSpec<Guest>('Status', Editor.FieldType.StringField, 'status', {filtered: true, sortable: true, minWidth: 90}),
         new Editor.FieldSpec<Guest>('Check-in', Editor.FieldType.DateField, 'checkedIn',
-          {sortable: true, filterKey: 'checked_in', minWidth: 80}
+          {sortable: true, filterKey: 'checked_in', minWidth: 180}
         ),
         new Editor.FieldSpec<Guest>('Card', Editor.FieldType.CardField, 'card',
           {filtered: true, filterMap: (card: string) => convertCard(card)}

@@ -5,6 +5,7 @@ import {Product} from '../../common/model/product';
 import {Chart} from 'chart.js';
 import palette from 'google-palette';
 import {StatisticsService} from '../../common/rest-service/statistics.service';
+import {formatCurrency} from '../../common/utils';
 
 @Component({
   selector: 'app-dashboard',
@@ -76,12 +77,12 @@ export class DashboardComponent implements OnInit {
                 const label = labels[tooltipModel.index];
                 const value = quantitySalesData[tooltipModel.index];
                 const percentage = value / sumQuantitySales;
-                return `${label}: ${value} (${(percentage * 100).toFixed(1)}%)`;
+                return `${label}: ${value} (${formatCurrency(percentage * 100)}%)`;
               } else {
                 const label = labels[tooltipModel.index];
                 const value = valueSalesData[tooltipModel.index];
                 const percentage = value / sumValueSales;
-                return `${label}: €${value.toFixed(2)} (${(percentage * 100).toFixed(1)}%)`;
+                return `${label}: €${formatCurrency(value)} (${formatCurrency(percentage * 100)}%)`;
               }
             }
           }

@@ -8,7 +8,6 @@
       <!-- Title "button". -->
       <div class="row m-0">
         <button
-          (focus)="$event.target.blur()"
           disabled
           class="btn-grid-row-single"
         >
@@ -24,7 +23,6 @@
           class="col-free-tag"
         >
           <button
-            (focus)="$event.target.blur()"
             (click)="addTag(tagId)"
             type="button"
             class="btn-tag btn-primary"
@@ -61,7 +59,6 @@
       <!-- Refresh button. -->
       <div class="row m-0">
         <button
-          (focus)="$event.target.blur()"
           (click)="refreshTags()"
           class="btn-grid-row-single"
         >
@@ -81,7 +78,7 @@
             ngbButtonLabel
             class="btn-primary btn-lg px-1 w-100"
           >
-            <input ngbButton type="radio" [value]="price" (focus)="$event.target.blur()">
+            <input ngbButton type="radio" [value]="price">
             €{{price | number: '1.2-2'}}
           </label>
         </div>
@@ -95,7 +92,6 @@
       <div class="row m-0">
         <div class="btn-group w-100 p-1" role="group">
           <button
-            (focus)="$event.target.blur()"
             disabled
             class="btn btn-primary btn-lg w-100"
           >
@@ -103,7 +99,6 @@
           </button>
           <button
             *ngIf="activeGuest != null"
-            (focus)="$event.target.blur()"
             (click)="setActiveGuest(null)"
             class="btn btn-primary btn-lg"
           >
@@ -120,7 +115,6 @@
           class="col-stored-tag"
         >
           <button
-            (focus)="$event.target.blur()"
             (click)="removeTag(tag)"
             type="button"
             class="btn-tag"
@@ -167,7 +161,6 @@
       <div class="row m-0">
         <div class="col-6 p-1">
           <button
-            (focus)="$event.target.blur()"
             (click)="removeAllTags()"
             type="button"
             class="btn-grid-row-multi"
@@ -178,7 +171,6 @@
         </div>
         <div class="col-6 p-1">
           <button
-            (focus)="$event.target.blur()"
             (click)="unflagAllTags()"
             type="button"
             class="btn-grid-row-multi"
@@ -192,7 +184,6 @@
       <!-- Save button. -->
       <div class="row m-0">
         <button
-          (focus)="$event.target.blur()"
           (click)="saveTags()"
           type="button"
           class="btn-grid-row-single"

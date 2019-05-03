@@ -1,5 +1,6 @@
 from django.db import models
 from rest_framework import serializers, viewsets, mixins
+from rest_framework.filters import OrderingFilter
 
 
 class Config(models.Model):
@@ -25,3 +26,5 @@ class ConfigViewSet(
 ):
     queryset = Config.objects.all()
     serializer_class = ConfigSerializer
+    filter_backends = (OrderingFilter,)
+    ordering = ('id',)

@@ -11,7 +11,6 @@
       <div class="row m-0">
         <div ngbDropdown class="w-100 p-1">
           <button
-            (focus)="$event.target.blur()"
             class="btn btn-primary w-100"
             ngbDropdownToggle
           >
@@ -20,7 +19,6 @@
           <div ngbDropdownMenu>
             <button
               *ngFor="let productRange of productRanges"
-              (focus)="$event.target.blur()"
               (click)="setProductRange(productRange)"
               class="dropdown-item"
             >
@@ -40,7 +38,6 @@
             class="col-product-range"
           >
             <button
-              (focus)="$event.target.blur()"
               (click)="rangeProductClicked(product)"
               type="button"
               class="btn-product"
@@ -69,7 +66,6 @@
         <!-- Custom product button. -->
         <div class="col-product-range">
           <button
-            (focus)="$event.target.blur()"
             (click)="addCustomProduct()"
             type="button"
             class="btn-product btn-outline-primary btn-product-custom"
@@ -97,7 +93,6 @@
       <div class="row m-0">
         <div class="col-6 p-1">
           <button
-            (focus)="$event.target.blur()"
             (click)="refreshProducts()"
             type="button"
             class="btn-grid-row-multi"
@@ -108,7 +103,6 @@
         </div>
         <div class="col-6 p-1">
           <button
-            (focus)="$event.target.blur()"
             (click)="showOrderHistory()"
             type="button"
             class="btn-grid-row-multi"
@@ -126,11 +120,10 @@
       <!-- "Current order" title "button". -->
       <div class="row m-0">
         <button
-          (focus)="$event.target.blur()"
           disabled
           class="btn-grid-row-single"
         >
-          Current order: €{{formatCurrency(total)}}
+          Current order: <b>€{{formatCurrency(total)}}</b>
         </button>
       </div>
 
@@ -144,7 +137,6 @@
         >
 
           <button
-            (focus)="$event.target.blur()"
             (mouseup)="orderItemClicked(orderItem)"
             type="button"
             class="btn btn-block btn-product"
@@ -191,7 +183,6 @@
       <div class="row m-0">
         <div class="col-6 p-1">
           <button
-            (focus)="$event.target.blur()"
             (click)="clear()"
             type="button"
             class="btn-grid-row-multi"
@@ -203,7 +194,6 @@
 
         <div class="col-6 p-1">
           <button
-            (focus)="$event.target.blur()"
             (click)="placeOrder()"
             type="button"
             class="btn-grid-row-multi"

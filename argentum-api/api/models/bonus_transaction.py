@@ -4,6 +4,7 @@ from django.db import models
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import serializers, viewsets, mixins
+from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import BasePermission
 
 from api.models.guest import Guest
@@ -83,8 +84,9 @@ class BonusTransactionViewSet(
     viewsets.GenericViewSet
 ):
     queryset = BonusTransaction.objects.all()
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_fields = ('guest__card',)
+    ordering = ('id',)
 
     def get_serializer_class(self):
         if self.action == 'list':

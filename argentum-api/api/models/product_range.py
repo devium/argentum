@@ -3,6 +3,7 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from rest_framework import serializers, viewsets, mixins
+from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import OR
 from rest_framework.request import Request
 
@@ -71,6 +72,8 @@ class ProductRangeViewSet(
 ):
     queryset = ProductRange.objects.all()
     serializer_class = ProductRangeMetaSerializer
+    filter_backends = (OrderingFilter,)
+    ordering = ('id',)
 
     def get_serializer_class(self):
         if self.action == 'retrieve':

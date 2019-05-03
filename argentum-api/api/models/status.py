@@ -1,5 +1,6 @@
 from django.db import models
 from rest_framework import serializers, viewsets, mixins
+from rest_framework.filters import OrderingFilter
 
 
 class Status(models.Model):
@@ -31,3 +32,5 @@ class StatusViewSet(
 ):
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
+    filter_backends = (OrderingFilter,)
+    ordering = ('id',)

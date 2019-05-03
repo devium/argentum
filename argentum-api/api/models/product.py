@@ -1,5 +1,6 @@
 from django.db import models
 from rest_framework import serializers, viewsets, mixins
+from rest_framework.filters import OrderingFilter
 
 from api.models.category import Category
 from argentum.settings import CURRENCY_CONFIG
@@ -49,6 +50,8 @@ class ProductViewSet(
     viewsets.GenericViewSet
 ):
     queryset = Product.objects.all()
+    filter_backends = (OrderingFilter,)
+    ordering = ('id',)
 
     def get_serializer_class(self):
         if self.action in ['update', 'partial_update']:

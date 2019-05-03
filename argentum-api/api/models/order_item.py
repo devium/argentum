@@ -3,6 +3,7 @@ from typing import Dict, Any
 from django.db import models
 from rest_framework import mixins, viewsets, serializers
 from rest_framework.exceptions import ValidationError
+from rest_framework.filters import OrderingFilter
 
 from api.models.product import Product, ProductCreateSerializer
 from api.models.transaction import TransactionUpdateSerializer
@@ -88,6 +89,8 @@ class OrderItemViewSet(
     viewsets.GenericViewSet
 ):
     queryset = OrderItem.objects.all()
+    filter_backends = (OrderingFilter,)
+    ordering = ('id',)
 
     def get_serializer_class(self):
         if self.action in ['update', 'partial_update']:

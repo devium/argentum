@@ -1,18 +1,17 @@
 <div class="container-fluid h-100 d-flex flex-column m-0 justify-content-center">
   <div class="row p-2 my-0 grid-max mx-auto">
     <div *ngIf="hasGroup(['check_in'])" class="col-sm-6 p-1">
-      <button (focus)="$event.target.blur()" (click)="newGuest()" class="btn btn-primary btn-block btn-huge">
+      <button (click)="newGuest()" class="btn btn-primary btn-block btn-huge">
         <i class="fa fa-plus fa-lg pr-1"></i>New guest
       </button>
     </div>
     <div *ngIf="hasGroup(['check_in'])" class="col-sm-6 p-1">
-      <button (focus)="$event.target.blur()" (click)="searchGuest()" class="btn btn-primary btn-block btn-huge">
+      <button (click)="searchGuest()" class="btn btn-primary btn-block btn-huge">
         <i class="fa fa-search fa-lg pr-1"></i>Search guest
       </button>
     </div>
     <div *ngIf="hasGroup(['transfer'])" class="col-sm-6 p-1">
       <button
-        (focus)="$event.target.blur()"
         (click)="deposit()"
         class="btn btn-primary btn-block btn-huge"
       >
@@ -21,7 +20,6 @@
     </div>
     <div *ngIf="hasGroup(['transfer'])" class="col-sm-6 p-1">
       <button
-        (focus)="$event.target.blur()"
         (click)="withdraw()"
         class="btn btn-primary btn-block btn-huge"
       >

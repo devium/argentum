@@ -1,4 +1,4 @@
-<div>
+<div class="overflow-auto">
   <span *ngIf="entries && entries.length === 0" class="h4">
     No orders.
   </span>
@@ -130,7 +130,6 @@
 
             <td *ngIf="allowCancel" class="py-0 align-middle align-right">
               <button
-                (focus)="$event.target.blur()"
                 (click)="cancelOrderItem(order, orderItem)"
                 type="button"
                 class="btn btn-sm btn-danger"
@@ -162,9 +161,7 @@
             <!--Cancel custom-->
             <td *ngIf="allowCancel" class="py-0 align-middle align-right">
               <button
-                [id]="'order' + order.id + 'CustomCancel'"
                 *ngIf="order.customCurrent > 0"
-                (focus)="$event.target.blur()"
                 (click)="cancelCustom(order)"
                 type="button"
                 class="btn btn-sm btn-danger"

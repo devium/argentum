@@ -48,7 +48,6 @@
       <div ngbDropdownMenu *ngIf="results.length > 0 && !guest" class="dropdown-menu">
         <button
           *ngFor="let guest of results"
-          (focus)="$event.target.blur()"
           (click)="lockGuest(guest)"
           type="button"
           class="dropdown-item"
@@ -72,7 +71,6 @@
   </div>
 
   <button
-    (focus)="$event.target.blur()"
     (click)="checkIn()"
     type="button"
     [disabled]="!guest || guest.checkedIn != null"
@@ -87,7 +85,6 @@
     <div class="form-group">
       <label for="cardButton">Card (optional)</label>
       <button
-        (focus)="$event.target.blur()"
         (click)="setCard()"
         id="cardButton"
         type="button"
@@ -104,7 +101,6 @@
 
       <div class="d-flex">
         <button
-          (focus)="$event.target.blur()"
           (click)="subBalance()"
           type="button"
           class="btn btn-primary"
@@ -121,7 +117,6 @@
           [value]="guest.balance | number:'1.2-2'"
         >
         <button
-          (focus)="$event.target.blur()"
           (click)="addBalance()"
           type="button"
           class="btn btn-primary"
@@ -140,7 +135,6 @@
 
       <div class="d-flex">
         <button
-          (focus)="$event.target.blur()"
           (click)="subBonus()"
           type="button"
           class="btn btn-primary"
@@ -158,7 +152,6 @@
         >
 
         <button
-          (focus)="$event.target.blur()"
           (click)="addBonus()"
           type="button"
           class="btn btn-primary"
@@ -174,7 +167,6 @@
   </div>
 
   <button
-    (focus)="$event.target.blur()"
     (click)="activeModal.dismiss('Cancel click')"
     type="button"
     class="btn btn-secondary btn-block btn-lg"

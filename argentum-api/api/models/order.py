@@ -4,10 +4,9 @@ from typing import Dict, Any
 from django.db import models
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import mixins, viewsets, serializers, status
+from rest_framework import mixins, viewsets, serializers
 from rest_framework.exceptions import ValidationError
-from rest_framework.request import Request
-from rest_framework.response import Response
+from rest_framework.filters import OrderingFilter
 
 from api.models.config import Config
 from api.models.guest import Guest
@@ -160,8 +159,9 @@ class OrderViewSet(
     viewsets.GenericViewSet
 ):
     queryset = Order.objects.all()
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_fields = ('guest__card',)
+    ordering = ('id',)
 
     def get_serializer_class(self):
         if self.action == 'list':

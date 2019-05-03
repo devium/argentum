@@ -3,6 +3,7 @@ from typing import Iterable
 from django.contrib.auth.models import User
 from rest_framework import serializers, viewsets, mixins
 from rest_framework.decorators import action
+from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import BasePermission
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -47,6 +48,8 @@ class UserViewSet(
 ):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    filter_backends = (OrderingFilter,)
+    ordering = ('id',)
 
     def get_permissions(self) -> Iterable[BasePermission]:
         if self.action == 'me':

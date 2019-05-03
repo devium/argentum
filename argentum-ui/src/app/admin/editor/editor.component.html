@@ -1,6 +1,6 @@
 <app-admin-nav></app-admin-nav>
 
-<div class="container mt-3">
+<div class="container-flex mt-3 mx-2">
 
   <table
     *ngIf="editorConfig && editorConfig.entries"
@@ -40,7 +40,6 @@
         <input
           *ngIf="fieldSpec.params.filtered"
           (input)="setFilter(fieldSpec, $event.target.value)"
-          (focus)="$event.target.select()"
           class="form-control form-control-sm"
         >
       </th>
@@ -63,7 +62,11 @@
         </td>
 
         <td *ngIf="fieldSpec.type === Editor.FieldType.DateField" class="text-right align-middle">
-          {{formatDate(entry.active[fieldSpec.key])}}
+          <input
+            [ngModel]="formatDate(entry.active[fieldSpec.key])"
+            class="form-control form-control-sm"
+            disabled
+          >
         </td>
 
         <td *ngIf="fieldSpec.type === Editor.FieldType.StringField">
@@ -79,7 +82,6 @@
           <input
             (ngModelChange)="entry.active[fieldSpec.key] = $event"
             [ngModel]="entry.active[fieldSpec.key] ? entry.active[fieldSpec.key] : '********'"
-            (focus)="$event.target.select()"
             class="form-control form-control-sm"
             [disabled]="disabled(fieldSpec, entry)"
             type="password"
@@ -262,7 +264,7 @@
       [collectionSize]="editorConfig.entries.length"
       [(page)]="page"
       [pageSize]="pageSize"
-      [maxSize]="10"
+      [maxSize]="5"
       [rotate]="true"
     >
     </ngb-pagination>

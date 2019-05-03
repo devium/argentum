@@ -4,6 +4,7 @@ import { MessageComponent } from '../common/message/message.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CoatCheckTag } from '../common/model/coat-check-tag';
 import { Guest } from '../common/model/guest';
+import {formatCurrency} from '../common/utils';
 
 class EditorTag extends CoatCheckTag {
   flaggedForRemoval = false;
@@ -272,7 +273,7 @@ export class CoatCheckComponent implements OnInit {
         }
         message += `
           For <b>${guest.name}</b>.<br>
-          Price: <b>€${price.toFixed(2)}.</b>
+          Price: <b>€${formatCurrency(price)}.</b>
         `;
         this.message.success(message);
 
