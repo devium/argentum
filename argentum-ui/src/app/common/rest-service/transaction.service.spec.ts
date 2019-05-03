@@ -32,7 +32,7 @@ fdescribe('TransactionService', () => {
     httpTestingController = TestBed.get(HttpTestingController);
     guestService = createSpyObj('GuestService', ['list']);
     guestService.list.and.returnValue(of(Guests.ALL));
-    orderService = createSpyObj('OrderService', ['list']);
+    orderService = createSpyObj('OrderService', ['list', 'listByCard']);
     orderService.list.and.returnValue(of(Orders.ALL));
     orderService.listByCard.and.returnValue(of(Orders.ALL));
     service = new TransactionService(http, guestService, orderService);
@@ -64,7 +64,7 @@ fdescribe('TransactionService', () => {
       resolved = true;
     });
     expect(guestService.list).toHaveBeenCalledTimes(0);
-    expect(orderService.list).toHaveBeenCalledTimes(1);
+    expect(orderService.listByCard).toHaveBeenCalledTimes(1);
     testEndpoint(httpTestingController, requests, responses, 'GET', `/transactions?guest__card=${Guests.ROBY.card}`);
   }));
 
