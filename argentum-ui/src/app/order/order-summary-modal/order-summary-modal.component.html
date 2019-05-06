@@ -1,0 +1,54 @@
+<div class="p-2">
+  <h4>Order summary</h4>
+
+  <app-order-history [allowCancel]="false" [showTransactionsAndBalances]="false">
+  </app-order-history>
+
+  <div *ngIf="discounts.length === 0" class="my-2">
+    <h6>No discounts.</h6>
+  </div>
+  <div *ngIf="discounts.length > 0" class="my-2">
+    <h6>Guest discounts</h6>
+    <div *ngFor="let discount of discounts" class="row mx-0 p-1">
+      <div
+        class="col-5 rounded-pill"
+        [style.background-color]="discount.status.color"
+        [class.dark-bg]="isDarkBackground(discount.status.color)"
+      >
+        {{discount.status.displayName}}
+      </div>
+      <div
+        class="col-5 rounded-pill"
+        [style.background-color]="discount.category.color"
+        [class.dark-bg]="isDarkBackground(discount.category.color)"
+      >
+        {{discount.category.name}}
+      </div>
+      <div class="col-2 rounded-pill bg-light">
+        -{{discount.rate * 100}}%
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-2 mx-0">
+    <div class="col-6 p-1">
+      <button
+        (click)="activeModal.dismiss('Cancel click')"
+        type="button"
+        class="btn btn-secondary btn-block btn-lg"
+      >
+        <i class="fa fa-close fa-lg"></i>
+      </button>
+    </div>
+    <div class="col-6 p-1">
+      <button
+        id="confirm"
+        (click)="confirm()"
+        type="button"
+        class="btn btn-primary btn-block btn-lg"
+      >
+        Confirm <i class="fa fa-check fa-lg"></i>
+      </button>
+    </div>
+  </div>
+</div>

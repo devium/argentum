@@ -41,6 +41,7 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {BaseInterceptor} from './common/rest-service/base-interceptor';
 import {EditorComponent} from './admin/editor/editor.component';
 import {CardEntryComponent} from './common/card-entry/card-entry.component';
+import { OrderSummaryModalComponent } from './order/order-summary-modal/order-summary-modal.component';
 
 @NgModule({
   declarations: [
@@ -77,6 +78,7 @@ import {CardEntryComponent} from './common/card-entry/card-entry.component';
     ConfirmModalComponent,
     EditorComponent,
     CardEntryComponent,
+    OrderSummaryModalComponent,
   ],
   imports: [
     BrowserModule,
@@ -101,7 +103,8 @@ import {CardEntryComponent} from './common/card-entry/card-entry.component';
     CardModalComponent,
     DeleteGuestsModalComponent,
     OrderHistoryModalComponent,
-    ConfirmModalComponent
+    ConfirmModalComponent,
+    OrderSummaryModalComponent
   ]
 })
 export class AppModule {

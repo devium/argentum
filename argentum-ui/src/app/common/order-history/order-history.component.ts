@@ -112,15 +112,8 @@ export class OrderHistoryComponent implements OnInit {
     }
   }
 
-  refresh() {
-    if (this.card) {
-      this.getOrderHistory(this.card);
-    }
-  }
-
-  clear() {
-    this.card = null;
-    this.entries = null;
+  setSingleOrder(order: Order) {
+    this.entries = [order];
   }
 
   cancelOrderItem(order: Order, orderItem: OrderItem) {

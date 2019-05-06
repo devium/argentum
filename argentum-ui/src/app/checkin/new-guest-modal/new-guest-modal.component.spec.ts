@@ -26,8 +26,6 @@ describe('NewGuestModalComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(NewGuestModalComponent);
     component = fixture.componentInstance;
-    // TODO
-    restService.getStatuses.and.returnValue(Promise.resolve([]));
   });
 
   it('should create', fakeAsync(() => {

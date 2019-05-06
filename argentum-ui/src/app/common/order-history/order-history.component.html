@@ -57,7 +57,7 @@
 
       <!-- Bonus transaction row -->
       <tr *ngIf="instanceOf(entry, BonusTransaction)" class="transaction">
-        <ng-container *ngIf="toTransaction(entry); let bonusTransaction">
+        <ng-container *ngIf="toBonusTransaction(entry); let bonusTransaction">
           <td>
             Bonus
           </td>

@@ -13,7 +13,10 @@ import {Order} from '../../common/model/order';
 import {OrderItem} from '../../common/model/order-item';
 import {CardModalComponent} from '../../common/card-modal/card-modal.component';
 import {formatCurrency, getPaginated, isDarkBackground} from '../../common/utils';
-import {flatMap} from 'rxjs/operators';
+import {OrderSummaryModalComponent} from '../order-summary-modal/order-summary-modal.component';
+import {DiscountService} from '../../common/rest-service/discount.service';
+import {combineLatest} from 'rxjs';
+import {Discount} from '../../common/model/discount';
 
 @Component({
   selector: 'app-order',
@@ -35,7 +38,6 @@ export class OrderComponent implements OnInit {
   selectedRange: ProductRange = null;
   orderItems: OrderItem[] = [];
   total = 0;
-  waitingForOrder = false;
 
   @ViewChild(MessageComponent)
   message: MessageComponent;
@@ -43,6 +45,7 @@ export class OrderComponent implements OnInit {
   constructor(
     private productRangeService: ProductRangeService,
     private categoryService: CategoryService,
+    private discountService: DiscountService,
     private orderService: OrderService,
     private ngZone: NgZone,
     private modalService: NgbModal
@@ -158,7 +161,6 @@ export class OrderComponent implements OnInit {
   }
 
   placeOrder(): void {
-    this.waitingForOrder = true;
     this.modalService.open(CardModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
       (card: string) => {
         const custom = this.orderItems
@@ -175,21 +177,37 @@ export class OrderComponent implements OnInit {
           undefined,
           this.orderItems.filter((orderItem: OrderItem) => orderItem.product.id !== undefined)
         );
-        this.orderService.create(newOrder).pipe(
-          flatMap((order: Order) => this.orderService.commit(order))
-        ).subscribe(
-          (committedOrder: Order) => {
-            this.message.success(`Order placed for <b>card #${card}</b>`);
-            this.clear();
-            this.waitingForOrder = false;
+
+        const order$ = this.orderService.create(newOrder, this.selectedRange.products);
+        const discounts$ = this.discountService.listByCard(card);
+
+        combineLatest(order$, discounts$).subscribe(
+          ([order, discounts]: [Order, Discount[]]) => {
+            const modal = this.modalService.open(OrderSummaryModalComponent, {backdrop: 'static'});
+            const orderSummaryModalComponent = <OrderSummaryModalComponent>modal.componentInstance;
+            orderSummaryModalComponent.order = order;
+            orderSummaryModalComponent.discounts = discounts;
+            orderSummaryModalComponent.orderHistoryComponent.message = this.message;
+
+            modal.result.then(
+              () => {
+                this.orderService.commit(order).subscribe(
+                  (committedOrder: Order) => {
+                    this.message.success(`Order placed for <b>card #${card}</b>`);
+                    this.clear();
+                  },
+                  (error: string) => {
+                    this.message.error(error);
+                  }
+                );
+              },
+              (cancel: string) => void(0)
+            );
           },
-          (error: string) => {
-            this.waitingForOrder = false;
-            this.message.error(error);
-          }
+          (error: string) => this.message.error(error)
         );
       },
-      (cancel: string) => this.waitingForOrder = false
+      (cancel: string) => void(0)
     );
   }
 
