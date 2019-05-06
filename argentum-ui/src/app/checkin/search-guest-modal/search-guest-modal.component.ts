@@ -1,71 +1,85 @@
-import {Observable, of, Subject} from 'rxjs';
+import {Observable, of, Subject, Subscription} from 'rxjs';
 
 import {debounceTime, switchMap} from 'rxjs/operators';
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Guest} from '../../common/model/guest';
 import {CardModalComponent} from '../../common/card-modal/card-modal.component';
-import {KeypadModalComponent} from '../../common/keypad-modal/keypad-modal.component';
 import {MessageComponent} from '../../common/message/message.component';
 
-
 import {GroupBasedComponent} from '../../common/group-based/group-based.component';
-import {Status} from '../../common/model/status';
 import {distinctUntilChanged} from 'rxjs/internal/operators/distinctUntilChanged';
-import {formatCurrency, isDarkBackground} from '../../common/utils';
+import {formatTime, isDarkBackground} from '../../common/utils';
+import {StatusService} from '../../common/rest-service/status.service';
+import {GuestService} from '../../common/rest-service/guest.service';
+import {Status} from '../../common/model/status';
 
 @Component({
   selector: 'app-search-guest',
   templateUrl: 'search-guest-modal.component.html',
   styleUrls: ['search-guest-modal.component.scss']
 })
-export class SearchGuestModalComponent extends GroupBasedComponent implements OnInit {
+export class SearchGuestModalComponent extends GroupBasedComponent implements OnInit, OnDestroy {
+  isDarkBackground = isDarkBackground;
+  formatTime = formatTime;
+
   private inputSearchStream = new Subject<string>();
-  private searchStream = new Subject<string>();
+  private inputSearchSubscription: Subscription;
   results: Guest[] = [];
   guest: Guest;
 
   @ViewChild('searchInput')
   searchInput: ElementRef;
-  searchField = 'code';
+  searchField: 'code' | 'name' | 'mail' = 'code';
 
   message: MessageComponent;
+  statuses: Status[] = [];
 
-  constructor(private modalService: NgbModal, public activeModal: NgbActiveModal) {
+  constructor(
+    private statusService: StatusService,
+    private guestService: GuestService,
+    private modalService: NgbModal,
+    public activeModal: NgbActiveModal
+  ) {
     super();
   }
 
   ngOnInit() {
     super.ngOnInit();
-    this.inputSearchStream.pipe(
+    this.inputSearchSubscription = this.inputSearchStream.pipe(
       debounceTime(300),
       distinctUntilChanged()
-    ).subscribe(search => this.searchStream.next(search));
-    this.searchStream.pipe(
-      switchMap(search => this.requestSearch(search))
-    ).subscribe((guests: Guest[]) => this.results = guests);
+    ).subscribe(search => this.searchInstantly(search));
 
     this.searchInput.nativeElement.focus();
 
-    // TODO
-    // this.restService.getStatuses()
-    // Promise.resolve([])
-    //   .then((statuses: Status[]) => this.statuses = statuses)
-    //   .catch(reason => this.message.error(reason));
+    this.statusService.list().subscribe(
+      (statuses: Status[]) => this.statuses = statuses,
+      (error: string) => this.message.error(error)
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.inputSearchSubscription.unsubscribe();
   }
 
   requestSearch(search: string): Observable<Guest[]> {
     if (search) {
-      // TODO
-      // return this.restService.getGuestsBySearch(this.searchField, search);
-      return of([]);
+      return this.guestService.listFiltered({[this.searchField]: search});
     } else {
       return of([]);
     }
   }
 
   search(search: string): void {
-    this.searchStream.next(search);
+    this.inputSearchStream.next(search);
+  }
+
+  searchInstantly(search: string): void {
+    this.requestSearch(search).subscribe(
+      (guests: Guest[]) => this.results = guests.slice(0, 5),
+      (error: string) => this.message.error(error)
+    );
   }
 
   lockGuest(guest: Guest) {
@@ -82,112 +96,23 @@ export class SearchGuestModalComponent extends GroupBasedComponent implements On
     this.results = [];
   }
 
-  isDarkBackground(color: string): boolean {
-    return isDarkBackground(color);
-  }
-
   checkIn() {
-    // TODO
-    // this.restService.checkIn(this.guest)
-    Promise.resolve(new Date())
-      .then((date: Date) => {
-        this.guest.checkedIn = date;
-        this.message.success(`Guest <b>${this.guest.name}</b> checked in.`);
-      })
-      .catch(reason => this.message.error(reason));
+    this.guestService.checkIn(this.guest, this.statuses).subscribe(
+      (guest: Guest) => this.guest = guest,
+      (error: string) => this.message.error(error)
+    );
   }
 
   setCard() {
     this.modalService.open(CardModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
       (card: string) => {
         this.guest.card = card;
-        // TODO
-        // this.restService.registerCard(this.guest, card)
-        Promise.resolve()
-          .then(() => this.message.success(`Card <b>${card}</b> registered to <b>${this.guest.name}</b>`))
-          .catch(reason => this.message.error(reason));
+        this.guestService.setCard(this.guest, this.statuses).subscribe(
+          (guest: Guest) => this.guest = guest,
+          (error: string) => this.message.error(error)
+        );
       },
       (cancel: string) => void (0)
     );
   }
-
-  addBalance() {
-    this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
-      (value: number) => {
-        // TODO
-        // this.restService.addBalance(this.guest, value)
-        Promise.resolve(0)
-          .then(newBalance => {
-            this.guest.balance = newBalance;
-            this.message.success(`
-            Added <b>€${formatCurrency(value)}</b>
-            to balance of <b>${this.guest.name}</b>.
-            New balance: <b>€${formatCurrency(newBalance)}</b>
-          `);
-          })
-          .catch(reason => this.message.error(reason));
-      },
-      (cancel: string) => void (0)
-    );
-  }
-
-  subBalance() {
-    this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
-      (value: number) => {
-        // TODO
-        // this.restService.addBalance(this.guest, -value)
-        Promise.resolve(0)
-          .then(newBalance => {
-            this.guest.balance = newBalance;
-            this.message.success(`
-            Removed <b>€${value.toFixed(2)}</b>
-            from balance of <b>${this.guest.name}</b>.
-            New balance: <b>€${formatCurrency(newBalance)}</b>
-          `);
-          })
-          .catch(reason => this.message.error(reason));
-      },
-      (cancel: string) => void (0)
-    );
-  }
-
-  addBonus() {
-    this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
-      (value: number) => {
-        // TODO
-        // this.restService.addBonus(this.guest, value)
-        Promise.resolve(0)
-          .then(newBonus => {
-            this.guest.bonus = newBonus;
-            this.message.success(`
-            Added <b>€${value.toFixed(2)}</b>
-            to bonus of <b>${this.guest.name}</b>.
-            New bonus: <b>€${formatCurrency(newBonus)}</b>
-          `);
-          })
-          .catch(reason => this.message.error(reason));
-      },
-      (cancel: string) => void (0)
-    );
-  }
-
-  subBonus() {
-    this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
-      (value: number) => {
-        // TODO
-        // this.restService.addBonus(this.guest, -value)
-        Promise.resolve(0)
-          .then(newBonus => {
-            this.guest.bonus = newBonus;
-            this.message.success(`
-            Removed <b>€${value.toFixed(2)}</b>
-            from bonus of <b>${this.guest.name}</b>.
-            New bonus: <b>€${formatCurrency(newBonus)}</b>
-          `);
-          })
-          .catch(reason => this.message.error(reason));
-      },
-      (cancel: string) => void (0));
-  }
-
 }

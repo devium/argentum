@@ -8,7 +8,7 @@
       *ngIf="!guest"
       ngbRadioGroup
       [(ngModel)]="searchField"
-      (change)="search(searchInput.value)"
+      (change)="searchInstantly(searchInput.value)"
       class="btn-group btn-group-toggle d-block mb-2"
     >
       <label ngbButtonLabel class="btn-primary">
@@ -64,9 +64,9 @@
       id="statusInput"
       disabled
       class="disabled form-control text-center flex-grow-1"
-      [style.background-color]="status.color"
-      [class.dark-bg]="isDarkBackground(status.color)"
-      [value]="status.displayName"
+      [style.background-color]="guest.status.color"
+      [class.dark-bg]="isDarkBackground(guest.status.color)"
+      [value]="guest.status.displayName"
     >
   </div>
 
@@ -77,93 +77,20 @@
     [class.disabled]="!guest || guest.checkedIn != null"
     class="btn btn-block btn-primary mb-3"
   >
-    {{ guest && guest.checkedIn != null ? 'Checked in at ' + guest.checkedIn.toLocaleTimeString() : 'Check in' }}
+    {{ guest && guest.checkedIn != null ? 'Checked in at ' + formatTime(guest.checkedIn) : 'Check in' }}
   </button>
 
-  <div *ngIf="guest && guest.checkedIn != null">
-
-    <div class="form-group">
-      <label for="cardButton">Card (optional)</label>
-      <button
-        (click)="setCard()"
-        id="cardButton"
-        type="button"
-        class="btn btn-block btn-primary"
-      >
-        {{guest.card ? guest.card : '-'}}
-      </button>
-    </div>
-
-
-    <div *ngIf="hasRole(['TRANSFER'])" class="form-group">
-
-      <label for="balanceInput">Balance (requires card)</label>
-
-      <div class="d-flex">
-        <button
-          (click)="subBalance()"
-          type="button"
-          class="btn btn-primary"
-          [disabled]="!guest.card"
-          [class.disabled]="!guest.card"
-        >
-          <i class="fa fa-minus"></i>
-        </button>
-
-        <input
-          id="balanceInput"
-          disabled
-          class="disabled form-control text-center flex-grow-1"
-          [value]="guest.balance | number:'1.2-2'"
-        >
-        <button
-          (click)="addBalance()"
-          type="button"
-          class="btn btn-primary"
-          [disabled]="!guest.card"
-          [class.disabled]="!guest.card"
-        >
-          <i class="fa fa-plus"></i>
-        </button>
-      </div>
-
-    </div>
-
-    <div *ngIf="hasRole(['TRANSFER'])" class="form-group">
-
-      <label for="bonusInput">Bonus (requires card)</label>
-
-      <div class="d-flex">
-        <button
-          (click)="subBonus()"
-          type="button"
-          class="btn btn-primary"
-          [disabled]="!guest.card"
-          [class.disabled]="!guest.card"
-        >
-          <i class="fa fa-minus"></i>
-        </button>
-
-        <input
-          id="bonusInput"
-          disabled
-          class="disabled form-control text-center flex-grow-1"
-          [value]="guest.bonus | number:'1.2-2'"
-        >
-
-        <button
-          (click)="addBonus()"
-          type="button"
-          class="btn btn-primary"
-          [disabled]="!guest.card"
-          [class.disabled]="!guest.card"
-        >
-          <i class="fa fa-plus"></i>
-        </button>
-      </div>
-
-    </div>
-
+  <div *ngIf="guest && guest.checkedIn != null" class="form-group">
+    <label for="cardButton">Card (optional)</label>
+    <button
+      (click)="setCard()"
+      id="cardButton"
+      type="button"
+      class="btn btn-block btn-primary"
+    >
+      <i *ngIf="!guest.card" class="fa fa-credit-card px-3"></i>
+      <span *ngIf="guest.card">{{guest.card}}</span>
+    </button>
   </div>
 
   <button

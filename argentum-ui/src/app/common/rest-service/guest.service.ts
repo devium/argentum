@@ -71,6 +71,26 @@ export class GuestService {
     );
   }
 
+  checkIn(guest: Guest, statuses?: Status[]): Observable<Guest> {
+    return withDependencies(
+      this.http.patch<Guest.Dto>(`/guests/${guest.id}`, Guest.checkInDto()),
+      [statuses, () => this.statusService.list()]
+    ).pipe(
+      map(([dto, statusesDep]: [Guest.Dto, Status[], {}, {}]) => Guest.fromDto(dto, statusesDep)),
+      catchError((err: HttpErrorResponse) => processErrors(err))
+    );
+  }
+
+  setCard(guest: Guest, statuses?: Status[]): Observable<Guest> {
+    return withDependencies(
+      this.http.patch<Guest.Dto>(`/guests/${guest.id}`, guest.cardDto()),
+      [statuses, () => this.statusService.list()]
+    ).pipe(
+      map(([dto, statusesDep]: [Guest.Dto, Status[], {}, {}]) => Guest.fromDto(dto, statusesDep)),
+      catchError((err: HttpErrorResponse) => processErrors(err))
+    );
+  }
+
   update(guest: Guest, statuses?: Status[]): Observable<Guest> {
     return withDependencies(
       this.http.patch<Guest.Dto>(`/guests/${guest.id}`, guest.toDto()),
