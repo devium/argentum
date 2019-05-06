@@ -26,8 +26,10 @@ export namespace Editor {
     }
 
     activeOption(fieldSpec: FieldSpec<T>): OptionSpec {
-      if (this.active[fieldSpec.key] instanceof AbstractModel && this.active[fieldSpec.key] !== null) {
-        return fieldSpec.params.optionSpecs.find((optionSpec: OptionSpec) => optionSpec.value.id === this.active[fieldSpec.key]['id']);
+      if (this.active[fieldSpec.key] instanceof AbstractModel) {
+        return fieldSpec.params.optionSpecs.find((optionSpec: OptionSpec) =>
+          optionSpec.value && optionSpec.value.id === this.active[fieldSpec.key]['id']
+        );
       } else {
         return fieldSpec.params.optionSpecs.find((optionSpec: OptionSpec) => optionSpec.value === this.active[fieldSpec.key]);
       }
@@ -55,6 +57,7 @@ export namespace Editor {
     PasswordField,
     ColorField,
     CurrencyField,
+    PercentageField,
     CardField,
     BalanceField,
     MultiCheckboxField,
@@ -70,6 +73,8 @@ export namespace Editor {
     }
   }
 
+  export const FILTER_OPTION_ANY = new OptionSpec('Any', '', '#ffffff');
+
   export interface Params<T extends AbstractModel> {
     optionSpecs?: OptionSpec[];
     filtered?: boolean;
@@ -77,7 +82,9 @@ export namespace Editor {
     filterKey?: string;
     minWidth?: number;
     disabled?: (entry: Entry<T>) => boolean;
-    filterMap?: ((filter: string) => string);
+    filterMap?: ((filter: any) => any);
+    optionsFilter?: boolean;
+    activeFilterOption?: OptionSpec;
   }
 
   export class FieldSpec<T extends AbstractModel> {
@@ -115,7 +122,10 @@ export namespace Editor {
       public deleteDisabled: ((entry: Entry<T>) => boolean) = (entry: Entry<T>) => false
     ) {
       for (const fieldSpec of fieldSpecs) {
-        if (fieldSpec.type === FieldType.MultiCheckboxField || fieldSpec.type === FieldType.MultiModelCheckboxField) {
+        if (
+          (fieldSpec.type === FieldType.MultiCheckboxField || fieldSpec.type === FieldType.MultiModelCheckboxField) &&
+          fieldSpec.params.optionSpecs.length > 0
+        ) {
           this.headerOptionRow = true;
           this.headerOptionSpecs = this.headerOptionSpecs.concat(fieldSpec.params.optionSpecs);
           fieldSpec.colspan = fieldSpec.params.optionSpecs.length;
@@ -125,6 +135,9 @@ export namespace Editor {
         }
         if (fieldSpec.params.filtered) {
           this.headerFilterRow = true;
+          if (fieldSpec.params.optionsFilter) {
+            fieldSpec.params.activeFilterOption = FILTER_OPTION_ANY;
+          }
         }
         this.numCols += fieldSpec.colspan;
       }

@@ -35,7 +35,7 @@ export class CheckinComponent extends GroupBasedComponent implements OnInit {
     (<SearchGuestModalComponent>modal.componentInstance).message = this.message;
     modal.result.then(
       (guest: Guest) => {
-        this.guestService.create(guest).subscribe(
+        this.guestService.create(guest, [guest.status]).subscribe(
           (createdGuest: Guest) => this.message.success(`Created guest <b>${guest.name}</b>.`),
           (error: string) => this.message.error(error)
         );

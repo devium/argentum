@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { CardBarComponent } from '../common/card-bar/card-bar.component';
 import { MessageComponent } from '../common/message/message.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CoatCheckTag } from '../common/model/coat-check-tag';
@@ -25,7 +24,7 @@ class EditorTag extends CoatCheckTag {
 })
 export class CoatCheckComponent implements OnInit {
 
-  constructor(private modalService: NgbModal) {
+  constructor() {
   }
   readonly MAX_ID = 999;
 
@@ -47,8 +46,6 @@ export class CoatCheckComponent implements OnInit {
 
   @ViewChild(MessageComponent)
   message: MessageComponent;
-  @ViewChild(CardBarComponent)
-  cardBar: CardBarComponent;
 
   static getPaginated<T>(data: T[], pageSize: number, page: number): T[] {
     return data.slice(pageSize * (page - 1), pageSize * page);
@@ -57,7 +54,7 @@ export class CoatCheckComponent implements OnInit {
   ngOnInit() {
     this.onResize(window);
     this.refreshTags();
-    this.cardBar.countdownStream.subscribe(() => this.setActiveGuest(this.cardBar.guest));
+    // this.cardBar.countdownStream.subscribe(() => this.setActiveGuest(this.cardBar.guest));
   }
 
   onResize(newWindow: Window): void {
@@ -126,7 +123,7 @@ export class CoatCheckComponent implements OnInit {
       this.loadGuest(guest);
     }
     if (guest === null) {
-      this.cardBar.reset();
+      // this.cardBar.reset();
     }
   }
 
@@ -223,17 +220,17 @@ export class CoatCheckComponent implements OnInit {
         this.storedTags.find((tag: EditorTag) => tag.flaggedForRemoval) !== undefined
       ) && (
         // Either the scanned guest is still logged in the card bar or the tagging changes are free.
-        this.cardBar.guest !== null || (
+        // this.cardBar.guest !== null || (
           // Tags may still be saved without an active card bar if it doesn't cost the guest anything.
           this.activeGuest !== null && this.activePrice === 0
-        )
+        // )
       )
     );
   }
 
   saveTags() {
     this.waitingForSave = true;
-    this.cardBar.active = false;
+    // this.cardBar.active = false;
 
     const deleteTagIds = this.storedTags
       .filter((tag: EditorTag) => tag.flaggedForRemoval)
@@ -289,13 +286,13 @@ export class CoatCheckComponent implements OnInit {
         this.freeIds.sort((a, b) => a - b);
 
         this.waitingForSave = false;
-        this.cardBar.active = true;
-        this.cardBar.reset();
+        // this.cardBar.active = true;
+        // this.cardBar.reset();
       })
       .catch(reason => {
         this.message.error(reason);
         this.waitingForSave = false;
-        this.cardBar.active = true;
+        // this.cardBar.active = true;
       });
   }
 

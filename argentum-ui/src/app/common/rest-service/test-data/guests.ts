@@ -1,4 +1,5 @@
 import {Guest} from '../../model/guest';
+import {Statuses} from './statuses';
 
 export namespace Guests {
   export const ROBY = new Guest(
@@ -6,7 +7,7 @@ export namespace Guests {
     'DEMO-00001',
     'Roby Brushfield',
     'rbrushfield0@sohu.com',
-    'staff',
+    Statuses.PAID,
     new Date('2019-12-31T22:55:44Z'),
     '567a',
     4.50,
@@ -18,7 +19,7 @@ export namespace Guests {
     'DEMO-00002',
     'Sheelah Arnault',
     'sarnault1@tuttocitta.it',
-    'pending',
+    Statuses.PENDING,
     null,
     null,
     7.00,
@@ -32,7 +33,7 @@ export namespace Guests {
     'DEMO-00003',
     'Johanna Doe',
     'jdoe2@tinypic.com',
-    'paid',
+    undefined,
     undefined,
     undefined,
     undefined,
@@ -44,7 +45,7 @@ export namespace Guests {
     'DEMO-00003',
     'Johanna Doe',
     'jdoe2@tinypic.com',
-    'paid',
+    null,
     null,
     null,
     0.00,
@@ -56,7 +57,7 @@ export namespace Guests {
     'DEMO-00003',
     'Johanna Doe',
     'jdoe2@tinypic.com',
-    'paid',
+    Statuses.PAID,
     new Date('2019-12-31T23:13:52Z'),
     '581a',
     undefined,
@@ -68,7 +69,7 @@ export namespace Guests {
     'DEMO-00003',
     'Johanna Doe',
     'jdoe2@tinypic.com',
-    'paid',
+    Statuses.PAID,
     new Date('2019-12-31T23:13:52Z'),
     '581a',
     0.00,
@@ -92,10 +93,34 @@ export namespace Guests {
     'DEMO-00001',
     'Roby Brushfield',
     'rbrushfield0@sohu.com',
-    'staff',
+    Statuses.PAID,
     new Date('2019-12-31T22:57:30Z'),
     '567a',
     4.50,
+    0.00
+  );
+
+  export const JOHANNA_LIST_CREATED = new Guest(
+    undefined,
+    'DEMO-00003',
+    'Johanna Doe',
+    'jdoe2@tinypic.com',
+    Statuses.PAID,
+    undefined,
+    undefined,
+    undefined,
+    undefined
+  );
+
+  export const JOHANNA_LIST_CREATED_REFERENCE = new Guest(
+    3,
+    'DEMO-00003',
+    'Johanna Doe',
+    'jdoe2@tinypic.com',
+    Statuses.PAID,
+    null,
+    null,
+    0.00,
     0.00
   );
 
@@ -104,7 +129,7 @@ export namespace Guests {
     'DEMO-00001',
     'Toby Brushfield',
     'tbrushfield0@sohu.com',
-    'paid',
+    Statuses.PAID,
     undefined,
     undefined,
     undefined,
@@ -116,7 +141,7 @@ export namespace Guests {
     'DEMO-00001',
     'Toby Brushfield',
     'tbrushfield0@sohu.com',
-    'paid',
+    Statuses.PAID,
     new Date('2019-12-31T22:55:44Z'),
     '567a',
     4.50,

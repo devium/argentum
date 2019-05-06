@@ -7,6 +7,7 @@ from django.test import TestCase
 from api.tests.data.bonus_transactions import TestBonusTransactions
 from api.tests.data.categories import TestCategories
 from api.tests.data.config import TestConfig
+from api.tests.data.discounts import TestDiscounts
 from api.tests.data.groups import TestGroups
 from api.tests.data.guests import TestGuests
 from api.tests.data.order_items import TestOrderItems
@@ -34,6 +35,7 @@ class PopulatedTestCase(TestCase):
             TestCategories,
             TestProducts,
             TestProductRanges,
+            TestDiscounts,
             TestOrders,
             TestOrderItems,
             TestStatuses

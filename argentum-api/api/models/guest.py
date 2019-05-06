@@ -7,6 +7,7 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from api.models import Status
 from argentum.settings import CURRENCY_CONFIG
 
 
@@ -14,7 +15,7 @@ class Guest(models.Model):
     code = models.CharField(max_length=32, unique=True)
     name = models.CharField(max_length=64, blank=True)
     mail = models.CharField(max_length=64, blank=True)
-    status = models.CharField(max_length=32, blank=True)
+    status = models.ForeignKey('api.Status', related_name='guests', default=None, null=True, on_delete=models.SET_NULL)
     checked_in = models.DateTimeField(default=None, null=True)
     card = models.CharField(max_length=32, default=None, null=True, unique=True, blank=True)
     balance = models.DecimalField(default=0, **CURRENCY_CONFIG)
@@ -78,7 +79,7 @@ class GuestViewSet(
         code = django_filters.CharFilter(field_name='code', lookup_expr='icontains')
         name = django_filters.CharFilter(field_name='name', lookup_expr='icontains')
         mail = django_filters.CharFilter(field_name='mail', lookup_expr='icontains')
-        status = django_filters.CharFilter(field_name='status', lookup_expr='icontains')
+        status = django_filters.ModelChoiceFilter(queryset=Status.objects.all(), field_name='status', null_label='null')
 
     queryset = Guest.objects.all()
     filter_backends = (DjangoFilterBackend, OrderingFilter)

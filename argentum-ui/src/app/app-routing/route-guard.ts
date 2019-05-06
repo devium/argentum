@@ -18,6 +18,7 @@ export class RouteGuard implements CanActivate {
     'admin/import',
     'admin/users',
     'admin/statuses',
+    'admin/discounts',
     'admin/config'
   ];
 

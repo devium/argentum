@@ -1,5 +1,3 @@
-
-
 export function getPaginated(data: any[], pageSize: number, page: number): any[] {
   return data.slice(pageSize * (page - 1), pageSize * page);
 }
@@ -42,6 +40,16 @@ export function formatDate(date: Date): string {
 }
 
 export function formatCurrency(value: number): string {
+  if (value === undefined) {
+    return undefined;
+  }
+  if (value == null) {
+    return null;
+  }
+  return value.toFixed(2);
+}
+
+export function formatDiscount(value: number): string {
   if (value === undefined) {
     return undefined;
   }

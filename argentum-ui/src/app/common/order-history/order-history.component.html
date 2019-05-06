@@ -8,12 +8,13 @@
     class="table mb-0"
     [class.table-sm]="!activeModal"
   >
+    <!-- Columns: Description | Time/Product | Price | Quantity | Discount | Total | Cancel -->
     <tbody class="px-2">
     <tr *ngIf="guest" class="balance">
       <td>
         <b>Balance</b>
       </td>
-      <td colspan="3">
+      <td colspan="4">
       </td>
       <td class="text-right">
         <b>€{{formatCurrency(guest.balance)}}</b>
@@ -23,7 +24,7 @@
       <td>
         <b>Bonus</b>
       </td>
-      <td colspan="3">
+      <td colspan="4">
       </td>
       <td class="text-right">
         <b>€{{formatCurrency(guest.bonus)}}</b>
@@ -42,7 +43,7 @@
           <td>
             <i class="fa fa-clock-o"></i> {{formatTime(transaction.time)}}
           </td>
-          <td colspan="2">
+          <td colspan="3">
           </td>
           <td
             class="text-right"
@@ -63,7 +64,7 @@
           <td>
             <i class="fa fa-clock-o"></i> {{formatTime(bonusTransaction.time)}}
           </td>
-          <td colspan="2">
+          <td colspan="3">
           </td>
           <td
             class="text-right"
@@ -86,7 +87,7 @@
             <td>
               <i class="fa fa-clock-o"></i> {{formatTime(order.time)}}
             </td>
-            <td colspan="2">
+            <td colspan="3">
             </td>
             <td *ngIf="order.totalInitial(); let totalInitial" class="text-right">
               <ng-container *ngIf="order.total(); let total">
@@ -105,13 +106,16 @@
           <tr *ngFor="let orderItem of order.orderItems">
             <td>
             </td>
+            <!--Product name-->
             <td>
               {{orderItem.product.name}}
             </td>
-            <td class="text-right">
+            <!--Product price-->
+            <td class="text-right pr-0">
               €{{formatCurrency(orderItem.product.price)}}
             </td>
-            <td class="text-right">
+            <!--Initial/current quantity-->
+            <td class="text-right pr-0">
               <span *ngIf="orderItem.quantityInitial !== orderItem.quantityCurrent">
                 <s>{{orderItem.quantityInitial}}</s>
               </span>
@@ -119,6 +123,13 @@
                 {{orderItem.quantityCurrent}}
               </span>
             </td>
+            <!--Discount-->
+            <td class="text-right pr-0">
+              <span *ngIf="orderItem.discount > 0">
+                {{-100 * formatDiscount(orderItem.discount)}}%
+              </span>
+            </td>
+            <!--Initial/current total-->
             <td class="text-right">
               <span *ngIf="orderItem.quantityInitial !== orderItem.quantityCurrent">
                 <s>€{{formatCurrency(-orderItem.totalInitial())}}</s>
@@ -127,7 +138,7 @@
                 €{{formatCurrency(-orderItem.total())}}
               </span>
             </td>
-
+            <!--Cancel product items-->
             <td *ngIf="allowCancel" class="py-0 align-middle align-right">
               <button
                 (click)="cancelOrderItem(order, orderItem)"
@@ -147,7 +158,7 @@
             <td>
               Custom
             </td>
-            <td colspan="2">
+            <td colspan="3">
             </td>
             <td class="text-right">
               <span *ngIf="order.customInitial !== order.customCurrent">

@@ -38,7 +38,7 @@ export class ProductEditorComponent implements OnInit {
 
     combineLatest(productRanges$, categories$).subscribe(
       ([productRanges, categories]: [ProductRange[], Category[]]) => {
-        categories.push(new Category(null, 'No Category', '#ffffff'));
+        categories.unshift(new Category(null, 'No Category', '#ffffff'));
         const categoryOptions = categories.map((category: Category) => new Editor.OptionSpec(category.name, category, category.color));
 
         this.editorConfig = new Editor.Config<Product>(
@@ -65,7 +65,7 @@ export class ProductEditorComponent implements OnInit {
           (original: Product) => this.productService.deprecate(original).pipe(
             map((deprecated: Product) => null)
           ),
-          new Product(undefined, 'New Product', false, 0.00, null, []),
+          new Product(undefined, 'New Product', false, 0.00, categories[0], []),
           [
             new Editor.FieldSpec<Product>('ID', Editor.FieldType.ReadOnlyField, 'id'),
             new Editor.FieldSpec<Product>('Name', Editor.FieldType.StringField, 'name'),

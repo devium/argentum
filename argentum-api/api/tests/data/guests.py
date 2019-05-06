@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.utils.dateparse import parse_datetime
 
 from api.models.guest import Guest
+from api.tests.data.statuses import TestStatuses
 from api.tests.utils.test_objects import TestObjects
 
 
@@ -14,7 +15,7 @@ class TestGuests(TestObjects):
         code='DEMO-00001',
         name='Roby Brushfield',
         mail='rbrushfield0@sohu.com',
-        status='staff',
+        status=TestStatuses.PAID,
         checked_in=parse_datetime('2019-12-31T22:55:44Z'),
         card='567a',
         balance=Decimal('4.50'),
@@ -26,7 +27,7 @@ class TestGuests(TestObjects):
         code='DEMO-00002',
         name='Sheelah Arnault',
         mail='sarnault1@tuttocitta.it',
-        status='pending',
+        status=TestStatuses.PENDING,
         checked_in=None,
         card=None,
         balance=Decimal('7.00'),
@@ -42,7 +43,7 @@ class TestGuests(TestObjects):
         code='DEMO-00003',
         name='Johanna Doe',
         mail='jdoe2@tinypic.com',
-        status='paid',
+        status=TestStatuses.PAID,
         checked_in=None,
         card=None,
         balance=Decimal('0.00'),
@@ -54,7 +55,7 @@ class TestGuests(TestObjects):
         code='DEMO-00003',
         name='Johanna Doe',
         mail='jdoe2@tinypic.com',
-        status='paid',
+        status=TestStatuses.PAID,
         checked_in=parse_datetime('2019-12-31T23:13:52Z'),
         card='581a',
         balance=Decimal('0.00'),
@@ -66,7 +67,7 @@ class TestGuests(TestObjects):
         code='DEMO-00001',
         name='Roby Brushfield',
         mail='rbrushfield0@sohu.com',
-        status='staff',
+        status=TestStatuses.PAID,
         checked_in=parse_datetime('2019-12-31T22:57:30Z'),
         card='567a',
         balance=Decimal('4.50'),
@@ -78,7 +79,7 @@ class TestGuests(TestObjects):
         code='DEMO-00001',
         name='Toby Brushfield',
         mail='tbrushfield0@sohu.com',
-        status='paid',
+        status=TestStatuses.PAID,
         checked_in=parse_datetime('2019-12-31T22:55:44Z'),
         card='567a',
         balance=Decimal('4.50'),

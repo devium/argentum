@@ -115,7 +115,7 @@ export class OrderComponent implements OnInit {
     if (existingItem) {
       existingItem.quantityInitial += 1;
     } else {
-      this.orderItems.push(new OrderItem(undefined, product, 1, undefined));
+      this.orderItems.push(new OrderItem(undefined, product, 1, undefined, undefined));
     }
     this.updateTotal();
   }
@@ -145,7 +145,7 @@ export class OrderComponent implements OnInit {
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
     modal.result.then(
       (price: number) => {
-        this.orderItems.push(new OrderItem(undefined, new Product(undefined, 'Custom', false, price, null, []), 1, undefined));
+        this.orderItems.push(new OrderItem(undefined, new Product(undefined, 'Custom', false, price, null, []), 1, undefined, undefined));
         this.updateTotal();
       },
       (cancel: string) => void (0)
@@ -181,6 +181,7 @@ export class OrderComponent implements OnInit {
           (committedOrder: Order) => {
             this.message.success(`Order placed for <b>card #${card}</b>`);
             this.clear();
+            this.waitingForOrder = false;
           },
           (error: string) => {
             this.waitingForOrder = false;

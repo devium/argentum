@@ -7,6 +7,7 @@ from rest_framework.filters import OrderingFilter
 
 from api.models.product import Product, ProductCreateSerializer
 from api.models.transaction import TransactionUpdateSerializer
+from argentum.settings import DISCOUNT_CONFIG
 
 
 class OrderItem(models.Model):
@@ -14,6 +15,7 @@ class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity_initial = models.IntegerField()
     quantity_current = models.IntegerField()
+    discount = models.DecimalField(**DISCOUNT_CONFIG)
 
     def __str__(self):
         return f'OrderItem(' \
@@ -21,6 +23,7 @@ class OrderItem(models.Model):
             f'product={self.product}' \
             f'quantity_initial={self.quantity_initial},' \
             f'quantity_current={self.quantity_current},' \
+            f'discount={self.discount}' \
             f')'
 
 
@@ -30,14 +33,14 @@ class OrderItemListByCardSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderItem
-        fields = ['id', 'product', 'quantity_initial', 'quantity_current']
+        fields = ['id', 'product', 'quantity_initial', 'quantity_current', 'discount']
 
 
 class OrderItemCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
-        fields = ['id', 'product', 'quantity_initial', 'quantity_current']
-        read_only_fields = ['quantity_current']
+        fields = ['id', 'product', 'quantity_initial', 'quantity_current', 'discount']
+        read_only_fields = ['quantity_current', 'discount']
 
 
 class OrderItemUpdateSerializer(serializers.ModelSerializer):
@@ -48,7 +51,7 @@ class OrderItemUpdateSerializer(serializers.ModelSerializer):
     def get_fields(self):
         committed = not self.instance.order.pending
         if committed:
-            self.Meta.read_only_fields = ['product', 'quantity_initial']
+            self.Meta.read_only_fields = ['product', 'quantity_initial', 'discount']
         else:
             self.Meta.read_only_fields = self.Meta.fields
         return super().get_fields()

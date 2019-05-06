@@ -15,7 +15,8 @@ export class AdminNavComponent implements OnInit {
     ['/admin/ranges', 'Product ranges'],
     ['/admin/guests', 'Guest list'],
     ['/admin/import', 'Guest import'],
-    ['/admin/statuses', 'Status mappings'],
+    ['/admin/statuses', 'Statuses'],
+    ['/admin/discounts', 'Discounts'],
     ['/admin/users', 'Users'],
     ['/admin/config', 'Config']
   ];

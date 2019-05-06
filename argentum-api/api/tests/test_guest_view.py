@@ -42,8 +42,11 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         response = self.client.get('/guests?mail=rbrush')
         self.assertPksEqual(response.data, [TestGuests.ROBY])
 
-        response = self.client.get('/guests?status=staff')
+        response = self.client.get('/guests?status=1')
         self.assertPksEqual(response.data, [TestGuests.ROBY])
+
+        response = self.client.get('/guests?status=null')
+        self.assertPksEqual(response.data, [])
 
         response = self.client.get('/guests?code=DEMO&name=el&mail=sohu.com')
         self.assertPksEqual(response.data, [TestGuests.ROBY])
@@ -94,7 +97,7 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
             'code': '123',
             'name': 'Jimmy',
             'mail': 'jimmy@cherpcherp.org',
-            'status': 'special',
+            'status': 2,
             'card': '1212',
         }
         immutable_fields = {

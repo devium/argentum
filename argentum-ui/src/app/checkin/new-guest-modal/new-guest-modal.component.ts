@@ -63,7 +63,7 @@ export class NewGuestModalComponent extends GroupBasedComponent implements OnIni
       this.code,
       this.name,
       this.mail,
-      this.status ? this.status.internalName : '',
+      this.status,
       new Date(),
       this.card,
       undefined,

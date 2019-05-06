@@ -24,7 +24,7 @@
           <i *ngIf="editorConfig.filters['ordering'] === '-' + fieldSpec.filterKey()" class="fa fa-sort-down"></i>
         </a>
       </th>
-      <th [attr.rowspan]="editorConfig.headerOptionRow ? 2 : 1" colspan="3">
+      <th [attr.rowspan]="editorConfig.headerOptionRow ? 2 : 1" style="min-width: 120px">
         Controls
       </th>
     </tr>
@@ -38,17 +38,38 @@
     <tr *ngIf="editorConfig.headerFilterRow">
       <th *ngFor="let fieldSpec of editorConfig.fieldSpecs">
         <input
-          *ngIf="fieldSpec.params.filtered"
+          *ngIf="fieldSpec.params.filtered && !fieldSpec.params.optionsFilter"
           (input)="setFilter(fieldSpec, $event.target.value)"
           class="form-control form-control-sm"
         >
+        <div *ngIf="fieldSpec.params.filtered && fieldSpec.params.optionsFilter" ngbDropdown placement="bottom-left">
+          <button
+            class="btn btn-sm text-black w-100"
+            ngbDropdownToggle
+            [style.background-color]="fieldSpec.params.activeFilterOption.color"
+            [class.dark-bg]="isDarkBackground(fieldSpec.params.activeFilterOption.color)"
+          >
+            {{fieldSpec.params.activeFilterOption.name}}
+          </button>
+          <div ngbDropdownMenu>
+            <button
+              *ngFor="let optionSpec of [Editor.FILTER_OPTION_ANY].concat(fieldSpec.params.optionSpecs)"
+              (click)="setFilter(fieldSpec, optionSpec.value, true); fieldSpec.params.activeFilterOption = optionSpec"
+              class="dropdown-item"
+              [style.background-color]="optionSpec.color"
+              [class.dark-bg]="isDarkBackground(optionSpec.color)"
+            >
+              {{optionSpec.name}}
+            </button>
+          </div>
+        </div>
       </th>
     </tr>
     </thead>
 
     <tbody>
     <tr *ngIf="editorConfig.entries.length === 0">
-      <td [attr.colspan]="editorConfig.numCols + 3">
+      <td [attr.colspan]="editorConfig.numCols + 1">
         No entries found.
       </td>
     </tr>
@@ -100,11 +121,21 @@
 
         <td *ngIf="fieldSpec.type === Editor.FieldType.CurrencyField">
           <button
-            (click)="promptCurrency(entry, fieldSpec.key)"
+            (click)="promptNumber(entry, fieldSpec.key)"
             class="btn btn-primary btn-sm"
             [disabled]="disabled(fieldSpec, entry)"
           >
-            {{entry.active[fieldSpec.key] | number: '1.2-2'}}
+            {{formatCurrency(entry.active[fieldSpec.key])}}
+          </button>
+        </td>
+
+        <td *ngIf="fieldSpec.type === Editor.FieldType.PercentageField">
+          <button
+            (click)="promptPercentage(entry, fieldSpec.key)"
+            class="btn btn-primary btn-sm"
+            [disabled]="disabled(fieldSpec, entry)"
+          >
+            {{entry.active[fieldSpec.key] * 100}}%
           </button>
         </td>
 
@@ -156,7 +187,7 @@
 
         <td *ngIf="fieldSpec.type === Editor.FieldType.DropdownField">
           <ng-container *ngIf="entry.activeOption(fieldSpec); let activeOption">
-            <div ngbDropdown placement="top-left">
+            <div ngbDropdown placement="bottom-left" class="position-static">
               <button
                 class="btn btn-sm text-black w-100"
                 ngbDropdownToggle
@@ -182,6 +213,8 @@
         </td>
 
         <ng-container *ngIf="fieldSpec.type === Editor.FieldType.MultiCheckboxField">
+          <td *ngIf="fieldSpec.params.optionSpecs.length === 0">
+          </td>
           <td *ngFor="let optionSpec of fieldSpec.params.optionSpecs" class="text-center">
             <input
               type="checkbox"
@@ -194,6 +227,8 @@
         </ng-container>
 
         <ng-container *ngIf="fieldSpec.type === Editor.FieldType.MultiModelCheckboxField">
+          <td *ngIf="fieldSpec.params.optionSpecs.length === 0">
+          </td>
           <td *ngFor="let optionSpec of fieldSpec.params.optionSpecs" class="text-center">
             <input
               type="checkbox"
@@ -206,7 +241,7 @@
         </ng-container>
       </ng-container>
 
-      <td class="text-center">
+      <td>
         <button
           (click)="editorConfig.remove(entry)"
           class="btn btn-danger btn-sm"
@@ -214,18 +249,14 @@
         >
           <i class="fa fa-trash"></i>
         </button>
-      </td>
-      <td class="text-center">
         <button
           (click)="entry.reset()"
-          class="btn btn-primary btn-sm"
+          class="btn btn-primary btn-sm mx-1"
           [class.disabled]="!entry.changed()"
           [disabled]="!entry.changed()"
         >
           <i class="fa fa-undo"></i>
         </button>
-      </td>
-      <td class="text-center">
         <button
           (click)="entry.save()"
           class="btn btn-primary btn-sm"
@@ -240,7 +271,7 @@
     </tbody>
     <tfoot>
     <tr>
-      <td [attr.colspan]="editorConfig.numCols + 3">
+      <td [attr.colspan]="editorConfig.numCols + 1">
         <button
           *ngIf="editorConfig.defaultModel"
           (click)="editorConfig.create()"

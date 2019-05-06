@@ -136,7 +136,7 @@
       "code": "DEMO-00001",
       "name": "Roby Brushfield",
       "mail": "rbrushfield0@sohu.com",
-      "status": "staff",
+      "status": 1,
       "checked_in": "2019-12-31T22:55:44Z",
       "card": "567a",
       "balance": "4.50",
@@ -147,7 +147,7 @@
       "code": "DEMO-00002",
       "name": "Sheelah Arnault",
       "mail": "sarnault1@tuttocitta.it",
-      "status": "pending",
+      "status": 2,
       "checked_in": null,
       "card": null,
       "balance": "7.00",
@@ -160,7 +160,7 @@
       "code": "DEMO-00001",
       "name": "Roby Brushfield",
       "mail": "rbrushfield0@sohu.com",
-      "status": "staff",
+      "status": 1,
       "checked_in": "2019-12-31T22:55:44Z",
       "card": "567a",
       "balance": "4.50",
@@ -173,7 +173,7 @@
       "code": "DEMO-00001",
       "name": "Roby Brushfield",
       "mail": "rbrushfield0@sohu.com",
-      "status": "staff",
+      "status": 1,
       "checked_in": "2019-12-31T22:55:44Z",
       "card": "567a",
       "balance": "4.50",
@@ -185,7 +185,7 @@
     "code": "DEMO-00003",
     "name": "Johanna Doe",
     "mail": "jdoe2@tinypic.com",
-    "status": "paid",
+    "status": null,
     "checked_in": null,
     "card": null,
     "balance": "0.00",
@@ -196,7 +196,7 @@
     "code": "DEMO-00003",
     "name": "Johanna Doe",
     "mail": "jdoe2@tinypic.com",
-    "status": "paid",
+    "status": 1,
     "checked_in": "2019-12-31T23:13:52Z",
     "card": "581a",
     "balance": "0.00",
@@ -207,7 +207,7 @@
     "code": "DEMO-00001",
     "name": "Roby Brushfield",
     "mail": "rbrushfield0@sohu.com",
-    "status": "staff",
+    "status": 1,
     "checked_in": "2019-12-31T22:57:30Z",
     "card": "567a",
     "balance": "4.50",
@@ -219,7 +219,7 @@
       "code": "DEMO-00003",
       "name": "Johanna Doe",
       "mail": "jdoe2@tinypic.com",
-      "status": "paid",
+      "status": 1,
       "checked_in": null,
       "card": null,
       "balance": "0.00",
@@ -230,7 +230,7 @@
       "code": "DEMO-00001",
       "name": "Toby Brushfield",
       "mail": "tbrushfield0@sohu.com",
-      "status": "paid",
+      "status": 1,
       "checked_in": "2019-12-31T22:55:44Z",
       "card": "567a",
       "balance": "4.50",
@@ -512,6 +512,40 @@
     "id": 1,
     "name": "Just aqua"
   },
+  "GET/discounts": [
+    {
+      "id": 1,
+      "status": 1,
+      "category": 1,
+      "rate": "0.10"
+    },
+    {
+      "id": 2,
+      "status": 2,
+      "category": 2,
+      "rate": "0.25"
+    }
+  ],
+  "GET/discounts?status__guests__card=567a": [
+    {
+      "id": 1,
+      "status": 1,
+      "category": 1,
+      "rate": "0.10"
+    }
+  ],
+  "POST/discounts": {
+    "id": 3,
+    "status": 2,
+    "category": 1,
+    "rate": "0.20"
+  },
+  "PATCH/discounts/1": {
+    "id": 1,
+    "status": 1,
+    "category": 1,
+    "rate": "0.40"
+  },
   "GET/orders": [
     {
       "id": 1,
@@ -524,7 +558,8 @@
           "id": 1,
           "product": 1,
           "quantity_initial": 1,
-          "quantity_current": 1
+          "quantity_current": 1,
+          "discount": "0.00"
         }
       ],
       "pending": false
@@ -540,7 +575,8 @@
           "id": 2,
           "product": 2,
           "quantity_initial": 2,
-          "quantity_current": 2
+          "quantity_current": 2,
+          "discount": "0.00"
         }
       ],
       "pending": true
@@ -564,7 +600,8 @@
             "product_ranges": [
               1,
               2
-            ]
+            ],
+            "discount": "0.00"
           },
           "quantity_initial": 1,
           "quantity_current": 1
@@ -583,13 +620,15 @@
         "id": 3,
         "product": 1,
         "quantity_initial": 1,
-        "quantity_current": 1
+        "quantity_current": 1,
+        "discount": "0.00"
       },
       {
         "id": 4,
         "product": 2,
         "quantity_initial": 1,
-        "quantity_current": 1
+        "quantity_current": 1,
+        "discount": "0.00"
       }
     ],
     "pending": true
@@ -604,13 +643,38 @@
         "id": 3,
         "product": 1,
         "quantity_initial": 1,
-        "quantity_current": 1
+        "quantity_current": 1,
+        "discount": "0.00"
       },
       {
         "id": 4,
         "product": 2,
         "quantity_initial": 1,
-        "quantity_current": 1
+        "quantity_current": 1,
+        "discount": "0.00"
+      }
+    ],
+    "pending": true
+  },
+  "POST/orders#discount": {
+    "id": 3,
+    "time": "CHANGEME",
+    "custom_initial": "0.40",
+    "custom_current": "0.40",
+    "items": [
+      {
+        "id": 3,
+        "product": 1,
+        "quantity_initial": 1,
+        "quantity_current": 1,
+        "discount": "0.20"
+      },
+      {
+        "id": 4,
+        "product": 2,
+        "quantity_initial": 1,
+        "quantity_current": 1,
+        "discount": "0.00"
       }
     ],
     "pending": true
@@ -625,7 +689,8 @@
         "id": 2,
         "product": 2,
         "quantity_initial": 2,
-        "quantity_current": 2
+        "quantity_current": 2,
+        "discount": "0.00"
       }
     ],
     "pending": false
@@ -640,7 +705,8 @@
         "id": 1,
         "product": 1,
         "quantity_initial": 1,
-        "quantity_current": 1
+        "quantity_current": 1,
+        "discount": "0.00"
       }
     ],
     "pending": false
@@ -649,7 +715,8 @@
     "id": 1,
     "product": 1,
     "quantity_initial": 1,
-    "quantity_current": 0
+    "quantity_current": 0,
+    "discount": "0.00"
   },
   "GET/statuses": [
     {

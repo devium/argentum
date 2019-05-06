@@ -1,5 +1,6 @@
 import {AbstractModel} from './abstract-model';
-import {formatCurrency, formatDate} from '../utils';
+import {formatDate} from '../utils';
+import {Status} from './status';
 
 export namespace Guest {
   export interface Filter {
@@ -14,7 +15,7 @@ export namespace Guest {
     code: string;
     name: string;
     mail: string;
-    status: string;
+    status: number;
     checked_in: string;
     card: string;
     balance: string;
@@ -28,7 +29,7 @@ export class Guest extends AbstractModel {
     public code: string,
     public name: string,
     public mail: string,
-    public status: string,
+    public status: Status,
     public checkedIn: Date,
     public card: string,
     public balance: number,
@@ -37,13 +38,13 @@ export class Guest extends AbstractModel {
     super(id);
   }
 
-  static fromDto(dto: Guest.Dto): Guest {
+  static fromDto(dto: Guest.Dto, statuses: Status[]): Guest {
     return new Guest(
       dto.id,
       dto.code,
       dto.name,
       dto.mail,
-      dto.status,
+      dto.status === undefined ? undefined : dto.status === null ? null : statuses.find((status: Status) => status.id === dto.status),
       dto.checked_in === undefined ? undefined : dto.checked_in === null ? null : new Date(dto.checked_in),
       dto.card,
       parseFloat(dto.balance),
@@ -57,7 +58,7 @@ export class Guest extends AbstractModel {
       code: this.code,
       name: this.name,
       mail: this.mail,
-      status: this.status,
+      status: this.status === undefined ? undefined : this.status === null ? null : this.status.id,
       checked_in: formatDate(this.checkedIn),
       card: this.card,
       balance: undefined,

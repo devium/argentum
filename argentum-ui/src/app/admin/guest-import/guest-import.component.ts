@@ -5,6 +5,8 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {Papa, PapaParseResult} from 'ngx-papaparse';
 import {GuestService} from '../../common/rest-service/guest.service';
+import {Status} from '../../common/model/status';
+import {StatusService} from '../../common/rest-service/status.service';
 
 interface FieldSpec {
   key: string;
@@ -47,6 +49,7 @@ export class GuestImportComponent implements OnInit {
   private message: MessageComponent;
 
   constructor(
+    private statusService: StatusService,
     private guestService: GuestService,
     private modalService: NgbModal,
     private papa: Papa
@@ -86,32 +89,38 @@ export class GuestImportComponent implements OnInit {
           }
         }
 
-        const guests: Guest[] = [];
-        results.data.forEach(row => {
-          // Skip erroneous rows.
-          for (const field of this.fields) {
-            if (!row.hasOwnProperty(field.value)) {
-              return;
-            }
-          }
+        this.statusService.list().subscribe((statuses: Status[]) => {
+            const statusMap = {};
+            statuses.forEach((status: Status) => statusMap[status.internalName] = status);
 
-          guests.push(new Guest(
-            undefined,
-            row[fieldColumns['code']],
-            row[fieldColumns['name']],
-            row[fieldColumns['mail']],
-            row[fieldColumns['status']],
-            undefined,
-            undefined,
-            undefined,
-            undefined
-          ));
-        });
+            const guests: Guest[] = [];
+            results.data.forEach(row => {
+              // Skip erroneous rows.
+              for (const field of this.fields) {
+                if (!row.hasOwnProperty(field.value)) {
+                  return;
+                }
+              }
 
-        this.guestService.listUpdate(guests).subscribe(
-          (guestsSaved: Guest[]) => this.message.success(`Successfully imported or updated <b>${guestsSaved.length}</b> guests.`),
-          error => this.message.error(error)
-        );
+              guests.push(new Guest(
+                undefined,
+                row[fieldColumns['code']],
+                row[fieldColumns['name']],
+                row[fieldColumns['mail']],
+                statusMap[row[fieldColumns['status']]],
+                undefined,
+                undefined,
+                undefined,
+                undefined
+              ));
+            });
+
+            this.guestService.listUpdate(guests).subscribe(
+              (guestsSaved: Guest[]) => this.message.success(`Successfully imported or updated <b>${guestsSaved.length}</b> guests.`),
+              error => this.message.error(error)
+            );
+          },
+          (error: string) => this.message.error(error));
       }
     });
   }

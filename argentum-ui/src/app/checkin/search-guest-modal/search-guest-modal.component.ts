@@ -22,10 +22,8 @@ import {formatCurrency, isDarkBackground} from '../../common/utils';
 export class SearchGuestModalComponent extends GroupBasedComponent implements OnInit {
   private inputSearchStream = new Subject<string>();
   private searchStream = new Subject<string>();
-  statuses: Status[] = [];
   results: Guest[] = [];
   guest: Guest;
-  status: Status;
 
   @ViewChild('searchInput')
   searchInput: ElementRef;
@@ -51,9 +49,9 @@ export class SearchGuestModalComponent extends GroupBasedComponent implements On
 
     // TODO
     // this.restService.getStatuses()
-    Promise.resolve([])
-      .then((statuses: Status[]) => this.statuses = statuses)
-      .catch(reason => this.message.error(reason));
+    // Promise.resolve([])
+    //   .then((statuses: Status[]) => this.statuses = statuses)
+    //   .catch(reason => this.message.error(reason));
   }
 
   requestSearch(search: string): Observable<Guest[]> {
@@ -72,27 +70,16 @@ export class SearchGuestModalComponent extends GroupBasedComponent implements On
 
   lockGuest(guest: Guest) {
     this.guest = guest;
-    this.status = this.resolveStatus(guest);
     this.searchInput.nativeElement.value = `${guest.code} ${guest.name} <${guest.mail}>`;
     this.searchInput.nativeElement.disabled = true;
   }
 
   clearGuest() {
     this.guest = null;
-    this.status = null;
     this.searchInput.nativeElement.value = '';
     this.searchInput.nativeElement.disabled = false;
     this.searchInput.nativeElement.focus();
     this.results = [];
-  }
-
-  resolveStatus(guest: Guest): Status {
-    const statusMapping = this.statuses.find((status: Status) => status.internalName === guest.status);
-    if (statusMapping) {
-      return statusMapping;
-    } else {
-      return new Status(undefined, guest.status, guest.status, '#ffffff');
-    }
   }
 
   isDarkBackground(color: string): boolean {

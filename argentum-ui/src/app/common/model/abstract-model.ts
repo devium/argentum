@@ -20,6 +20,11 @@ export abstract class AbstractModel {
         return false;
       }
 
+      // Get nulls out of the way.
+      if ((value1 === null && value2 !== null) || (value1 !== null && value2 === null)) {
+        return false;
+      }
+
       if (value1 instanceof AbstractModel) {
         // Compare model references by ID.
         if (value1.id !== value2.id) {

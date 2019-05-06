@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from api.models.order_item import OrderItem
 from api.tests.data.orders import TestOrders
 from api.tests.data.products import TestProducts
@@ -12,7 +14,8 @@ class TestOrderItems(TestObjects):
         order=TestOrders.ONE_WATER_PLUS_TIP,
         product=TestProducts.WATER,
         quantity_initial=1,
-        quantity_current=1
+        quantity_current=1,
+        discount=Decimal("0.00")
     )
 
     TWO_COKES = MODEL(
@@ -20,7 +23,8 @@ class TestOrderItems(TestObjects):
         order=TestOrders.TWO_COKES_PLUS_TIP,
         product=TestProducts.COKE,
         quantity_initial=2,
-        quantity_current=2
+        quantity_current=2,
+        discount=Decimal("0.00")
     )
 
     ALL = [ONE_WATER, TWO_COKES]
@@ -32,7 +36,8 @@ class TestOrderItems(TestObjects):
         order=TestOrders.ONE_WATER_ONE_COKE_PLUS_TIP,
         product=TestProducts.WATER,
         quantity_initial=1,
-        quantity_current=1
+        quantity_current=1,
+        discount=Decimal("0.10")
     )
 
     ONE_COKE = MODEL(
@@ -40,5 +45,6 @@ class TestOrderItems(TestObjects):
         order=TestOrders.ONE_WATER_ONE_COKE_PLUS_TIP,
         product=TestProducts.COKE,
         quantity_initial=1,
-        quantity_current=1
+        quantity_current=1,
+        discount=Decimal("0.10")
     )

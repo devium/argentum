@@ -16,6 +16,7 @@ import { UserEditorComponent } from '../admin/user-editor/user-editor.component'
 import { ConfigEditorComponent } from '../admin/config-editor/config-editor.component';
 import { StatusEditorComponent } from '../admin/status-editor/status-editor.component';
 import { CoatCheckComponent } from '../coat-check/coat-check.component';
+import {DiscountEditorComponent} from '../admin/discount-editor/discount-editor.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -35,6 +36,7 @@ const routes: Routes = [
   { path: 'admin/import', component: GuestImportComponent, canActivate: [RouteGuard] },
   { path: 'admin/users', component: UserEditorComponent, canActivate: [RouteGuard] },
   { path: 'admin/statuses', component: StatusEditorComponent, canActivate: [RouteGuard] },
+  { path: 'admin/discounts', component: DiscountEditorComponent, canActivate: [RouteGuard] },
   { path: 'admin/config', component: ConfigEditorComponent, canActivate: [RouteGuard] }
 ];
 @NgModule({

@@ -7,9 +7,14 @@ import {BaseInterceptor} from './base-interceptor';
 import {expectArraysEqual, testEndpoint} from './test-utils';
 import {Guest} from '../model/guest';
 import {Guests} from './test-data/guests';
+import {StatusService} from './status.service';
+import createSpyObj = jasmine.createSpyObj;
+import {Statuses} from './test-data/statuses';
+import {of} from 'rxjs';
 
 fdescribe('GuestService', () => {
   let service: GuestService;
+  let statusService: any;
   let http: HttpClient;
   let httpTestingController: HttpTestingController;
   const requests: Object = require('./test-data/requests.json');
@@ -24,7 +29,9 @@ fdescribe('GuestService', () => {
     resolved = false;
     http = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
-    service = new GuestService(http);
+    statusService = createSpyObj('StatusService', ['list']);
+    statusService.list.and.returnValue(of(Statuses.ALL));
+    service = new GuestService(http, statusService);
     resolved = false;
   });
 
@@ -86,8 +93,8 @@ fdescribe('GuestService', () => {
   }));
 
   it('should perform a bulk update', fakeAsync(() => {
-    service.listUpdate([Guests.ROBY_LIST_PATCHED, Guests.JOHANNA_MIN]).subscribe((guests: Guest[]) => {
-      expectArraysEqual(guests, [Guests.JOHANNA_MIN_REFERENCE, Guests.ROBY_LIST_PATCHED_REFERENCE]);
+    service.listUpdate([Guests.ROBY_LIST_PATCHED, Guests.JOHANNA_LIST_CREATED]).subscribe((guests: Guest[]) => {
+      expectArraysEqual(guests, [Guests.JOHANNA_LIST_CREATED_REFERENCE, Guests.ROBY_LIST_PATCHED_REFERENCE]);
       resolved = true;
     });
     testEndpoint(httpTestingController, requests, responses, 'PATCH', '/guests/list_update');

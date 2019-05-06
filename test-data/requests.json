@@ -28,14 +28,13 @@
   "POST/guests#min": {
     "code": "DEMO-00003",
     "name": "Johanna Doe",
-    "mail": "jdoe2@tinypic.com",
-    "status": "paid"
+    "mail": "jdoe2@tinypic.com"
   },
   "POST/guests#max": {
     "code": "DEMO-00003",
     "name": "Johanna Doe",
     "mail": "jdoe2@tinypic.com",
-    "status": "paid",
+    "status": 1,
     "checked_in": "2019-12-31T23:13:52Z",
     "card": "581a"
   },
@@ -47,13 +46,13 @@
       "code": "DEMO-00001",
       "name": "Toby Brushfield",
       "mail": "tbrushfield0@sohu.com",
-      "status": "paid"
+      "status": 1
     },
     {
       "code": "DEMO-00003",
       "name": "Johanna Doe",
       "mail": "jdoe2@tinypic.com",
-      "status": "paid"
+      "status": 1
     }
   ],
   "POST/transactions": {
@@ -120,6 +119,14 @@
   },
   "PATCH/product_ranges/1": {
     "name": "Just aqua"
+  },
+  "POST/discounts": {
+    "status": 2,
+    "category": 1,
+    "rate": "0.20"
+  },
+  "PATCH/discounts/1": {
+    "rate": "0.40"
   },
   "POST/orders": {
     "guest": 2,

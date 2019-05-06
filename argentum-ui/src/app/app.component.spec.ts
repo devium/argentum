@@ -3,7 +3,6 @@ import { AppComponent } from './app.component';
 import { Router } from '@angular/router';
 import { AppRoutingModule } from './app-routing/app-routing.module';
 import { AdminNavComponent } from './admin/admin-nav/admin-nav.component';
-import { CardBarComponent } from './common/card-bar/card-bar.component';
 import { RangeEditorComponent } from './admin/range-editor/range-editor.component';
 import { ProductEditorComponent } from './admin/product-editor/product-editor.component';
 import { NavbarComponent } from './common/navbar/navbar.component';
@@ -22,7 +21,6 @@ xdescribe('AppComponent', () => {
       declarations: [
         AppComponent,
         AdminNavComponent,
-        CardBarComponent,
         OrderComponent,
         NavbarComponent,
         ProductEditorComponent,

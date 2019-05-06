@@ -1,21 +1,20 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Editor} from '../../common/model/editor';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {KeypadModalComponent} from '../../common/keypad-modal/keypad-modal.component';
-import {Subject} from 'rxjs';
+import {Subject, Subscription} from 'rxjs';
 import {debounceTime} from 'rxjs/operators';
 import {CardModalComponent} from '../../common/card-modal/card-modal.component';
 import {AbstractModel} from '../../common/model/abstract-model';
 import {MessageComponent} from '../../common/message/message.component';
 import {formatCurrency, formatDate, isDarkBackground} from '../../common/utils';
-import FieldSpec = Editor.FieldSpec;
 
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss']
 })
-export class EditorComponent implements OnInit {
+export class EditorComponent implements OnInit, OnDestroy {
   Editor = Editor;
   isDarkBackground = isDarkBackground;
   formatCurrency = formatCurrency;
@@ -30,24 +29,37 @@ export class EditorComponent implements OnInit {
   pageSize: number;
 
   filterStream = new Subject<null>();
+  filterSubscription: Subscription;
   page = 1;
 
   constructor(private modalService: NgbModal) {
   }
 
   ngOnInit() {
-    this.filterStream.pipe(
+    this.filterSubscription = this.filterStream.pipe(
       debounceTime(500)
     ).subscribe(() => {
-      this.page = 1;
-      this.editorConfig.reload();
+      this.reload();
     });
   }
 
-  setFilter(fieldSpec: Editor.FieldSpec<any>, value: any) {
+  ngOnDestroy(): void {
+    this.filterSubscription.unsubscribe();
+  }
+
+  reload() {
+    this.page = 1;
+    this.editorConfig.reload();
+  }
+
+  setFilter(fieldSpec: Editor.FieldSpec<any>, value: any, instant = false) {
     const key = fieldSpec.params.filterKey ? fieldSpec.params.filterKey : fieldSpec.key;
     this.editorConfig.filters[key] = fieldSpec.params.filterMap ? fieldSpec.params.filterMap(value) : value;
-    this.filterStream.next();
+    if (instant) {
+      this.reload();
+    } else {
+      this.filterStream.next();
+    }
   }
 
   cycleSort(fieldSpec: Editor.FieldSpec<any>) {
@@ -64,11 +76,20 @@ export class EditorComponent implements OnInit {
     this.editorConfig.reload();
   }
 
-  promptCurrency(entry: Editor.Entry<any>, key: any) {
+  promptNumber(entry: Editor.Entry<any>, key: any) {
     const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
     modal.result.then(
       (result: number) => entry.active[key] = result,
+      (cancel: string) => void (0)
+    );
+  }
+
+  promptPercentage(entry: Editor.Entry<any>, key: any) {
+    const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
+    (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
+    modal.result.then(
+      (result: number) => entry.active[key] = parseFloat((Math.max(0, Math.min(1, result / 100))).toFixed(2)),
       (cancel: string) => void (0)
     );
   }

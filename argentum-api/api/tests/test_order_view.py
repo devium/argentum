@@ -6,9 +6,11 @@ from api.models.config import Config
 from api.models.order import Order
 from api.models.order_item import OrderItem
 from api.models.transaction import Transaction
+from api.tests.data.discounts import TestDiscounts
 from api.tests.data.guests import TestGuests
 from api.tests.data.order_items import TestOrderItems
 from api.tests.data.orders import TestOrders
+from api.tests.data.products import TestProducts
 from api.tests.data.transactions import TestTransactions
 from api.tests.data.users import TestUsers
 from api.tests.utils.authenticated_test_case import AuthenticatedTestCase
@@ -77,6 +79,25 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         response = self.client.post('/orders', body)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['card'][0], 'Card not registered.')
+
+    def test_discount(self):
+        self.login(TestUsers.BAR)
+        TestDiscounts.PENDING_SOFT_DRINKS.save()
+
+        response = self.client.post('/orders', self.REQUESTS['POST/orders'])
+        self.assertEqual(response.status_code, 201)
+        self.RESPONSES['POST/orders#discount']['time'] = response.data['time']
+        self.assertJSONEqual(response.content, self.RESPONSES['POST/orders#discount'])
+
+        response = self.client.patch(f'/orders/{TestOrders.ONE_WATER_ONE_COKE_PLUS_TIP.id}', '{"pending": false}')
+        self.assertEqual(response.status_code, 200)
+        self.assertGreater(TestDiscounts.PENDING_SOFT_DRINKS.rate, Decimal('0.00'))
+        self.assertEqual(
+            (-list(Transaction.objects.all())[-1].value).compare(
+                TestOrders.ONE_WATER_ONE_COKE_PLUS_TIP.custom_current +
+                TestProducts.WATER.price * (1 - TestDiscounts.PENDING_SOFT_DRINKS.rate) + TestProducts.COKE.price
+            ), 0
+        )
 
     def test_commit(self):
         self.login(TestUsers.BAR)

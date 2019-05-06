@@ -145,6 +145,7 @@ REST_FRAMEWORK = {
 CORS_ORIGIN_ALLOW_ALL = True
 
 CURRENCY_CONFIG = {'max_digits': 9, 'decimal_places': 2}
+DISCOUNT_CONFIG = {'max_digits': 3, 'decimal_places': 2}
 
 # Logging
 LOGGING = {

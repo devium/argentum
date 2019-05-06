@@ -14,7 +14,7 @@ import {combineLatest} from 'rxjs';
 import {AbstractTimeModel} from '../model/abstract-model';
 import {Guest} from '../model/guest';
 import {GuestService} from '../rest-service/guest.service';
-import {formatCurrency, formatTime} from '../utils';
+import {formatCurrency, formatDiscount, formatTime} from '../utils';
 
 @Component({
   selector: 'app-order-history',
@@ -26,6 +26,7 @@ export class OrderHistoryComponent implements OnInit {
   BonusTransaction = BonusTransaction;
   Order = Order;
   formatCurrency = formatCurrency;
+  formatDiscount = formatDiscount;
   formatTime = formatTime;
 
   @Input()

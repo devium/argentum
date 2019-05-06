@@ -8,6 +8,7 @@ export namespace OrderItem {
     product: number | Product.Dto;
     quantity_initial: number;
     quantity_current: number;
+    discount: string;
   }
 }
 
@@ -16,7 +17,8 @@ export class OrderItem extends AbstractModel {
     id: number,
     public product: Product,
     public quantityInitial: number,
-    public quantityCurrent: number
+    public quantityCurrent: number,
+    public discount: number
   ) {
     super(id);
   }
@@ -28,16 +30,18 @@ export class OrderItem extends AbstractModel {
         products.find((product: Product) => product.id === dto.product) :
         Product.fromDto(dto.product, categories),
       dto.quantity_initial,
-      dto.quantity_current
+      dto.quantity_current,
+      parseFloat(dto.discount)
     );
   }
 
-  static cancelDto(newQuantity: number) {
+  static cancelDto(newQuantity: number): OrderItem.Dto {
     return {
       id: undefined,
       product: undefined,
       quantity_initial: undefined,
-      quantity_current: newQuantity
+      quantity_current: newQuantity,
+      discount: undefined
     };
   }
 
@@ -46,15 +50,16 @@ export class OrderItem extends AbstractModel {
       id: undefined,
       product: this.product.id,
       quantity_initial: this.quantityInitial,
-      quantity_current: undefined
+      quantity_current: undefined,
+      discount: undefined
     };
   }
 
   total(): number {
-    return this.product.price * this.quantityCurrent;
+    return this.product.price * this.quantityCurrent * (1 - this.discount);
   }
 
   totalInitial(): number {
-    return this.product.price * this.quantityInitial;
+    return this.product.price * this.quantityInitial * (1 - this.discount);
   }
 }

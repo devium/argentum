@@ -8,7 +8,9 @@ from rest_framework import mixins, viewsets, serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.filters import OrderingFilter
 
+from api.models import Status
 from api.models.config import Config
+from api.models.discount import Discount
 from api.models.guest import Guest
 from api.models.order_item import OrderItemCreateSerializer, OrderItem, OrderItemListByCardSerializer
 from api.models.transaction import TransactionUpdateSerializer
@@ -31,7 +33,7 @@ class Order(models.Model):
     @property
     def total(self):
         return self.custom_current + sum(
-            item.quantity_current * item.product.price
+            item.quantity_current * item.product.price * max(0, min(1, (1 - item.discount)))
             for item in self.items.all()
         )
 
@@ -81,6 +83,21 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         validated_data['custom_current'] = validated_data['custom_initial']
         items_data = validated_data.pop('items')
         instance = self.Meta.model.objects.create(**validated_data)
+
+        for item_data in items_data:
+            item_data['discount'] = 0
+
+        if validated_data['guest'].status:
+            discounts = {
+                discount.category: discount.rate
+                for discount in Discount.objects.filter(status=validated_data['guest'].status)
+            }
+            for item_data in items_data:
+                item_data['discount'] += discounts.get(item_data['product'].category, 0)
+
+            for item_data in items_data:
+                item_data['discount'] = max(0, min(1, item_data['discount']))
+
         OrderItem.objects.bulk_create(
             OrderItem(order=instance, quantity_current=item_data['quantity_initial'], **item_data)
             for item_data in items_data
