@@ -64,7 +64,7 @@ export class CheckinComponent extends GroupBasedComponent implements OnInit {
           (value: number) => {
             value *= sign;
             this.transactionService.createByCard(card, value, false, []).pipe(
-              flatMap((transaction: Transaction) => this.transactionService.commit(transaction))
+              flatMap((transaction: Transaction) => this.transactionService.commit(transaction, []))
             ).subscribe((transaction: Transaction) => {
                 if (sign < 0) {
                   this.message.success(`

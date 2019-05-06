@@ -102,7 +102,8 @@
         <td *ngIf="fieldSpec.type === Editor.FieldType.PasswordField">
           <input
             (ngModelChange)="entry.active[fieldSpec.key] = $event"
-            [ngModel]="entry.active[fieldSpec.key] ? entry.active[fieldSpec.key] : '********'"
+            [ngModel]="entry.active[fieldSpec.key]"
+            (focus)="$event.target.select()"
             class="form-control form-control-sm"
             [disabled]="disabled(fieldSpec, entry)"
             type="password"

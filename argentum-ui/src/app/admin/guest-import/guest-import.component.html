@@ -1,22 +1,22 @@
 <app-admin-nav></app-admin-nav>
 
-<div class="container mt-3">
+<div class="container mt-3" style="max-width: 420px">
   <div *ngFor="let field of fields" class="form-group row">
-    <label [for]="field.key + 'Input'" class="col-sm-4 col-form-label">{{field.name}}</label>
+    <label [for]="field.key + 'Input'" class="col-sm-4 col-form-label col-form-label-sm">{{field.name}}</label>
     <div class="col-sm-8">
       <input
         [id]="field.key + 'Input'"
-        class="form-control"
+        class="form-control form-control-sm"
         [(ngModel)]="field.value">
     </div>
   </div>
 
-  <label class="custom-file btn btn-block btn-primary mt-5">
+  <label class="custom-file btn btn-block btn-primary">
     <input type="file" class="custom-file-input" (change)="importCsv($event.target)" hidden accept=".csv">
     <span class="custom-file-control text-white"><i class="fa fa-upload pr-1"></i>Upload file (.csv)</span>
   </label>
 
-  <button (click)="deleteGuests()" type="button" class="btn btn-sm btn-block btn-danger my-5">
+  <button (click)="deleteGuests()" type="button" class="btn btn-block btn-danger mb-2">
     <i class="fa fa-exclamation-triangle fa-lg pr-1"></i>Delete all guests
   </button>
 

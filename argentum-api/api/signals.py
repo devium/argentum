@@ -75,6 +75,7 @@ def populate_db(sender, **kwargs):
         ]),
         ('order', [
             'view_me',
+            'view_group',
             'view_config',
             'view_card_transaction',
             'view_card_bonustransaction',
@@ -90,6 +91,7 @@ def populate_db(sender, **kwargs):
         ]),
         ('coat_check', [
             'view_me',
+            'view_group',
             'view_config',
             'view_card_transaction',
             'view_card_bonustransaction',
@@ -98,6 +100,7 @@ def populate_db(sender, **kwargs):
         ]),
         ('check_in', [
             'view_me',
+            'view_group',
             'view_config',
             'view_guest',
             'add_guest',
@@ -106,6 +109,7 @@ def populate_db(sender, **kwargs):
         ]),
         ('transfer', [
             'view_me',
+            'view_group',
             'view_config',
             'add_transaction',
             'change_transaction',
@@ -115,6 +119,7 @@ def populate_db(sender, **kwargs):
         ]),
         ('scan', [
             'view_me',
+            'view_group',
             'view_config',
             'view_card_transaction',
             'view_card_bonustransaction',

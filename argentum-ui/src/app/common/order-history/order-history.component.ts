@@ -10,11 +10,12 @@ import {Transaction} from '../model/transaction';
 import {TransactionService} from '../rest-service/transaction.service';
 import {BonusTransactionService} from '../rest-service/bonus-transaction.service';
 import {OrderService} from '../rest-service/order.service';
-import {combineLatest} from 'rxjs';
+import {combineLatest, of} from 'rxjs';
 import {AbstractTimeModel} from '../model/abstract-model';
 import {Guest} from '../model/guest';
 import {GuestService} from '../rest-service/guest.service';
 import {formatCurrency, formatDiscount, formatTime} from '../utils';
+import {flatMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-order-history',
@@ -80,18 +81,18 @@ export class OrderHistoryComponent implements OnInit {
   getOrderHistory(card: string) {
     this.card = card;
     if (this.showTransactionsAndBalances) {
-      // Orders are implicitly queried by the transaction service.
-      const transactions$ = this.transactionService.listByCard(card);
-      const bonusTransactions$ = this.bonusTransactionService.listByCard(card);
-      combineLatest(transactions$, bonusTransactions$).subscribe(
-        ([transactions, bonusTransactions]: [Transaction[], BonusTransaction[]]) => {
+      this.orderService.listByCard(card).pipe(
+        flatMap((orders: Order[]) => {
+          const transactions$ = this.transactionService.listByCard(card, orders);
+          const bonusTransactions$ = this.bonusTransactionService.listByCard(card);
+          return combineLatest(of(orders), transactions$, bonusTransactions$);
+        })
+      ).subscribe(
+        ([orders, transactions, bonusTransactions]: [Order[], Transaction[], BonusTransaction[]]) => {
           this.entries = [];
           this.entries.push(...transactions.filter((transaction: Transaction) => transaction.order === null && !transaction.pending));
           this.entries.push(...bonusTransactions.filter((bonusTransaction: BonusTransaction) => !bonusTransaction.pending));
-          this.entries.push(...transactions
-            .filter((transaction: Transaction) => transaction.order !== null && !transaction.pending)
-            .map((transaction: Transaction) => transaction.order)
-          );
+          this.entries.push(...orders.filter((order: Order) => !order.pending));
           this.entries.sort((a: AbstractTimeModel, b: AbstractTimeModel) => b.time.getTime() - a.time.getTime());
         },
         (error: string) => this.error(error, true)
