@@ -102,17 +102,20 @@ export class GuestImportComponent implements OnInit {
                 }
               }
 
-              guests.push(new Guest(
-                undefined,
-                row[fieldColumns['code']],
-                row[fieldColumns['name']],
-                row[fieldColumns['mail']],
-                statusMap[row[fieldColumns['status']]],
-                undefined,
-                undefined,
-                undefined,
-                undefined
-              ));
+              const code = row[fieldColumns['code']];
+              if (code) {
+                guests.push(new Guest(
+                  undefined,
+                  code,
+                  row[fieldColumns['name']],
+                  row[fieldColumns['mail']],
+                  statusMap[row[fieldColumns['status']]],
+                  undefined,
+                  undefined,
+                  undefined,
+                  undefined
+                ));
+              }
             });
 
             this.guestService.listUpdate(guests).subscribe(

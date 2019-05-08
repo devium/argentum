@@ -35,6 +35,8 @@ export class SearchGuestModalComponent extends GroupBasedComponent implements On
   message: MessageComponent;
   statuses: Status[] = [];
 
+  noStatus = new Status(undefined, undefined, 'No Status', '#ffffff');
+
   constructor(
     private statusService: StatusService,
     private guestService: GuestService,
@@ -106,8 +108,7 @@ export class SearchGuestModalComponent extends GroupBasedComponent implements On
   setCard() {
     this.modalService.open(CardModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
       (card: string) => {
-        this.guest.card = card;
-        this.guestService.setCard(this.guest, this.statuses).subscribe(
+        this.guestService.setCard(this.guest, card, this.statuses).subscribe(
           (guest: Guest) => this.guest = guest,
           (error: string) => this.message.error(error)
         );

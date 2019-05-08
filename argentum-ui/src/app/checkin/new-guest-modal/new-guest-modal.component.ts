@@ -16,19 +16,22 @@ import {StatusService} from '../../common/rest-service/status.service';
 export class NewGuestModalComponent extends GroupBasedComponent implements OnInit {
   isDarkBackground = isDarkBackground;
 
+  noStatus = new Status(undefined, undefined, 'No Status', '#ffffff');
+
   code = '';
   name = '';
   mail = '';
-  status: Status = null;
+  status: Status = this.noStatus;
   card: string;
   balance = 0;
   bonus = 0;
-  statuses: Status[] = [];
+  statuses: Status[] = [this.noStatus];
 
   @ViewChild('nameInput')
   nameInput: ElementRef;
 
   message: MessageComponent;
+
 
   constructor(
     private statusService: StatusService,
@@ -45,7 +48,10 @@ export class NewGuestModalComponent extends GroupBasedComponent implements OnIni
     this.code = `BOX-${formatTime(new Date())}-${getRandomInt(2 ** 32).toString(16)}`;
 
     this.statusService.list().subscribe(
-      (statuses: Status[]) => this.statuses = statuses,
+      (statuses: Status[]) => {
+        this.statuses = statuses;
+        this.statuses.unshift(this.noStatus);
+      },
       (error: string) => this.message.error(error)
     );
   }
@@ -63,7 +69,7 @@ export class NewGuestModalComponent extends GroupBasedComponent implements OnIni
       this.code,
       this.name,
       this.mail,
-      this.status,
+      this.status === this.noStatus ? null : this.status,
       new Date(),
       this.card,
       undefined,

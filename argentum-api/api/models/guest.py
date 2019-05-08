@@ -8,6 +8,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from api.models import Status
+from argentum.permissions import StrictModelPermissions
 from argentum.settings import CURRENCY_CONFIG
 
 
@@ -93,6 +94,12 @@ class GuestViewSet(
             return GuestListUpdateSerializer
         else:
             return GuestCreateSerializer
+
+    def get_permissions(self):
+        if 'card' in self.request.query_params and self.request.query_params['card']:
+            return StrictModelPermissions({'GET': ['%(app_label)s.view_card_%(model_name)s']}),
+        else:
+            return StrictModelPermissions(),
 
     @action(detail=False, methods=['patch'])
     def list_update(self, request: Request):

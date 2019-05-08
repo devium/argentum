@@ -30,6 +30,8 @@ export function processErrors(error: HttpErrorResponse) {
     messages = traverseError(error.error);
   }
   console.log(messages.join('\n'));
-  const pureMessages = messages.map((message: string) => message.substr(message.indexOf(']: ') + 3));
-  return throwError(pureMessages.join('\n'));
+  const pureMessages = messages
+    .filter((message: string) => message.indexOf(']: ') !== -1)
+    .map((message: string) => message.substr(message.indexOf(']: ') + 3));
+  return throwError(pureMessages.join('<br>\n'));
 }

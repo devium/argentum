@@ -21,18 +21,12 @@
       <button
         class="btn btn-primary text-black"
         ngbDropdownToggle
-        [style.background-color]="status ? status.color : '#ffffff'"
-        [class.dark-bg]="status && isDarkBackground(status.color)"
+        [style.background-color]="status.color"
+        [class.dark-bg]="isDarkBackground(status.color)"
       >
-        {{status ? status.displayName : 'No status'}}
+        {{status.displayName}}
       </button>
       <div ngbDropdownMenu>
-        <button
-          (click)="status = null"
-          class="dropdown-item"
-        >
-          No status
-        </button>
         <button
           *ngFor="let statusOption of statuses"
           (click)="status = statusOption"

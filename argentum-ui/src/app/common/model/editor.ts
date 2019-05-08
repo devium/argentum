@@ -26,9 +26,11 @@ export namespace Editor {
     }
 
     activeOption(fieldSpec: FieldSpec<T>): OptionSpec {
-      if (this.active[fieldSpec.key] instanceof AbstractModel) {
+      if (fieldSpec.params.optionSpecs[0].value instanceof AbstractModel) {
         return fieldSpec.params.optionSpecs.find((optionSpec: OptionSpec) =>
-          optionSpec.value && optionSpec.value.id === this.active[fieldSpec.key]['id']
+          // Dummy models created for the editor with a null ID are mapped to an actual null relation.
+          (this.active[fieldSpec.key] === null && optionSpec.value.id === null) ||
+          (optionSpec.value.id === this.active[fieldSpec.key]['id'])
         );
       } else {
         return fieldSpec.params.optionSpecs.find((optionSpec: OptionSpec) => optionSpec.value === this.active[fieldSpec.key]);

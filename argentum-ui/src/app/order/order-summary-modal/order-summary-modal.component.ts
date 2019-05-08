@@ -19,7 +19,7 @@ export class OrderSummaryModalComponent implements OnInit {
   @ViewChild(OrderHistoryComponent)
   orderHistoryComponent: OrderHistoryComponent;
 
-  constructor(private activeModal: NgbActiveModal) { }
+  constructor(public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
     this.orderHistoryComponent.setSingleOrder(this.order);

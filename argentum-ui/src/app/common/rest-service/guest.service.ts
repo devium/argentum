@@ -81,9 +81,9 @@ export class GuestService {
     );
   }
 
-  setCard(guest: Guest, statuses?: Status[]): Observable<Guest> {
+  setCard(guest: Guest, card: string, statuses?: Status[]): Observable<Guest> {
     return withDependencies(
-      this.http.patch<Guest.Dto>(`/guests/${guest.id}`, guest.cardDto()),
+      this.http.patch<Guest.Dto>(`/guests/${guest.id}`, Guest.cardDto(card)),
       [statuses, () => this.statusService.list()]
     ).pipe(
       map(([dto, statusesDep]: [Guest.Dto, Status[], {}, {}]) => Guest.fromDto(dto, statusesDep)),

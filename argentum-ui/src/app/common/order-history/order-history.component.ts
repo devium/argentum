@@ -41,7 +41,7 @@ export class OrderHistoryComponent implements OnInit {
 
   card: string;
   guest: Guest;
-  entries: AbstractTimeModel[] = [];
+  entries: AbstractTimeModel[] = null;
 
   constructor(
     private guestService: GuestService,
@@ -123,7 +123,7 @@ export class OrderHistoryComponent implements OnInit {
 
     confirmModalComponent.message = `
       Are you sure you want to refund <b>card #${this.card}</b>
-      with <b>€${formatCurrency(orderItem.product.price)}</b>
+      with <b>€${formatCurrency(orderItem.product.price * (1 - orderItem.discount))}</b>
       for one <b>${orderItem.product.name}?</b>
     `;
 
@@ -134,7 +134,7 @@ export class OrderHistoryComponent implements OnInit {
           (orderItemResponse: OrderItem) => {
             this.message.success(`
                 Refunded <b>card #${this.card}</b>
-                with <b>€${formatCurrency(orderItem.product.price)}</b>
+                with <b>€${formatCurrency(orderItem.product.price * (1 - orderItem.discount))}</b>
                 for one <b>${orderItem.product.name}</b>.
             `);
             const index = order.orderItems.findIndex((findOrderItem: OrderItem) => findOrderItem.id === orderItemResponse.id);

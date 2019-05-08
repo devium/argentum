@@ -66,6 +66,20 @@ export class Guest extends AbstractModel {
     };
   }
 
+  static cardDto(card: string): Guest.Dto {
+    return {
+      id: undefined,
+      code: undefined,
+      name: undefined,
+      mail: undefined,
+      status: undefined,
+      checked_in: undefined,
+      card: card,
+      balance: undefined,
+      bonus: undefined
+    };
+  }
+
   toDto(): Guest.Dto {
     return {
       id: undefined,
@@ -74,20 +88,6 @@ export class Guest extends AbstractModel {
       mail: this.mail,
       status: this.status === undefined ? undefined : this.status === null ? null : this.status.id,
       checked_in: formatDate(this.checkedIn),
-      card: this.card,
-      balance: undefined,
-      bonus: undefined
-    };
-  }
-
-  cardDto(): Guest.Dto {
-    return {
-      id: undefined,
-      code: undefined,
-      name: undefined,
-      mail: undefined,
-      status: undefined,
-      checked_in: undefined,
       card: this.card,
       balance: undefined,
       bonus: undefined

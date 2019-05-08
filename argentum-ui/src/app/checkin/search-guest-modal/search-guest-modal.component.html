@@ -59,22 +59,23 @@
   </div>
 
   <div *ngIf="guest" class="form-group">
-    <label for="statusInput">Status</label>
-    <input
-      id="statusInput"
-      disabled
-      class="disabled form-control text-center flex-grow-1"
-      [style.background-color]="guest.status.color"
-      [class.dark-bg]="isDarkBackground(guest.status.color)"
-      [value]="guest.status.displayName"
-    >
+    <ng-container *ngIf="(guest.status || noStatus); let status">
+      <label for="statusInput">Status</label>
+      <input
+        id="statusInput"
+        disabled
+        class="disabled form-control text-center flex-grow-1"
+        [style.background-color]="status.color"
+        [class.dark-bg]="isDarkBackground(status.color)"
+        [value]="status.displayName"
+      >
+    </ng-container>
   </div>
 
   <button
     (click)="checkIn()"
     type="button"
     [disabled]="!guest || guest.checkedIn != null"
-    [class.disabled]="!guest || guest.checkedIn != null"
     class="btn btn-block btn-primary mb-3"
   >
     {{ guest && guest.checkedIn != null ? 'Checked in at ' + formatTime(guest.checkedIn) : 'Check in' }}

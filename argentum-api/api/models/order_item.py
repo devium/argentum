@@ -76,10 +76,14 @@ class OrderItemUpdateSerializer(serializers.ModelSerializer):
         if committed:
             quantity_current = validated_data.get('quantity_current', None)
             # Validation has already been performed. Just execute the transaction.
-            if quantity_current is not None:
+            if quantity_current is not None and self.instance.discount < 1:
                 TransactionUpdateSerializer.create_internal(
                     guest=self.instance.order.guest,
-                    value=(self.instance.quantity_current - quantity_current) * self.instance.product.price,
+                    value=(
+                        (1 - self.instance.discount) *
+                        (self.instance.quantity_current - quantity_current) *
+                        self.instance.product.price
+                    ),
                     description='cancel',
                     order=self.instance.order
                 )

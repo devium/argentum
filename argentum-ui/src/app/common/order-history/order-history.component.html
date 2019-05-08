@@ -1,5 +1,8 @@
 <div class="overflow-auto">
-  <span *ngIf="entries && entries.length === 0" class="h4">
+  <span *ngIf="!entries" class="h6">
+    Waiting for orders.
+  </span>
+  <span *ngIf="entries && entries.length === 0" class="h6">
     No orders.
   </span>
   <table
