@@ -20,10 +20,25 @@ export class ProductRange extends AbstractModel {
   }
 
   static fromDto(dto: ProductRange.Dto, categories: Category[]): ProductRange {
+    let products: Product[];
+    if (dto.products) {
+      products = dto.products.map((productDto: Product.Dto) => Product.fromDto(productDto, categories));
+      products.sort((a: Product, b: Product) => {
+        const aValue = a.category.name ? a.category.name : 'Ω';
+        const bValue = b.category.name ? b.category.name : 'Ω';
+        if (aValue < bValue) {
+          return -1;
+        }
+        if (aValue > bValue) {
+          return 1;
+        }
+        return 0;
+      } );
+    }
     return new ProductRange(
       dto.id,
       dto.name,
-      dto.products ? dto.products.map((productDto: Product.Dto) => Product.fromDto(productDto, categories)) : undefined
+      products
     );
   }
 
