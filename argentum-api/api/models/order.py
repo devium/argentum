@@ -32,10 +32,7 @@ class Order(models.Model):
 
     @property
     def total(self):
-        return self.custom_current + sum(
-            item.quantity_current * item.product.price * max(0, min(1, (1 - item.discount)))
-            for item in self.items.all()
-        )
+        return self.custom_current + sum(item.total for item in self.items.all())
 
     def __str__(self):
         return f'Order(' \

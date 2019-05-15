@@ -1,5 +1,7 @@
+from decimal import Decimal
+
 from django.db import models
-from django.db.models import Sum
+from django.db.models import Sum, Avg, F, FloatField
 from rest_framework import viewsets
 from rest_framework import fields
 from rest_framework.request import Request
@@ -57,11 +59,21 @@ class StatisticsViewSet(viewsets.ViewSet):
                     "quantity": OrderItem.objects.filter(
                         product=product,
                         order__pending=False
-                    ).aggregate(Sum('quantity_current'))['quantity_current__sum']
+                    ).aggregate(Sum('quantity_current'))['quantity_current__sum'],
+                    "value": OrderItem.objects.filter(
+                        product=product,
+                        order__pending=False
+                    ).aggregate(
+                        total=Sum(
+                            F('quantity_current') * F('product__price') * (1 - F('discount')),
+                            output_field=FloatField()
+                        )
+                    )['total']
                 }
                 for product in Product.objects.all()
             ]
         }
+        decimal = fields.DecimalField(**CURRENCY_CONFIG)
 
         # Set queries that didn't return any results to 0 instead of None.
         for key, value in body.items():
@@ -72,6 +84,9 @@ class StatisticsViewSet(viewsets.ViewSet):
         for sales in body['quantity_sales']:
             if sales['quantity'] is None:
                 sales['quantity'] = 0
+            if sales['value'] is None:
+                sales['value'] = 0
+            sales['value'] = decimal.to_representation(sales['value'])
 
         # Flip sign on negative transaction sums.
         for key in (
@@ -82,7 +97,6 @@ class StatisticsViewSet(viewsets.ViewSet):
             body[key] = -body[key]
 
         # Convert decimal fields to string representation.
-        decimal = fields.DecimalField(**CURRENCY_CONFIG)
         for key in (
             'total_positive_balance',
             'total_negative_balance',

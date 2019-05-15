@@ -17,6 +17,10 @@ class OrderItem(models.Model):
     quantity_current = models.IntegerField()
     discount = models.DecimalField(**DISCOUNT_CONFIG)
 
+    @property
+    def total(self):
+        return self.quantity_current * self.product.price * max(0, min(1, (1 - self.discount)))
+
     def __str__(self):
         return f'OrderItem(' \
             f'id={self.id},' \

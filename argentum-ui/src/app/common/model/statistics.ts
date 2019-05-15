@@ -5,6 +5,7 @@ export namespace QuantitySales {
   export interface Dto {
     product: number;
     quantity: number;
+    value: string;
   }
 }
 
@@ -31,7 +32,8 @@ export namespace Statistics {
 export class QuantitySales extends AbstractModel {
   constructor(
     public product: Product,
-    public quantity: number
+    public quantity: number,
+    public value: number
   ) {
     super(undefined);
   }
@@ -39,7 +41,8 @@ export class QuantitySales extends AbstractModel {
   static fromDto(dto: QuantitySales.Dto, products: Product[]): QuantitySales {
     return new QuantitySales(
       products.find((product: Product) => product.id === dto.product),
-      dto.quantity
+      dto.quantity,
+      parseFloat(dto.value)
     );
   }
 }

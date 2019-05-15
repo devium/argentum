@@ -14,6 +14,11 @@ interface FieldSpec {
   value: string;
 }
 
+interface DelimiterOption {
+  name: string;
+  value: string;
+}
+
 @Component({
   selector: 'app-guest-import',
   templateUrl: 'guest-import.component.html',
@@ -45,8 +50,25 @@ export class GuestImportComponent implements OnInit {
     }
   ];
 
+  delimiterOptions: DelimiterOption[] = [
+    {
+      name: 'Auto-detect',
+      value: ''
+    },
+    {
+      name: ',',
+      value: ','
+    },
+    {
+      name: ';',
+      value: ';'
+    }
+  ];
+
   @ViewChild(MessageComponent)
   private message: MessageComponent;
+
+  delimiterOption: DelimiterOption = this.delimiterOptions[0];
 
   constructor(
     private statusService: StatusService,
@@ -75,6 +97,7 @@ export class GuestImportComponent implements OnInit {
   parse(content: string) {
     this.papa.parse(content, {
       header: true,
+      delimiter: this.delimiterOption.value,
       complete: (results: PapaParseResult) => {
         if (results.errors) {
           console.error(results.errors);
@@ -106,9 +129,9 @@ export class GuestImportComponent implements OnInit {
               if (code) {
                 guests.push(new Guest(
                   undefined,
-                  code,
-                  row[fieldColumns['name']],
-                  row[fieldColumns['mail']],
+                  code.substring(0, 32),
+                  row[fieldColumns['name']].substring(0, 64),
+                  row[fieldColumns['mail']].substring(0, 64),
                   statusMap[row[fieldColumns['status']]],
                   undefined,
                   undefined,

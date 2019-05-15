@@ -762,11 +762,13 @@
     "quantity_sales": [
       {
         "product": 1,
-        "quantity": 1
+        "quantity": 1,
+        "value": "2.40"
       },
       {
         "product": 2,
-        "quantity": 0
+        "quantity": 0,
+        "value": "0.00"
       }
     ]
   }

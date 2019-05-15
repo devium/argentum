@@ -43,11 +43,14 @@ export class DashboardComponent implements OnInit {
 
   redrawCharts() {
     const salesContext = this.salesCanvas.nativeElement.getContext('2d');
+
     const quantitySalesSorted = this.statistics.quantitySales.sort((qs1: QuantitySales, qs2: QuantitySales) => qs1.quantity - qs2.quantity);
     const quantitySalesData = quantitySalesSorted.map((qs: QuantitySales) => qs.quantity);
     const sumQuantitySales = quantitySalesData.reduce((a: number, b: number) => a + b, 0);
-    const valueSalesData = quantitySalesSorted.map((qs: QuantitySales) => qs.quantity * qs.product.price);
+
+    const valueSalesData = quantitySalesSorted.map((qs: QuantitySales) => qs.value);
     const sumValueSales = valueSalesData.reduce((a: number, b: number) => a + b, 0);
+
     const labels = quantitySalesSorted.map((qs: QuantitySales) => qs.product.name);
     const colorPalette = palette('qualitative', quantitySalesSorted.length).map((hex: string) => '#' + hex);
 
