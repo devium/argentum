@@ -17,6 +17,6 @@ export namespace TestStatistics {
     1,
     2,
     2,
-    [new QuantitySales(Products.WATER, 1), new QuantitySales(Products.COKE, 0)]
+    [new QuantitySales(Products.WATER, 1, 2.40), new QuantitySales(Products.COKE, 0, 0.00)]
   );
 }

@@ -1,7 +1,6 @@
 import {fakeAsync, TestBed} from '@angular/core/testing';
 
 import {StatisticsService} from './statistics.service';
-import {ProductRangeService} from './product-range.service';
 import {HTTP_INTERCEPTORS, HttpClient} from '@angular/common/http';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {BaseInterceptor} from './base-interceptor';
