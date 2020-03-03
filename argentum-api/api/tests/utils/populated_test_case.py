@@ -15,6 +15,7 @@ from api.tests.data.orders import TestOrders
 from api.tests.data.product_ranges import TestProductRanges
 from api.tests.data.products import TestProducts
 from api.tests.data.statuses import TestStatuses
+from api.tests.data.tags import TestTags
 from api.tests.data.transactions import TestTransactions
 from api.tests.data.users import TestUsers
 from api.tests.utils.test_objects import TestObjects
@@ -38,7 +39,8 @@ class PopulatedTestCase(TestCase):
             TestDiscounts,
             TestOrders,
             TestOrderItems,
-            TestStatuses
+            TestStatuses,
+            TestTags
         ]
 
         for test_objects in test_object_groups:

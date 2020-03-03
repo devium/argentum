@@ -73,6 +73,7 @@ def populate_db(sender, **kwargs):
             'add_status',
             'change_status',
             'delete_status',
+            'view_tag',
             'view_productrange_all',
             'view_statistics'
         ]),
@@ -100,6 +101,7 @@ def populate_db(sender, **kwargs):
             'view_card_bonustransaction',
             'view_category',
             'view_status',
+            'view_tag'
         ]),
         ('check_in', [
             'view_me',
@@ -132,7 +134,7 @@ def populate_db(sender, **kwargs):
             'view_product',
             'view_discount',
             'view_card_order',
-            'view_status',
+            'view_status'
         ]),
         ('product_range_all', [
             'view_productrange_all'
@@ -151,7 +153,7 @@ def populate_db(sender, **kwargs):
                 codename=codename
             )
 
-    admin = User.objects.get(username='admin');
+    admin = User.objects.get(username='admin')
     for group_name, permission_names in default_groups:
         groups = Group.objects.filter(name=group_name)
         if not groups:

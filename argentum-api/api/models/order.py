@@ -8,7 +8,6 @@ from rest_framework import mixins, viewsets, serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.filters import OrderingFilter
 
-from api.models import Status
 from api.models.config import Config
 from api.models.discount import Discount
 from api.models.guest import Guest

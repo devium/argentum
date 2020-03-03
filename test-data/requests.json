@@ -184,5 +184,12 @@
   },
   "PATCH/statuses/2": {
     "internal_name": "pen"
+  },
+  "POST/tags": {
+    "label": 4,
+    "guest": 2
+  },
+  "PATCH/tags/1": {
+    "label": 5
   }
 }

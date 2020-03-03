@@ -151,7 +151,7 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         )
         self.assertPermissions(
             lambda: self.client.get(f'/guests?card={TestGuests.ROBY.card}'),
-            [TestUsers.ADMIN, TestUsers.TERMINAL]
+            [TestUsers.ADMIN, TestUsers.TERMINAL, TestUsers.RECEPTION]
         )
         self.assertPermissions(
             lambda: self.client.get(f'/guests?mail={TestGuests.ROBY.mail}'),

@@ -744,6 +744,16 @@
     "display_name": "Pending",
     "color": "#ff0000"
   },
+  "GET/tags": [
+    {
+      "id": 1,
+      "label": 2
+    },
+    {
+      "id": 2,
+      "label": 3
+    }
+  ],
   "GET/statistics": {
     "guests_total": 2,
     "guests_checked_in": 1,

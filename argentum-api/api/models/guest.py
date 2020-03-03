@@ -22,6 +22,9 @@ class Guest(models.Model):
     balance = models.DecimalField(default=0, **CURRENCY_CONFIG)
     bonus = models.DecimalField(default=0, **CURRENCY_CONFIG)
 
+    # Many-to-one fields specified in the other models:
+    # tags
+
     def __str__(self):
         return f'Guest(id={self.id},name="{self.name}",code="{self.code}")'
 
