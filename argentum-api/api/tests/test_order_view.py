@@ -199,13 +199,6 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX_CANCEL2])
         self.assertJSONEqual(response.content, self.RESPONSES[base_identifier + '#cancel'])
 
-    def test_get_by_card(self):
-        self.login(TestUsers.TERMINAL)
-
-        response = self.client.get(f'/orders?guest__card={TestGuests.ROBY.card}')
-        self.assertEqual(response.status_code, 200)
-        self.assertPksEqual(response.data, [TestOrders.ONE_WATER_PLUS_TIP])
-
     def test_permissions(self):
         self.assertPermissions(
             lambda: self.client.get('/orders'),

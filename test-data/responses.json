@@ -600,11 +600,11 @@
             "product_ranges": [
               1,
               2
-            ],
-            "discount": "0.00"
+            ]
           },
           "quantity_initial": 1,
-          "quantity_current": 1
+          "quantity_current": 1,
+          "discount": "0.00"
         }
       ],
       "pending": false
@@ -752,6 +752,12 @@
     {
       "id": 2,
       "label": 3
+    }
+  ],
+  "GET/tags?guest__card=567a": [
+    {
+      "id": 1,
+      "label": 2
     }
   ],
   "GET/statistics": {

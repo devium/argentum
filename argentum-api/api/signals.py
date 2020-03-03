@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.contenttypes.models import ContentType
 
-from api.models import Guest
+from api.models import Guest, Tag
 from api.models.config import Config
 from api.models.product_range import ProductRange
 from api.models.transaction import Transaction
@@ -23,7 +23,8 @@ def populate_db(sender, **kwargs):
         ('Can view bonus transaction by card', BonusTransaction, 'view_card_bonustransaction'),
         ('Can view orders by card', Transaction, 'view_card_order'),
         ('Can view guests by card', Guest, 'view_card_guest'),
-        ('Can view all product ranges', ProductRange, 'view_productrange_all')
+        ('Can view all product ranges', ProductRange, 'view_productrange_all'),
+        ('Can view tags by card', Tag, 'view_card_tag')
     ]
 
     default_groups = [
@@ -74,6 +75,7 @@ def populate_db(sender, **kwargs):
             'change_status',
             'delete_status',
             'view_tag',
+            'view_card_tag',
             'view_productrange_all',
             'view_statistics'
         ]),
@@ -101,7 +103,8 @@ def populate_db(sender, **kwargs):
             'view_card_bonustransaction',
             'view_category',
             'view_status',
-            'view_tag'
+            'view_tag',
+            'view_card_tag'
         ]),
         ('check_in', [
             'view_me',
@@ -134,7 +137,8 @@ def populate_db(sender, **kwargs):
             'view_product',
             'view_discount',
             'view_card_order',
-            'view_status'
+            'view_status',
+            'view_card_tag'
         ]),
         ('product_range_all', [
             'view_productrange_all'
