@@ -106,6 +106,7 @@ def populate_db(sender, **kwargs):
             'view_group',
             'view_config',
             'view_guest',
+            'view_card_guest',
             'add_guest',
             'change_guest',
             'view_status',

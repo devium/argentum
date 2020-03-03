@@ -20,7 +20,7 @@ class UserViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedTe
 
     def test_permissions(self):
         # Groups have neither retrieve, nor update, nor destroy, so detail urls are a 404 instead of a 405.
-        self.assertPermissions(lambda: self.client.get('/groups'), [TestUsers.ADMIN])
+        self.assertPermissions(lambda: self.client.get('/groups'), TestUsers.ALL)
         self.assertPermissions(lambda: self.client.get(f'/groups/{TestGroups.ADMIN.id}'), [], expected_errors=[404])
         self.assertPermissions(lambda: self.client.post('/groups', {}), [])
         self.assertPermissions(
