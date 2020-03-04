@@ -8,16 +8,18 @@ export function testEndpoint(
   responses: Object,
   method: string,
   url: string,
-  identifierSuffix?: string,
+  requestSuffix?: string,
+  responseSuffix?: string
 ): TestRequest {
-  identifierSuffix = identifierSuffix ? identifierSuffix : '';
+  requestSuffix = requestSuffix ? requestSuffix : '';
+  responseSuffix = responseSuffix ? responseSuffix : '';
   const req = httpTestingController.expectOne(`${environment.apiUrl}${url}`);
   expect(req.request.method).toBe(method);
 
-  const identifier = `${method}${url}${identifierSuffix}`;
-  const requestBody = requests[identifier];
+  const identifier = `${method}${url}`;
+  const requestBody = requests[identifier + requestSuffix];
   expect(req.request.body).toEqual(requestBody === undefined ? null : requestBody, `Request body mismatch for ${identifier}`);
-  const responseBody = responses[identifier];
+  const responseBody = responses[identifier + responseSuffix];
   req.flush(responseBody === undefined ? null : responseBody);
   return req;
 }

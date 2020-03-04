@@ -56,7 +56,7 @@ fdescribe('ProductService', () => {
       expect(product.equals(Products.BEER_MIN_REFERENCE)).toBeTruthy();
       resolved = true;
     });
-    testEndpoint(httpTestingController, requests, responses, 'POST', '/products', '#min');
+    testEndpoint(httpTestingController, requests, responses, 'POST', '/products', '#min', '#min');
   }));
 
   it('should create a product with full information', fakeAsync(() => {
@@ -64,7 +64,7 @@ fdescribe('ProductService', () => {
       expect(product.equals(Products.BEER_MAX_REFERENCE)).toBeTruthy();
       resolved = true;
     });
-    testEndpoint(httpTestingController, requests, responses, 'POST', '/products', '#max');
+    testEndpoint(httpTestingController, requests, responses, 'POST', '/products', '#max', '#max');
   }));
 
   it('should deprecate a product', fakeAsync(() => {
@@ -72,7 +72,7 @@ fdescribe('ProductService', () => {
       expect(product.equals(Products.WATER_DEPRECATED_REFERENCE)).toBeTruthy();
       resolved = true;
     });
-    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/products/${Products.WATER.id}`, '#deprecate');
+    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/products/${Products.WATER.id}`, '#deprecate', '#deprecate');
   }));
 
   it('should update a product', fakeAsync(() => {

@@ -60,7 +60,7 @@ fdescribe('TransactionService', () => {
 
   it('should list transactions by card', fakeAsync(() => {
     service.listByCard(Guests.ROBY.card).subscribe((transactions: Transaction[]) => {
-      expectArraysEqual(transactions, [Transactions.TX1_BY_CARD, Transactions.TX_ORDER1_BY_CARD]);
+      expectArraysEqual(transactions, [Transactions.TX1_BY_CARD, Transactions.TX_COAT_CHECK_1_BY_CARD, Transactions.TX_ORDER_1_BY_CARD]);
       resolved = true;
     });
     expect(guestService.list).toHaveBeenCalledTimes(0);
@@ -69,8 +69,8 @@ fdescribe('TransactionService', () => {
   }));
 
   it('should create a transaction', fakeAsync(() => {
-    service.create(Guests.ROBY, Transactions.TX5_REFERENCE.value).subscribe((transaction: Transaction) => {
-      expect(transaction.equals(Transactions.TX5_REFERENCE)).toBeTruthy();
+    service.create(Guests.ROBY, Transactions.TX4_REFERENCE.value).subscribe((transaction: Transaction) => {
+      expect(transaction.equals(Transactions.TX4_REFERENCE)).toBeTruthy();
       resolved = true;
     });
     expect(guestService.list).toHaveBeenCalledTimes(0);
@@ -79,8 +79,8 @@ fdescribe('TransactionService', () => {
   }));
 
   it('should create a transaction by card', fakeAsync(() => {
-    service.createByCard(Guests.ROBY.card, Transactions.TX5_REFERENCE.value).subscribe((transaction: Transaction) => {
-      expect(transaction.equals(Transactions.TX5_REFERENCE)).toBeTruthy();
+    service.createByCard(Guests.ROBY.card, Transactions.TX4_REFERENCE.value).subscribe((transaction: Transaction) => {
+      expect(transaction.equals(Transactions.TX4_REFERENCE)).toBeTruthy();
       resolved = true;
     });
     expect(guestService.list).toHaveBeenCalledTimes(0);
@@ -89,12 +89,12 @@ fdescribe('TransactionService', () => {
   }));
 
   it('should commit a transaction', fakeAsync(() => {
-    service.commit(Transactions.TX4).subscribe((transaction: Transaction) => {
-      expect(transaction.equals(Transactions.TX4_PATCHED_REFERENCE)).toBeTruthy();
+    service.commit(Transactions.TX3).subscribe((transaction: Transaction) => {
+      expect(transaction.equals(Transactions.TX3_PATCHED_REFERENCE)).toBeTruthy();
       resolved = true;
     });
     expect(guestService.list).toHaveBeenCalledTimes(0);
     expect(orderService.list).toHaveBeenCalledTimes(1);
-    testEndpoint(httpTestingController, requests, responses, 'PATCH', '/transactions/4');
+    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/transactions/${Transactions.TX3.id}`);
   }));
 });

@@ -6,17 +6,21 @@ export namespace TestStatistics {
     2,
     1,
     1,
-    11.50,
+    10.50,
     0.00,
     2.00,
-    3.00,
+    5.00,
     0.00,
-    15.00,
+    11.00,
     0.00,
-    1,
+    2,
     1,
     2,
-    2,
-    [new QuantitySales(Products.WATER, 1, 2.40), new QuantitySales(Products.COKE, 0, 0.00)]
+    3,
+    [
+      new QuantitySales(Products.COAT_CHECK_ITEM, 1, 2.00),
+      new QuantitySales(Products.WATER, 1, 2.40),
+      new QuantitySales(Products.COKE, 0, 0.00)
+    ]
   );
 }

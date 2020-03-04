@@ -29,7 +29,14 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
 
         response = self.client.get(f'/transactions?guest__card={TestGuests.ROBY.card}')
         self.assertEqual(response.status_code, 200)
-        self.assertPksEqual(response.data, [TestTransactions.TX1, TestTransactions.TX_ORDER1])
+        self.assertPksEqual(
+            response.data,
+            [
+                TestTransactions.TX1,
+                TestTransactions.TX_COAT_CHECK_1,
+                TestTransactions.TX_ORDER_1
+            ]
+        )
         self.assertJSONEqual(response.content, self.RESPONSES[f'GET/transactions?guest__card={TestGuests.ROBY.card}'])
 
     def test_get_by_card_not_found(self):
@@ -54,21 +61,21 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         )
         self.assertEqual(response.status_code, 201)
 
-        TestTransactions.TX5.time = server_time
-        self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX5])
+        TestTransactions.TX4.time = server_time
+        self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX4])
         self.RESPONSES[identifier]['time'] = to_iso_format(server_time)
         self.assertJSONEqual(response.content, self.RESPONSES[identifier])
 
     def test_patch(self):
         self.login(TestUsers.TOPUP)
-        identifier = f'PATCH/transactions/{TestTransactions.TX4.id}'
+        identifier = f'PATCH/transactions/{TestTransactions.TX3.id}'
 
         response, server_time = self.time_constrained(
-            lambda: self.client.patch(f'/transactions/{TestTransactions.TX4.id}', self.REQUESTS[identifier])
+            lambda: self.client.patch(f'/transactions/{TestTransactions.TX3.id}', self.REQUESTS[identifier])
         )
         self.assertEqual(response.status_code, 200)
 
-        self.assertFalse(Transaction.objects.get(id=TestTransactions.TX4.id).pending)
+        self.assertFalse(Transaction.objects.get(id=TestTransactions.TX3.id).pending)
         self.RESPONSES[identifier]['time'] = to_iso_format(server_time)
         self.assertJSONEqual(response.content, self.RESPONSES[identifier])
 
@@ -79,7 +86,7 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         self.assertEqual(response.status_code, 201)
 
         self.assertValueEqual(
-            Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX5],
+            Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX4],
             ignore_fields=['time']
         )
 
@@ -181,10 +188,10 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
             'description': 'withdraw more'
         }
 
-        self.assertPatchReadonly(f'/transactions/{TestTransactions.TX4.id}', mutable_fields, immutable_fields)
+        self.assertPatchReadonly(f'/transactions/{TestTransactions.TX3.id}', mutable_fields, immutable_fields)
 
         # Commit transaction.
-        response = self.client.patch(f'/transactions/{TestTransactions.TX4.id}', {'pending': False})
+        response = self.client.patch(f'/transactions/{TestTransactions.TX3.id}', {'pending': False})
         self.assertEqual(response.status_code, 200)
 
         # After committing, everything should be immutable.
@@ -197,7 +204,7 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
             'pending': True
         }
 
-        self.assertPatchReadonly(f'/transactions/{TestTransactions.TX4.id}', mutable_fields, immutable_fields)
+        self.assertPatchReadonly(f'/transactions/{TestTransactions.TX3.id}', mutable_fields, immutable_fields)
 
     def test_permissions(self):
         self.assertPermissions(lambda: self.client.get('/transactions'), [TestUsers.ADMIN])
@@ -216,11 +223,11 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         )
 
     def test_str(self):
-        LOG.debug(TestTransactions.TX_ORDER1)
+        LOG.debug(TestTransactions.TX_ORDER_1)
         self.assertEqual(
-            str(TestTransactions.TX_ORDER1),
+            str(TestTransactions.TX_ORDER_1),
             f'Transaction('
-            f'id=3,'
+            f'id=5,'
             f'time="2019-12-31 22:10:00+00:00",'
             f'value=-3.00,'
             f'description="order",'

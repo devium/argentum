@@ -30,7 +30,7 @@ class TestGuests(TestObjects):
         status=TestStatuses.PENDING,
         checked_in=None,
         card=None,
-        balance=Decimal('7.00'),
+        balance=Decimal('6.00'),
         bonus=Decimal('2.00')
     )
 

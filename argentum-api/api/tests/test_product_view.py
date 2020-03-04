@@ -96,11 +96,11 @@ class ProductViewTestCase(PopulatedTestCase, SerializationTestCase, Authenticate
         self.assertEqual(
             str(TestProducts.WATER),
             f'Product('
-            f'id=1,'
+            f'id=2,'
             f'name="Water",'
             f'deprecated=False,'
             f'price=2.40,'
-            f'category={str(TestCategories.SOFT_DRINKS)},'
-            f'product_ranges=[{str(TestProductRanges.JUST_WATER)},{str(TestProductRanges.EVERYTHING)}]'
+            f'category={TestCategories.SOFT_DRINKS},'
+            f'product_ranges=[{TestProductRanges.JUST_WATER},{TestProductRanges.EVERYTHING}]'
             f')'
         )

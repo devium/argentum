@@ -1,7 +1,6 @@
 import {fakeAsync, TestBed} from '@angular/core/testing';
 
 import {OrderService} from './order.service';
-import {ProductService} from './product.service';
 import {HTTP_INTERCEPTORS, HttpClient} from '@angular/common/http';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {BaseInterceptor} from './base-interceptor';
@@ -68,7 +67,7 @@ fdescribe('OrderService', () => {
 
   it('should list orders by card', fakeAsync(() => {
     service.listByCard(Guests.ROBY.card).subscribe((orders: Order[]) => {
-      expectArraysEqual(orders, [Orders.ONE_WATER_PLUS_TIP_BY_CARD]);
+      expectArraysEqual(orders, [Orders.TAG_REGISTRATION_TWO_BY_CARD, Orders.ONE_WATER_PLUS_TIP_BY_CARD]);
       resolved = true;
     });
     // Guest information is hidden from non-admin users and products are serialized fully in this view. Only categories need to be fetched.
@@ -101,7 +100,7 @@ fdescribe('OrderService', () => {
     expect(guestService.list).toHaveBeenCalledTimes(0);
     expect(productService.list).toHaveBeenCalledTimes(1);
     expect(categoryService.list).toHaveBeenCalledTimes(0);
-    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/orders/${Orders.TWO_COKES_PLUS_TIP.id}`, '#commit');
+    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/orders/${Orders.TWO_COKES_PLUS_TIP.id}`, '#commit', '#commit');
   }));
 
   it('should cancel custom products', fakeAsync(() => {
@@ -114,7 +113,7 @@ fdescribe('OrderService', () => {
     expect(guestService.list).toHaveBeenCalledTimes(0);
     expect(productService.list).toHaveBeenCalledTimes(1);
     expect(categoryService.list).toHaveBeenCalledTimes(0);
-    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/orders/${Orders.ONE_WATER_PLUS_TIP.id}`, '#cancel');
+    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/orders/${Orders.ONE_WATER_PLUS_TIP.id}`, '#cancel', '#cancel');
   }));
 
   it('should cancel products', fakeAsync(() => {
@@ -127,6 +126,6 @@ fdescribe('OrderService', () => {
     expect(guestService.list).toHaveBeenCalledTimes(0);
     expect(productService.list).toHaveBeenCalledTimes(1);
     expect(categoryService.list).toHaveBeenCalledTimes(0);
-    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/order_items/${OrderItems.ONE_WATER.id}`, '#cancel');
+    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/order_items/${OrderItems.ONE_WATER.id}`, '#cancel', '#cancel');
   }));
 });

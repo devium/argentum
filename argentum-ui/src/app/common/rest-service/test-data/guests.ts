@@ -22,7 +22,7 @@ export namespace Guests {
     Statuses.PENDING,
     null,
     null,
-    7.00,
+    6.00,
     2.00
   );
 

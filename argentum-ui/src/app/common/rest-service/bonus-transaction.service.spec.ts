@@ -9,7 +9,7 @@ import {Guests} from './test-data/guests';
 import createSpyObj = jasmine.createSpyObj;
 import {BonusTransaction} from '../model/bonus_transaction';
 import {expectArraysEqual, testEndpoint} from './test-utils';
-import {BonusTransactions} from './test-data/bonus_transactions';
+import {BonusTransactions} from './test-data/bonus-transactions';
 
 fdescribe('BonusTransactionService', () => {
   let service: BonusTransactionService;

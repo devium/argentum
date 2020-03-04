@@ -40,7 +40,8 @@ class Order(models.Model):
             f'custom_initial={self.custom_initial},' \
             f'custom_current={self.custom_current},' \
             f'guest={self.guest},' \
-            f'items=[{",".join(str(item) for item in self.items.all())}]' \
+            f'items=[{",".join(str(item) for item in self.items.all())}],' \
+            f'pending={self.pending}' \
             f')'
 
 

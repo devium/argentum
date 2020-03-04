@@ -3,8 +3,30 @@ import {Guests} from './guests';
 import {OrderItems} from './order-items';
 
 export namespace Orders {
-  export const ONE_WATER_PLUS_TIP = new Order(
+  export const TAG_REGISTRATION_TWO = new Order(
     1,
+    new Date('2019-12-31T22:07:00Z'),
+    Guests.ROBY,
+    undefined,
+    0.00,
+    0.00,
+    false,
+    [OrderItems.ONE_COAT_CHECK_ITEM_1]
+  );
+
+  export const TAG_REGISTRATION_THREE = new Order(
+    2,
+    new Date('2019-12-31T22:09:00Z'),
+    Guests.SHEELAH,
+    undefined,
+    0.00,
+    0.00,
+    false,
+    [OrderItems.ONE_COAT_CHECK_ITEM_2]
+  );
+
+  export const ONE_WATER_PLUS_TIP = new Order(
+    3,
     new Date('2019-12-31T22:10:00Z'),
     Guests.ROBY,
     undefined,
@@ -15,7 +37,7 @@ export namespace Orders {
   );
 
   export const TWO_COKES_PLUS_TIP = new Order(
-    2,
+    4,
     new Date('2019-12-31T22:14:00Z'),
     Guests.SHEELAH,
     undefined,
@@ -25,10 +47,21 @@ export namespace Orders {
     [OrderItems.TWO_COKES]
   );
 
-  export const ALL = [ONE_WATER_PLUS_TIP, TWO_COKES_PLUS_TIP];
+  export const ALL = [TAG_REGISTRATION_TWO, TAG_REGISTRATION_THREE, ONE_WATER_PLUS_TIP, TWO_COKES_PLUS_TIP];
+
+  export const TAG_REGISTRATION_TWO_BY_CARD = new Order(
+    1,
+    new Date('2019-12-31T22:07:00Z'),
+    undefined,
+    undefined,
+    0.00,
+    0.00,
+    false,
+    [OrderItems.ONE_COAT_CHECK_ITEM_1]
+  );
 
   export const ONE_WATER_PLUS_TIP_BY_CARD = new Order(
-    1,
+    3,
     new Date('2019-12-31T22:10:00Z'),
     undefined,
     undefined,
@@ -39,7 +72,7 @@ export namespace Orders {
   );
 
   export const ONE_WATER_ONE_COKE_PLUS_TIP = new Order(
-    3,
+    5,
     undefined,
     undefined,
     Guests.ROBY.card,
@@ -50,7 +83,7 @@ export namespace Orders {
   );
 
   export const ONE_WATER_ONE_COKE_PLUS_TIP_REFERENCE = new Order(
-    3,
+    5,
     new Date('2019-12-31T22:17:00Z'),
     undefined,
     undefined,
@@ -61,7 +94,7 @@ export namespace Orders {
   );
 
   export const TWO_COKES_PLUS_TIP_PATCHED_REFERENCE = new Order(
-    2,
+    4,
     new Date('2019-12-31T22:14:30Z'),
     undefined,
     undefined,
@@ -72,7 +105,7 @@ export namespace Orders {
   );
 
   export const ONE_WATER_PLUS_TIP_PATCHED = new Order(
-    1,
+    3,
     new Date('2019-12-31T22:10:00Z'),
     undefined,
     undefined,

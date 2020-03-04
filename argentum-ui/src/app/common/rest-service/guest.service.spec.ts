@@ -73,7 +73,7 @@ fdescribe('GuestService', () => {
       expect(guest.equals(Guests.JOHANNA_MIN_REFERENCE)).toBeTruthy();
       resolved = true;
     });
-    testEndpoint(httpTestingController, requests, responses, 'POST', '/guests', '#min');
+    testEndpoint(httpTestingController, requests, responses, 'POST', '/guests', '#min', '#min');
   }));
 
   it('should create a guest with maximum information', fakeAsync(() => {
@@ -81,7 +81,7 @@ fdescribe('GuestService', () => {
       expect(guest.equals(Guests.JOHANNA_MAX_REFERENCE)).toBeTruthy();
       resolved = true;
     });
-    testEndpoint(httpTestingController, requests, responses, 'POST', '/guests', '#max');
+    testEndpoint(httpTestingController, requests, responses, 'POST', '/guests', '#max', '#max');
   }));
 
   it('should update a guest', fakeAsync(() => {

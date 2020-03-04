@@ -23,7 +23,7 @@ class TestBonusTransactions(TestObjects):
         id=2,
         time=parse_datetime('2019-12-31T22:02:30Z'),
         guest=TestGuests.SHEELAH,
-        value=Decimal('2.00'),
+        value=Decimal('3.00'),
         description='default',
         pending=False
     )

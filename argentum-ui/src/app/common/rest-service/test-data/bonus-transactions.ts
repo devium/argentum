@@ -17,7 +17,7 @@ export namespace BonusTransactions {
     new Date('2019-12-31T22:02:30Z'),
     Guests.SHEELAH,
     undefined,
-    2.00,
+    3.00,
     'default',
     false
   );

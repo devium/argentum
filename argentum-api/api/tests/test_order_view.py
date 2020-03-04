@@ -35,7 +35,7 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
 
         response = self.client.get(f'/orders?guest__card={TestGuests.ROBY.card}')
         self.assertEqual(response.status_code, 200)
-        self.assertPksEqual(response.data, [TestOrders.ONE_WATER_PLUS_TIP])
+        self.assertPksEqual(response.data, [TestOrders.TAG_REGISTRATION_TWO, TestOrders.ONE_WATER_PLUS_TIP])
         self.assertJSONEqual(response.content, self.RESPONSES[f'GET/orders?guest__card={TestGuests.ROBY.card}'])
 
     def test_get_by_card_not_found(self):
@@ -108,11 +108,11 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         )
         self.assertEqual(response.status_code, 200)
 
-        TestTransactions.TX_ORDER2.time = server_time
+        TestTransactions.TX_ORDER_2.time = server_time
         sheelah = Guest.objects.get(id=TestGuests.SHEELAH.id)
         self.assertEqual(sheelah.bonus, Decimal('0.00'))
-        self.assertEqual(sheelah.balance, Decimal('2.00'))
-        self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX_ORDER2])
+        self.assertEqual(sheelah.balance, Decimal('1.00'))
+        self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX_ORDER_2])
         self.RESPONSES[identifier]['time'] = to_iso_format(server_time)
         self.assertJSONEqual(response.content, self.RESPONSES[identifier])
 
@@ -124,14 +124,14 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
 
         postpaid_limit.value = Decimal('-20.00')
         postpaid_limit.save()
-        order.custom_current = order.custom_initial = Decimal('22.61')
+        order.custom_current = order.custom_initial = Decimal('21.61')
         order.save()
 
         response = self.client.patch(f'/orders/{TestOrders.TWO_COKES_PLUS_TIP.id}', {'pending': False})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['non_field_errors'][0], 'Insufficient funds.')
 
-        order.custom_current = order.custom_initial = Decimal('22.60')
+        order.custom_current = order.custom_initial = Decimal('21.60')
         order.save()
 
         response = self.client.patch(f'/orders/{TestOrders.TWO_COKES_PLUS_TIP.id}', {'pending': False})
@@ -160,12 +160,12 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
                 f'/orders/{TestOrders.ONE_WATER_PLUS_TIP.id}',
                 self.REQUESTS[base_identifier + '#cancel']
             ),
-            lambda _: Transaction.objects.get(id=TestTransactions.TX_CANCEL1.id).time
+            lambda _: Transaction.objects.get(id=TestTransactions.TX_CANCEL_1.id).time
         )
         self.assertEqual(response.status_code, 200)
 
-        TestTransactions.TX_CANCEL1.time = server_time
-        self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX_CANCEL1])
+        TestTransactions.TX_CANCEL_1.time = server_time
+        self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX_CANCEL_1])
         self.assertJSONEqual(response.content, self.RESPONSES[base_identifier + '#cancel'])
 
     def test_cancel_product(self):
@@ -191,12 +191,12 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
                 f'/order_items/{TestOrderItems.ONE_WATER.id}',
                 self.RESPONSES[base_identifier + '#cancel']
             ),
-            lambda _: Transaction.objects.get(id=TestTransactions.TX_CANCEL2.id).time
+            lambda _: Transaction.objects.get(id=TestTransactions.TX_CANCEL_2.id).time
         )
         self.assertEqual(response.status_code, 200)
 
-        TestTransactions.TX_CANCEL2.time = server_time
-        self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX_CANCEL2])
+        TestTransactions.TX_CANCEL_2.time = server_time
+        self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX_CANCEL_2])
         self.assertJSONEqual(response.content, self.RESPONSES[base_identifier + '#cancel'])
 
     def test_permissions(self):
@@ -231,11 +231,12 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         self.assertEqual(
             str(TestOrders.ONE_WATER_PLUS_TIP),
             f'Order('
-            f'id=1,'
+            f'id=3,'
             f'time="2019-12-31 22:10:00+00:00",'
             f'custom_initial=0.20,'
             f'custom_current=0.20,'
             f'guest={TestGuests.ROBY},'
-            f'items=[{TestOrderItems.ONE_WATER}]'
+            f'items=[{TestOrderItems.ONE_WATER}],'
+            f'pending=False'
             f')'
         )

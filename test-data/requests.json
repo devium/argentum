@@ -65,7 +65,7 @@
     "value": "5.00",
     "ignore_bonus": false
   },
-  "PATCH/transactions/4": {
+  "PATCH/transactions/6": {
     "pending": false
   },
   "POST/bonus_transactions": {
@@ -83,7 +83,7 @@
     "name": "Spirits",
     "color": "#ff00ff"
   },
-  "PATCH/categories/1": {
+  "PATCH/categories/2": {
     "name": "Nonalcoholic"
   },
   "POST/products#min": {
@@ -94,7 +94,7 @@
     "name": "Beer",
     "deprecated": true,
     "price": "3.60",
-    "category": 2,
+    "category": 3,
     "product_ranges": [
       2
     ]
@@ -104,14 +104,14 @@
     "price": "3.60",
     "product_ranges": []
   },
-  "PATCH/products/1": {
+  "PATCH/products/2": {
     "name": "Aqua",
     "deprecated": true,
     "product_ranges": [
       1
     ]
   },
-  "PATCH/products/1#deprecate": {
+  "PATCH/products/2#deprecate": {
     "deprecated": true
   },
   "POST/product_ranges": {
@@ -122,7 +122,7 @@
   },
   "POST/discounts": {
     "status": 2,
-    "category": 1,
+    "category": 2,
     "rate": "0.20"
   },
   "PATCH/discounts/1": {
@@ -133,11 +133,11 @@
     "custom_initial": "0.40",
     "items": [
       {
-        "product": 1,
+        "product": 2,
         "quantity_initial": 1
       },
       {
-        "product": 2,
+        "product": 3,
         "quantity_initial": 1
       }
     ]
@@ -147,34 +147,34 @@
     "custom_initial": "0.40",
     "items": [
       {
-        "product": 1,
+        "product": 2,
         "quantity_initial": 1
       },
       {
-        "product": 2,
+        "product": 3,
         "quantity_initial": 1
       }
     ]
   },
-  "PATCH/orders/2#commit": {
+  "PATCH/orders/4#commit": {
     "pending": false
   },
-  "PATCH/orders/1#cancel_exceed": {
+  "PATCH/orders/3#cancel_exceed": {
     "custom_current": "0.20"
   },
-  "PATCH/orders/1#cancel_negative": {
+  "PATCH/orders/3#cancel_negative": {
     "custom_current": "-0.10"
   },
-  "PATCH/orders/1#cancel": {
+  "PATCH/orders/3#cancel": {
     "custom_current": "0.05"
   },
-  "PATCH/order_items/1#cancel_exceed": {
+  "PATCH/order_items/3#cancel_exceed": {
     "quantity_current": 1
   },
-  "PATCH/order_items/1#cancel_negative": {
+  "PATCH/order_items/3#cancel_negative": {
     "quantity_current": -1
   },
-  "PATCH/order_items/1#cancel": {
+  "PATCH/order_items/3#cancel": {
     "quantity_current": 0
   },
   "POST/statuses": {

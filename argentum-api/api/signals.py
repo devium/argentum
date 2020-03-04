@@ -76,6 +76,9 @@ def populate_db(sender, **kwargs):
             'delete_status',
             'view_tag',
             'view_card_tag',
+            'view_tagregistration',
+            'add_tagregistration',
+            'change_tagregistration',
             'view_productrange_all',
             'view_statistics'
         ]),
@@ -104,7 +107,9 @@ def populate_db(sender, **kwargs):
             'view_category',
             'view_status',
             'view_tag',
-            'view_card_tag'
+            'view_card_tag',
+            'add_tagregistration',
+            'change_tagregistration'
         ]),
         ('check_in', [
             'view_me',

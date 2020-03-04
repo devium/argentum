@@ -67,5 +67,5 @@ class CategoryViewTestCase(PopulatedTestCase, SerializationTestCase, Authenticat
         LOG.debug(TestCategories.SOFT_DRINKS)
         self.assertEqual(
             str(TestCategories.SOFT_DRINKS),
-            'Category(id=1,name="Soft drinks",color="#00ffff")'
+            'Category(id=2,name="Soft drinks",color="#00ffff")'
         )

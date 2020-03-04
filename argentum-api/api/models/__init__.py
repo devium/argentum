@@ -10,3 +10,4 @@ from .bonus_transaction import BonusTransaction
 from .order import Order
 from .order_item import OrderItem
 from .tag import Tag
+from .tag_registration import TagRegistration
