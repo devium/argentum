@@ -49,7 +49,7 @@ class ProductViewTestCase(PopulatedTestCase, SerializationTestCase, Authenticate
 
         response = self.client.post('/products', self.REQUESTS[identifier])
         self.assertEqual(response.status_code, 201)
-        self.assertValueEqual(Product.objects.all(), TestProducts.ALL + [TestProducts.BEER_MAX])
+        self.assertValueEqual(Product.objects.all(), TestProducts.ALL + [TestProducts.BEER_MIN])
         self.assertJSONEqual(response.content, self.RESPONSES[identifier])
         # ManyToMany relationships need to be checked manually via their queryset (original one works).
         self.assertValueEqual(TestProducts.BEER_MAX.product_ranges.all(), [])
@@ -60,7 +60,10 @@ class ProductViewTestCase(PopulatedTestCase, SerializationTestCase, Authenticate
 
         response = self.client.patch(f'/products/{TestProducts.WATER.id}', self.REQUESTS[identifier])
         self.assertEqual(response.status_code, 200)
-        self.assertValueEqual(Product.objects.all(), [TestProducts.WATER_PATCHED, TestProducts.COKE])
+        self.assertValueEqual(
+            Product.objects.all(),
+            [TestProducts.COAT_CHECK_ITEM, TestProducts.WATER_PATCHED, TestProducts.COKE]
+        )
         self.assertJSONEqual(response.content, self.RESPONSES[identifier])
         # ManyToMany relationships need to be checked manually via their queryset (original one works).
         self.assertValueEqual(TestProducts.WATER.product_ranges.all(), [TestProductRanges.JUST_WATER])
@@ -71,7 +74,10 @@ class ProductViewTestCase(PopulatedTestCase, SerializationTestCase, Authenticate
 
         response = self.client.patch(f'/products/{TestProducts.WATER.id}', self.REQUESTS[identifier])
         self.assertEqual(response.status_code, 200)
-        self.assertValueEqual(Product.objects.all(), [TestProducts.WATER_PATCHED, TestProducts.COKE])
+        self.assertValueEqual(
+            Product.objects.all(),
+            [TestProducts.COAT_CHECK_ITEM, TestProducts.WATER_DEPRECATED, TestProducts.COKE]
+        )
         self.assertJSONEqual(response.content, self.RESPONSES[identifier])
         # ManyToMany relationships need to be checked manually via their queryset (original one works).
         self.assertValueEqual(TestProducts.WATER.product_ranges.all(), TestProductRanges.ALL)

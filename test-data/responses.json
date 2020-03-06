@@ -139,7 +139,7 @@
       "status": 1,
       "checked_in": "2019-12-31T22:55:44Z",
       "card": "567a",
-      "balance": "4.50",
+      "balance": "7.50",
       "bonus": "0.00"
     },
     {
@@ -163,7 +163,7 @@
       "status": 1,
       "checked_in": "2019-12-31T22:55:44Z",
       "card": "567a",
-      "balance": "4.50",
+      "balance": "7.50",
       "bonus": "0.00"
     }
   ],
@@ -176,7 +176,7 @@
       "status": 1,
       "checked_in": "2019-12-31T22:55:44Z",
       "card": "567a",
-      "balance": "4.50",
+      "balance": "7.50",
       "bonus": "0.00"
     }
   ],
@@ -210,7 +210,7 @@
     "status": 1,
     "checked_in": "2019-12-31T22:57:30Z",
     "card": "567a",
-    "balance": "4.50",
+    "balance": "7.50",
     "bonus": "0.00"
   },
   "PATCH/guests/list_update": [
@@ -219,7 +219,7 @@
       "code": "DEMO-00003",
       "name": "Johanna Doe",
       "mail": "jdoe2@tinypic.com",
-      "status": 1,
+      "status": null,
       "checked_in": null,
       "card": null,
       "balance": "0.00",
@@ -233,7 +233,7 @@
       "status": 1,
       "checked_in": "2019-12-31T22:55:44Z",
       "card": "567a",
-      "balance": "4.50",
+      "balance": "7.50",
       "bonus": "0.00"
     }
   ],
@@ -242,7 +242,7 @@
       "id": 1,
       "time": "2019-12-31T22:05:00Z",
       "guest": 1,
-      "value": "6.00",
+      "value": "9.00",
       "ignore_bonus": false,
       "description": "default",
       "order": null,
@@ -303,7 +303,7 @@
     {
       "id": 1,
       "time": "2019-12-31T22:05:00Z",
-      "value": "6.00",
+      "value": "9.00",
       "ignore_bonus": false,
       "description": "default",
       "order": null,
@@ -648,6 +648,40 @@
         }
       ],
       "pending": true
+    },
+    {
+      "id": 5,
+      "time": "2019-12-31T22:15:00Z",
+      "guest": 1,
+      "custom_initial": "0.00",
+      "custom_current": "0.00",
+      "items": [
+        {
+          "id": 5,
+          "product": 1,
+          "quantity_initial": 1,
+          "quantity_current": 1,
+          "discount": "0.00"
+        }
+      ],
+      "pending": true
+    },
+    {
+      "id": 6,
+      "time": "2019-12-31T22:19:00Z",
+      "guest": 1,
+      "custom_initial": "0.00",
+      "custom_current": "0.00",
+      "items": [
+        {
+          "id": 6,
+          "product": 1,
+          "quantity_initial": 1,
+          "quantity_current": 1,
+          "discount": "0.00"
+        }
+      ],
+      "pending": true
     }
   ],
   "GET/orders?guest__card=567a": [
@@ -700,23 +734,71 @@
         }
       ],
       "pending": false
+    },
+    {
+      "id": 5,
+      "time": "2019-12-31T22:15:00Z",
+      "custom_initial": "0.00",
+      "custom_current": "0.00",
+      "items": [
+        {
+          "id": 5,
+          "product": {
+            "id": 1,
+            "name": "Coat check item",
+            "deprecated": false,
+            "price": "1.00",
+            "category": 1,
+            "product_ranges": [
+            ]
+          },
+          "quantity_initial": 1,
+          "quantity_current": 1,
+          "discount": "0.00"
+        }
+      ],
+      "pending": true
+    },
+    {
+      "id": 6,
+      "time": "2019-12-31T22:19:00Z",
+      "custom_initial": "0.00",
+      "custom_current": "0.00",
+      "items": [
+        {
+          "id": 6,
+          "product": {
+            "id": 1,
+            "name": "Coat check item",
+            "deprecated": false,
+            "price": "1.00",
+            "category": 1,
+            "product_ranges": [
+            ]
+          },
+          "quantity_initial": 1,
+          "quantity_current": 1,
+          "discount": "0.00"
+        }
+      ],
+      "pending": true
     }
   ],
   "POST/orders": {
-    "id": 5,
+    "id": 7,
     "time": "2019-12-31T22:17:00Z",
     "custom_initial": "0.40",
     "custom_current": "0.40",
     "items": [
       {
-        "id": 5,
+        "id": 7,
         "product": 2,
         "quantity_initial": 1,
         "quantity_current": 1,
-        "discount": "0.00"
+        "discount": "0.10"
       },
       {
-        "id": 6,
+        "id": 8,
         "product": 3,
         "quantity_initial": 1,
         "quantity_current": 1,
@@ -726,20 +808,20 @@
     "pending": true
   },
   "POST/orders#discount": {
-    "id": 5,
+    "id": 7,
     "time": "CHANGEME",
     "custom_initial": "0.40",
     "custom_current": "0.40",
     "items": [
       {
-        "id": 5,
+        "id": 7,
         "product": 2,
         "quantity_initial": 1,
         "quantity_current": 1,
-        "discount": "0.20"
+        "discount": "0.10"
       },
       {
-        "id": 6,
+        "id": 8,
         "product": 3,
         "quantity_initial": 1,
         "quantity_current": 1,
@@ -829,16 +911,56 @@
       "label": 2
     }
   ],
+  "GET/tag_registrations": [
+    {
+      "id": 1,
+      "time": "2019-12-31T22:07:01Z",
+      "label": 2,
+      "guest": 1,
+      "order": 1,
+      "pending": false
+    },
+    {
+      "id": 2,
+      "time": "2019-12-31T22:09:01Z",
+      "label": 3,
+      "guest": 2,
+      "order": 2,
+      "pending": false
+    },
+    {
+      "id": 3,
+      "time": "2019-12-31T22:15:01Z",
+      "label": 4,
+      "guest": 1,
+      "order": 5,
+      "pending": true
+    }
+  ],
+  "POST/tag_registrations#card": {
+    "id": 4,
+    "time": "2019-12-31T22:19:01Z",
+    "label": 5,
+    "order": 6,
+    "pending": true
+  },
+  "PATCH/tag_registrations/3#commit": {
+    "id": 3,
+    "time": "2019-12-31T22:15:01Z",
+    "label": 4,
+    "order": 5,
+    "pending": false
+  },
   "GET/statistics": {
     "guests_total": 2,
     "guests_checked_in": 1,
     "cards_total": 1,
-    "total_positive_balance": "10.50",
+    "total_positive_balance": "13.50",
     "total_negative_balance": "0.00",
     "total_bonus": "2.00",
     "total_spent": "5.00",
     "total_refund": "0.00",
-    "total_deposited": "11.00",
+    "total_deposited": "14.00",
     "total_withdrawn": "0.00",
     "num_products": 2,
     "num_legacy_products": 1,

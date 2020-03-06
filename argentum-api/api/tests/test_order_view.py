@@ -35,7 +35,15 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
 
         response = self.client.get(f'/orders?guest__card={TestGuests.ROBY.card}')
         self.assertEqual(response.status_code, 200)
-        self.assertPksEqual(response.data, [TestOrders.TAG_REGISTRATION_TWO, TestOrders.ONE_WATER_PLUS_TIP])
+        self.assertPksEqual(
+            response.data,
+            [
+                TestOrders.TAG_REGISTRATION_TWO,
+                TestOrders.ONE_WATER_PLUS_TIP,
+                TestOrders.TAG_REGISTRATION_FOUR,
+                TestOrders.TAG_REGISTRATION_FIVE,
+            ]
+        )
         self.assertJSONEqual(response.content, self.RESPONSES[f'GET/orders?guest__card={TestGuests.ROBY.card}'])
 
     def test_get_by_card_not_found(self):
@@ -53,7 +61,10 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         self.assertEqual(response.status_code, 201)
 
         TestOrders.ONE_WATER_ONE_COKE_PLUS_TIP.time = server_time
-        self.assertValueEqual(Order.objects.all(), TestOrders.ALL + [TestOrders.ONE_WATER_ONE_COKE_PLUS_TIP])
+        self.assertValueEqual(
+            Order.objects.all(),
+            TestOrders.ALL + [TestOrders.ONE_WATER_ONE_COKE_PLUS_TIP]
+        )
         self.assertValueEqual(
             OrderItem.objects.all(),
             TestOrderItems.ALL + [TestOrderItems.ONE_WATER2, TestOrderItems.ONE_COKE]
@@ -68,7 +79,7 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         self.assertEqual(response.status_code, 201)
 
         self.assertValueEqual(
-            Order.objects.all(), TestOrders.ALL + [TestOrders.ONE_WATER_PLUS_TIP],
+            Order.objects.all(), TestOrders.ALL + [TestOrders.ONE_WATER_ONE_COKE_PLUS_TIP],
             ignore_fields=['time']
         )
 
@@ -95,7 +106,7 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         self.assertEqual(
             (-list(Transaction.objects.all())[-1].value).compare(
                 TestOrders.ONE_WATER_ONE_COKE_PLUS_TIP.custom_current +
-                TestProducts.WATER.price * (1 - TestDiscounts.PENDING_SOFT_DRINKS.rate) + TestProducts.COKE.price
+                TestProducts.WATER.price * (1 - TestDiscounts.PAID_SOFT_DRINKS.rate) + TestProducts.COKE.price
             ), 0
         )
 
@@ -109,10 +120,12 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         self.assertEqual(response.status_code, 200)
 
         TestTransactions.TX_ORDER_2.time = server_time
+        self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX_ORDER_2])
+
         sheelah = Guest.objects.get(id=TestGuests.SHEELAH.id)
         self.assertEqual(sheelah.bonus, Decimal('0.00'))
         self.assertEqual(sheelah.balance, Decimal('1.00'))
-        self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX_ORDER_2])
+
         self.RESPONSES[identifier]['time'] = to_iso_format(server_time)
         self.assertJSONEqual(response.content, self.RESPONSES[identifier])
 

@@ -46,14 +46,39 @@ class TestOrders(TestObjects):
         pending=True
     )
 
-    ALL = [TAG_REGISTRATION_TWO, TAG_REGISTRATION_THREE, ONE_WATER_PLUS_TIP, TWO_COKES_PLUS_TIP]
+    TAG_REGISTRATION_FOUR = Order(
+        id=5,
+        time=parse_datetime('2019-12-31T22:15:00Z'),
+        guest=TestGuests.ROBY,
+        custom_initial=Decimal('0.00'),
+        custom_current=Decimal('0.00'),
+        pending=True
+    )
+
+    TAG_REGISTRATION_FIVE = Order(
+        id=6,
+        time=parse_datetime('2019-12-31T22:19:00Z'),
+        guest=TestGuests.ROBY,
+        custom_initial=Decimal('0.00'),
+        custom_current=Decimal('0.00'),
+        pending=True
+    )
+
+    ALL = [
+        TAG_REGISTRATION_TWO,
+        TAG_REGISTRATION_THREE,
+        ONE_WATER_PLUS_TIP,
+        TWO_COKES_PLUS_TIP,
+        TAG_REGISTRATION_FOUR,
+        TAG_REGISTRATION_FIVE
+    ]
 
     # Models below are not stored in the DB, but rather used for POST deserialization testing.
 
     ONE_WATER_ONE_COKE_PLUS_TIP = Order(
-        id=5,
+        id=7,
         time=parse_datetime('2019-12-31T22:17:00Z'),
-        guest=TestGuests.SHEELAH,
+        guest=TestGuests.ROBY,
         custom_initial=Decimal('0.40'),
         custom_current=Decimal('0.40'),
         pending=True

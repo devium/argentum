@@ -2,8 +2,8 @@ from typing import Any, Dict
 
 from django.db import models
 from django.utils import timezone
-from django_filters import OrderingFilter
 from rest_framework import mixins, viewsets, serializers
+from rest_framework.filters import OrderingFilter
 
 from api.models import Guest, Order, Tag
 from api.models.order import OrderUpdateSerializer
@@ -19,13 +19,19 @@ class TagRegistration(models.Model):
 
     def __str__(self):
         return f'TagRegistration(' \
-            f'id={self.id},' \
-            f'time={self.time},' \
-            f'label={self.label},' \
-            f'guest={self.guest},' \
-            f'order={self.order},' \
-            f'pending={self.pending}' \
-            f')'
+               f'id={self.id},' \
+               f'time={self.time},' \
+               f'label={self.label},' \
+               f'guest={self.guest},' \
+               f'order={self.order},' \
+               f'pending={self.pending}' \
+               f')'
+
+
+class TagRegistrationListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TagRegistration
+        fields = ['id', 'time', 'label', 'guest', 'order', 'pending']
 
 
 class TagRegistrationCreateSerializer(serializers.ModelSerializer):
@@ -58,15 +64,20 @@ class TagRegistrationUpdateSerializer(serializers.ModelSerializer):
         commit = not committed and not validated_data.get('pending', True)
 
         if commit:
+            self.instance.time = timezone.now()
             # Commit order. If for some reason the order is already committed, this does nothing.
-            order_serializer = OrderUpdateSerializer(self.instance.order, data={'pending': False})
+            order_serializer = OrderUpdateSerializer(
+                self.instance.order,
+                data={'pending': False, 'time': self.instance.time},
+                partial=True
+            )
             order_serializer.is_valid(raise_exception=True)
             order_serializer.save()
 
             # Create or update tag.
-            tag = Tag.objects.get_or_create(label=instance.label)
-            tag.guest = instance.guest
-            tag.save()
+            tag = Tag.objects.update_or_create(label=self.instance.label, defaults={'guest': self.instance.guest})
+
+        return super().update(instance, validated_data)
 
 
 class TagRegistrationViewSet(
@@ -78,6 +89,17 @@ class TagRegistrationViewSet(
     queryset = TagRegistration.objects.all()
     filter_backends = (OrderingFilter,)
     ordering = ('id',)
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            # Admin list request.
+            return TagRegistrationListSerializer
+        elif self.action in ['update', 'partial_update']:
+            # Commit request.
+            return TagRegistrationUpdateSerializer
+        else:
+            # Create request.
+            return TagRegistrationCreateSerializer
 
     def create(self, request, *args, **kwargs):
         resolve_card(request.data)

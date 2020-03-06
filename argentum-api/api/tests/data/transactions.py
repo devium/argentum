@@ -15,7 +15,7 @@ class TestTransactions(TestObjects):
         id=1,
         time=parse_datetime('2019-12-31T22:05:00Z'),
         guest=TestGuests.ROBY,
-        value=Decimal('6.00'),
+        value=Decimal('9.00'),
         ignore_bonus=False,
         description='default',
         order=None,

@@ -40,18 +40,22 @@ class SerializationTestCase(TestCase):
             ignore_fields = []
         models1_dicts = [model_to_dict(model) for model in models1]
         models2_dicts = [model_to_dict(model) for model in models2]
-        models1_dicts = {
-            key: value
+        models1_dicts = [
+            {
+                key: value
+                for key, value in model_dict.items()
+                if key not in ignore_fields
+            }
             for model_dict in models1_dicts
-            for key, value in model_dict.items()
-            if key not in ignore_fields
-        }
-        models2_dicts = {
-            key: value
+        ]
+        models2_dicts = [
+            {
+                key: value
+                for key, value in model_dict.items()
+                if key not in ignore_fields
+            }
             for model_dict in models2_dicts
-            for key, value in model_dict.items()
-            if key not in ignore_fields
-        }
+        ]
         self.assertCountEqual(models1_dicts, models2_dicts)
 
     def assertPatchReadonly(

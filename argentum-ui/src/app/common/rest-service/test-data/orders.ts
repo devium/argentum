@@ -47,7 +47,36 @@ export namespace Orders {
     [OrderItems.TWO_COKES]
   );
 
-  export const ALL = [TAG_REGISTRATION_TWO, TAG_REGISTRATION_THREE, ONE_WATER_PLUS_TIP, TWO_COKES_PLUS_TIP];
+  export const TAG_REGISTRATION_FOUR = new Order(
+    5,
+    new Date('2019-12-31T22:15:00Z'),
+    Guests.ROBY,
+    undefined,
+    0.00,
+    0.00,
+    true,
+    [OrderItems.ONE_COAT_CHECK_ITEM_3]
+  );
+
+  export const TAG_REGISTRATION_FIVE = new Order(
+    6,
+    new Date('2019-12-31T22:19:00Z'),
+    Guests.ROBY,
+    undefined,
+    0.00,
+    0.00,
+    true,
+    [OrderItems.ONE_COAT_CHECK_ITEM_4]
+  );
+
+  export const ALL = [
+    TAG_REGISTRATION_TWO,
+    TAG_REGISTRATION_THREE,
+    ONE_WATER_PLUS_TIP,
+    TWO_COKES_PLUS_TIP,
+    TAG_REGISTRATION_FOUR,
+    TAG_REGISTRATION_FIVE
+  ];
 
   export const TAG_REGISTRATION_TWO_BY_CARD = new Order(
     1,
@@ -71,8 +100,30 @@ export namespace Orders {
     [OrderItems.ONE_WATER]
   );
 
-  export const ONE_WATER_ONE_COKE_PLUS_TIP = new Order(
+  export const TAG_REGISTRATION_FOUR_BY_CARD = new Order(
     5,
+    new Date('2019-12-31T22:15:00Z'),
+    undefined,
+    undefined,
+    0.00,
+    0.00,
+    true,
+    [OrderItems.ONE_COAT_CHECK_ITEM_3]
+  );
+
+  export const TAG_REGISTRATION_FIVE_BY_CARD = new Order(
+    6,
+    new Date('2019-12-31T22:19:00Z'),
+    undefined,
+    undefined,
+    0.00,
+    0.00,
+    true,
+    [OrderItems.ONE_COAT_CHECK_ITEM_4]
+  );
+
+  export const ONE_WATER_ONE_COKE_PLUS_TIP = new Order(
+    undefined,
     undefined,
     undefined,
     Guests.ROBY.card,
@@ -83,7 +134,7 @@ export namespace Orders {
   );
 
   export const ONE_WATER_ONE_COKE_PLUS_TIP_REFERENCE = new Order(
-    5,
+    7,
     new Date('2019-12-31T22:17:00Z'),
     undefined,
     undefined,

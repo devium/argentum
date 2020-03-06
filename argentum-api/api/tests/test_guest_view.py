@@ -26,7 +26,7 @@ class GuestViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         response = self.client.get('/guests?ordering=-code')
         self.assertPksEqual(response.data, [TestGuests.SHEELAH, TestGuests.ROBY])
 
-        response = self.client.get('/guests?ordering=-balance')
+        response = self.client.get('/guests?ordering=balance')
         self.assertPksEqual(response.data, [TestGuests.SHEELAH, TestGuests.ROBY])
 
     def test_get_search(self):

@@ -31,7 +31,6 @@ fdescribe('OrderService', () => {
       imports: [HttpClientTestingModule],
       providers: [{provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true}],
     });
-    resolved = false;
     http = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
     guestService = createSpyObj('GuestService', ['list']);
@@ -67,7 +66,15 @@ fdescribe('OrderService', () => {
 
   it('should list orders by card', fakeAsync(() => {
     service.listByCard(Guests.ROBY.card).subscribe((orders: Order[]) => {
-      expectArraysEqual(orders, [Orders.TAG_REGISTRATION_TWO_BY_CARD, Orders.ONE_WATER_PLUS_TIP_BY_CARD]);
+      expectArraysEqual(
+        orders,
+        [
+          Orders.TAG_REGISTRATION_TWO_BY_CARD,
+          Orders.ONE_WATER_PLUS_TIP_BY_CARD,
+          Orders.TAG_REGISTRATION_FOUR_BY_CARD,
+          Orders.TAG_REGISTRATION_FIVE_BY_CARD
+        ]
+      );
       resolved = true;
     });
     // Guest information is hidden from non-admin users and products are serialized fully in this view. Only categories need to be fetched.

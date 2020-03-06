@@ -10,7 +10,7 @@ export namespace Guests {
     Statuses.PAID,
     new Date('2019-12-31T22:55:44Z'),
     '567a',
-    4.50,
+    7.50,
     0.00
   );
 
@@ -96,7 +96,7 @@ export namespace Guests {
     Statuses.PAID,
     new Date('2019-12-31T22:57:30Z'),
     '567a',
-    4.50,
+    7.50,
     0.00
   );
 
@@ -105,7 +105,7 @@ export namespace Guests {
     'DEMO-00003',
     'Johanna Doe',
     'jdoe2@tinypic.com',
-    Statuses.PAID,
+    undefined,
     undefined,
     undefined,
     undefined,
@@ -117,7 +117,7 @@ export namespace Guests {
     'DEMO-00003',
     'Johanna Doe',
     'jdoe2@tinypic.com',
-    Statuses.PAID,
+    null,
     null,
     null,
     0.00,
@@ -144,7 +144,7 @@ export namespace Guests {
     Statuses.PAID,
     new Date('2019-12-31T22:55:44Z'),
     '567a',
-    4.50,
+    7.50,
     0.00
   );
 }

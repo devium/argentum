@@ -46,9 +46,9 @@ class ProductRangeViewTestCase(PopulatedTestCase, SerializationTestCase, Authent
         self.assertEqual(response.status_code, 200)
         self.assertValueEqual(
             ProductRange.objects.all(),
-            [TestProductRanges.JUST_WATER_PATCHED, TestProductRanges.JUST_COKE]
+            [TestProductRanges.JUST_WATER_PATCHED, TestProductRanges.EVERYTHING]
         )
-        self.assertValueEqual(TestProductRanges.JUST_WATER.products.all(), [TestProducts.WATER, TestProducts.COKE])
+        self.assertValueEqual(TestProductRanges.JUST_WATER.products.all(), [TestProducts.WATER])
         self.assertJSONEqual(response.content, self.RESPONSES[identifier])
 
     def test_create_permissions(self):

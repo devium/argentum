@@ -59,3 +59,11 @@ class TestProducts(TestObjects):
         price=Decimal('2.40'),
         category=TestCategories.SOFT_DRINKS
     )
+
+    WATER_DEPRECATED = MODEL(
+        id=2,
+        name='Water',
+        deprecated=True,
+        price=Decimal('2.40'),
+        category=TestCategories.SOFT_DRINKS
+    )

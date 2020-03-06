@@ -25,7 +25,6 @@ fdescribe('ProductService', () => {
       imports: [HttpClientTestingModule],
       providers: [{provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true}],
     });
-    resolved = false;
     http = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
     categoryService = createSpyObj('CategoryService', ['list']);

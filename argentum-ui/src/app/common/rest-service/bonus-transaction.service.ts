@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {GuestService} from './guest.service';
-import {BonusTransaction} from '../model/bonus_transaction';
+import {BonusTransaction} from '../model/bonus-transaction';
 import {Observable} from 'rxjs';
 import {Guest} from '../model/guest';
 import {processErrors, withDependencies} from './utils';

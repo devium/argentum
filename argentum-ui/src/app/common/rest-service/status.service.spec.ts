@@ -21,7 +21,6 @@ fdescribe('StatusService', () => {
       imports: [HttpClientTestingModule],
       providers: [{provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true}],
     });
-    resolved = false;
     http = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
     service = new StatusService(http);

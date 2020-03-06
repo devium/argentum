@@ -18,7 +18,7 @@ class TestGuests(TestObjects):
         status=TestStatuses.PAID,
         checked_in=parse_datetime('2019-12-31T22:55:44Z'),
         card='567a',
-        balance=Decimal('4.50'),
+        balance=Decimal('7.50'),
         bonus=Decimal('0.00')
     )
 
@@ -43,7 +43,7 @@ class TestGuests(TestObjects):
         code='DEMO-00003',
         name='Johanna Doe',
         mail='jdoe2@tinypic.com',
-        status=TestStatuses.PAID,
+        status=None,
         checked_in=None,
         card=None,
         balance=Decimal('0.00'),
@@ -70,7 +70,7 @@ class TestGuests(TestObjects):
         status=TestStatuses.PAID,
         checked_in=parse_datetime('2019-12-31T22:57:30Z'),
         card='567a',
-        balance=Decimal('4.50'),
+        balance=Decimal('7.50'),
         bonus=Decimal('0.00')
     )
 
@@ -82,6 +82,6 @@ class TestGuests(TestObjects):
         status=TestStatuses.PAID,
         checked_in=parse_datetime('2019-12-31T22:55:44Z'),
         card='567a',
-        balance=Decimal('4.50'),
+        balance=Decimal('7.50'),
         bonus=Decimal('0.00')
     )

@@ -7,7 +7,7 @@ import {BaseInterceptor} from './base-interceptor';
 import {of} from 'rxjs';
 import {Guests} from './test-data/guests';
 import createSpyObj = jasmine.createSpyObj;
-import {BonusTransaction} from '../model/bonus_transaction';
+import {BonusTransaction} from '../model/bonus-transaction';
 import {expectArraysEqual, testEndpoint} from './test-utils';
 import {BonusTransactions} from './test-data/bonus-transactions';
 
@@ -25,7 +25,6 @@ fdescribe('BonusTransactionService', () => {
       imports: [HttpClientTestingModule],
       providers: [{provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true}],
     });
-    resolved = false;
     http = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
     guestService = createSpyObj('GuestService', ['list']);

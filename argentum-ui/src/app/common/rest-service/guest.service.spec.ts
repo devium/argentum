@@ -26,7 +26,6 @@ fdescribe('GuestService', () => {
       imports: [HttpClientTestingModule],
       providers: [{provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true}],
     });
-    resolved = false;
     http = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
     statusService = createSpyObj('StatusService', ['list']);

@@ -45,12 +45,37 @@ class TestOrderItems(TestObjects):
         discount=Decimal('0.00')
     )
 
-    ALL = [ONE_COAT_CHECK_ITEM_1, ONE_COAT_CHECK_ITEM_2, ONE_WATER, TWO_COKES]
+    ONE_COAT_CHECK_ITEM_3 = MODEL(
+        id=5,
+        order=TestOrders.TAG_REGISTRATION_FOUR,
+        product=TestProducts.COAT_CHECK_ITEM,
+        quantity_initial=1,
+        quantity_current=1,
+        discount=Decimal('0.00')
+    )
+
+    ONE_COAT_CHECK_ITEM_4 = MODEL(
+        id=6,
+        order=TestOrders.TAG_REGISTRATION_FIVE,
+        product=TestProducts.COAT_CHECK_ITEM,
+        quantity_initial=1,
+        quantity_current=1,
+        discount=Decimal('0.00')
+    )
+
+    ALL = [
+        ONE_COAT_CHECK_ITEM_1,
+        ONE_COAT_CHECK_ITEM_2,
+        ONE_WATER,
+        TWO_COKES,
+        ONE_COAT_CHECK_ITEM_3,
+        ONE_COAT_CHECK_ITEM_4
+    ]
 
     # Models below are not stored in the DB, but rather used for POST deserialization testing.
 
     ONE_WATER2 = MODEL(
-        id=5,
+        id=7,
         order=TestOrders.ONE_WATER_ONE_COKE_PLUS_TIP,
         product=TestProducts.WATER,
         quantity_initial=1,
@@ -59,10 +84,10 @@ class TestOrderItems(TestObjects):
     )
 
     ONE_COKE = MODEL(
-        id=6,
+        id=8,
         order=TestOrders.ONE_WATER_ONE_COKE_PLUS_TIP,
         product=TestProducts.COKE,
         quantity_initial=1,
         quantity_current=1,
-        discount=Decimal('0.10')
+        discount=Decimal('0.00')
     )

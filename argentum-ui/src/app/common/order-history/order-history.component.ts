@@ -5,7 +5,7 @@ import {OrderItem} from '../model/order-item';
 import {ConfirmModalComponent} from '../confirm-modal/confirm-modal.component';
 import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {KeypadModalComponent} from '../keypad-modal/keypad-modal.component';
-import {BonusTransaction} from '../model/bonus_transaction';
+import {BonusTransaction} from '../model/bonus-transaction';
 import {Transaction} from '../model/transaction';
 import {TransactionService} from '../rest-service/transaction.service';
 import {BonusTransactionService} from '../rest-service/bonus-transaction.service';

@@ -4,7 +4,7 @@ import {Editor} from '../../common/model/editor';
 import {GuestService} from '../../common/rest-service/guest.service';
 import {combineLatest, Observable, of} from 'rxjs';
 import {Transaction} from '../../common/model/transaction';
-import {BonusTransaction} from '../../common/model/bonus_transaction';
+import {BonusTransaction} from '../../common/model/bonus-transaction';
 import {BonusTransactionService} from '../../common/rest-service/bonus-transaction.service';
 import {TransactionService} from '../../common/rest-service/transaction.service';
 import {flatMap} from 'rxjs/operators';

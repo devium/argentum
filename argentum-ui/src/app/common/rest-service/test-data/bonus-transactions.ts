@@ -1,5 +1,5 @@
 import {Guests} from './guests';
-import {BonusTransaction} from '../../model/bonus_transaction';
+import {BonusTransaction} from '../../model/bonus-transaction';
 
 export namespace BonusTransactions {
   export const BTX1 = new BonusTransaction(

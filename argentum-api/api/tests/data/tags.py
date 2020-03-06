@@ -20,3 +20,21 @@ class TestTags(TestObjects):
     )
 
     ALL = [TWO, THREE]
+
+    THREE_STOLEN = MODEL(
+        id=2,
+        label=3,
+        guest=TestGuests.ROBY
+    )
+
+    FOUR = MODEL(
+        id=3,
+        label=4,
+        guest=TestGuests.ROBY
+    )
+
+    FIVE = MODEL(
+        id=4,
+        label=5,
+        guest=TestGuests.ROBY
+    )

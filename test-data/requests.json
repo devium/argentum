@@ -51,8 +51,7 @@
     {
       "code": "DEMO-00003",
       "name": "Johanna Doe",
-      "mail": "jdoe2@tinypic.com",
-      "status": 1
+      "mail": "jdoe2@tinypic.com"
     }
   ],
   "POST/transactions": {
@@ -129,7 +128,7 @@
     "rate": "0.40"
   },
   "POST/orders": {
-    "guest": 2,
+    "guest": 1,
     "custom_initial": "0.40",
     "items": [
       {
@@ -191,5 +190,21 @@
   },
   "PATCH/tags/1": {
     "label": 5
+  },
+  "POST/tag_registrations#card": {
+    "label": 5,
+    "card": "567a",
+    "order": 6
+  },
+  "POST/tag_registrations#steal": {
+    "label": 3,
+    "guest": 1,
+    "order": 5
+  },
+  "PATCH/tag_registrations/3#commit": {
+    "pending": false
+  },
+  "PATCH/tag_registrations/4#steal": {
+    "pending": false
   }
 }
