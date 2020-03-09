@@ -14,6 +14,7 @@ export function withDependencies<T, TDto, D1, D2, D3>(
 }
 
 function traverseError(error: any): string[] {
+  // Traverses an object recursively until a native type leaf is reached. The traversed path is stored in prepended [brackets].
   if (error instanceof Array) {
     return error.map((element: any, index: number) => `[${index}]${traverseError(element)}`);
   } else if (error instanceof Object) {

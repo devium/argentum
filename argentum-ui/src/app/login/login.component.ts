@@ -2,6 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {MessageComponent} from '../common/message/message.component';
 import {Router} from '@angular/router';
 import {LoginService} from '../common/rest-service/login.service';
+import {environment} from '../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -33,7 +34,14 @@ export class LoginComponent implements OnInit {
           this.waitingForLogin = false;
         }, (err: string) => {
           this.waitingForLogin = false;
-          this.message.error(err);
+          // Hack: the processErrors error handler is tailored to django error messages. This happens when the backend is unreachable.'
+          if (err === 'true') {
+            this.message.error(
+              `Unable to reach server. <a href="${environment.apiUrl}" target="_blank">Click to check API connection manually.</a>`
+            );
+          } else {
+            this.message.error(err);
+          }
         }
       );
   }
