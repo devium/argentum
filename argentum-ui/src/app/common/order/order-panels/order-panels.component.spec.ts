@@ -1,10 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { OrderComponent } from './order.component';
-import { IterablePipe } from '../../common/pipes/iterable.pipe';
-import { RangePipe } from '../../common/pipes/range.pipe';
-import { ProductRange } from '../../common/model/product-range';
+import { OrderPanelsComponent } from './order-panels.component';
+import { IterablePipe } from '../../pipes/iterable.pipe';
+import { RangePipe } from '../../pipes/range.pipe';
+import { ProductRange } from '../../model/product-range';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import {ProductRanges} from '../../common/rest-service/test-data/product-ranges';
+import {ProductRanges} from '../../rest-service/test-data/product-ranges';
 
 class RestServiceStub {
   getProductRangesMeta(): Promise<ProductRange[]> {
@@ -17,13 +17,13 @@ class RestServiceStub {
 }
 
 xdescribe('OrderComponent', () => {
-  let component: OrderComponent;
-  let fixture: ComponentFixture<OrderComponent>;
+  let component: OrderPanelsComponent;
+  let fixture: ComponentFixture<OrderPanelsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
-        OrderComponent,
+        OrderPanelsComponent,
         IterablePipe,
         RangePipe
       ],
@@ -34,7 +34,7 @@ xdescribe('OrderComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(OrderComponent);
+    fixture = TestBed.createComponent(OrderPanelsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

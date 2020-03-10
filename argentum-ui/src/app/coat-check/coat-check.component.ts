@@ -1,21 +1,16 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MessageComponent } from '../common/message/message.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CoatCheckTag } from '../common/model/coat-check-tag';
-import { Guest } from '../common/model/guest';
-import {formatCurrency} from '../common/utils';
-
-class EditorTag extends CoatCheckTag {
-  flaggedForRemoval = false;
-
-  constructor(base: CoatCheckTag) {
-    super();
-    this.id = base.id;
-    this.time = base.time;
-    this.guest = base.guest;
-    this.flaggedForRemoval = false;
-  }
-}
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {OrderPanelsComponent} from '../common/order/order-panels/order-panels.component';
+import {TagRegistrationService} from '../common/rest-service/tag-registration.service';
+import {TagService} from '../common/rest-service/tag.service';
+import {Tag} from '../common/model/tag';
+import {MessageComponent} from '../common/message/message.component';
+import {getPaddingItemCount, getPaginated} from '../common/utils';
+import {CardModalComponent} from '../common/card-modal/card-modal.component';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {Order} from '../common/model/order';
+import {combineLatest, Observable} from 'rxjs';
+import {flatMap, map} from 'rxjs/operators';
+import {TagRegistration} from '../common/model/tag-registration';
 
 @Component({
   selector: 'app-coat-check',
@@ -23,281 +18,160 @@ class EditorTag extends CoatCheckTag {
   styleUrls: ['./coat-check.component.scss']
 })
 export class CoatCheckComponent implements OnInit {
+  getPaginated = getPaginated;
+  getPaddingItemCount = getPaddingItemCount;
+  abs = Math.abs;
 
-  constructor() {
-  }
-  readonly MAX_ID = 999;
+  readonly MAX_LABEL = 999;
 
-  free_page_size: number;
-  max_free_pages_shown: number;
-  stored_page_size: number;
-  max_stored_pages_shown: number;
-  prices: number[];
+  @ViewChild(OrderPanelsComponent)
+  orderComponent: OrderPanelsComponent;
 
-  freeIds: number[] = [];
-  freePage = 1;
-  storedTags: EditorTag[] = [];
-  storedPage = 1;
-
-  activeGuest: Guest = null;
-  activePrice = 0.00;
-
-  waitingForSave = false;
-
-  @ViewChild(MessageComponent)
   message: MessageComponent;
 
-  static getPaginated<T>(data: T[], pageSize: number, page: number): T[] {
-    return data.slice(pageSize * (page - 1), pageSize * page);
+  availableLabelsPerPage: number;
+  stagedLabelsPerPage: number;
+  pagesShown: number;
+  availablePage = 0;
+  stagedPage = 0;
+
+  availableLabels = [];
+  stagedLabels = [];
+  showRegistered = false;
+  registerMode = true;
+
+  constructor(
+    private tagService: TagService,
+    private tagRegistrationService: TagRegistrationService,
+    private modalService: NgbModal
+  ) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.onResize(window);
-    this.refreshTags();
-    // this.cardBar.countdownStream.subscribe(() => this.setActiveGuest(this.cardBar.guest));
+    this.message = this.orderComponent.message;
+    this.orderComponent.commitOrders = false;
+    this.orderComponent.canPlace = CoatCheckComponent.prototype.canPlace.bind(this);
+    this.orderComponent.orderCreationCallback = CoatCheckComponent.prototype.onOrderCreation.bind(this);
+    // We're using our own resize settings here.
+    this.orderComponent.onResize = () => {
+    };
+    this.refresh();
   }
 
   onResize(newWindow: Window): void {
     if (newWindow.innerWidth < 576) {
-      this.free_page_size = 6;
-      this.max_free_pages_shown = 3;
-      this.stored_page_size = 4;
-      this.max_stored_pages_shown = 3;
-      this.prices = [0.00, 0.50, 1.00, 2.00, 3.00];
+      this.availableLabelsPerPage = 4;
+      this.stagedLabelsPerPage = 2;
+      this.pagesShown = 5;
+      this.orderComponent.rangeProductsPerPage = 3;
+      this.orderComponent.orderProductsPerPage = 2;
+      this.orderComponent.pagesShown = 5;
     } else if (newWindow.innerWidth < 768) {
-      this.free_page_size = 8;
-      this.max_free_pages_shown = 5;
-      this.stored_page_size = 4;
-      this.max_stored_pages_shown = 5;
-      this.prices = [0.00, 0.50, 1.00, 2.00, 3.00, 5.00];
+      this.availableLabelsPerPage = 8;
+      this.stagedLabelsPerPage = 4;
+      this.pagesShown = 10;
+      this.orderComponent.rangeProductsPerPage = 3;
+      this.orderComponent.orderProductsPerPage = 4;
+      this.orderComponent.pagesShown = 10;
     } else {
-      this.free_page_size = 12;
-      this.max_free_pages_shown = 5;
-      this.stored_page_size = 6;
-      this.max_stored_pages_shown = 2;
-      this.prices = [0.00, 0.50, 1.00, 2.00, 3.00, 5.00];
+      this.availableLabelsPerPage = 12;
+      this.stagedLabelsPerPage = 6;
+      this.pagesShown = 10;
+      this.orderComponent.rangeProductsPerPage = 11;
+      this.orderComponent.orderProductsPerPage = 6;
+      this.orderComponent.pagesShown = 10;
     }
   }
 
-  getPaginatedEditorTag(data: EditorTag[], pageSize: number, page: number): EditorTag[] {
-    return CoatCheckComponent.getPaginated(data, pageSize, page);
+  clear(): void {
+    this.stagedLabels = [];
+    this.registerMode = true;
   }
 
-  getPaginatedNumber(data: number[], pageSize: number, page: number): number[] {
-    return CoatCheckComponent.getPaginated(data, pageSize, page);
-  }
-
-  getNumPadItems(count: number, pageSize: number, page: number): number {
-    if (count === 0) {
-      return pageSize;
-    }
-    if (count - pageSize * (page - 1) < pageSize) {
-      return pageSize - count % pageSize;
-    }
-    return 0;
-  }
-
-  refreshTags() {
-    // TODO
-    // this.restService.getAllCoatCheckTags()
-    Promise.resolve([])
-      .then((tagIds: number[]) => {
-        // Integer range from 1 to this.MAX_ID.
-        this.freeIds = Array.from({ length: this.MAX_ID }, (v, k) => k + 1);
-        this.freeIds = this.freeIds.filter((id: number) => !tagIds.includes(id));
-
-        // Remove tags in the right panel from the available tags.
-        const storedTagIds = this.storedTags.map((tag: EditorTag) => tag.id);
-        this.freeIds = this.freeIds.filter((id: number) => !storedTagIds.includes(id));
-      })
-      .catch(reason => this.message.error(reason));
-  }
-
-  setActiveGuest(guest: Guest) {
-    if (
-      (!guest && this.activeGuest) ||
-      (guest && !this.activeGuest) ||
-      (guest && this.activeGuest && guest.id !== this.activeGuest.id)
-    ) {
-      this.activeGuest = guest;
-      this.loadGuest(guest);
-    }
-    if (guest === null) {
-      // this.cardBar.reset();
-    }
-  }
-
-  loadGuest(guest: Guest) {
-    // Remove all saved tags from the store tags grid.
-    this.storedTags = this.storedTags.filter((tag: EditorTag) => !tag.time);
-
-    if (guest === null) {
-      return;
-    }
-
-    this.waitingForSave = true;
-    // TODO
-    // this.restService.getGuestCoatCheckTags(guest)
-    Promise.resolve([])
-      .then((tags: CoatCheckTag[]) => {
-        this.storedTags.push(...tags.map((tag: CoatCheckTag) => new EditorTag(tag)));
-        this.waitingForSave = false;
-      })
-      .catch(reason => {
-        this.message.error(reason);
-        this.waitingForSave = false;
-      });
-  }
-
-  addTag(tagId: number) {
-    this.storedTags.push({
-      id: tagId,
-      time: null,
-      guest: null,
-      flaggedForRemoval: false
-    });
-
-    const index = this.freeIds.indexOf(tagId);
-    if (index !== -1) {
-      this.freeIds.splice(index, 1);
-    }
-  }
-
-  removeTag(tag: EditorTag) {
-    if (tag.time === null) {
-      // Not saved yet.
-      const index = this.storedTags.indexOf(tag);
-      if (index !== -1) {
-        this.storedTags.splice(index, 1);
-      }
-      this.freeIds.push(tag.id);
-      this.freeIds.sort((a, b) => a - b);
-    } else {
-      tag.flaggedForRemoval = !tag.flaggedForRemoval;
-    }
-  }
-
-  removeAllTags() {
-    const removedTagIds: number[] = [];
-    for (let i = this.storedTags.length - 1; i >= 0; --i) {
-      const tag = this.storedTags[i];
-      if (tag.time === null) {
-        // Not saved yet.
-        removedTagIds.push(tag.id);
-        this.storedTags.splice(i, 1);
-      } else {
-        tag.flaggedForRemoval = true;
-      }
-    }
-    this.freeIds.push(...removedTagIds);
-    this.freeIds.sort((a, b) => a - b);
-  }
-
-  canRemoveAll(): boolean {
-    // Deleting all is possible as long as there is still one tag that is not flagged for deletion.
-    // Note: unsaved tags are never flagged for deletion.
-    return this.storedTags.find((tag: EditorTag) => !tag.flaggedForRemoval) !== undefined;
-  }
-
-  unflagAllTags() {
-    for (const tag of this.storedTags) {
-      tag.flaggedForRemoval = false;
-    }
-  }
-
-  canUnflagAll(): boolean {
-    // Only if at least one saved tag is flagged for removal.
-    return this.storedTags.find((tag: EditorTag) => tag.flaggedForRemoval) !== undefined;
-  }
-
-  canSave(): boolean {
-    return (
-      // Can't save if a save is already in progress.
-      !this.waitingForSave &&
-      this.storedTags.length > 0 && (
-        // Either a new tag is to be saved or a saved tag is flagged for deletion.
-        this.storedTags.find((tag: EditorTag) => tag.time === null) !== undefined ||
-        this.storedTags.find((tag: EditorTag) => tag.flaggedForRemoval) !== undefined
-      ) && (
-        // Either the scanned guest is still logged in the card bar or the tagging changes are free.
-        // this.cardBar.guest !== null || (
-          // Tags may still be saved without an active card bar if it doesn't cost the guest anything.
-          this.activeGuest !== null && this.activePrice === 0
-        // )
-      )
+  refresh(): void {
+    this.clear();
+    this.tagService.list().subscribe((tags: Tag[]) => {
+        const labelsAvailable = Array.from(Array(this.MAX_LABEL + 1).keys());
+        // Sort registered labels in descending order-panels and slice from available labels to preserve indices.
+        const labelsRegistered = tags.map((tag: Tag) => tag.label).sort((a: number, b: number) => b - a);
+        // At this point availableLabels[i] === i, so labels are easy to mark by their index.
+        for (const labelRegistered of labelsRegistered) {
+          labelsAvailable[labelRegistered] = -labelRegistered;
+        }
+        // Remove 0.
+        labelsAvailable.shift();
+        if (!this.showRegistered) {
+          this.availableLabels = labelsAvailable.filter((label: number) => label > 0);
+        } else {
+          // Registered labels are marked by being negative.
+          this.availableLabels = labelsAvailable;
+        }
+      },
+      (error: string) => this.message.error(error)
     );
   }
 
-  saveTags() {
-    this.waitingForSave = true;
-    // this.cardBar.active = false;
+  toggleRegisteredLabels() {
+    this.showRegistered = !this.showRegistered;
+    this.refresh();
+  }
 
-    const deleteTagIds = this.storedTags
-      .filter((tag: EditorTag) => tag.flaggedForRemoval)
-      .map((tag: EditorTag) => tag.id);
+  availableLabelClicked(label: number) {
+    this.stagedLabels.push(label);
+  }
 
-    const newTagIds = this.storedTags
-      .filter((tag: EditorTag) => tag.time === null)
-      .map((tag: EditorTag) => tag.id);
+  stagedLabelClicked(label: number) {
+    const index = this.stagedLabels.indexOf(label);
+    this.stagedLabels.splice(index, 1);
+  }
 
-    const guest = this.activeGuest;
-    const price = this.activePrice;
+  availableLabelDisabled(label: number): boolean {
+    return !this.registerMode || this.stagedLabels.includes(label);
+  }
 
-    // Deregister first.
-    let pDelete: Promise<void> = Promise.resolve();
-    if (deleteTagIds.length > 0) {
-      // TODO
-      // pDelete = this.restService.deregisterTags(deleteTagIds);
-      pDelete = Promise.resolve();
-    }
+  stagedLabelDisabled(label: number): boolean {
+    return !this.registerMode;
+  }
 
-    // Register new tags.
-    let pRegister: Promise<CoatCheckTag[]> = Promise.resolve([]);
-    if (newTagIds.length > 0) {
-      // TODO
-      // pRegister = this.restService.registerTags(newTagIds, guest, price);
-      pRegister = Promise.resolve([]);
-    }
+  canPlace(): boolean {
+    return this.registerMode && this.stagedLabels.length > 0;
+  }
 
-    Promise.all([pDelete, pRegister])
-      .then(([{}, response]: [void, CoatCheckTag[]]) => {
-        let message = '';
-        if (deleteTagIds.length > 0) {
-          message += `Deregistered the following tags: <b>${deleteTagIds}</b>.<br>`;
-        }
-        if (newTagIds.length > 0) {
-          message += `Registered the following tags: <b>${newTagIds}</b>.<br>`;
-        }
-        message += `
-          For <b>${guest.name}</b>.<br>
-          Price: <b>€${formatCurrency(price)}.</b>
-        `;
-        this.message.success(message);
-
-        // Update saved tags to reflect their saved state.
-        this.storedTags = this.storedTags.filter((tag: EditorTag) => tag.time !== null);
-        for (const tag of response) {
-          this.storedTags.push(new EditorTag(tag));
-        }
-
-        // Update tag views to remove deleted tags and make them available again.
-        this.storedTags = this.storedTags.filter((tag: EditorTag) => !deleteTagIds.includes(tag.id));
-        this.freeIds.push(...deleteTagIds);
-        this.freeIds.sort((a, b) => a - b);
-
-        this.waitingForSave = false;
-        // this.cardBar.active = true;
-        // this.cardBar.reset();
+  onOrderCreation(card: string, order: Order): void {
+    // Already registered labels are still negative when staged.
+    const stagedLabelsAbs = this.stagedLabels.map((label: number) => Math.abs(label));
+    const tagRegistrations$ = this.tagRegistrationService.create(card, stagedLabelsAbs, order);
+    combineLatest(tagRegistrations$).pipe(
+      flatMap((tagRegistrations: TagRegistration[]) => {
+        return combineLatest(this.tagRegistrationService.commit(tagRegistrations, order));
       })
-      .catch(reason => {
-        this.message.error(reason);
-        this.waitingForSave = false;
-        // this.cardBar.active = true;
-      });
+    ).subscribe((tagRegistrations: TagRegistration[]) => {
+        const labels = tagRegistrations.map((tagRegistration: TagRegistration) => tagRegistration.label);
+        this.message.success(`Tag${labels.length > 1 ? 's' : ''} <b>${labels.join(',')}</b> registered for <b>card #${card}</b>`);
+        this.refresh();
+      },
+      (error: string) => this.message.error(error)
+    );
   }
 
-  formatTime(time: Date): string {
-    return `${time.getHours()}:${time.getMinutes()}`;
+  loadTags(): void {
+    this.registerMode = true;
+    this.modalService.open(CardModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
+      (card: string) => {
+        this.tagService.listByCard(card).subscribe(
+          (tags: Tag[]) => {
+            this.registerMode = false;
+            // Negate tag labels, so they are styled as registered.
+            this.stagedLabels = tags.map((tag: Tag) => -tag.label);
+          },
+          (error: string) => {
+            this.message.error(error);
+            this.clear();
+          }
+        );
+      },
+      (cancel: string) => this.clear()
+    );
   }
-
 }

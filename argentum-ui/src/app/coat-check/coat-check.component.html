@@ -1,204 +1,138 @@
-<div (window:resize)="onResize($event.target)" class="h-100 container-fluid d-sm-flex flex-sm-column p-0">
-
-  <div class="container-fluid row h-100 m-0 p-0 container-outer">
-
-    <div class="container-grid-free-tags">
-
-      <!-- Title "button". -->
-      <div class="row m-0">
-        <button
-          disabled
-          class="btn-grid-row-single"
-        >
-          Available tags
-        </button>
-      </div>
-
-      <!-- Actual grid body. -->
-      <div class="row-grid-body">
-        <!-- Free tag IDs. -->
+<div (window:resize)="onResize($event.target)" class="h-100 container-fluid d-flex flex-column p-0">
+  <div class="container-main">
+    <!-- Available tags. -->
+    <div class="container-panel-available">
+      <div class="row-grid">
         <div
-          *ngFor="let tagId of getPaginatedNumber(freeIds, free_page_size, freePage)"
-          class="col-free-tag"
+          *ngFor="let availableLabel of getPaginated(availableLabels, availableLabelsPerPage, availablePage)"
+          class="col-label-available"
         >
           <button
-            (click)="addTag(tagId)"
+            (click)="availableLabelClicked(availableLabel)"
             type="button"
-            class="btn-tag btn-primary"
+            [class.btn-label-available]="availableLabel > 0"
+            [class.btn-label-registered]="availableLabel <= 0"
+            [disabled]="availableLabelDisabled(availableLabel)"
           >
-            <span class="tag-text">{{tagId}}</span>
+            {{abs(availableLabel)}}
           </button>
         </div>
 
         <!-- Padding buttons. -->
         <div
-          *ngFor="let i of 1 | range : getNumPadItems(freeIds.length, free_page_size, freePage)"
-          class="col-free-tag"
-        >
-          <button type="button" class="btn-tag btn-dummy disabled" disabled>
-            <span class="tag-text">&zwnj;</span>
-          </button>
+          *ngFor="let i of 1 | range : getPaddingItemCount(availableLabels.length, availableLabelsPerPage, availablePage)"
+          class="col-label-available"
+          >
+          <button type="button" class="btn-dummy" disabled>&zwnj;</button>
         </div>
       </div>
 
-      <!-- Pagination. -->
-      <div class="row justify-content-center mx-0 my-1">
+      <div class="row-pagination">
         <ngb-pagination
-          [collectionSize]="freeIds.length"
-          [(page)]="freePage"
-          [pageSize]="free_page_size"
-          [maxSize]="max_free_pages_shown"
+          [collectionSize]="availableLabels.length"
+          [(page)]="availablePage"
+          [pageSize]="availableLabelsPerPage"
+          [maxSize]="pagesShown"
           [rotate]="true"
           [ellipses]="false"
-          class="pagination-lg"
+          [boundaryLinks]="true"
         >
         </ngb-pagination>
       </div>
 
-      <!-- Refresh button. -->
-      <div class="row m-0">
+      <div class="row-controls">
         <button
-          (click)="refreshTags()"
-          class="btn-grid-row-single"
-        >
-          <i class="fa fa-refresh fa-lg"></i>
-        </button>
-      </div>
-
-      <!-- Price buttons. -->
-      <div class="row m-0">
-        <div
-          ngbRadioGroup
-          [(ngModel)]="activePrice"
-          class="btn-group btn-group-toggle w-100 m-1"
-        >
-          <label
-            *ngFor="let price of prices"
-            ngbButtonLabel
-            class="btn-primary btn-lg px-1 w-100"
-          >
-            <input ngbButton type="radio" [value]="price">
-            €{{price | number: '1.2-2'}}
-          </label>
-        </div>
-      </div>
-    </div>
-
-
-    <div class="container-grid-stored-tags">
-
-      <!-- Title "button". -->
-      <div class="row m-0">
-        <div class="btn-group w-100 p-1" role="group">
-          <button
-            disabled
-            class="btn btn-primary btn-lg w-100"
-          >
-            {{activeGuest != null ? 'Tags of ' + activeGuest.name : 'Store tags'}}
-          </button>
-          <button
-            *ngIf="activeGuest != null"
-            (click)="setActiveGuest(null)"
-            class="btn btn-primary btn-lg"
-          >
-            <i class="fa fa-times fa-lg"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Actual grid body. -->
-      <div class="row-grid-body">
-        <!-- Stored and to be stored tag buttons. -->
-        <div
-          *ngFor="let tag of getPaginatedEditorTag(storedTags, stored_page_size, storedPage)"
-          class="col-stored-tag"
-        >
-          <button
-            (click)="removeTag(tag)"
-            type="button"
-            class="btn-tag"
-            [class.btn-primary]="tag.time === null"
-            [class.btn-outline-primary]="tag.time !== null && !tag.flaggedForRemoval"
-            [class.btn-hover-red]="tag.time !== null && !tag.flaggedForRemoval"
-            [class.btn-danger]="tag.time !== null && tag.flaggedForRemoval"
-          >
-            <span class="tag-text">{{tag.id}}</span>
-            <span *ngIf="tag.time !== null" class="tag-time" >
-              <i class="fa fa-clock-o"></i>
-              {{formatTime(tag.time)}}
-            </span>
-          </button>
-
-        </div>
-
-        <!-- Padding buttons. -->
-        <div
-          *ngFor="let i of 1 | range : getNumPadItems(storedTags.length, stored_page_size, storedPage)"
-          class="col-stored-tag"
-        >
-          <button type="button" class="btn-tag btn-dummy disabled" disabled>
-            <span class="tag-text">&zwnj;</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Pagination. -->
-      <div class="row justify-content-center mx-0 my-1">
-        <ngb-pagination
-          [collectionSize]="storedTags.length"
-          [(page)]="storedPage"
-          [pageSize]="stored_page_size"
-          [maxSize]="max_stored_pages_shown"
-          [rotate]="true"
-          [ellipses]="false"
-          class="pagination-lg"
-        >
-        </ngb-pagination>
-      </div>
-
-      <!-- Delete and unflag all button. -->
-      <div class="row m-0">
-        <div class="col-6 p-1">
-          <button
-            (click)="removeAllTags()"
-            type="button"
-            class="btn-grid-row-multi"
-            [disabled]="!canRemoveAll()"
-          >
-            <i class="fa fa-trash fa-lg"></i>
-          </button>
-        </div>
-        <div class="col-6 p-1">
-          <button
-            (click)="unflagAllTags()"
-            type="button"
-            class="btn-grid-row-multi"
-            [disabled]="!canUnflagAll()"
-          >
-            <i class="fa fa-undo fa-lg"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Save button. -->
-      <div class="row m-0">
-        <button
-          (click)="saveTags()"
+          (click)="showRegisteredLabels.click()"
           type="button"
-          class="btn-grid-row-single"
-          [disabled]="!canSave()"
+          class="btn-controls-single"
+          [disabled]="!registerMode"
         >
-          <i class="fa fa-save fa-lg mr-1"></i>€{{activePrice | number: '1.2-2'}}
+          <div class="custom-control custom-checkbox">
+            <input
+              #showRegisteredLabels
+              (click)="toggleRegisteredLabels()"
+              type="checkbox"
+              class="custom-control-input"
+              id="showRegisteredLabels"
+              [disabled]="!registerMode"
+            >
+            <label
+              class="custom-control-label"
+              for="showRegisteredLabels"
+              style="pointer-events: none"
+            >
+              Include registered tags
+            </label>
+          </div>
         </button>
       </div>
     </div>
 
-  </div>
+    <!-- Staged tags. -->
+    <div class="container-panel-stage">
+      <div class="row-grid">
+        <div
+          *ngFor="let stagedLabel of getPaginated(stagedLabels, stagedLabelsPerPage, stagedPage)"
+          class="col-label-stage"
+        >
+          <button
+            (click)="stagedLabelClicked(stagedLabel)"
+            type="button"
+            [class.btn-label-available]="stagedLabel > 0"
+            [class.btn-label-registered]="stagedLabel <= 0"
+            [disabled]="stagedLabelDisabled(stagedLabel)"
+          >
+            {{abs(stagedLabel)}}
+          </button>
+        </div>
 
-  <div class="message-wrap position-fixed w-100 px-3">
-    <app-message class="text-center d-block mx-auto"></app-message>
-  </div>
+        <!-- Padding buttons. -->
+        <div
+          *ngFor="let i of 1 | range : getPaddingItemCount(stagedLabels.length, stagedLabelsPerPage, stagedPage)"
+          class="col-label-stage"
+        >
+          <button type="button" class="btn-dummy" disabled>&zwnj;</button>
+        </div>
+      </div>
 
+      <div class="row-pagination">
+        <ngb-pagination
+          [collectionSize]="stagedLabels.length"
+          [(page)]="stagedPage"
+          [pageSize]="stagedLabelsPerPage"
+          [maxSize]="pagesShown"
+          [rotate]="true"
+          [ellipses]="false"
+        >
+        </ngb-pagination>
+      </div>
+
+      <div class="row-controls">
+        <div class="col-6 p-1">
+          <button
+            (click)="clear()"
+            type="button"
+            class="btn-controls-multi"
+            [disabled]="this.stagedLabels.length === 0"
+          >
+            <i *ngIf="registerMode" class="fa fa-trash fa-lg"></i>
+            <i *ngIf="!registerMode" class="fa fa-ban fa-lg"></i>
+          </button>
+        </div>
+
+        <div class="col-6 p-1">
+          <button
+            (click)="loadTags()"
+            type="button"
+            class="btn-controls-multi"
+            [disabled]="this.stagedLabels.length > 0"
+          >
+            <i class="fa fa-credit-card fa-lg mr-1"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <app-order-panels class="flex-grow-1"></app-order-panels>
   <app-navbar></app-navbar>
-
 </div>

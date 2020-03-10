@@ -2,6 +2,16 @@ export function getPaginated(data: any[], pageSize: number, page: number): any[]
   return data.slice(pageSize * (page - 1), pageSize * page);
 }
 
+export function getPaddingItemCount(count: number, pageSize: number, page: number): number {
+  if (count === 0) {
+    return pageSize;
+  }
+  if (count - pageSize * (page - 1) < pageSize) {
+    return pageSize - count % pageSize;
+  }
+  return 0;
+}
+
 export function convertCard(card: string): string {
   if (!card) {
     return card;

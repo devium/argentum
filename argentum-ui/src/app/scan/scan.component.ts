@@ -2,7 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {MessageComponent} from '../common/message/message.component';
 import {CardEntryComponent} from '../common/card-entry/card-entry.component';
 import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
-import {OrderHistoryModalComponent} from '../common/order-history-modal/order-history-modal.component';
+import {OrderHistoryModalComponent} from '../common/order/order-history-modal/order-history-modal.component';
 
 @Component({
   selector: 'app-balance',

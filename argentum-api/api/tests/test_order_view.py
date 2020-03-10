@@ -219,16 +219,16 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         )
         self.assertPermissions(
             lambda: self.client.get(f'/orders?guest__card={TestGuests.ROBY.card}'),
-            [TestUsers.ADMIN, TestUsers.BAR, TestUsers.TERMINAL]
+            [TestUsers.ADMIN, TestUsers.BAR, TestUsers.WARDROBE, TestUsers.TERMINAL]
         )
         self.assertPermissions(lambda: self.client.get(f'/orders/{TestOrders.ONE_WATER_PLUS_TIP.id}'), [])
         self.assertPermissions(
             lambda: self.client.post('/orders', self.REQUESTS['POST/orders']),
-            [TestUsers.ADMIN, TestUsers.BAR]
+            [TestUsers.ADMIN, TestUsers.BAR, TestUsers.WARDROBE]
         )
         self.assertPermissions(
             lambda: self.client.patch(f'/orders/{TestOrders.TWO_COKES_PLUS_TIP.id}', {'pending': False}),
-            [TestUsers.ADMIN, TestUsers.BAR]
+            [TestUsers.ADMIN, TestUsers.BAR, TestUsers.WARDROBE]
         )
         self.assertPermissions(lambda: self.client.get('/order_items', {}), [], [404])
         self.assertPermissions(lambda: self.client.get(f'/order_items/{TestOrderItems.ONE_WATER.id}'), [])
@@ -236,7 +236,7 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         self.assertPermissions(lambda: self.client.get(f'/order_items/{TestOrderItems.ONE_WATER.id}', {}), [])
         self.assertPermissions(
             lambda: self.client.patch(f'/order_items/{TestOrderItems.ONE_WATER.id}', {}),
-            [TestUsers.ADMIN, TestUsers.BAR]
+            [TestUsers.ADMIN, TestUsers.BAR, TestUsers.WARDROBE]
         )
 
     def test_str(self):

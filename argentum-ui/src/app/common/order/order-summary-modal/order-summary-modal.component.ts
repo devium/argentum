@@ -1,9 +1,9 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {Order} from '../../common/model/order';
-import {OrderHistoryComponent} from '../../common/order-history/order-history.component';
-import {Discount} from '../../common/model/discount';
-import {isDarkBackground} from '../../common/utils';
+import {Order} from '../../model/order';
+import {OrderHistoryComponent} from '../order-history/order-history.component';
+import {Discount} from '../../model/discount';
+import {isDarkBackground} from '../../utils';
 
 @Component({
   selector: 'app-order-summary-modal',

@@ -3,7 +3,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {AppComponent} from './app.component';
-import {OrderComponent} from './order/order/order.component';
+import {OrderPanelsComponent} from './common/order/order-panels/order-panels.component';
 import {IterablePipe} from './common/pipes/iterable.pipe';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {KeypadModalComponent} from './common/keypad-modal/keypad-modal.component';
@@ -32,8 +32,8 @@ import {ConfigEditorComponent} from './admin/config-editor/config-editor.compone
 import {GroupBasedComponent} from './common/group-based/group-based.component';
 import {StatusEditorComponent} from './admin/status-editor/status-editor.component';
 import {DiscountEditorComponent} from './admin/discount-editor/discount-editor.component';
-import {OrderHistoryComponent} from './common/order-history/order-history.component';
-import {OrderHistoryModalComponent} from './common/order-history-modal/order-history-modal.component';
+import {OrderHistoryComponent} from './common/order/order-history/order-history.component';
+import {OrderHistoryModalComponent} from './common/order/order-history-modal/order-history-modal.component';
 import {ConfirmModalComponent} from './common/confirm-modal/confirm-modal.component';
 import {PapaParseModule} from 'ngx-papaparse';
 import {CoatCheckComponent} from './coat-check/coat-check.component';
@@ -41,13 +41,14 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {BaseInterceptor} from './common/rest-service/base-interceptor';
 import {EditorComponent} from './admin/editor/editor.component';
 import {CardEntryComponent} from './common/card-entry/card-entry.component';
-import {OrderSummaryModalComponent} from './order/order-summary-modal/order-summary-modal.component';
+import {OrderSummaryModalComponent} from './common/order/order-summary-modal/order-summary-modal.component';
+import {OrderComponent} from './order/order.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CoatCheckComponent,
-    OrderComponent,
+    OrderPanelsComponent,
     IterablePipe,
     KeypadModalComponent,
     RangePipe,
@@ -79,6 +80,7 @@ import {OrderSummaryModalComponent} from './order/order-summary-modal/order-summ
     EditorComponent,
     CardEntryComponent,
     OrderSummaryModalComponent,
+    OrderComponent,
   ],
   imports: [
     BrowserModule,

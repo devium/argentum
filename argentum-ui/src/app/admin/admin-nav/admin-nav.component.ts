@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 export class AdminNavComponent implements OnInit {
   navbarCollapsed = true;
 
-  readonly links = [
+  readonly LINKS = [
     ['/admin/dashboard', 'Dashboard'],
     ['/admin/products', 'Products'],
     ['/admin/categories', 'Categories'],

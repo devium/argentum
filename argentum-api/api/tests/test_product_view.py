@@ -85,7 +85,7 @@ class ProductViewTestCase(PopulatedTestCase, SerializationTestCase, Authenticate
     def test_permissions(self):
         self.assertPermissions(
             lambda: self.client.get('/products'),
-            [TestUsers.ADMIN, TestUsers.BAR, TestUsers.TERMINAL]
+            [TestUsers.ADMIN, TestUsers.BAR, TestUsers.WARDROBE, TestUsers.TERMINAL]
         )
         self.assertPermissions(lambda: self.client.get(f'/products/{TestProducts.WATER.id}'), [])
         self.assertPermissions(

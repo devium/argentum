@@ -26,6 +26,7 @@ export class NavbarComponent extends GroupBasedComponent implements OnInit {
       // {groups: ['coat_check'], target: '/coat_check', name: 'Coat check'},
       {groups: ['order'], target: '/order', name: 'Order'},
       {groups: ['check_in', 'transfer'], target: '/checkin', name: 'Check-in'},
+      {groups: ['coat_check'], target: '/coat_check', name: 'Coat check'},
       {groups: ['scan'], target: '/scan', name: 'Scan'},
       {groups: ['admin'], target: '/admin', name: 'Admin'},
     ].filter((link: LinkSpec) => this.hasGroup(link.groups));

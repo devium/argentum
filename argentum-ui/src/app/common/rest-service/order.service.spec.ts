@@ -84,7 +84,7 @@ fdescribe('OrderService', () => {
     testEndpoint(httpTestingController, requests, responses, 'GET', `/orders?guest__card=${Guests.ROBY.card}`);
   }));
 
-  it('should create a new order', fakeAsync(() => {
+  it('should create a new order-panels', fakeAsync(() => {
     service.create(Orders.ONE_WATER_ONE_COKE_PLUS_TIP).subscribe((order: Order) => {
       expect(order.equals(Orders.ONE_WATER_ONE_COKE_PLUS_TIP_REFERENCE)).toBeTruthy();
       resolved = true;
@@ -97,7 +97,7 @@ fdescribe('OrderService', () => {
     testEndpoint(httpTestingController, requests, responses, 'POST', '/orders', '#card');
   }));
 
-  it('should commit an order', fakeAsync(() => {
+  it('should commit an order-panels', fakeAsync(() => {
     service.commit(Orders.TWO_COKES_PLUS_TIP).subscribe((order: Order) => {
       expect(order.equals(Orders.TWO_COKES_PLUS_TIP_PATCHED_REFERENCE)).toBeTruthy();
       resolved = true;
@@ -128,7 +128,7 @@ fdescribe('OrderService', () => {
       expect(orderItem.equals(OrderItems.ONE_WATER_PATCHED)).toBeTruthy();
       resolved = true;
     });
-    // No guest information on an order item. Products, while realistically known, are not serialized fully in this view.
+    // No guest information on an order-panels item. Products, while realistically known, are not serialized fully in this view.
     // CategoryService would implicitly be called by ProductService.
     expect(guestService.list).toHaveBeenCalledTimes(0);
     expect(productService.list).toHaveBeenCalledTimes(1);

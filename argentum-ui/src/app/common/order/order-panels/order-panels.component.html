@@ -1,0 +1,210 @@
+<div (window:resize)="onResize($event.target)" class="container-main">
+
+  <div class="message-wrap position-fixed">
+    <app-message class="text-center d-block mx-auto"></app-message>
+  </div>
+
+  <div class="container-panel-offer">
+
+    <!-- Product range selection. -->
+    <div class="row-header">
+      <div ngbDropdown class="w-100 p-1">
+        <button
+          class="btn btn-primary w-100"
+          ngbDropdownToggle
+        >
+          {{selectedRange ? selectedRange.name : 'Select product range'}}
+        </button>
+        <div ngbDropdownMenu>
+          <button
+            *ngFor="let productRange of productRanges"
+            (click)="setProductRange(productRange)"
+            class="dropdown-item"
+          >
+            {{productRange.name}}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actual grid body. -->
+    <div class="row-grid">
+
+      <ng-container *ngIf="selectedRange && selectedRange.products">
+        <!-- Product buttons. -->
+        <div
+          *ngFor="let product of getPaginated(selectedRange.products, rangeProductsPerPage, rangePage)"
+          class="col-product-offer"
+        >
+          <button
+            (click)="rangeProductClicked(product)"
+            type="button"
+            class="btn-product"
+            [style.background-color]="product.category ? product.category.color : '#ffffff'"
+            [class.dark-bg]="product.category && isDarkBackground(product.category.color)"
+          >
+            <div class="product-name">{{product.name}}</div>
+            <div>
+              <span class="product-price">€{{formatCurrency(product.price)}}</span>
+            </div>
+          </button>
+        </div>
+      </ng-container>
+
+      <!-- Padding buttons. -->
+      <div
+        *ngFor="let i of 1 | range : getPaddingItemCount(selectedRange && selectedRange.products ? selectedRange.products.length : 0, rangeProductsPerPage, rangePage)"
+        class="col-product-offer"
+      >
+        <button type="button" class="btn-dummy" disabled>
+          <div class="product-name">&zwnj;</div>
+          <div>&zwnj;</div>
+        </button>
+      </div>
+
+      <!-- Custom product button. -->
+      <div class="col-product-offer">
+        <button
+          (click)="addCustomProduct()"
+          type="button"
+          class="btn-custom"
+        >
+          <div class="product-name">Custom</div>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Pagination. -->
+    <div class="row-pagination">
+      <ngb-pagination
+        [collectionSize]="selectedRange && selectedRange.products ? selectedRange.products.length : 0"
+        [(page)]="rangePage"
+        [pageSize]="rangeProductsPerPage"
+        [maxSize]="pagesShown"
+        [rotate]="true"
+        [ellipses]="false"
+      >
+      </ngb-pagination>
+    </div>
+
+    <!-- Refresh and order-panels history buttons. -->
+    <div class="row-controls">
+      <div class="col-6 p-1">
+        <button
+          (click)="refreshProducts()"
+          type="button"
+          class="btn-controls-multi"
+          [disabled]="!selectedRange"
+        >
+          <i class="fa fa-refresh fa-lg"></i>
+        </button>
+      </div>
+      <div class="col-6 p-1">
+        <button
+          (click)="showOrderHistory()"
+          type="button"
+          class="btn-controls-multi"
+        >
+          <i class="fa fa-history fa-lg"></i>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="container-panel-stage">
+
+    <!-- "Current order-panels" title "button". -->
+    <div class="row-header">
+      <button
+        disabled
+        class="btn-controls-single"
+      >
+        Current order: <b>€{{formatCurrency(total)}}</b>
+      </button>
+    </div>
+
+    <!-- Actual grid body. -->
+    <div class="row-grid">
+
+      <!-- Product buttons. -->
+      <div
+        *ngFor="let orderItem of getPaginated(orderItems, orderProductsPerPage, orderPage)"
+        class="col-product-stage"
+      >
+
+        <button
+          (mouseup)="orderItemClicked(orderItem)"
+          type="button"
+          class="btn-product"
+          [style.background-color]="orderItem.product.category ? orderItem.product.category.color : '#ffffff'"
+          [class.dark-bg]="orderItem.product.category && isDarkBackground(orderItem.product.category.color)"
+          [class.btn-outline-primary]="!orderItem.product.id"
+        >
+          <div class="product-name">{{orderItem.product.name}}</div>
+          <div>
+            <span class="product-price">€{{orderItem.product.price | number: '1.2-2'}}</span>
+            <span *ngIf="orderItem.product.id" class="product-quantity">x{{orderItem.quantityInitial}}</span>
+          </div>
+        </button>
+      </div>
+
+      <!-- Padding buttons. -->
+      <div
+        *ngFor="let i of 1 | range : getPaddingItemCount(orderItems.length, orderProductsPerPage, orderPage)"
+        class="col-product-stage"
+      >
+        <button type="button" class="btn-dummy" disabled>
+          <div class="product-name">&zwnj;</div>
+          <div>&zwnj;</div>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Pagination. -->
+    <div class="row-pagination">
+      <ngb-pagination
+        [collectionSize]="orderItems.length"
+        [(page)]="orderPage"
+        [pageSize]="orderProductsPerPage"
+        [maxSize]="pagesShown"
+        [rotate]="true"
+        [ellipses]="false"
+      >
+
+      </ngb-pagination>
+    </div>
+
+    <!-- Clear and buy buttons. -->
+    <div class="row-controls">
+      <div class="col-6 p-1">
+        <button
+          (click)="clear()"
+          type="button"
+          class="btn-controls-multi"
+          [disabled]="this.orderItems.length === 0"
+        >
+          <i class="fa fa-trash fa-lg"></i>
+        </button>
+      </div>
+
+      <div class="col-6 p-1">
+        <button
+          (click)="placeOrder()"
+          type="button"
+          class="btn-controls-multi"
+          [disabled]="!canPlace()"
+        >
+          <i class="fa fa-shopping-cart fa-lg mr-1"></i>
+          <i class="fa fa-long-arrow-right fa-lg"></i>
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

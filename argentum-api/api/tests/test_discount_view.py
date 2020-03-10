@@ -54,7 +54,7 @@ class DiscountViewTestCase(PopulatedTestCase, SerializationTestCase, Authenticat
     def test_permissions(self):
         self.assertPermissions(
             lambda: self.client.get('/discounts'),
-            [TestUsers.ADMIN, TestUsers.BAR, TestUsers.TERMINAL]
+            [TestUsers.ADMIN, TestUsers.BAR, TestUsers.WARDROBE, TestUsers.TERMINAL]
         )
         self.assertPermissions(lambda: self.client.get(f'/discounts/{TestDiscounts.PAID_SOFT_DRINKS.id}'), [])
         self.assertPermissions(

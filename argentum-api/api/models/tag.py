@@ -1,9 +1,10 @@
 from django.db import models
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import serializers, mixins, viewsets
+from rest_framework import serializers, viewsets
 from rest_framework.filters import OrderingFilter
 
 from api.models import Guest
+from api.models.utils import ListByCardModelMixin
 from argentum.permissions import StrictModelPermissions
 
 
@@ -22,7 +23,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class TagViewSet(
-    mixins.ListModelMixin,
+    ListByCardModelMixin,
     viewsets.GenericViewSet
 ):
     queryset = Tag.objects.all()

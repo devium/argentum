@@ -1,32 +1,37 @@
 import {Component, NgZone, OnInit, ViewChild} from '@angular/core';
-import {Product} from '../../common/model/product';
+import {Product} from '../../model/product';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {KeypadModalComponent} from '../../common/keypad-modal/keypad-modal.component';
-import {ProductRange} from '../../common/model/product-range';
-import {MessageComponent} from '../../common/message/message.component';
-import {OrderHistoryModalComponent} from '../../common/order-history-modal/order-history-modal.component';
-import {Category} from '../../common/model/category';
-import {ProductRangeService} from '../../common/rest-service/product-range.service';
-import {OrderService} from '../../common/rest-service/order.service';
-import {CategoryService} from '../../common/rest-service/category.service';
-import {Order} from '../../common/model/order';
-import {OrderItem} from '../../common/model/order-item';
-import {CardModalComponent} from '../../common/card-modal/card-modal.component';
-import {formatCurrency, getPaginated, isDarkBackground} from '../../common/utils';
+import {KeypadModalComponent} from '../../keypad-modal/keypad-modal.component';
+import {ProductRange} from '../../model/product-range';
+import {MessageComponent} from '../../message/message.component';
+import {OrderHistoryModalComponent} from '../order-history-modal/order-history-modal.component';
+import {Category} from '../../model/category';
+import {ProductRangeService} from '../../rest-service/product-range.service';
+import {OrderService} from '../../rest-service/order.service';
+import {CategoryService} from '../../rest-service/category.service';
+import {Order} from '../../model/order';
+import {OrderItem} from '../../model/order-item';
+import {CardModalComponent} from '../../card-modal/card-modal.component';
+import {formatCurrency, getPaddingItemCount, getPaginated, isDarkBackground} from '../../utils';
 import {OrderSummaryModalComponent} from '../order-summary-modal/order-summary-modal.component';
-import {DiscountService} from '../../common/rest-service/discount.service';
-import {combineLatest} from 'rxjs';
-import {Discount} from '../../common/model/discount';
+import {DiscountService} from '../../rest-service/discount.service';
+import {combineLatest, from, Observable, of, throwError} from 'rxjs';
+import {Discount} from '../../model/discount';
+import {catchError, flatMap, map} from 'rxjs/operators';
 
 @Component({
-  selector: 'app-order',
-  templateUrl: 'order.component.html',
-  styleUrls: ['order.component.scss']
+  selector: 'app-order-panels',
+  templateUrl: 'order-panels.component.html',
+  styleUrls: ['order-panels.component.scss']
 })
-export class OrderComponent implements OnInit {
+export class OrderPanelsComponent implements OnInit {
   isDarkBackground = isDarkBackground;
   formatCurrency = formatCurrency;
   getPaginated = getPaginated;
+  getPaddingItemCount = getPaddingItemCount;
+
+  orderCreationCallback = (card: string, order: Order) => {
+  };
 
   rangeProductsPerPage: number;
   orderProductsPerPage: number;
@@ -38,6 +43,7 @@ export class OrderComponent implements OnInit {
   selectedRange: ProductRange = null;
   orderItems: OrderItem[] = [];
   total = 0;
+  commitOrders = true;
 
   @ViewChild(MessageComponent)
   message: MessageComponent;
@@ -133,16 +139,6 @@ export class OrderComponent implements OnInit {
     this.updateTotal();
   }
 
-  getNumPadItems(count: number, pageSize: number, page: number): number {
-    if (count === 0) {
-      return pageSize;
-    }
-    if (count - pageSize * (page - 1) < pageSize) {
-      return pageSize - count % pageSize;
-    }
-    return 0;
-  }
-
   addCustomProduct(): void {
     const modal = this.modalService.open(KeypadModalComponent, {backdrop: 'static', size: 'sm'});
     (<KeypadModalComponent>modal.componentInstance).captureKeyboard = true;
@@ -160,9 +156,14 @@ export class OrderComponent implements OnInit {
     this.updateTotal();
   }
 
+  canPlace(): boolean {
+    return this.orderItems.length > 0;
+  }
+
   placeOrder(): void {
-    this.modalService.open(CardModalComponent, {backdrop: 'static', size: 'sm'}).result.then(
-      (card: string) => {
+    const cardModal = this.modalService.open(CardModalComponent, {backdrop: 'static', size: 'sm'});
+    const cardOrder$ = from(cardModal.result).pipe(
+      flatMap((card: string) => {
         const custom = this.orderItems
           .filter((orderItem: OrderItem) => orderItem.product.id === undefined)
           .map((orderItem: OrderItem) => orderItem.product.price * orderItem.quantityInitial)
@@ -178,37 +179,41 @@ export class OrderComponent implements OnInit {
           this.orderItems.filter((orderItem: OrderItem) => orderItem.product.id !== undefined)
         );
 
-        const order$ = this.orderService.create(newOrder, this.selectedRange.products);
+        const createdOrder$ = this.orderService.create(newOrder, this.selectedRange ? this.selectedRange.products : []);
         const discounts$ = this.discountService.listByCard(card);
 
-        combineLatest(order$, discounts$).subscribe(
-          ([order, discounts]: [Order, Discount[]]) => {
-            const modal = this.modalService.open(OrderSummaryModalComponent, {backdrop: 'static'});
-            const orderSummaryModalComponent = <OrderSummaryModalComponent>modal.componentInstance;
-            orderSummaryModalComponent.order = order;
-            orderSummaryModalComponent.discounts = discounts;
-            orderSummaryModalComponent.orderHistoryComponent.message = this.message;
-
-            modal.result.then(
-              () => {
-                this.orderService.commit(order).subscribe(
-                  (committedOrder: Order) => {
-                    this.message.success(`Order placed for <b>card #${card}</b>`);
-                    this.clear();
-                  },
-                  (error: string) => {
-                    this.message.error(error);
-                  }
-                );
-              },
-              (cancel: string) => void(0)
-            );
-          },
-          (error: string) => this.message.error(error)
-        );
-      },
-      (cancel: string) => void(0)
+        return combineLatest(of(card), createdOrder$, discounts$);
+      }),
+      flatMap(([card, order, discounts]: [string, Order, Discount[]]) => {
+        const modal = this.modalService.open(OrderSummaryModalComponent, {backdrop: 'static'});
+        const orderSummaryModalComponent = <OrderSummaryModalComponent>modal.componentInstance;
+        orderSummaryModalComponent.order = order;
+        orderSummaryModalComponent.discounts = discounts;
+        orderSummaryModalComponent.orderHistoryComponent.message = this.message;
+        return combineLatest(of(card), of(order), from(modal.result));
+      }),
+      flatMap(([card, order, result]: [string, Order, any]) => {
+        if (this.commitOrders) {
+          return combineLatest(of(card), this.orderService.commit(order));
+        } else {
+          return combineLatest(of(card), of(order));
+        }
+      })
     );
+
+    cardOrder$.subscribe(([card, order]: [string, Order]) => {
+        if (this.commitOrders) {
+          this.message.success(`Order placed for <b>card #${card}</b>`);
+        } else {
+          this.orderCreationCallback(card, order);
+        }
+        this.clear();
+      },
+      (error: string) => {
+        if (error !== 'Cancel click') {
+          this.message.error(error);
+        }
+      });
   }
 
   showOrderHistory() {
@@ -222,7 +227,7 @@ export class OrderComponent implements OnInit {
         orderHistoryModalComponent.orderHistory.allowCancel = true;
         orderHistoryModalComponent.orderHistory.getOrderHistory(card);
       },
-      (cancel: string) => void(0)
+      (cancel: string) => void (0)
     );
   }
 }

@@ -27,6 +27,13 @@ class TagViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedTes
         self.assertPksEqual(response.data, [TestTags.TWO])
         self.assertJSONEqual(response.content, self.RESPONSES[f'GET/tags?guest__card={TestGuests.ROBY.card}'])
 
+    def test_get_by_card_not_found(self):
+        self.login(TestUsers.TERMINAL)
+
+        response = self.client.get('/tags?guest__card=NOTFOUND')
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.data['guest__card'][0], 'Card not registered.')
+
     def test_permissions(self):
         self.assertPermissions(lambda: self.client.get('/tags'), [TestUsers.ADMIN, TestUsers.WARDROBE])
         # Detail requests yield a 404 because those endpoints aren't even created.
@@ -36,7 +43,7 @@ class TagViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedTes
             expected_errors=[404]
         )
         self.assertPermissions(
-            lambda: self.client.get(f'/tags?guest__card={TestGuests.ROBY.id}'),
+            lambda: self.client.get(f'/tags?guest__card={TestGuests.ROBY.card}'),
             [TestUsers.ADMIN, TestUsers.WARDROBE, TestUsers.TERMINAL]
         )
         self.assertPermissions(

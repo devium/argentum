@@ -29,7 +29,7 @@ describe('GroupBasedComponent', () => {
 
   it('should read groups from local storage', () => {
     spyOn(localStorage, 'getItem').and.callFake((item: string) => {
-      return item === 'groups' ? 'admin,scan,order' : null;
+      return item === 'groups' ? 'admin,scan,order-panels' : null;
     });
     fixture.detectChanges();
     expect(component.groupNames).toEqual(['admin', 'scan', 'order']);
@@ -37,7 +37,7 @@ describe('GroupBasedComponent', () => {
 
   it('should properly check for any of the queried groups', () => {
     spyOn(localStorage, 'getItem').and.callFake((item: string) => {
-      return item === 'groups' ? 'admin,scan,order' : null;
+      return item === 'groups' ? 'admin,scan,order-panels' : null;
     });
     fixture.detectChanges();
     expect(component.hasGroup(['admin'])).toBeTruthy();

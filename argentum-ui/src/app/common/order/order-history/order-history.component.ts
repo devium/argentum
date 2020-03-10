@@ -1,20 +1,20 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Order} from '../model/order';
-import {MessageComponent} from '../message/message.component';
-import {OrderItem} from '../model/order-item';
-import {ConfirmModalComponent} from '../confirm-modal/confirm-modal.component';
+import {Order} from '../../model/order';
+import {MessageComponent} from '../../message/message.component';
+import {OrderItem} from '../../model/order-item';
+import {ConfirmModalComponent} from '../../confirm-modal/confirm-modal.component';
 import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {KeypadModalComponent} from '../keypad-modal/keypad-modal.component';
-import {BonusTransaction} from '../model/bonus-transaction';
-import {Transaction} from '../model/transaction';
-import {TransactionService} from '../rest-service/transaction.service';
-import {BonusTransactionService} from '../rest-service/bonus-transaction.service';
-import {OrderService} from '../rest-service/order.service';
+import {KeypadModalComponent} from '../../keypad-modal/keypad-modal.component';
+import {BonusTransaction} from '../../model/bonus-transaction';
+import {Transaction} from '../../model/transaction';
+import {TransactionService} from '../../rest-service/transaction.service';
+import {BonusTransactionService} from '../../rest-service/bonus-transaction.service';
+import {OrderService} from '../../rest-service/order.service';
 import {combineLatest, of} from 'rxjs';
-import {AbstractTimeModel} from '../model/abstract-model';
-import {Guest} from '../model/guest';
-import {GuestService} from '../rest-service/guest.service';
-import {formatCurrency, formatDiscount, formatTime} from '../utils';
+import {AbstractTimeModel} from '../../model/abstract-model';
+import {Guest} from '../../model/guest';
+import {GuestService} from '../../rest-service/guest.service';
+import {formatCurrency, formatDiscount, formatTime} from '../../utils';
 import {flatMap} from 'rxjs/operators';
 
 @Component({

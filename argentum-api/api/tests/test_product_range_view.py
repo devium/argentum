@@ -74,7 +74,7 @@ class ProductRangeViewTestCase(PopulatedTestCase, SerializationTestCase, Authent
         # General access to list action.
         self.assertPermissions(
             lambda: self.client.get('/product_ranges'),
-            [TestUsers.ADMIN, TestUsers.BAR]
+            [TestUsers.ADMIN, TestUsers.BAR, TestUsers.WARDROBE]
         )
         # Results should be filtered according to permissions.
         self.login(TestUsers.ADMIN)

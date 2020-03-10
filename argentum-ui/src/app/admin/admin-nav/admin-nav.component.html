@@ -10,7 +10,7 @@
 
   <div class="collapse navbar-collapse" [ngbCollapse]="navbarCollapsed">
     <ul id="adminLinks" class="navbar-nav justify-content-center mx-auto">
-      <li *ngFor="let link of links" class="nav-item">
+      <li *ngFor="let link of LINKS" class="nav-item">
         <a class="nav-link" [routerLink]="[link[0]]" routerLinkActive="active">{{link[1]}}</a>
       </li>
     </ul>

@@ -6,7 +6,7 @@ import { AdminNavComponent } from './admin/admin-nav/admin-nav.component';
 import { RangeEditorComponent } from './admin/range-editor/range-editor.component';
 import { ProductEditorComponent } from './admin/product-editor/product-editor.component';
 import { NavbarComponent } from './common/navbar/navbar.component';
-import { OrderComponent } from './order/order/order.component';
+import { OrderPanelsComponent } from './common/order/order-panels/order-panels.component';
 import { CategoryEditorComponent } from './admin/category-editor/category-editor.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { RangePipe } from './common/pipes/range.pipe';
@@ -21,7 +21,7 @@ xdescribe('AppComponent', () => {
       declarations: [
         AppComponent,
         AdminNavComponent,
-        OrderComponent,
+        OrderPanelsComponent,
         NavbarComponent,
         ProductEditorComponent,
         CategoryEditorComponent,
