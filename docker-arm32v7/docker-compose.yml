@@ -12,8 +12,9 @@ services:
       context: ..
       dockerfile: docker-arm32v7/api.Dockerfile
     image: arm32v7/argentum-api
-    image: 514036853215.dkr.ecr.eu-central-1.amazonaws.com/arm32v7/argentum-api:latest
+    image: $API_REMOTE_TAG
     environment:
+      - DJANGO_KEY
       - POSTGRES_PASSWORD
       - POSTGRES_HOST=postgres
     ports:
@@ -26,7 +27,7 @@ services:
       context: ..
       dockerfile: docker-arm32v7/ui.Dockerfile
     image: arm32v7/argentum-ui
-    image: 514036853215.dkr.ecr.eu-central-1.amazonaws.com/arm32v7/argentum-ui:latest
+    image: $UI_REMOTE_TAG
     ports:
       - '80:80'
       - '443:443'
