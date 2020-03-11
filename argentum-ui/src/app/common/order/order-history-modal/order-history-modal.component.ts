@@ -8,7 +8,7 @@ import { OrderHistoryComponent } from '../order-history/order-history.component'
   styleUrls: ['./order-history-modal.component.scss']
 })
 export class OrderHistoryModalComponent implements OnInit {
-  @ViewChild(OrderHistoryComponent)
+  @ViewChild(OrderHistoryComponent, { static: true })
   orderHistory: OrderHistoryComponent;
 
   constructor(public activeModal: NgbActiveModal) {

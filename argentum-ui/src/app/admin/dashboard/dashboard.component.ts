@@ -6,6 +6,7 @@ import {Chart} from 'chart.js';
 import palette from 'google-palette';
 import {StatisticsService} from '../../common/rest-service/statistics.service';
 import {formatCurrency} from '../../common/utils';
+import {saveAs} from 'file-saver';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,13 +17,19 @@ export class DashboardComponent implements OnInit {
   statistics: Statistics;
   products: Map<number, Product> = new Map<number, Product>();
 
-  @ViewChild(MessageComponent)
+  @ViewChild(MessageComponent, { static: true })
   message: MessageComponent;
 
-  @ViewChild('salesCanvas')
+  @ViewChild('salesCanvas', { static: true })
   salesCanvas: ElementRef;
 
   salesChart: Chart;
+
+  salesLabels: string[];
+  salesQuantities: number[];
+  salesQuantitiesTotal: number;
+  salesValues: number[];
+  salesValuesTotal: number;
 
   constructor(private statisticsService: StatisticsService) {
   }
@@ -45,13 +52,13 @@ export class DashboardComponent implements OnInit {
     const salesContext = this.salesCanvas.nativeElement.getContext('2d');
 
     const quantitySalesSorted = this.statistics.quantitySales.sort((qs1: QuantitySales, qs2: QuantitySales) => qs1.quantity - qs2.quantity);
-    const quantitySalesData = quantitySalesSorted.map((qs: QuantitySales) => qs.quantity);
-    const sumQuantitySales = quantitySalesData.reduce((a: number, b: number) => a + b, 0);
+    this.salesQuantities = quantitySalesSorted.map((qs: QuantitySales) => qs.quantity);
+    this.salesQuantitiesTotal = this.salesQuantities.reduce((a: number, b: number) => a + b, 0);
 
-    const valueSalesData = quantitySalesSorted.map((qs: QuantitySales) => qs.value);
-    const sumValueSales = valueSalesData.reduce((a: number, b: number) => a + b, 0);
+    this.salesValues = quantitySalesSorted.map((qs: QuantitySales) => qs.value);
+    this.salesValuesTotal = this.salesValues.reduce((a: number, b: number) => a + b, 0);
 
-    const labels = quantitySalesSorted.map((qs: QuantitySales) => qs.product.name);
+    this.salesLabels = quantitySalesSorted.map((qs: QuantitySales) => qs.product.name);
     const colorPalette = palette('qualitative', quantitySalesSorted.length).map((hex: string) => '#' + hex);
 
     this.salesChart = new Chart(salesContext, {
@@ -59,11 +66,11 @@ export class DashboardComponent implements OnInit {
       data: {
         datasets: [
           {
-            data: quantitySalesData,
+            data: this.salesQuantities,
             backgroundColor: colorPalette
           },
           {
-            data: valueSalesData,
+            data: this.salesValues,
             backgroundColor: colorPalette
           }
         ]
@@ -77,14 +84,14 @@ export class DashboardComponent implements OnInit {
           callbacks: {
             label: tooltipModel => {
               if (tooltipModel.datasetIndex === 0) {
-                const label = labels[tooltipModel.index];
-                const value = quantitySalesData[tooltipModel.index];
-                const percentage = value / sumQuantitySales;
+                const label = this.salesLabels[tooltipModel.index];
+                const value = this.salesQuantities[tooltipModel.index];
+                const percentage = value / this.salesQuantitiesTotal;
                 return `${label}: ${value} (${formatCurrency(percentage * 100)}%)`;
               } else {
-                const label = labels[tooltipModel.index];
-                const value = valueSalesData[tooltipModel.index];
-                const percentage = value / sumValueSales;
+                const label = this.salesLabels[tooltipModel.index];
+                const value = this.salesValues[tooltipModel.index];
+                const percentage = value / this.salesValuesTotal;
                 return `${label}: €${formatCurrency(value)} (${formatCurrency(percentage * 100)}%)`;
               }
             }
@@ -92,6 +99,21 @@ export class DashboardComponent implements OnInit {
         }
       }
     });
+  }
+
+  downloadSales(): void {
+    const rows = Array(this.salesLabels.length).fill(0).map((_, i) => {
+      return [
+        this.salesLabels[i],
+        this.salesQuantities[i],
+        this.salesQuantities[i] / this.salesQuantitiesTotal,
+        this.salesValues[i],
+        this.salesValues[i] / this.salesValuesTotal
+      ].join(',');
+    });
+    rows.unshift(['Product', 'Quantity', 'Quantity %', 'Value', 'Value %'].join(','));
+    const blob = new Blob([rows.join('\n')], {type: 'text/csv'});
+    saveAs(blob, 'sales.csv');
   }
 
 }

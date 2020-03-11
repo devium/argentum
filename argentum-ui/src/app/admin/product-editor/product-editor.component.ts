@@ -17,7 +17,7 @@ import {EditorComponent} from '../editor/editor.component';
   styleUrls: ['product-editor.component.scss']
 })
 export class ProductEditorComponent implements OnInit {
-  @ViewChild(EditorComponent)
+  @ViewChild(EditorComponent, { static: true })
   editor: EditorComponent;
   message: MessageComponent;
 

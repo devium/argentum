@@ -11,7 +11,7 @@ import {EditorComponent} from '../editor/editor.component';
   styleUrls: ['range-editor.component.scss']
 })
 export class RangeEditorComponent implements OnInit {
-  @ViewChild(EditorComponent)
+  @ViewChild(EditorComponent, { static: true })
   editor: EditorComponent;
   message: MessageComponent;
 

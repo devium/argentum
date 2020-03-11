@@ -20,7 +20,7 @@ export class EditorComponent implements OnInit, OnDestroy {
   formatCurrency = formatCurrency;
   formatDate = formatDate;
 
-  @ViewChild(MessageComponent)
+  @ViewChild(MessageComponent, { static: true })
   message: MessageComponent;
 
   @Input()

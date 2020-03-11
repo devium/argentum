@@ -19,7 +19,7 @@ import {flatMap} from 'rxjs/operators';
   styleUrls: ['checkin.component.scss']
 })
 export class CheckinComponent extends GroupBasedComponent implements OnInit {
-  @ViewChild(MessageComponent)
+  @ViewChild(MessageComponent, { static: true })
   message: MessageComponent;
 
   constructor(

@@ -45,7 +45,7 @@ export class OrderPanelsComponent implements OnInit {
   total = 0;
   commitOrders = true;
 
-  @ViewChild(MessageComponent)
+  @ViewChild(MessageComponent, { static: true })
   message: MessageComponent;
 
   constructor(

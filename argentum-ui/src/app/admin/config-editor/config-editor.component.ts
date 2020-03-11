@@ -11,7 +11,7 @@ import {EditorComponent} from '../editor/editor.component';
   styleUrls: ['./config-editor.component.scss']
 })
 export class ConfigEditorComponent implements OnInit {
-  @ViewChild(EditorComponent)
+  @ViewChild(EditorComponent, { static: true })
   editor: EditorComponent;
   message: MessageComponent;
 

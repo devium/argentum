@@ -16,7 +16,7 @@ export class OrderSummaryModalComponent implements OnInit {
   order: Order;
   discounts: Discount[];
 
-  @ViewChild(OrderHistoryComponent)
+  @ViewChild(OrderHistoryComponent, { static: true })
   orderHistoryComponent: OrderHistoryComponent;
 
   constructor(public activeModal: NgbActiveModal) { }

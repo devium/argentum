@@ -28,7 +28,7 @@ export class SearchGuestModalComponent extends GroupBasedComponent implements On
   results: Guest[] = [];
   guest: Guest;
 
-  @ViewChild('searchInput')
+  @ViewChild('searchInput', { static: true })
   searchInput: ElementRef;
   searchField: 'code' | 'name' | 'mail' = 'code';
 

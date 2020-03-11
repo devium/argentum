@@ -22,7 +22,7 @@ import {Status} from '../../common/model/status';
   styleUrls: ['./guest-editor.component.scss']
 })
 export class GuestEditorComponent implements OnInit {
-  @ViewChild(EditorComponent)
+  @ViewChild(EditorComponent, { static: true })
   editor: EditorComponent;
   message: MessageComponent;
 

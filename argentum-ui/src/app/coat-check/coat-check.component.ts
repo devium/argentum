@@ -24,7 +24,7 @@ export class CoatCheckComponent implements OnInit {
 
   readonly MAX_LABEL = 999;
 
-  @ViewChild(OrderPanelsComponent)
+  @ViewChild(OrderPanelsComponent, { static: true })
   orderComponent: OrderPanelsComponent;
 
   message: MessageComponent;

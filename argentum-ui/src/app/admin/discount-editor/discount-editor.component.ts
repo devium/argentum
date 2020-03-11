@@ -16,7 +16,7 @@ import {Status} from '../../common/model/status';
   styleUrls: ['discount-editor.component.scss']
 })
 export class DiscountEditorComponent implements OnInit {
-  @ViewChild(EditorComponent)
+  @ViewChild(EditorComponent, { static: true })
   editor: EditorComponent;
   message: MessageComponent;
 

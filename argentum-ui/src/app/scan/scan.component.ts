@@ -10,10 +10,10 @@ import {OrderHistoryModalComponent} from '../common/order/order-history-modal/or
   styleUrls: ['./scan.component.scss']
 })
 export class ScanComponent implements OnInit {
-  @ViewChild(CardEntryComponent)
+  @ViewChild(CardEntryComponent, { static: true })
   cardEntry: CardEntryComponent;
 
-  @ViewChild(MessageComponent)
+  @ViewChild(MessageComponent, { static: true })
   message: MessageComponent;
 
   orderHistoryModal: NgbModalRef;

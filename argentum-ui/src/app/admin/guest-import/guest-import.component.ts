@@ -65,7 +65,7 @@ export class GuestImportComponent implements OnInit {
     }
   ];
 
-  @ViewChild(MessageComponent)
+  @ViewChild(MessageComponent, { static: true })
   private message: MessageComponent;
 
   delimiterOption: DelimiterOption = this.delimiterOptions[0];

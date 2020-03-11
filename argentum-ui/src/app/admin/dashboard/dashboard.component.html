@@ -71,6 +71,9 @@
   </table>
 
   <canvas #salesCanvas>{{salesChart}}</canvas>
+  <a [routerLink]="" (click)="downloadSales()" class="float-right">
+    Download CSV <i class="fa fa-download"></i>
+  </a>
 
   <button (click)='refresh()' type="button" class="btn btn-block btn-primary mt-3">
     <i class="fa fa-refresh"></i>

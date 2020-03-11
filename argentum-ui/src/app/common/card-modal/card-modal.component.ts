@@ -8,7 +8,7 @@ import {CardEntryComponent} from '../card-entry/card-entry.component';
   styleUrls: ['./card-modal.component.scss']
 })
 export class CardModalComponent implements OnInit, OnDestroy {
-  @ViewChild(CardEntryComponent)
+  @ViewChild(CardEntryComponent, { static: true })
   cardEntry: CardEntryComponent;
 
   constructor(public activeModal: NgbActiveModal) {

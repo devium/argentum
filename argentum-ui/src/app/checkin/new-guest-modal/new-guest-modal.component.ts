@@ -27,7 +27,7 @@ export class NewGuestModalComponent extends GroupBasedComponent implements OnIni
   bonus = 0;
   statuses: Status[] = [this.noStatus];
 
-  @ViewChild('nameInput')
+  @ViewChild('nameInput', { static: true })
   nameInput: ElementRef;
 
   message: MessageComponent;

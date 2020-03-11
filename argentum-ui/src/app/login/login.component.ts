@@ -13,7 +13,7 @@ export class LoginComponent implements OnInit {
   username = '';
   password = '';
 
-  @ViewChild(MessageComponent)
+  @ViewChild(MessageComponent, { static: true })
   message: MessageComponent;
 
   waitingForLogin = false;
