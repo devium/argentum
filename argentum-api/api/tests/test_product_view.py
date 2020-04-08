@@ -5,96 +5,46 @@ from api.tests.data.product_ranges import TestProductRanges
 from api.tests.data.products import TestProducts
 from api.tests.data.users import TestUsers
 from api.tests.data.categories import TestCategories
-from api.tests.utils.authenticated_test_case import AuthenticatedTestCase
-from api.tests.utils.populated_test_case import PopulatedTestCase
-from api.tests.utils.serialization_test_case import SerializationTestCase
+from api.tests.utils.combined_test_case import CombinedTestCase
 
 LOG = logging.getLogger(__name__)
 
 
-class ProductViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedTestCase):
-    def test_get(self):
-        self.login(TestUsers.BAR)
+class ProductViewTestCase(CombinedTestCase):
+    def test_list(self):
+        self.login(TestUsers.BAR_EXT)
+        self.perform_list_test('/products', TestProducts.SAVED)
 
-        response = self.client.get('/products')
-        self.assertEqual(response.status_code, 200)
-        self.assertPksEqual(response.data, TestProducts.ALL)
-        self.assertJSONEqual(response.content, self.RESPONSES['GET/products'])
-
-    def test_post_min(self):
-        self.login(TestUsers.ADMIN)
-        identifier = 'POST/products#min'
-
-        response = self.client.post('/products', self.REQUESTS[identifier])
-        self.assertEqual(response.status_code, 201)
-        self.assertValueEqual(Product.objects.all(), TestProducts.ALL + [TestProducts.BEER_MIN])
-        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
-        # ManyToMany relationships need to be checked manually via their queryset (original one works).
-        self.assertValueEqual(TestProducts.BEER_MIN.product_ranges.all(), [])
+    def test_create_min(self):
+        self.login(TestUsers.ADMIN_EXT)
+        self.perform_create_test('/products', TestProducts, '#min', '#min')
 
     def test_post_max(self):
-        self.login(TestUsers.ADMIN)
-        identifier = 'POST/products#max'
+        self.login(TestUsers.ADMIN_EXT)
+        self.perform_create_test('/products', TestProducts, '#max', '#max')
 
-        response = self.client.post('/products', self.REQUESTS[identifier])
-        self.assertEqual(response.status_code, 201)
-        self.assertValueEqual(Product.objects.all(), TestProducts.ALL + [TestProducts.BEER_MAX])
-        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
-        # ManyToMany relationships need to be checked manually via their queryset (original one works).
-        self.assertValueEqual(TestProducts.BEER_MAX.product_ranges.all(), [TestProductRanges.EVERYTHING])
+    def test_create_empty_ranges(self):
+        self.login(TestUsers.ADMIN_EXT)
+        self.perform_create_test('/products', TestProducts, '#empty_ranges', '#empty_ranges')
 
-    def test_post_empty_ranges(self):
-        self.login(TestUsers.ADMIN)
-        identifier = 'POST/products#empty_ranges'
+    def test_update(self):
+        self.login(TestUsers.ADMIN_EXT)
+        self.perform_update_test('/products', TestProducts)
 
-        response = self.client.post('/products', self.REQUESTS[identifier])
-        self.assertEqual(response.status_code, 201)
-        self.assertValueEqual(Product.objects.all(), TestProducts.ALL + [TestProducts.BEER_MIN])
-        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
-        # ManyToMany relationships need to be checked manually via their queryset (original one works).
-        self.assertValueEqual(TestProducts.BEER_MAX.product_ranges.all(), [])
-
-    def test_patch(self):
-        self.login(TestUsers.ADMIN)
-        identifier = f'PATCH/products/{TestProducts.WATER.id}'
-
-        response = self.client.patch(f'/products/{TestProducts.WATER.id}', self.REQUESTS[identifier])
-        self.assertEqual(response.status_code, 200)
-        self.assertValueEqual(
-            Product.objects.all(),
-            [TestProducts.COAT_CHECK_ITEM, TestProducts.WATER_PATCHED, TestProducts.COKE]
-        )
-        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
-        # ManyToMany relationships need to be checked manually via their queryset (original one works).
-        self.assertValueEqual(TestProducts.WATER.product_ranges.all(), [TestProductRanges.JUST_WATER])
-
-    def test_patch_deprecate(self):
-        self.login(TestUsers.ADMIN)
-        identifier = f'PATCH/products/{TestProducts.WATER.id}#deprecate'
-
-        response = self.client.patch(f'/products/{TestProducts.WATER.id}', self.REQUESTS[identifier])
-        self.assertEqual(response.status_code, 200)
-        self.assertValueEqual(
-            Product.objects.all(),
-            [TestProducts.COAT_CHECK_ITEM, TestProducts.WATER_DEPRECATED, TestProducts.COKE]
-        )
-        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
-        # ManyToMany relationships need to be checked manually via their queryset (original one works).
-        self.assertValueEqual(TestProducts.WATER.product_ranges.all(), TestProductRanges.ALL)
+    def test_update_deprecate(self):
+        self.login(TestUsers.ADMIN_EXT)
+        self.perform_update_test('/products', TestProducts, '#deprecate')
 
     def test_permissions(self):
-        self.assertPermissions(
-            lambda: self.client.get('/products'),
-            [TestUsers.ADMIN, TestUsers.BAR, TestUsers.WARDROBE, TestUsers.TERMINAL]
-        )
-        self.assertPermissions(lambda: self.client.get(f'/products/{TestProducts.WATER.id}'), [])
-        self.assertPermissions(
-            lambda: self.client.post('/products', self.REQUESTS['POST/products#max']),
-            [TestUsers.ADMIN]
-        )
-        self.assertPermissions(
-            lambda: self.client.delete('/products/1'),
-            []
+        self.perform_permission_test(
+            '/products',
+            list_users=[TestUsers.ADMIN_EXT, TestUsers.BAR_EXT, TestUsers.WARDROBE_EXT, TestUsers.TERMINAL_EXT],
+            retrieve_users=[],
+            create_users=[TestUsers.ADMIN_EXT],
+            update_users=[TestUsers.ADMIN_EXT],
+            delete_users=[],
+            detail_id=TestProducts.WATER.id,
+            create_suffix='#min'
         )
 
     def test_str(self):
@@ -102,11 +52,10 @@ class ProductViewTestCase(PopulatedTestCase, SerializationTestCase, Authenticate
         self.assertEqual(
             str(TestProducts.WATER),
             f'Product('
-            f'id=2,'
+            f'id={TestProducts.WATER.id},'
             f'name="Water",'
             f'deprecated=False,'
             f'price=2.40,'
-            f'category={TestCategories.SOFT_DRINKS},'
-            f'product_ranges=[{TestProductRanges.JUST_WATER},{TestProductRanges.EVERYTHING}]'
+            f'category={TestCategories.SOFT_DRINKS}'
             f')'
         )

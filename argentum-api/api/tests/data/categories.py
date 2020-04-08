@@ -5,36 +5,45 @@ from api.tests.utils.test_objects import TestObjects
 class TestCategories(TestObjects):
     MODEL = Category
 
-    COAT_CHECK = MODEL(
-        id=1,
-        name='Coat check',
-        color='#ffff00'
-    )
+    COAT_CHECK: MODEL
+    SOFT_DRINKS: MODEL
+    HARD_DRINKS: MODEL
 
-    SOFT_DRINKS = MODEL(
-        id=2,
-        name='Soft drinks',
-        color='#00ffff',
-    )
+    SPIRITS: MODEL
+    SOFT_DRINKS_PATCHED: MODEL
 
-    HARD_DRINKS = MODEL(
-        id=3,
-        name='Hard drinks',
-        color='#ff0000',
-    )
+    @classmethod
+    def init(cls):
+        cls.COAT_CHECK = cls.MODEL(
+            id=11010,
+            name='Coat check',
+            color='#ffff00'
+        )
 
-    ALL = [COAT_CHECK, SOFT_DRINKS, HARD_DRINKS]
+        cls.SOFT_DRINKS = cls.MODEL(
+            id=11020,
+            name='Soft drinks',
+            color='#00ffff',
+        )
 
-    # Models below are not stored in the DB, but rather used for POST deserialization testing.
+        cls.HARD_DRINKS = cls.MODEL(
+            id=11030,
+            name='Hard drinks',
+            color='#ff0000',
+        )
 
-    SPIRITS = MODEL(
-        id=4,
-        name="Spirits",
-        color='#ff00ff',
-    )
+        cls.SAVED = [cls.COAT_CHECK, cls.SOFT_DRINKS, cls.HARD_DRINKS]
 
-    SOFT_DRINKS_PATCHED = MODEL(
-        id=2,
-        name='Nonalcoholic',
-        color='#00ffff',
-    )
+        cls.SPIRITS = cls.MODEL(
+            id=11040,
+            name="Spirits",
+            color='#ff00ff',
+        )
+
+        cls.SOFT_DRINKS_PATCHED = cls.MODEL(
+            id=11021,
+            name='Nonalcoholic',
+            color='#00ffff',
+        )
+
+        cls.UNSAVED = [cls.SPIRITS, cls.SOFT_DRINKS_PATCHED]

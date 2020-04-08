@@ -1,19 +1,20 @@
 from typing import Dict, Any, Iterable
 
-from django.db import models
+from django.db import models, transaction
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import serializers, viewsets, mixins
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import BasePermission
 
+from api.models.commitable import Committable
 from api.models.guest import Guest
-from api.models.utils import resolve_card, ListByCardModelMixin
+from api.models.utils import resolve_card, ListByCardModelMixin, UpdateLockedModelMixin
 from argentum.permissions import StrictModelPermissions
 from argentum.settings import CURRENCY_CONFIG
 
 
-class BonusTransaction(models.Model):
+class BonusTransaction(Committable):
     time = models.DateTimeField(default=timezone.now)
     guest = models.ForeignKey(Guest, on_delete=models.CASCADE)
     value = models.DecimalField(**CURRENCY_CONFIG)
@@ -67,19 +68,23 @@ class BonusTransactionUpdateSerializer(serializers.ModelSerializer):
 
     def update(self, instance: BonusTransaction, validated_data: Dict[str, Any]):
         self.instance.time = timezone.now()
-        super().update(instance, validated_data)
+        committed = not self.instance.pending
+        commit = not committed and not validated_data.get('pending', True)
 
-        if not instance.pending:
+        if commit:
             # Transaction can only be committed once. This is where it is credited.
-            instance.guest.bonus += instance.value
-            instance.guest.save()
+            with transaction.atomic():
+                instance.guest.bonus += instance.value
+                instance.guest.save()
+                return super().update(instance, validated_data)
 
-        return instance
+        # Nothing changes.
+        return super().update(instance, validated_data)
 
 
 class BonusTransactionViewSet(
     mixins.CreateModelMixin,
-    mixins.UpdateModelMixin,
+    UpdateLockedModelMixin,
     ListByCardModelMixin,
     viewsets.GenericViewSet
 ):

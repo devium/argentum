@@ -11,18 +11,24 @@
     "username": "buffet",
     "password": "buffet1",
     "groups": [
-      2
+      14020
     ]
   },
-  "PATCH/users/3": {
+  "PATCH/users/": {
     "username": "giftshop",
     "password": "giftshop1",
     "groups": [
-      2,
-      4
+      14020,
+      14040
     ]
   },
-  "PATCH/config/1": {
+  "POST/groups": {
+    "name": "forbidden"
+  },
+  "POST/config": {
+    "value": "forbidden"
+  },
+  "PATCH/config/": {
     "value": "-10.00"
   },
   "POST/guests#min": {
@@ -34,11 +40,11 @@
     "code": "DEMO-00003",
     "name": "Johanna Doe",
     "mail": "jdoe2@tinypic.com",
-    "status": 1,
+    "status": 16010,
     "checked_in": "2019-12-31T23:13:52Z",
     "card": "581a"
   },
-  "PATCH/guests/1": {
+  "PATCH/guests/": {
     "checked_in": "2019-12-31T22:57:30Z"
   },
   "PATCH/guests/list_update": [
@@ -46,7 +52,7 @@
       "code": "DEMO-00001",
       "name": "Toby Brushfield",
       "mail": "tbrushfield0@sohu.com",
-      "status": 1
+      "status": 16020
     },
     {
       "code": "DEMO-00003",
@@ -55,7 +61,7 @@
     }
   ],
   "POST/transactions": {
-    "guest": 1,
+    "guest": 17010,
     "value": "5.00",
     "ignore_bonus": false
   },
@@ -64,25 +70,29 @@
     "value": "5.00",
     "ignore_bonus": false
   },
-  "PATCH/transactions/6": {
+  "PATCH/transactions/#commit": {
     "pending": false
   },
   "POST/bonus_transactions": {
-    "guest": 1,
+    "guest": 17010,
     "value": "4.00"
   },
   "POST/bonus_transactions#card": {
     "card": "567a",
     "value": "4.00"
   },
-  "PATCH/bonus_transactions/3": {
+  "POST/bonus_transactions#card404": {
+    "card": "567b",
+    "value": "4.00"
+  },
+  "PATCH/bonus_transactions/#commit": {
     "pending": false
   },
   "POST/categories": {
     "name": "Spirits",
     "color": "#ff00ff"
   },
-  "PATCH/categories/2": {
+  "PATCH/categories/": {
     "name": "Nonalcoholic"
   },
   "POST/products#min": {
@@ -93,9 +103,9 @@
     "name": "Beer",
     "deprecated": true,
     "price": "3.60",
-    "category": 3,
+    "category": 11030,
     "product_ranges": [
-      2
+      13020
     ]
   },
   "POST/products#empty_ranges": {
@@ -103,40 +113,40 @@
     "price": "3.60",
     "product_ranges": []
   },
-  "PATCH/products/2": {
+  "PATCH/products/": {
     "name": "Aqua",
     "deprecated": true,
     "product_ranges": [
-      1
+      13010
     ]
   },
-  "PATCH/products/2#deprecate": {
+  "PATCH/products/#deprecate": {
     "deprecated": true
   },
   "POST/product_ranges": {
     "name": "Just coke"
   },
-  "PATCH/product_ranges/1": {
+  "PATCH/product_ranges/": {
     "name": "Just aqua"
   },
   "POST/discounts": {
-    "status": 2,
-    "category": 2,
+    "status": 16020,
+    "category": 11020,
     "rate": "0.20"
   },
-  "PATCH/discounts/1": {
+  "PATCH/discounts/": {
     "rate": "0.40"
   },
   "POST/orders": {
-    "guest": 1,
+    "guest": 17010,
     "custom_initial": "0.40",
     "items": [
       {
-        "product": 2,
+        "product": 12020,
         "quantity_initial": 1
       },
       {
-        "product": 3,
+        "product": 12030,
         "quantity_initial": 1
       }
     ]
@@ -146,34 +156,58 @@
     "custom_initial": "0.40",
     "items": [
       {
-        "product": 2,
+        "product": 12020,
         "quantity_initial": 1
       },
       {
-        "product": 3,
+        "product": 12030,
         "quantity_initial": 1
       }
     ]
   },
-  "PATCH/orders/4#commit": {
+  "POST/orders#card404": {
+    "card": "567b",
+    "custom_initial": "0.40",
+    "items": [
+      {
+        "product": 12020,
+        "quantity_initial": 1
+      },
+      {
+        "product": 12030,
+        "quantity_initial": 1
+      }
+    ]
+  },
+  "PATCH/orders/#commit": {
     "pending": false
   },
-  "PATCH/orders/3#cancel_exceed": {
+  "PATCH/orders/#discount": {
+    "pending": false
+  },
+  "PATCH/orders/#cancel_exceed": {
     "custom_current": "0.20"
   },
-  "PATCH/orders/3#cancel_negative": {
+  "PATCH/orders/#cancel_negative": {
     "custom_current": "-0.10"
   },
-  "PATCH/orders/3#cancel": {
+  "PATCH/orders/#cancel": {
     "custom_current": "0.05"
   },
-  "PATCH/order_items/3#cancel_exceed": {
+  "POST/order_items": {
+    "order": 18010,
+    "product": 12010,
+    "quantity_initial": 1,
+    "quantity_current": 1,
+    "discount": "0.00"
+  },
+  "PATCH/order_items/#cancel_exceed": {
     "quantity_current": 1
   },
-  "PATCH/order_items/3#cancel_negative": {
+  "PATCH/order_items/#cancel_negative": {
     "quantity_current": -1
   },
-  "PATCH/order_items/3#cancel": {
+  "PATCH/order_items/#cancel": {
     "quantity_current": 0
   },
   "POST/statuses": {
@@ -181,30 +215,34 @@
     "display_name": "Staff",
     "color": "#0000ff"
   },
-  "PATCH/statuses/2": {
+  "PATCH/statuses/": {
     "internal_name": "pen"
   },
   "POST/tags": {
     "label": 4,
-    "guest": 2
+    "guest": 17020
   },
-  "PATCH/tags/1": {
-    "label": 5
+  "PATCH/tags/": {
+    "label": 25050
   },
   "POST/tag_registrations#card": {
-    "label": 5,
+    "labels": [5],
     "card": "567a",
-    "order": 6
+    "order": 18060
   },
   "POST/tag_registrations#steal": {
-    "label": 3,
-    "guest": 1,
-    "order": 5
+    "labels": [3],
+    "guest": 17010,
+    "order": 18050
   },
-  "PATCH/tag_registrations/3#commit": {
+  "PATCH/tag_registrations/#commit": {
     "pending": false
   },
-  "PATCH/tag_registrations/4#steal": {
+  "PATCH/tag_registrations/#steal": {
     "pending": false
+  },
+  "POST/statistics": {
+  },
+  "PATCH/statistics/": {
   }
 }

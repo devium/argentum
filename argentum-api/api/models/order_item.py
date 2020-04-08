@@ -1,12 +1,13 @@
 from typing import Dict, Any
 
-from django.db import models
+from django.db import models, transaction
 from rest_framework import mixins, viewsets, serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.filters import OrderingFilter
 
 from api.models.product import Product, ProductCreateSerializer
 from api.models.transaction import TransactionUpdateSerializer
+from api.models.utils import UpdateLockedModelMixin
 from argentum.settings import DISCOUNT_CONFIG
 
 
@@ -81,22 +82,24 @@ class OrderItemUpdateSerializer(serializers.ModelSerializer):
             quantity_current = validated_data.get('quantity_current', None)
             # Validation has already been performed. Just execute the transaction.
             if quantity_current is not None and self.instance.discount < 1:
-                TransactionUpdateSerializer.create_internal(
-                    guest=self.instance.order.guest,
-                    value=(
-                        (1 - self.instance.discount) *
-                        (self.instance.quantity_current - quantity_current) *
-                        self.instance.product.price
-                    ),
-                    description='cancel',
-                    order=self.instance.order
-                )
+                with transaction.atomic():
+                    TransactionUpdateSerializer.create_internal(
+                        guest=self.instance.order.guest,
+                        value=(
+                            (1 - self.instance.discount) *
+                            (self.instance.quantity_current - quantity_current) *
+                            self.instance.product.price
+                        ),
+                        description='cancel',
+                        order=self.instance.order
+                    )
+                    return super().update(instance, validated_data)
 
         return super().update(instance, validated_data)
 
 
 class OrderItemViewSet(
-    mixins.UpdateModelMixin,
+    UpdateLockedModelMixin,
     viewsets.GenericViewSet
 ):
     queryset = OrderItem.objects.all()

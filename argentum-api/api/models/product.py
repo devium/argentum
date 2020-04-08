@@ -19,8 +19,7 @@ class Product(models.Model):
             f'name="{self.name}",' \
             f'deprecated={self.deprecated},' \
             f'price={self.price},' \
-            f'category={self.category},' \
-            f'product_ranges=[{",".join(str(product_range) for product_range in self.product_ranges.all())}]' \
+            f'category={self.category}' \
             f')'
 
 

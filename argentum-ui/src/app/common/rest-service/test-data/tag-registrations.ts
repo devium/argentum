@@ -4,9 +4,9 @@ import {Orders} from './orders';
 
 export namespace TagRegistrations {
   export const ROBY_TWO = new TagRegistration(
-    1,
+    24010,
     new Date('2019-12-31T22:07:01Z'),
-    Tags.TWO.label,
+    [Tags.TWO.label],
     undefined,
     undefined,
     Orders.TAG_REGISTRATION_TWO,
@@ -14,9 +14,9 @@ export namespace TagRegistrations {
   );
 
   export const SHEELAH_THREE = new TagRegistration(
-    2,
+    24020,
     new Date('2019-12-31T22:09:01Z'),
-    Tags.THREE.label,
+    [Tags.THREE.label],
     undefined,
     undefined,
     Orders.TAG_REGISTRATION_THREE,
@@ -24,9 +24,9 @@ export namespace TagRegistrations {
   );
 
   export const ROBY_FOUR = new TagRegistration(
-    3,
+    24030,
     new Date('2019-12-31T22:15:01Z'),
-    Tags.FOUR.label,
+    [Tags.FOUR.label],
     undefined,
     undefined,
     Orders.TAG_REGISTRATION_FOUR,
@@ -36,9 +36,9 @@ export namespace TagRegistrations {
   export const ALL = [ROBY_TWO, SHEELAH_THREE];
 
   export const ROBY_FOUR_COMMITTED_REFERENCE = new TagRegistration(
-    3,
+    24031,
     new Date('2019-12-31T22:15:01Z'),
-    Tags.FOUR.label,
+    [Tags.FOUR.label],
     undefined,
     undefined,
     Orders.TAG_REGISTRATION_FOUR,
@@ -46,9 +46,9 @@ export namespace TagRegistrations {
   );
 
   export const ROBY_FIVE_REFERENCE = new TagRegistration(
-    4,
+    24040,
     new Date('2019-12-31T22:19:01Z'),
-    Tags.FIVE.label,
+    [Tags.FIVE.label],
     undefined,
     undefined,
     Orders.TAG_REGISTRATION_FIVE,

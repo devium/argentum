@@ -40,6 +40,11 @@ export abstract class AbstractModel {
             if (value1[i].id !== value2[i].id) {
               return false;
             }
+          } else if (value1[i] instanceof Date) {
+            // Dates need special treatment.
+            if (!value2[i] || value1[i].getTime() !== value2[i].getTime()) {
+              return false;
+            }
             // Compare other arrays.
           } else if (value1[i] !== value2[i]) {
             return false;

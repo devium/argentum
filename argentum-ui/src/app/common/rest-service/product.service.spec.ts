@@ -11,7 +11,7 @@ import {Products} from './test-data/products';
 import {of} from 'rxjs';
 import {Categories} from './test-data/categories';
 
-fdescribe('ProductService', () => {
+describe('ProductService', () => {
   let service: ProductService;
   let categoryService: any;
   let http: HttpClient;
@@ -25,8 +25,8 @@ fdescribe('ProductService', () => {
       imports: [HttpClientTestingModule],
       providers: [{provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true}],
     });
-    http = TestBed.get(HttpClient);
-    httpTestingController = TestBed.get(HttpTestingController);
+    http = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
     categoryService = createSpyObj('CategoryService', ['list']);
     categoryService.list.and.returnValue(of(Categories.ALL));
     service = new ProductService(http, categoryService);
@@ -75,10 +75,10 @@ fdescribe('ProductService', () => {
   }));
 
   it('should update a product', fakeAsync(() => {
-    service.update(Products.WATER_PATCHED).subscribe((product: Product) => {
-      expect(product.equals(Products.WATER_PATCHED_REFERENCE)).toBeTruthy();
+    service.update(Products.WATER_PATCHED_REQUEST).subscribe((product: Product) => {
+      expect(product.equals(Products.WATER_PATCHED_RESPONSE)).toBeTruthy();
       resolved = true;
     });
-    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/products/${Products.WATER.id}`);
+    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/products/${Products.WATER_PATCHED_REQUEST.id}`);
   }));
 });

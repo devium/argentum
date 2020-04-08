@@ -12,7 +12,7 @@ import {expectArraysEqual, testEndpoint} from './test-utils';
 import {Groups} from './test-data/groups';
 import {Users} from './test-data/users';
 
-fdescribe('UserService', () => {
+describe('UserService', () => {
   let service: UserService;
   let groupService: any;
   let http: HttpClient;
@@ -26,8 +26,8 @@ fdescribe('UserService', () => {
       imports: [HttpClientTestingModule],
       providers: [{provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true}],
     });
-    http = TestBed.get(HttpClient);
-    httpTestingController = TestBed.get(HttpTestingController);
+    http = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
     groupService = createSpyObj('GroupService', ['list']);
     groupService.list.and.returnValue(of(Groups.ALL));
     service = new UserService(http, groupService);
@@ -86,7 +86,7 @@ fdescribe('UserService', () => {
       expect(user.equals(userWithoutPw)).toBeTruthy();
       resolved = true;
     });
-    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/users/${Users.WARDROBE.id}`);
+    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/users/${Users.WARDROBE_PATCHED.id}`);
   }));
 
   it('should delete a user', fakeAsync(() => {

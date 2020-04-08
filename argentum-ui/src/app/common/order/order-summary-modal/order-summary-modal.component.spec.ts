@@ -1,8 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { OrderSummaryModalComponent } from './order-summary-modal.component';
-
-describe('OrderSummaryModalComponent', () => {
+xdescribe('OrderSummaryModalComponent', () => {
   let component: OrderSummaryModalComponent;
   let fixture: ComponentFixture<OrderSummaryModalComponent>;
 

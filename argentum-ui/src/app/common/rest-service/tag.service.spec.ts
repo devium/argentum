@@ -9,7 +9,7 @@ import {expectArraysEqual, testEndpoint} from './test-utils';
 import {Tags} from './test-data/tags';
 import {Guests} from './test-data/guests';
 
-fdescribe('TagService', () => {
+describe('TagService', () => {
   let service: TagService;
   let http: HttpClient;
   let httpTestingController: HttpTestingController;
@@ -23,8 +23,8 @@ fdescribe('TagService', () => {
       providers: [{provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true}]
     });
     resolved = false;
-    http = TestBed.get(HttpClient);
-    httpTestingController = TestBed.get(HttpTestingController);
+    http = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
     service = new TagService(http);
   });
 

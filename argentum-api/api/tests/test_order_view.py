@@ -4,7 +4,6 @@ from decimal import Decimal
 from api.models import Guest
 from api.models.config import Config
 from api.models.order import Order
-from api.models.order_item import OrderItem
 from api.models.transaction import Transaction
 from api.tests.data.discounts import TestDiscounts
 from api.tests.data.guests import TestGuests
@@ -13,30 +12,22 @@ from api.tests.data.orders import TestOrders
 from api.tests.data.products import TestProducts
 from api.tests.data.transactions import TestTransactions
 from api.tests.data.users import TestUsers
-from api.tests.utils.authenticated_test_case import AuthenticatedTestCase
-from api.tests.utils.populated_test_case import PopulatedTestCase
-from api.tests.utils.serialization_test_case import SerializationTestCase
-from api.tests.utils.utils import to_iso_format
+from api.tests.utils.combined_test_case import CombinedTestCase
 
 LOG = logging.getLogger(__name__)
 
 
-class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedTestCase):
-    def test_get(self):
-        self.login(TestUsers.ADMIN)
+class OrderViewTestCase(CombinedTestCase):
+    REFRESH_OBJECTS = [TestOrders, TestOrderItems, TestGuests]
 
-        response = self.client.get('/orders')
-        self.assertEqual(response.status_code, 200)
-        self.assertPksEqual(response.data, TestOrders.ALL)
-        self.assertJSONEqual(response.content, self.RESPONSES['GET/orders'])
+    def test_list(self):
+        self.login(TestUsers.ADMIN_EXT)
+        self.perform_list_test('/orders', TestOrders.SAVED)
 
-    def test_get_by_card(self):
-        self.login(TestUsers.BAR)
-
-        response = self.client.get(f'/orders?guest__card={TestGuests.ROBY.card}')
-        self.assertEqual(response.status_code, 200)
-        self.assertPksEqual(
-            response.data,
+    def test_list_by_card(self):
+        self.login(TestUsers.BAR_EXT)
+        self.perform_list_test(
+            f'/orders?guest__card={TestGuests.ROBY.card}',
             [
                 TestOrders.TAG_REGISTRATION_TWO,
                 TestOrders.ONE_WATER_PLUS_TIP,
@@ -44,199 +35,204 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
                 TestOrders.TAG_REGISTRATION_FIVE,
             ]
         )
-        self.assertJSONEqual(response.content, self.RESPONSES[f'GET/orders?guest__card={TestGuests.ROBY.card}'])
 
-    def test_get_by_card_not_found(self):
-        self.login(TestUsers.BAR)
+    def test_list_by_card_404(self):
+        self.login(TestUsers.BAR_EXT)
 
-        response = self.client.get('/orders?guest__card=NOTFOUND')
+        response = self.client.get('/orders?guest__card=404')
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data['guest__card'][0], 'Card not registered.')
 
-    def test_post(self):
-        self.login(TestUsers.BAR)
-        identifier = 'POST/orders'
-
-        response, server_time = self.time_constrained(lambda: self.client.post('/orders', self.REQUESTS[identifier]))
-        self.assertEqual(response.status_code, 201)
-
-        TestOrders.ONE_WATER_ONE_COKE_PLUS_TIP.time = server_time
-        self.assertValueEqual(
-            Order.objects.all(),
-            TestOrders.ALL + [TestOrders.ONE_WATER_ONE_COKE_PLUS_TIP]
-        )
-        self.assertValueEqual(
-            OrderItem.objects.all(),
-            TestOrderItems.ALL + [TestOrderItems.ONE_WATER2, TestOrderItems.ONE_COKE]
-        )
-        self.RESPONSES[identifier]['time'] = to_iso_format(server_time)
-        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
-
-    def test_post_by_card(self):
-        self.login(TestUsers.BAR)
-
-        response = self.client.post('/orders', self.REQUESTS['POST/orders#card'])
-        self.assertEqual(response.status_code, 201)
-
-        self.assertValueEqual(
-            Order.objects.all(), TestOrders.ALL + [TestOrders.ONE_WATER_ONE_COKE_PLUS_TIP],
-            ignore_fields=['time']
+    def test_create(self):
+        self.login(TestUsers.BAR_EXT)
+        self.perform_create_test(
+            '/orders',
+            TestOrders,
+            side_effects_objects=[TestOrderItems],
+            timed=True
         )
 
-    def test_post_by_card_fail(self):
-        self.login(TestUsers.BAR)
+    def test_create_by_card(self):
+        self.login(TestUsers.BAR_EXT)
+        self.perform_create_test(
+            '/orders',
+            TestOrders,
+            '#card',
+            side_effects_objects=[TestOrderItems],
+            timed=True
+        )
 
-        body = {**self.REQUESTS['POST/orders#card'], **{'card': '567b'}}
-        response = self.client.post('/orders', body)
-        self.assertEqual(response.status_code, 400)
+    def test_create_by_card_fail(self):
+        self.login(TestUsers.BAR_EXT)
+
+        response = self.perform_create_test(
+            '/orders',
+            TestOrders,
+            '#card404',
+            '#card404',
+            reference_status=400,
+            fail=True
+        )
         self.assertEqual(response.data['card'][0], 'Card not registered.')
 
+    def test_commit(self):
+        self.login(TestUsers.BAR_EXT)
+        self.perform_update_test('/orders', TestOrders, '#commit', side_effects_objects=[TestTransactions], timed=True)
+
+        obj = Guest.objects.get(id=TestGuests.SHEELAH.id)
+        self.assertEqual(obj.bonus, Decimal('0.00'))
+        self.assertEqual(obj.balance, Decimal('1.00'))
+
+    def test_commit_multi(self):
+        self.login(TestUsers.BAR_EXT)
+
+        for i in range(3):
+            response = self.client.patch(
+                f'/orders/{TestOrders.TWO_COKES_PLUS_TIP.id}',
+                self.REQUESTS['PATCH/orders/#commit']
+            )
+            self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(Transaction.objects.count(), len(TestTransactions.SAVED) + 1)
+
+        obj = Guest.objects.get(id=TestGuests.SHEELAH.id)
+        self.assertEqual(obj.bonus, Decimal('0.00'))
+        self.assertEqual(obj.balance, Decimal('1.00'))
+
     def test_discount(self):
-        self.login(TestUsers.BAR)
-        TestDiscounts.PENDING_SOFT_DRINKS.save()
+        self.login(TestUsers.BAR_EXT)
+        self.assertGreater(TestDiscounts.PAID_SOFT_DRINKS.rate, Decimal('0.00'))
 
-        response = self.client.post('/orders', self.REQUESTS['POST/orders'])
-        self.assertEqual(response.status_code, 201)
-        self.RESPONSES['POST/orders#discount']['time'] = response.data['time']
-        self.assertJSONEqual(response.content, self.RESPONSES['POST/orders#discount'])
+        self.perform_create_test('/orders', TestOrders, side_effects_objects=[TestOrderItems], timed=True)
+        TestOrders.ONE_WATER_ONE_COKE_PLUS_TIP_COMMITTED.id = TestOrders.ONE_WATER_ONE_COKE_PLUS_TIP.id
+        self.perform_update_test('/orders', TestOrders, '#discount', timed=True)
 
-        response = self.client.patch(f'/orders/{TestOrders.ONE_WATER_ONE_COKE_PLUS_TIP.id}', '{"pending": false}')
-        self.assertEqual(response.status_code, 200)
-        self.assertGreater(TestDiscounts.PENDING_SOFT_DRINKS.rate, Decimal('0.00'))
+        transaction = Transaction.objects.get(order=TestOrders.ONE_WATER_ONE_COKE_PLUS_TIP)
         self.assertEqual(
-            (-list(Transaction.objects.all())[-1].value).compare(
+            (-transaction.value).compare(
                 TestOrders.ONE_WATER_ONE_COKE_PLUS_TIP.custom_current +
                 TestProducts.WATER.price * (1 - TestDiscounts.PAID_SOFT_DRINKS.rate) + TestProducts.COKE.price
             ), 0
         )
 
-    def test_commit(self):
-        self.login(TestUsers.BAR)
-        identifier = f'PATCH/orders/{TestOrders.TWO_COKES_PLUS_TIP.id}#commit'
-
-        response, server_time = self.time_constrained(
-            lambda: self.client.patch(f'/orders/{TestOrders.TWO_COKES_PLUS_TIP.id}', self.REQUESTS[identifier])
-        )
-        self.assertEqual(response.status_code, 200)
-
-        TestTransactions.TX_ORDER_2.time = server_time
-        self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX_ORDER_2])
-
-        sheelah = Guest.objects.get(id=TestGuests.SHEELAH.id)
-        self.assertEqual(sheelah.bonus, Decimal('0.00'))
-        self.assertEqual(sheelah.balance, Decimal('1.00'))
-
-        self.RESPONSES[identifier]['time'] = to_iso_format(server_time)
-        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
-
     def test_funds(self):
-        self.login(TestUsers.BAR)
+        self.login(TestUsers.BAR_EXT)
 
         postpaid_limit = Config.objects.get(key='postpaid_limit')
         order = Order.objects.get(id=TestOrders.TWO_COKES_PLUS_TIP.id)
 
         postpaid_limit.value = Decimal('-20.00')
         postpaid_limit.save()
-        order.custom_current = order.custom_initial = Decimal('21.61')
+        remaining = TestGuests.SHEELAH.bonus + TestGuests.SHEELAH.balance - order.total
+        order.custom_initial = order.custom_current + remaining - postpaid_limit.value + Decimal('0.01')
+        order.custom_current = order.custom_initial
         order.save()
 
         response = self.client.patch(f'/orders/{TestOrders.TWO_COKES_PLUS_TIP.id}', {'pending': False})
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['non_field_errors'][0], 'Insufficient funds.')
 
-        order.custom_current = order.custom_initial = Decimal('21.60')
+        order.custom_current = order.custom_initial = order.custom_current - Decimal('0.01')
         order.save()
 
         response = self.client.patch(f'/orders/{TestOrders.TWO_COKES_PLUS_TIP.id}', {'pending': False})
         self.assertEqual(response.status_code, 200)
 
     def test_cancel_custom(self):
-        self.login(TestUsers.BAR)
-        base_identifier = f'PATCH/orders/{TestOrders.ONE_WATER_PLUS_TIP.id}'
+        self.login(TestUsers.BAR_EXT)
 
+        # Cannot cancel more than initial custom value.
         response = self.client.patch(
             f'/orders/{TestOrders.ONE_WATER_PLUS_TIP.id}',
-            self.REQUESTS[base_identifier + '#cancel_exceed']
+            self.REQUESTS['PATCH/orders/#cancel_exceed']
         )
         self.assertEqual(response.status_code, 400)
         self.assertIsNotNone(response.data['custom_current'][0])
 
+        # Cannot cancel a negative amount.
         response = self.client.patch(
             f'/orders/{TestOrders.ONE_WATER_PLUS_TIP.id}',
-            self.REQUESTS[base_identifier + '#cancel_negative']
+            self.REQUESTS['PATCH/orders/#cancel_negative']
         )
         self.assertEqual(response.status_code, 400)
         self.assertIsNotNone(response.data['custom_current'][0])
 
-        response, server_time = self.time_constrained(
-            lambda: self.client.patch(
-                f'/orders/{TestOrders.ONE_WATER_PLUS_TIP.id}',
-                self.REQUESTS[base_identifier + '#cancel']
-            ),
-            lambda _: Transaction.objects.get(id=TestTransactions.TX_CANCEL_1.id).time
+        # Valid cancellation.
+        self.perform_update_test(
+            '/orders',
+            TestOrders,
+            '#cancel',
+            side_effects_objects=[TestTransactions],
+            side_effects_objects_filter=dict(
+                order=TestOrders.ONE_WATER_PLUS_TIP,
+                description='cancel',
+                value=(
+                        TestOrders.ONE_WATER_PLUS_TIP_CANCELLED.custom_initial -
+                        TestOrders.ONE_WATER_PLUS_TIP_CANCELLED.custom_current
+                )
+            )
         )
-        self.assertEqual(response.status_code, 200)
-
-        TestTransactions.TX_CANCEL_1.time = server_time
-        self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX_CANCEL_1])
-        self.assertJSONEqual(response.content, self.RESPONSES[base_identifier + '#cancel'])
 
     def test_cancel_product(self):
-        self.login(TestUsers.ADMIN)
-        base_identifier = f'PATCH/order_items/{TestOrderItems.ONE_WATER.id}'
+        self.login(TestUsers.ADMIN_EXT)
 
+        # Cannot cancel more than initial quantity.
         response = self.client.patch(
             f'/order_items/{TestOrderItems.ONE_WATER.id}',
-            self.REQUESTS[base_identifier + '#cancel_exceed']
+            self.REQUESTS['PATCH/order_items/#cancel_exceed']
         )
         self.assertEqual(response.status_code, 400)
         self.assertIsNotNone(response.data['quantity_current'][0])
 
+        # Cannot cancel a negative quantity.
         response = self.client.patch(
             f'/order_items/{TestOrderItems.ONE_WATER.id}',
-            self.REQUESTS[base_identifier + '#cancel_negative']
+            self.REQUESTS['PATCH/order_items/#cancel_negative']
         )
         self.assertEqual(response.status_code, 400)
         self.assertIsNotNone(response.data['quantity_current'][0])
 
-        response, server_time = self.time_constrained(
-            lambda: self.client.patch(
-                f'/order_items/{TestOrderItems.ONE_WATER.id}',
-                self.RESPONSES[base_identifier + '#cancel']
-            ),
-            lambda _: Transaction.objects.get(id=TestTransactions.TX_CANCEL_2.id).time
+        # Valid cancellation.
+        total_initial = TestOrders.ONE_WATER_PLUS_TIP.total
+        self.perform_update_test(
+            '/order_items',
+            TestOrderItems,
+            '#cancel',
+            side_effects_objects=[TestTransactions],
+            side_effects_objects_filter=dict(
+                order=TestOrders.ONE_WATER_PLUS_TIP,
+                description='cancel',
+                value=TestProducts.WATER.price
+            )
         )
-        self.assertEqual(response.status_code, 200)
 
-        TestTransactions.TX_CANCEL_2.time = server_time
-        self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX_CANCEL_2])
-        self.assertJSONEqual(response.content, self.RESPONSES[base_identifier + '#cancel'])
+        obj = Order.objects.get(id=TestOrders.ONE_WATER_PLUS_TIP.id)
+        self.assertEqual(total_initial - TestProducts.WATER.price, obj.total)
 
     def test_permissions(self):
-        self.assertPermissions(
-            lambda: self.client.get('/orders'),
-            [TestUsers.ADMIN]
+        self.perform_permission_test(
+            '/orders',
+            list_users=[TestUsers.ADMIN_EXT],
+            list_by_card_users=[TestUsers.ADMIN_EXT, TestUsers.BAR_EXT, TestUsers.WARDROBE_EXT, TestUsers.TERMINAL_EXT],
+            retrieve_users=[],
+            create_users=[TestUsers.ADMIN_EXT, TestUsers.BAR_EXT, TestUsers.WARDROBE_EXT],
+            update_users=[TestUsers.ADMIN_EXT, TestUsers.BAR_EXT, TestUsers.WARDROBE_EXT],
+            delete_users=[],
+            card=TestGuests.ROBY.card,
+            card_parameter='guest__card',
+            detail_id=TestOrders.ONE_WATER_PLUS_TIP.id,
+            update_suffix='#commit'
         )
-        self.assertPermissions(
-            lambda: self.client.get(f'/orders?guest__card={TestGuests.ROBY.card}'),
-            [TestUsers.ADMIN, TestUsers.BAR, TestUsers.WARDROBE, TestUsers.TERMINAL]
-        )
-        self.assertPermissions(lambda: self.client.get(f'/orders/{TestOrders.ONE_WATER_PLUS_TIP.id}'), [])
-        self.assertPermissions(
-            lambda: self.client.post('/orders', self.REQUESTS['POST/orders']),
-            [TestUsers.ADMIN, TestUsers.BAR, TestUsers.WARDROBE]
-        )
-        self.assertPermissions(
-            lambda: self.client.patch(f'/orders/{TestOrders.TWO_COKES_PLUS_TIP.id}', {'pending': False}),
-            [TestUsers.ADMIN, TestUsers.BAR, TestUsers.WARDROBE]
-        )
-        self.assertPermissions(lambda: self.client.get('/order_items', {}), [], [404])
-        self.assertPermissions(lambda: self.client.get(f'/order_items/{TestOrderItems.ONE_WATER.id}'), [])
-        self.assertPermissions(lambda: self.client.post('/order_items', {}), [], [404])
-        self.assertPermissions(lambda: self.client.get(f'/order_items/{TestOrderItems.ONE_WATER.id}', {}), [])
-        self.assertPermissions(
-            lambda: self.client.patch(f'/order_items/{TestOrderItems.ONE_WATER.id}', {}),
-            [TestUsers.ADMIN, TestUsers.BAR, TestUsers.WARDROBE]
+        self.perform_permission_test(
+            '/order_items',
+            list_users=[],
+            retrieve_users=[],
+            create_users=[],
+            update_users=[TestUsers.ADMIN_EXT, TestUsers.BAR_EXT, TestUsers.WARDROBE_EXT],
+            delete_users=[],
+            list_404=True,
+            detail_id=TestOrderItems.ONE_WATER.id,
+            update_suffix='#cancel'
         )
 
     def test_str(self):
@@ -244,7 +240,7 @@ class OrderViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedT
         self.assertEqual(
             str(TestOrders.ONE_WATER_PLUS_TIP),
             f'Order('
-            f'id=3,'
+            f'id={TestOrders.ONE_WATER_PLUS_TIP.id},'
             f'time="2019-12-31 22:10:00+00:00",'
             f'custom_initial=0.20,'
             f'custom_current=0.20,'

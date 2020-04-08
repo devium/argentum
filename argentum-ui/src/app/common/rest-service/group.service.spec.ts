@@ -8,7 +8,7 @@ import {Group} from '../model/group';
 import {expectArraysEqual, testEndpoint} from './test-utils';
 import {Groups} from './test-data/groups';
 
-fdescribe('GroupService', () => {
+describe('GroupService', () => {
   let service: GroupService;
   let http: HttpClient;
   let httpTestingController: HttpTestingController;
@@ -21,8 +21,8 @@ fdescribe('GroupService', () => {
       imports: [HttpClientTestingModule],
       providers: [{provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true}],
     });
-    http = TestBed.get(HttpClient);
-    httpTestingController = TestBed.get(HttpTestingController);
+    http = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
     service = new GroupService(http);
     resolved = false;
   });

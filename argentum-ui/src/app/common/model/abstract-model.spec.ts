@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import {AbstractModel} from './abstract-model';
 
-fdescribe('AbstractModel', () => {
+describe('AbstractModel', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should compare equal by reference', () => {

@@ -12,7 +12,7 @@ import {Transaction} from '../model/transaction';
 import {expectArraysEqual, testEndpoint} from './test-utils';
 import {Transactions} from './test-data/transactions';
 
-fdescribe('TransactionService', () => {
+describe('TransactionService', () => {
   let service: TransactionService;
   let guestService: any;
   let orderService: any;
@@ -27,8 +27,8 @@ fdescribe('TransactionService', () => {
       imports: [HttpClientTestingModule],
       providers: [{provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true}],
     });
-    http = TestBed.get(HttpClient);
-    httpTestingController = TestBed.get(HttpTestingController);
+    http = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
     guestService = createSpyObj('GuestService', ['list']);
     guestService.list.and.returnValue(of(Guests.ALL));
     orderService = createSpyObj('OrderService', ['list', 'listByCard']);
@@ -94,6 +94,6 @@ fdescribe('TransactionService', () => {
     });
     expect(guestService.list).toHaveBeenCalledTimes(0);
     expect(orderService.list).toHaveBeenCalledTimes(1);
-    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/transactions/${Transactions.TX3.id}`);
+    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/transactions/${Transactions.TX3.id}`, '#commit', '#commit');
   }));
 });

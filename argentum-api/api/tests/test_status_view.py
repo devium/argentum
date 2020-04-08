@@ -3,49 +3,38 @@ import logging
 from api.models.status import Status
 from api.tests.data.statuses import TestStatuses
 from api.tests.data.users import TestUsers
-from api.tests.utils.authenticated_test_case import AuthenticatedTestCase
-from api.tests.utils.populated_test_case import PopulatedTestCase
-from api.tests.utils.serialization_test_case import SerializationTestCase
+from api.tests.utils.combined_test_case import CombinedTestCase
 
 LOG = logging.getLogger(__name__)
 
 
-class StatusViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedTestCase):
-    def test_get(self):
-        self.login(TestUsers.TERMINAL)
+class StatusViewTestCase(CombinedTestCase):
+    def test_list(self):
+        self.login(TestUsers.TERMINAL_EXT)
+        self.perform_list_test('/statuses', TestStatuses.SAVED)
 
-        response = self.client.get('/statuses')
-        self.assertEqual(response.status_code, 200)
-        self.assertPksEqual(response.data, TestStatuses.ALL)
-        self.assertJSONEqual(response.content, self.RESPONSES['GET/statuses'])
+    def test_create(self):
+        self.login(TestUsers.ADMIN_EXT)
+        self.perform_create_test('/statuses', TestStatuses)
 
-    def test_post(self):
-        self.login(TestUsers.ADMIN)
-        identifier = 'POST/statuses'
-
-        response = self.client.post('/statuses', self.REQUESTS[identifier])
-        self.assertEqual(response.status_code, 201)
-        self.assertValueEqual(Status.objects.all(), TestStatuses.ALL + [TestStatuses.STAFF])
-        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
-
-    def test_patch(self):
-        self.login(TestUsers.ADMIN)
-        identifier = f'PATCH/statuses/{TestStatuses.PENDING.id}'
-
-        response = self.client.patch(f'/statuses/{TestStatuses.PENDING.id}', self.REQUESTS[identifier])
-        self.assertEqual(response.status_code, 200)
-        self.assertValueEqual(Status.objects.all(), [TestStatuses.PAID, TestStatuses.PENDING_PATCHED])
-        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
+    def test_update(self):
+        self.login(TestUsers.ADMIN_EXT)
+        self.perform_update_test('/statuses', TestStatuses)
 
     def test_permissions(self):
-        self.assertPermissions(lambda: self.client.get('/statuses'), TestUsers.ALL)
-        self.assertPermissions(lambda: self.client.get(f'/statuses/{TestStatuses.PAID.id}'), [])
-        self.assertPermissions(lambda: self.client.post('/statuses', self.REQUESTS['POST/statuses']), [TestUsers.ADMIN])
-        self.assertPermissions(lambda: self.client.delete('/statuses/1'), [TestUsers.ADMIN])
+        self.perform_permission_test(
+            '/statuses',
+            list_users=TestUsers.SAVED_EXT,
+            retrieve_users=[],
+            create_users=[TestUsers.ADMIN_EXT],
+            update_users=[TestUsers.ADMIN_EXT],
+            delete_users=[TestUsers.ADMIN_EXT],
+            detail_id=TestStatuses.PAID.id
+        )
 
     def test_str(self):
         LOG.debug(TestStatuses.PAID)
         self.assertEqual(
             str(TestStatuses.PAID),
-            'Status(id=1,internal_name="paid",display_name="Paid",color="#00ff00")'
+            f'Status(id={TestStatuses.PAID.id},internal_name="paid",display_name="Paid",color="#00ff00")'
         )

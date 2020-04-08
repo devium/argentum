@@ -1,61 +1,48 @@
+import copy
 import logging
 
 from django.contrib.auth.models import User
 
+from api.tests.data.groups import TestGroups
 from api.tests.data.users import TestUsers
-from api.tests.utils.authenticated_test_case import AuthenticatedTestCase
-from api.tests.utils.populated_test_case import PopulatedTestCase
-from api.tests.utils.serialization_test_case import SerializationTestCase
+from api.tests.utils.combined_test_case import CombinedTestCase
 
 LOG = logging.getLogger(__name__)
 
 
-class UserViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedTestCase):
-    def test_get(self):
-        self.login(TestUsers.ADMIN)
-
-        response = self.client.get('/users')
-        self.assertEqual(response.status_code, 200)
-        self.assertPksEqual(response.data, TestUsers.ALL)
-        self.assertJSONEqual(response.content, self.RESPONSES['GET/users'])
+class UserViewTestCase(CombinedTestCase):
+    def test_list(self):
+        self.login(TestUsers.ADMIN_EXT)
+        self.perform_list_test('/users', TestUsers.SAVED)
 
     def test_post(self):
-        self.login(TestUsers.ADMIN)
-
-        response = self.client.post('/users', self.REQUESTS['POST/users'])
-        self.assertEqual(response.status_code, 201)
-        self.assertPksEqual([response.data], [TestUsers.BUFFET])
-        self.assertJSONEqual(response.content, self.RESPONSES['POST/users'])
-        self.login(TestUsers.BUFFET)
+        self.login(TestUsers.ADMIN_EXT)
+        self.perform_create_test('/users', TestUsers, ignore_fields=['password', 'date_joined'])
+        self.login(TestUsers.BUFFET_EXT)
 
     def test_patch(self):
-        self.login(TestUsers.ADMIN)
-
-        response = self.client.patch(
-            f'/users/{TestUsers.WARDROBE.id}',
-            self.REQUESTS[f'PATCH/users/{TestUsers.WARDROBE.id}']
-        )
-        self.assertEqual(response.status_code, 200)
-        # Manual check necessary due to users and groups being special cases.
-        wardrobe_groups = User.objects.get(pk=TestUsers.WARDROBE.id).groups.all()
-        self.assertEqual(wardrobe_groups.count(), 2)
-        self.assertEqual([group.id for group in wardrobe_groups], [2, 4])
-        self.assertJSONEqual(response.content, self.RESPONSES[f'PATCH/users/{TestUsers.WARDROBE.id}'])
-        self.login(TestUsers.WARDROBE_PATCHED)
+        self.login(TestUsers.ADMIN_EXT)
+        self.perform_update_test('/users', TestUsers, ignore_fields=['password', 'date_joined'])
+        self.login(TestUsers.WARDROBE_PATCHED_EXT)
 
     def test_get_me(self):
-        self.login(TestUsers.RECEPTION)
-
+        self.login(TestUsers.RECEPTION_EXT)
         response = self.client.get('/users/me')
-        self.assertJSONEqual(response.content, self.RESPONSES['GET/users/me'])
+        expected_response = copy.deepcopy(self.RESPONSES['GET/users/me'])
+        self.patch_json_ids(expected_response)
+        self.assertJSONEqual(response.content, expected_response)
 
     def test_permissions(self):
-        self.assertPermissions(lambda: self.client.get('/users'), [TestUsers.ADMIN])
-        self.assertPermissions(lambda: self.client.get(f'/users/{TestUsers.ADMIN.id}'), [])
-        self.assertPermissions(lambda: self.client.post('/users', self.REQUESTS['POST/users']), [TestUsers.ADMIN])
-        self.assertPermissions(lambda: self.client.patch('/users/3', self.REQUESTS['PATCH/users/3']), [TestUsers.ADMIN])
-        self.assertPermissions(lambda: self.client.get('/users/me'), TestUsers.ALL)
-        self.assertPermissions(lambda: self.client.delete('/users/1'), [TestUsers.ADMIN])
+        self.perform_permission_test(
+            '/users',
+            list_users=[TestUsers.ADMIN_EXT],
+            retrieve_users=[],
+            create_users=[TestUsers.ADMIN_EXT],
+            update_users=[TestUsers.ADMIN_EXT],
+            delete_users=[TestUsers.ADMIN_EXT],
+            detail_id=TestUsers.BAR.id
+        )
+        self.assertPermissions(lambda: self.client.get('/users/me'), TestUsers.SAVED_EXT)
         self.logout()
         response = self.client.get('/users/me')
         self.assertEqual(response.status_code, 401)

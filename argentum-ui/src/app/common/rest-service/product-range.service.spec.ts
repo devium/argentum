@@ -12,7 +12,7 @@ import {Categories} from './test-data/categories';
 import {Products} from './test-data/products';
 import {ProductRanges} from './test-data/product-ranges';
 
-fdescribe('ProductRangeService', () => {
+describe('ProductRangeService', () => {
   let service: ProductRangeService;
   let categoryService: any;
   let http: HttpClient;
@@ -26,8 +26,8 @@ fdescribe('ProductRangeService', () => {
       imports: [HttpClientTestingModule],
       providers: [{provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true}],
     });
-    http = TestBed.get(HttpClient);
-    httpTestingController = TestBed.get(HttpTestingController);
+    http = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
     categoryService = createSpyObj('CategoryService', ['list']);
     categoryService.list.and.returnValue(of(Categories.ALL));
     service = new ProductRangeService(http, categoryService);
@@ -74,7 +74,7 @@ fdescribe('ProductRangeService', () => {
       expect(productRange.equals(ProductRanges.JUST_WATER_PATCHED_META)).toBeTruthy();
       resolved = true;
     });
-    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/product_ranges/${ProductRanges.JUST_WATER_META.id}`);
+    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/product_ranges/${ProductRanges.JUST_WATER_PATCHED_META.id}`);
   }));
 
   it('should delete a product range', fakeAsync(() => {

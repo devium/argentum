@@ -16,11 +16,17 @@ export function testEndpoint(
   const req = httpTestingController.expectOne(`${environment.apiUrl}${url}`);
   expect(req.request.method).toBe(method);
 
-  const identifier = `${method}${url}`;
+  // Remove detail part of URL for the identifier.
+  const re = RegExp('^(.+?/?)(\\d+)?$');
+  const noDetailUrl = re.exec(url)[1];
+  const identifier = `${method}${noDetailUrl}`;
   const requestBody = requests[identifier + requestSuffix];
+
   expect(req.request.body).toEqual(requestBody === undefined ? null : requestBody, `Request body mismatch for ${identifier}`);
+
   const responseBody = responses[identifier + responseSuffix];
   req.flush(responseBody === undefined ? null : responseBody);
+
   return req;
 }
 

@@ -9,7 +9,7 @@ import {TagRegistrations} from './test-data/tag-registrations';
 import {TagRegistration} from '../model/tag-registration';
 import {testEndpoint} from './test-utils';
 
-fdescribe('TagRegistrationService', () => {
+describe('TagRegistrationService', () => {
   let service: TagRegistrationService;
   let http: HttpClient;
   let httpTestingController: HttpTestingController;
@@ -23,8 +23,8 @@ fdescribe('TagRegistrationService', () => {
       providers: [{provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true}]
     });
     resolved = false;
-    http = TestBed.get(HttpClient);
-    httpTestingController = TestBed.get(HttpTestingController);
+    http = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
     service = new TagRegistrationService(http);
   });
 
@@ -38,7 +38,7 @@ fdescribe('TagRegistrationService', () => {
   });
 
   it('should create a tag registration', fakeAsync(() => {
-    service.create(Guests.ROBY.card, [TagRegistrations.ROBY_FIVE_REFERENCE.label], TagRegistrations.ROBY_FIVE_REFERENCE.order)[0].subscribe(
+    service.create(Guests.ROBY.card, TagRegistrations.ROBY_FIVE_REFERENCE.labels, TagRegistrations.ROBY_FIVE_REFERENCE.order).subscribe(
       (tagRegistration: TagRegistration) => {
         expect(tagRegistration.equals(TagRegistrations.ROBY_FIVE_REFERENCE)).toBeTruthy();
         resolved = true;
@@ -48,20 +48,14 @@ fdescribe('TagRegistrationService', () => {
   }));
 
   it('should commit a tag registration', fakeAsync(() => {
-    service.commit([TagRegistrations.ROBY_FOUR], TagRegistrations.ROBY_FOUR.order)[0].subscribe(
+    service.commit(TagRegistrations.ROBY_FOUR, TagRegistrations.ROBY_FOUR.order).subscribe(
       (tagRegistration: TagRegistration) => {
         expect(tagRegistration.equals(TagRegistrations.ROBY_FOUR_COMMITTED_REFERENCE)).toBeTruthy();
         resolved = true;
       }
     );
     testEndpoint(
-      httpTestingController,
-      requests,
-      responses,
-      'PATCH',
-      `/tag_registrations/${TagRegistrations.ROBY_FOUR.id}`,
-      '#commit',
-      '#commit'
+      httpTestingController, requests, responses, 'PATCH', `/tag_registrations/${TagRegistrations.ROBY_FOUR.id}`, '#commit', '#commit'
     );
   }));
 });

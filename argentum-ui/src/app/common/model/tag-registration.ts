@@ -9,7 +9,7 @@ export namespace TagRegistration {
   export interface Dto {
     id: number;
     time: string;
-    label: number;
+    labels: number[];
     guest: number;
     card: string;
     order: number;
@@ -21,7 +21,7 @@ export class TagRegistration extends AbstractTimeModel {
   constructor(
     id: number,
     time: Date,
-    public label: number,
+    public labels: number[],
     public guest: Guest,
     public card: string,
     public order: Order,
@@ -35,7 +35,7 @@ export class TagRegistration extends AbstractTimeModel {
     return new TagRegistration(
       dto.id,
       new Date(dto.time),
-      dto.label,
+      dto.labels,
       dto.guest ? guests.find((guest: Guest) => guest.id === dto.guest) : undefined,
       dto.card,
       orders.find((order: Order) => order.id === dto.order),
@@ -43,11 +43,11 @@ export class TagRegistration extends AbstractTimeModel {
     );
   }
 
-  static createDto(label: number, card: string, order: Order): TagRegistration.Dto {
+  static createDto(labels: number[], card: string, order: Order): TagRegistration.Dto {
     return {
       id: undefined,
       time: undefined,
-      label: label,
+      labels: labels,
       guest: undefined,
       card: card,
       order: order.id,
@@ -59,7 +59,7 @@ export class TagRegistration extends AbstractTimeModel {
     return {
       id: undefined,
       time: undefined,
-      label: undefined,
+      labels: undefined,
       guest: undefined,
       card: undefined,
       order: undefined,
@@ -71,7 +71,7 @@ export class TagRegistration extends AbstractTimeModel {
     return {
       id: undefined,
       time: undefined,
-      label: this.label,
+      labels: this.labels,
       guest: this.guest ? this.guest.id : undefined,
       card: this.card,
       order: this.order.id,

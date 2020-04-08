@@ -25,3 +25,17 @@ class ListByCardModelMixin(mixins.ListModelMixin):
         ):
             return Response({'guest__card': ['Card not registered.']}, status=status.HTTP_404_NOT_FOUND)
         return super().list(request, *args, **kwargs)
+
+
+class UpdateLockedModelMixin(mixins.UpdateModelMixin):
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+
+        # Lock this instance to avoid concurrent commits.
+        self.get_queryset().filter(id=instance.id).select_for_update()
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.data)

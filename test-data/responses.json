@@ -9,145 +9,145 @@
   },
   "GET/users": [
     {
-      "id": 1,
+      "id": 15010,
       "username": "admin",
       "groups": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7
+        14010,
+        14020,
+        14030,
+        14040,
+        14050,
+        14060,
+        14070
       ]
     },
     {
-      "id": 2,
+      "id": 15020,
       "username": "bar",
       "groups": [
-        2,
-        8
+        14020,
+        14080
       ]
     },
     {
-      "id": 3,
+      "id": 15030,
       "username": "wardrobe",
       "groups": [
-        3
+        14030
       ]
     },
     {
-      "id": 4,
+      "id": 15040,
       "username": "reception",
       "groups": [
-        4
+        14040
       ]
     },
     {
-      "id": 5,
+      "id": 15050,
       "username": "topup",
       "groups": [
-        5
+        14050
       ]
     },
     {
-      "id": 6,
+      "id": 15060,
       "username": "terminal",
       "groups": [
-        6
+        14060
       ]
     }
   ],
   "GET/users/me": {
-    "id": 4,
+    "id": 15040,
     "username": "reception",
     "groups": [
-      4
+      14040
     ]
   },
   "POST/users": {
-    "id": 7,
+    "id": 15070,
     "username": "buffet",
     "groups": [
-      2
+      14020
     ]
   },
-  "PATCH/users/3": {
-    "id": 3,
+  "PATCH/users/": {
+    "id": 15031,
     "username": "giftshop",
     "groups": [
-      2,
-      4
+      14020,
+      14040
     ]
   },
   "GET/groups": [
     {
-      "id": 1,
+      "id": 14010,
       "name": "admin"
     },
     {
-      "id": 2,
+      "id": 14020,
       "name": "order"
     },
     {
-      "id": 3,
+      "id": 14030,
       "name": "coat_check"
     },
     {
-      "id": 4,
+      "id": 14040,
       "name": "check_in"
     },
     {
-      "id": 5,
+      "id": 14050,
       "name": "transfer"
     },
     {
-      "id": 6,
+      "id": 14060,
       "name": "scan"
     },
     {
-      "id": 7,
+      "id": 14070,
       "name": "product_range_all"
     },
     {
-      "id": 8,
-      "name": "product_range_1"
+      "id": 14080,
+      "name": "product_range_13010"
     },
     {
-      "id": 9,
-      "name": "product_range_2"
+      "id": 14090,
+      "name": "product_range_13020"
     }
   ],
   "GET/config": [
     {
-      "id": 1,
+      "id": 10010,
       "key": "postpaid_limit",
       "value": "0.00"
     }
   ],
-  "PATCH/config/1": {
-    "id": 1,
+  "PATCH/config/": {
+    "id": 10011,
     "key": "postpaid_limit",
     "value": "-10.00"
   },
   "GET/guests": [
     {
-      "id": 1,
+      "id": 17010,
       "code": "DEMO-00001",
       "name": "Roby Brushfield",
       "mail": "rbrushfield0@sohu.com",
-      "status": 1,
+      "status": 16010,
       "checked_in": "2019-12-31T22:55:44Z",
       "card": "567a",
       "balance": "7.50",
       "bonus": "0.00"
     },
     {
-      "id": 2,
+      "id": 17020,
       "code": "DEMO-00002",
       "name": "Sheelah Arnault",
       "mail": "sarnault1@tuttocitta.it",
-      "status": 2,
+      "status": 16020,
       "checked_in": null,
       "card": null,
       "balance": "6.00",
@@ -156,11 +156,11 @@
   ],
   "GET/guests?code=DEMO&name=el&mail=sohu.com": [
     {
-      "id": 1,
+      "id": 17010,
       "code": "DEMO-00001",
       "name": "Roby Brushfield",
       "mail": "rbrushfield0@sohu.com",
-      "status": 1,
+      "status": 16010,
       "checked_in": "2019-12-31T22:55:44Z",
       "card": "567a",
       "balance": "7.50",
@@ -169,11 +169,11 @@
   ],
   "GET/guests?card=567a": [
     {
-      "id": 1,
+      "id": 17010,
       "code": "DEMO-00001",
       "name": "Roby Brushfield",
       "mail": "rbrushfield0@sohu.com",
-      "status": 1,
+      "status": 16010,
       "checked_in": "2019-12-31T22:55:44Z",
       "card": "567a",
       "balance": "7.50",
@@ -181,7 +181,7 @@
     }
   ],
   "POST/guests#min": {
-    "id": 3,
+    "id": 17030,
     "code": "DEMO-00003",
     "name": "Johanna Doe",
     "mail": "jdoe2@tinypic.com",
@@ -192,22 +192,22 @@
     "bonus": "0.00"
   },
   "POST/guests#max": {
-    "id": 3,
+    "id": 17031,
     "code": "DEMO-00003",
     "name": "Johanna Doe",
     "mail": "jdoe2@tinypic.com",
-    "status": 1,
+    "status": 16010,
     "checked_in": "2019-12-31T23:13:52Z",
     "card": "581a",
     "balance": "0.00",
     "bonus": "0.00"
   },
-  "PATCH/guests/1": {
-    "id": 1,
+  "PATCH/guests/": {
+    "id": 17011,
     "code": "DEMO-00001",
     "name": "Roby Brushfield",
     "mail": "rbrushfield0@sohu.com",
-    "status": 1,
+    "status": 16010,
     "checked_in": "2019-12-31T22:57:30Z",
     "card": "567a",
     "balance": "7.50",
@@ -215,7 +215,7 @@
   },
   "PATCH/guests/list_update": [
     {
-      "id": 3,
+      "id": 17030,
       "code": "DEMO-00003",
       "name": "Johanna Doe",
       "mail": "jdoe2@tinypic.com",
@@ -226,11 +226,11 @@
       "bonus": "0.00"
     },
     {
-      "id": 1,
+      "id": 17012,
       "code": "DEMO-00001",
       "name": "Toby Brushfield",
       "mail": "tbrushfield0@sohu.com",
-      "status": 1,
+      "status": 16020,
       "checked_in": "2019-12-31T22:55:44Z",
       "card": "567a",
       "balance": "7.50",
@@ -239,9 +239,9 @@
   ],
   "GET/transactions": [
     {
-      "id": 1,
+      "id": 20010,
       "time": "2019-12-31T22:05:00Z",
-      "guest": 1,
+      "guest": 17010,
       "value": "9.00",
       "ignore_bonus": false,
       "description": "default",
@@ -249,19 +249,19 @@
       "pending": false
     },
     {
-      "id": 2,
+      "id": 20020,
       "time": "2019-12-31T22:07:00Z",
-      "guest": 1,
+      "guest": 17010,
       "value": "-1.00",
       "ignore_bonus": false,
       "description": "order",
-      "order": 1,
+      "order": 18010,
       "pending": false
     },
     {
-      "id": 3,
+      "id": 20030,
       "time": "2019-12-31T22:07:30Z",
-      "guest": 2,
+      "guest": 17020,
       "value": "5.00",
       "ignore_bonus": true,
       "description": "default",
@@ -269,29 +269,29 @@
       "pending": false
     },
     {
-      "id": 4,
+      "id": 20040,
       "time": "2019-12-31T22:09:00Z",
-      "guest": 2,
+      "guest": 17020,
       "value": "-1.00",
       "ignore_bonus": false,
       "description": "order",
-      "order": 2,
+      "order": 18020,
       "pending": false
     },
     {
-      "id": 5,
+      "id": 20050,
       "time": "2019-12-31T22:10:00Z",
-      "guest": 1,
+      "guest": 17010,
       "value": "-3.00",
       "ignore_bonus": false,
       "description": "order",
-      "order": 3,
+      "order": 18030,
       "pending": false
     },
     {
-      "id": 6,
+      "id": 20060,
       "time": "2019-12-31T22:30:00Z",
-      "guest": 2,
+      "guest": 17020,
       "value": "-5.00",
       "ignore_bonus": false,
       "description": "default",
@@ -301,7 +301,7 @@
   ],
   "GET/transactions?guest__card=567a": [
     {
-      "id": 1,
+      "id": 20010,
       "time": "2019-12-31T22:05:00Z",
       "value": "9.00",
       "ignore_bonus": false,
@@ -310,26 +310,26 @@
       "pending": false
     },
     {
-      "id": 2,
+      "id": 20020,
       "time": "2019-12-31T22:07:00Z",
       "value": "-1.00",
       "ignore_bonus": false,
       "description": "order",
-      "order": 1,
+      "order": 18010,
       "pending": false
     },
     {
-      "id": 5,
+      "id": 20050,
       "time": "2019-12-31T22:10:00Z",
       "value": "-3.00",
       "ignore_bonus": false,
       "description": "order",
-      "order": 3,
+      "order": 18030,
       "pending": false
     }
   ],
   "POST/transactions": {
-    "id": 7,
+    "id": 20070,
     "time": "2019-12-31T22:35:30Z",
     "value": "5.00",
     "ignore_bonus": false,
@@ -337,8 +337,8 @@
     "order": null,
     "pending": true
   },
-  "PATCH/transactions/6": {
-    "id": 6,
+  "PATCH/transactions/#commit": {
+    "id": 20061,
     "time": "2019-12-31T22:30:05Z",
     "value": "-5.00",
     "ignore_bonus": false,
@@ -348,25 +348,25 @@
   },
   "GET/bonus_transactions": [
     {
-      "id": 1,
+      "id": 21010,
       "time": "2019-12-31T22:01:00Z",
-      "guest": 1,
+      "guest": 17010,
       "value": "2.50",
       "description": "default",
       "pending": false
     },
     {
-      "id": 2,
+      "id": 21020,
       "time": "2019-12-31T22:02:30Z",
-      "guest": 2,
+      "guest": 17020,
       "value": "3.00",
       "description": "default",
       "pending": false
     },
     {
-      "id": 3,
+      "id": 21030,
       "time": "2019-12-31T22:03:00Z",
-      "guest": 1,
+      "guest": 17010,
       "value": "3.00",
       "description": "default",
       "pending": true
@@ -374,14 +374,14 @@
   ],
   "GET/bonus_transactions?guest__card=567a": [
     {
-      "id": 1,
+      "id": 21010,
       "time": "2019-12-31T22:01:00Z",
       "value": "2.50",
       "description": "default",
       "pending": false
     },
     {
-      "id": 3,
+      "id": 21030,
       "time": "2019-12-31T22:03:00Z",
       "value": "3.00",
       "description": "default",
@@ -389,21 +389,17 @@
     }
   ],
   "POST/bonus_transactions": {
-    "id": 4,
+    "id": 21040,
     "time": "2019-12-31T22:04:20Z",
     "value": "4.00",
     "description": "default",
     "pending": true
   },
-  "POST/bonus_transactions#card": {
-    "id": 4,
-    "time": "2019-12-31T22:04:20Z",
-    "value": "4.00",
-    "description": "default",
-    "pending": true
+  "POST/bonus_transactions#card404": {
+    "card": ["Card not registered."]
   },
-  "PATCH/bonus_transactions/3": {
-    "id": 3,
+  "PATCH/bonus_transactions/#commit": {
+    "id": 21031,
     "time": "2019-12-31T22:03:05Z",
     "value": "3.00",
     "description": "default",
@@ -411,65 +407,65 @@
   },
   "GET/categories": [
     {
-      "id": 1,
+      "id": 11010,
       "name": "Coat check",
       "color": "#ffff00"
     },
     {
-      "id": 2,
+      "id": 11020,
       "name": "Soft drinks",
       "color": "#00ffff"
     },
     {
-      "id": 3,
+      "id": 11030,
       "name": "Hard drinks",
       "color": "#ff0000"
     }
   ],
   "POST/categories": {
-    "id": 4,
+    "id": 11040,
     "name": "Spirits",
     "color": "#ff00ff"
   },
-  "PATCH/categories/2": {
-    "id": 2,
+  "PATCH/categories/": {
+    "id": 11021,
     "name": "Nonalcoholic",
     "color": "#00ffff"
   },
   "GET/products": [
     {
-      "id": 1,
+      "id": 12010,
       "name": "Coat check item",
       "deprecated": false,
       "price": "1.00",
-      "category": 1,
+      "category": 11010,
       "product_ranges": [
       ]
     },
     {
-      "id": 2,
+      "id": 12020,
       "name": "Water",
       "deprecated": false,
       "price": "2.40",
-      "category": 2,
+      "category": 11020,
       "product_ranges": [
-        1,
-        2
+        13010,
+        13020
       ]
     },
     {
-      "id": 3,
+      "id": 12030,
       "name": "Coke",
       "deprecated": true,
       "price": "3.20",
       "category": null,
       "product_ranges": [
-        2
+        13020
       ]
     }
   ],
   "POST/products#min": {
-    "id": 4,
+    "id": 12040,
     "name": "Beer",
     "deprecated": false,
     "price": "3.60",
@@ -477,120 +473,120 @@
     "product_ranges": []
   },
   "POST/products#max": {
-    "id": 4,
+    "id": 12041,
     "name": "Beer",
     "deprecated": true,
     "price": "3.60",
-    "category": 3,
+    "category": 11030,
     "product_ranges": [
-      2
+      13020
     ]
   },
   "POST/products#empty_ranges": {
-    "id": 4,
+    "id": 12040,
     "name": "Beer",
     "deprecated": false,
     "price": "3.60",
     "category": null,
     "product_ranges": []
   },
-  "PATCH/products/2": {
-    "id": 2,
+  "PATCH/products/": {
+    "id": 12021,
     "name": "Aqua",
     "deprecated": true,
     "price": "2.40",
-    "category": 2,
+    "category": 11020,
     "product_ranges": [
-      1
+      13010
     ]
   },
-  "PATCH/products/2#deprecate": {
-    "id": 2,
+  "PATCH/products/#deprecate": {
+    "id": 12022,
     "name": "Water",
     "deprecated": true,
     "price": "2.40",
-    "category": 2,
+    "category": 11020,
     "product_ranges": [
-      1,
-      2
+      13010,
+      13020
     ]
   },
   "GET/product_ranges": [
     {
-      "id": 1,
+      "id": 13010,
       "name": "Just water"
     },
     {
-      "id": 2,
+      "id": 13020,
       "name": "Everything"
     }
   ],
-  "GET/product_ranges/1": {
-    "id": 1,
+  "GET/product_ranges/": {
+    "id": 13010,
     "name": "Just water",
     "products": [
       {
-        "id": 2,
+        "id": 12020,
         "name": "Water",
         "deprecated": false,
         "price": "2.40",
-        "category": 2
+        "category": 11020
       }
     ]
   },
   "POST/product_ranges": {
-    "id": 3,
+    "id": 13030,
     "name": "Just coke"
   },
-  "PATCH/product_ranges/1": {
-    "id": 1,
+  "PATCH/product_ranges/": {
+    "id": 13011,
     "name": "Just aqua"
   },
   "GET/discounts": [
     {
-      "id": 1,
-      "status": 1,
-      "category": 2,
+      "id": 22010,
+      "status": 16010,
+      "category": 11020,
       "rate": "0.10"
     },
     {
-      "id": 2,
-      "status": 2,
-      "category": 3,
+      "id": 22020,
+      "status": 16020,
+      "category": 11030,
       "rate": "0.25"
     }
   ],
   "GET/discounts?status__guests__card=567a": [
     {
-      "id": 1,
-      "status": 1,
-      "category": 2,
+      "id": 22010,
+      "status": 16010,
+      "category": 11020,
       "rate": "0.10"
     }
   ],
   "POST/discounts": {
-    "id": 3,
-    "status": 2,
-    "category": 2,
+    "id": 22030,
+    "status": 16020,
+    "category": 11020,
     "rate": "0.20"
   },
-  "PATCH/discounts/1": {
-    "id": 1,
-    "status": 1,
-    "category": 2,
+  "PATCH/discounts/": {
+    "id": 22011,
+    "status": 16010,
+    "category": 11020,
     "rate": "0.40"
   },
   "GET/orders": [
     {
-      "id": 1,
+      "id": 18010,
       "time": "2019-12-31T22:07:00Z",
-      "guest": 1,
+      "guest": 17010,
       "custom_initial": "0.00",
       "custom_current": "0.00",
       "items": [
         {
-          "id": 1,
-          "product": 1,
+          "id": 19010,
+          "product": 12010,
           "quantity_initial": 1,
           "quantity_current": 1,
           "discount": "0.00"
@@ -599,15 +595,15 @@
       "pending": false
     },
     {
-      "id": 2,
+      "id": 18020,
       "time": "2019-12-31T22:09:00Z",
-      "guest": 2,
+      "guest": 17020,
       "custom_initial": "0.00",
       "custom_current": "0.00",
       "items": [
         {
-          "id": 2,
-          "product": 1,
+          "id": 19020,
+          "product": 12010,
           "quantity_initial": 1,
           "quantity_current": 1,
           "discount": "0.00"
@@ -616,15 +612,15 @@
       "pending": false
     },
     {
-      "id": 3,
+      "id": 18030,
       "time": "2019-12-31T22:10:00Z",
-      "guest": 1,
+      "guest": 17010,
       "custom_initial": "0.20",
       "custom_current": "0.20",
       "items": [
         {
-          "id": 3,
-          "product": 2,
+          "id": 19030,
+          "product": 12020,
           "quantity_initial": 1,
           "quantity_current": 1,
           "discount": "0.00"
@@ -633,15 +629,15 @@
       "pending": false
     },
     {
-      "id": 4,
+      "id": 18040,
       "time": "2019-12-31T22:14:00Z",
-      "guest": 2,
+      "guest": 17020,
       "custom_initial": "0.60",
       "custom_current": "0.60",
       "items": [
         {
-          "id": 4,
-          "product": 3,
+          "id": 19040,
+          "product": 12030,
           "quantity_initial": 2,
           "quantity_current": 2,
           "discount": "0.00"
@@ -650,15 +646,15 @@
       "pending": true
     },
     {
-      "id": 5,
+      "id": 18050,
       "time": "2019-12-31T22:15:00Z",
-      "guest": 1,
+      "guest": 17010,
       "custom_initial": "0.00",
       "custom_current": "0.00",
       "items": [
         {
-          "id": 5,
-          "product": 1,
+          "id": 19050,
+          "product": 12010,
           "quantity_initial": 1,
           "quantity_current": 1,
           "discount": "0.00"
@@ -667,15 +663,15 @@
       "pending": true
     },
     {
-      "id": 6,
+      "id": 18060,
       "time": "2019-12-31T22:19:00Z",
-      "guest": 1,
+      "guest": 17010,
       "custom_initial": "0.00",
       "custom_current": "0.00",
       "items": [
         {
-          "id": 6,
-          "product": 1,
+          "id": 19060,
+          "product": 12010,
           "quantity_initial": 1,
           "quantity_current": 1,
           "discount": "0.00"
@@ -686,19 +682,19 @@
   ],
   "GET/orders?guest__card=567a": [
     {
-      "id": 1,
+      "id": 18010,
       "time": "2019-12-31T22:07:00Z",
       "custom_initial": "0.00",
       "custom_current": "0.00",
       "items": [
         {
-          "id": 1,
+          "id": 19010,
           "product": {
-            "id": 1,
+            "id": 12010,
             "name": "Coat check item",
             "deprecated": false,
             "price": "1.00",
-            "category": 1,
+            "category": 11010,
             "product_ranges": [
             ]
           },
@@ -710,22 +706,22 @@
       "pending": false
     },
     {
-      "id": 3,
+      "id": 18030,
       "time": "2019-12-31T22:10:00Z",
       "custom_initial": "0.20",
       "custom_current": "0.20",
       "items": [
         {
-          "id": 3,
+          "id": 19030,
           "product": {
-            "id": 2,
+            "id": 12020,
             "name": "Water",
             "deprecated": false,
             "price": "2.40",
-            "category": 2,
+            "category": 11020,
             "product_ranges": [
-              1,
-              2
+              13010,
+              13020
             ]
           },
           "quantity_initial": 1,
@@ -736,19 +732,19 @@
       "pending": false
     },
     {
-      "id": 5,
+      "id": 18050,
       "time": "2019-12-31T22:15:00Z",
       "custom_initial": "0.00",
       "custom_current": "0.00",
       "items": [
         {
-          "id": 5,
+          "id": 19050,
           "product": {
-            "id": 1,
+            "id": 12010,
             "name": "Coat check item",
             "deprecated": false,
             "price": "1.00",
-            "category": 1,
+            "category": 11010,
             "product_ranges": [
             ]
           },
@@ -760,19 +756,19 @@
       "pending": true
     },
     {
-      "id": 6,
+      "id": 18060,
       "time": "2019-12-31T22:19:00Z",
       "custom_initial": "0.00",
       "custom_current": "0.00",
       "items": [
         {
-          "id": 6,
+          "id": 19060,
           "product": {
-            "id": 1,
+            "id": 12010,
             "name": "Coat check item",
             "deprecated": false,
             "price": "1.00",
-            "category": 1,
+            "category": 11010,
             "product_ranges": [
             ]
           },
@@ -785,21 +781,21 @@
     }
   ],
   "POST/orders": {
-    "id": 7,
+    "id": 18070,
     "time": "2019-12-31T22:17:00Z",
     "custom_initial": "0.40",
     "custom_current": "0.40",
     "items": [
       {
-        "id": 7,
-        "product": 2,
+        "id": 19070,
+        "product": 12020,
         "quantity_initial": 1,
         "quantity_current": 1,
         "discount": "0.10"
       },
       {
-        "id": 8,
-        "product": 3,
+        "id": 19080,
+        "product": 12030,
         "quantity_initial": 1,
         "quantity_current": 1,
         "discount": "0.00"
@@ -807,38 +803,18 @@
     ],
     "pending": true
   },
-  "POST/orders#discount": {
-    "id": 7,
-    "time": "CHANGEME",
-    "custom_initial": "0.40",
-    "custom_current": "0.40",
-    "items": [
-      {
-        "id": 7,
-        "product": 2,
-        "quantity_initial": 1,
-        "quantity_current": 1,
-        "discount": "0.10"
-      },
-      {
-        "id": 8,
-        "product": 3,
-        "quantity_initial": 1,
-        "quantity_current": 1,
-        "discount": "0.00"
-      }
-    ],
-    "pending": true
+  "POST/orders#card404": {
+    "card": ["Card not registered."]
   },
-  "PATCH/orders/4#commit": {
-    "id": 4,
+  "PATCH/orders/#commit": {
+    "id": 18041,
     "time": "2019-12-31T22:14:30Z",
     "custom_initial": "0.60",
     "custom_current": "0.60",
     "items": [
       {
-        "id": 4,
-        "product": 3,
+        "id": 19040,
+        "product": 12030,
         "quantity_initial": 2,
         "quantity_current": 2,
         "discount": "0.00"
@@ -846,15 +822,22 @@
     ],
     "pending": false
   },
-  "PATCH/orders/3#cancel": {
-    "id": 3,
-    "time": "2019-12-31T22:10:00Z",
-    "custom_initial": "0.20",
-    "custom_current": "0.05",
+  "PATCH/orders/#discount": {
+    "id": 18071,
+    "time": "2019-12-31T22:17:00Z",
+    "custom_initial": "0.40",
+    "custom_current": "0.40",
     "items": [
       {
-        "id": 3,
-        "product": 2,
+        "id": 19070,
+        "product": 12020,
+        "quantity_initial": 1,
+        "quantity_current": 1,
+        "discount": "0.10"
+      },
+      {
+        "id": 19080,
+        "product": 12030,
         "quantity_initial": 1,
         "quantity_current": 1,
         "discount": "0.00"
@@ -862,93 +845,123 @@
     ],
     "pending": false
   },
-  "PATCH/order_items/3#cancel": {
-    "id": 3,
-    "product": 2,
+  "PATCH/orders/#cancel": {
+    "id": 18031,
+    "time": "2019-12-31T22:10:00Z",
+    "custom_initial": "0.20",
+    "custom_current": "0.05",
+    "items": [
+      {
+        "id": 19030,
+        "product": 12020,
+        "quantity_initial": 1,
+        "quantity_current": 1,
+        "discount": "0.00"
+      }
+    ],
+    "pending": false
+  },
+  "PATCH/order_items/#cancel": {
+    "id": 19031,
+    "product": 12020,
     "quantity_initial": 1,
     "quantity_current": 0,
     "discount": "0.00"
   },
   "GET/statuses": [
     {
-      "id": 1,
+      "id": 16010,
       "internal_name": "paid",
       "display_name": "Paid",
       "color": "#00ff00"
     },
     {
-      "id": 2,
+      "id": 16020,
       "internal_name": "pending",
       "display_name": "Pending",
       "color": "#ff0000"
     }
   ],
   "POST/statuses": {
-    "id": 3,
+    "id": 16030,
     "internal_name": "staff",
     "display_name": "Staff",
     "color": "#0000ff"
   },
-  "PATCH/statuses/2": {
-    "id": 2,
+  "PATCH/statuses/": {
+    "id": 16021,
     "internal_name": "pen",
     "display_name": "Pending",
     "color": "#ff0000"
   },
   "GET/tags": [
     {
-      "id": 1,
+      "id": 23010,
       "label": 2
     },
     {
-      "id": 2,
+      "id": 23020,
       "label": 3
     }
   ],
   "GET/tags?guest__card=567a": [
     {
-      "id": 1,
+      "id": 23010,
       "label": 2
     }
   ],
   "GET/tag_registrations": [
     {
-      "id": 1,
+      "id": 24010,
       "time": "2019-12-31T22:07:01Z",
-      "label": 2,
-      "guest": 1,
-      "order": 1,
+      "labels": [2],
+      "guest": 17010,
+      "order": 18010,
       "pending": false
     },
     {
-      "id": 2,
+      "id": 24020,
       "time": "2019-12-31T22:09:01Z",
-      "label": 3,
-      "guest": 2,
-      "order": 2,
+      "labels": [3],
+      "guest": 17020,
+      "order": 18020,
       "pending": false
     },
     {
-      "id": 3,
+      "id": 24030,
       "time": "2019-12-31T22:15:01Z",
-      "label": 4,
-      "guest": 1,
-      "order": 5,
+      "labels": [4],
+      "guest": 17010,
+      "order": 18050,
       "pending": true
     }
   ],
   "POST/tag_registrations#card": {
-    "id": 4,
+    "id": 24040,
     "time": "2019-12-31T22:19:01Z",
-    "label": 5,
-    "order": 6,
+    "labels": [5],
+    "order": 18060,
     "pending": true
   },
-  "PATCH/tag_registrations/3#commit": {
-    "id": 3,
+  "POST/tag_registrations#steal": {
+    "id": 24050,
+    "time": "2019-12-31T22:19:01Z",
+    "labels": [3],
+    "order": 18050,
+    "pending": true
+  },
+  "PATCH/tag_registrations/#commit": {
+    "id": 24031,
     "time": "2019-12-31T22:15:01Z",
-    "label": 4,
-    "order": 5,
+    "labels": [4],
+    "order": 18050,
+    "pending": false
+  },
+  "PATCH/tag_registrations/#steal": {
+    "id": 24051,
+    "time": "2019-12-31T22:15:01Z",
+    "labels": [3],
+    "order": 18050,
     "pending": false
   },
   "GET/statistics": {
@@ -968,19 +981,48 @@
     "num_categories": 3,
     "quantity_sales": [
       {
-        "product": 1,
+        "product": 12010,
         "quantity": 2,
         "value": "2.00"
       },
       {
-        "product": 2,
+        "product": 12020,
         "quantity": 1,
         "value": "2.40"
       },
       {
-        "product": 3,
+        "product": 12030,
         "quantity": 0,
         "value": "0.00"
+      }
+    ],
+    "check_ins": [
+      "2019-12-31T22:55:44Z"
+    ],
+    "deposits": [
+      {
+        "time": "2019-12-31T22:05:00Z",
+        "value": "9.00"
+      },
+      {
+        "time": "2019-12-31T22:07:30Z",
+        "value": "5.00"
+      }
+    ],
+    "withdrawals": [
+    ],
+    "orders": [
+      {
+        "time": "2019-12-31T22:07:00Z",
+        "value": "-1.00"
+      },
+      {
+        "time": "2019-12-31T22:09:00Z",
+        "value": "-1.00"
+      },
+      {
+        "time": "2019-12-31T22:10:00Z",
+        "value": "-3.00"
       }
     ]
   }

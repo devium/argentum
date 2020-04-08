@@ -7,7 +7,7 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import OR
 from rest_framework.request import Request
 
-from api.models.product import Product, ProductChildSerializer
+from api.models.product import ProductChildSerializer
 from argentum.permissions import StrictModelPermissions
 
 

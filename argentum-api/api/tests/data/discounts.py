@@ -9,34 +9,42 @@ from api.tests.utils.test_objects import TestObjects
 class TestDiscounts(TestObjects):
     MODEL = Discount
 
-    PAID_SOFT_DRINKS = MODEL(
-        id=1,
-        status=TestStatuses.PAID,
-        category=TestCategories.SOFT_DRINKS,
-        rate=Decimal('0.10')
-    )
+    PAID_SOFT_DRINKS: MODEL
+    PENDING_HARD_DRINKS: MODEL
 
-    PENDING_HARD_DRINKS = MODEL(
-        id=2,
-        status=TestStatuses.PENDING,
-        category=TestCategories.HARD_DRINKS,
-        rate=Decimal('0.25')
-    )
+    PENDING_SOFT_DRINKS: MODEL
+    PAID_SOFT_DRINKS_PATCHED: MODEL
 
-    ALL = [PAID_SOFT_DRINKS, PENDING_HARD_DRINKS]
+    @classmethod
+    def init(cls):
+        cls.PAID_SOFT_DRINKS = cls.MODEL(
+            id=22010,
+            status=TestStatuses.PAID,
+            category=TestCategories.SOFT_DRINKS,
+            rate=Decimal('0.10')
+        )
 
-    # Models below are not stored in the DB, but rather used for POST deserialization testing.
+        cls.PENDING_HARD_DRINKS = cls.MODEL(
+            id=22020,
+            status=TestStatuses.PENDING,
+            category=TestCategories.HARD_DRINKS,
+            rate=Decimal('0.25')
+        )
 
-    PENDING_SOFT_DRINKS = MODEL(
-        id=3,
-        status=TestStatuses.PENDING,
-        category=TestCategories.SOFT_DRINKS,
-        rate=Decimal('0.20')
-    )
+        cls.SAVED = [cls.PAID_SOFT_DRINKS, cls.PENDING_HARD_DRINKS]
 
-    PAID_SOFT_DRINKS_PATCHED = MODEL(
-        id=1,
-        status=TestStatuses.PAID,
-        category=TestCategories.SOFT_DRINKS,
-        rate=Decimal('0.40')
-    )
+        cls.PENDING_SOFT_DRINKS = cls.MODEL(
+            id=22030,
+            status=TestStatuses.PENDING,
+            category=TestCategories.SOFT_DRINKS,
+            rate=Decimal('0.20')
+        )
+
+        cls.PAID_SOFT_DRINKS_PATCHED = cls.MODEL(
+            id=22011,
+            status=TestStatuses.PAID,
+            category=TestCategories.SOFT_DRINKS,
+            rate=Decimal('0.40')
+        )
+
+        cls.UNSAVED = [cls.PENDING_SOFT_DRINKS, cls.PAID_SOFT_DRINKS_PATCHED]

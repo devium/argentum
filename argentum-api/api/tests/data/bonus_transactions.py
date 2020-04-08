@@ -10,41 +10,58 @@ from api.tests.utils.test_objects import TestObjects
 class TestBonusTransactions(TestObjects):
     MODEL = BonusTransaction
 
-    BTX1 = MODEL(
-        id=1,
-        time=parse_datetime('2019-12-31T22:01:00Z'),
-        guest=TestGuests.ROBY,
-        value=Decimal('2.50'),
-        description='default',
-        pending=False
-    )
+    BTX1: MODEL
+    BTX2: MODEL
+    BTX3: MODEL
 
-    BTX2 = MODEL(
-        id=2,
-        time=parse_datetime('2019-12-31T22:02:30Z'),
-        guest=TestGuests.SHEELAH,
-        value=Decimal('3.00'),
-        description='default',
-        pending=False
-    )
+    BTX3_COMMITTED: MODEL
+    BTX4: MODEL
 
-    BTX3 = MODEL(
-        id=3,
-        time=parse_datetime('2019-12-31T22:03:00Z'),
-        guest=TestGuests.ROBY,
-        value=Decimal('3.00'),
-        description='default',
-        pending=True
-    )
+    @classmethod
+    def init(cls):
+        cls.BTX1 = cls.MODEL(
+            id=21010,
+            time=parse_datetime('2019-12-31T22:01:00Z'),
+            guest=TestGuests.ROBY,
+            value=Decimal('2.50'),
+            description='default',
+            pending=False
+        )
 
-    ALL = [BTX1, BTX2, BTX3]
+        cls.BTX2 = cls.MODEL(
+            id=21020,
+            time=parse_datetime('2019-12-31T22:02:30Z'),
+            guest=TestGuests.SHEELAH,
+            value=Decimal('3.00'),
+            description='default',
+            pending=False
+        )
 
-    # Models below are not stored in the DB, but rather used for POST deserialization testing.
+        cls.BTX3 = cls.MODEL(
+            id=21030,
+            time=parse_datetime('2019-12-31T22:03:00Z'),
+            guest=TestGuests.ROBY,
+            value=Decimal('3.00'),
+            description='default',
+            pending=True
+        )
 
-    BTX4 = MODEL(
-        id=4,
-        guest=TestGuests.ROBY,
-        value=Decimal('4.00'),
-        description='default',
-        pending=True
-    )
+        cls.SAVED = [cls.BTX1, cls.BTX2, cls.BTX3]
+
+        cls.BTX3_COMMITTED = cls.MODEL(
+            id=21031,
+            guest=TestGuests.ROBY,
+            value=Decimal('3.00'),
+            description='default',
+            pending=False
+        )
+
+        cls.BTX4 = cls.MODEL(
+            id=21040,
+            guest=TestGuests.ROBY,
+            value=Decimal('4.00'),
+            description='default',
+            pending=True
+        )
+
+        cls.UNSAVED = [cls.BTX3_COMMITTED, cls.BTX4]

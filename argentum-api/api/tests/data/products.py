@@ -8,62 +8,76 @@ from api.tests.utils.test_objects import TestObjects
 class TestProducts(TestObjects):
     MODEL = Product
 
-    COAT_CHECK_ITEM = MODEL(
-        id=1,
-        name='Coat check item',
-        deprecated=False,
-        price=Decimal('1.00'),
-        category=TestCategories.COAT_CHECK
-    )
+    COAT_CHECK_ITEM: MODEL
+    WATER: MODEL
+    COKE: MODEL
 
-    WATER = MODEL(
-        id=2,
-        name='Water',
-        deprecated=False,
-        price=Decimal('2.40'),
-        category=TestCategories.SOFT_DRINKS
-    )
+    BEER_MIN: MODEL
+    BEER_MAX: MODEL
+    WATER_PATCHED: MODEL
+    WATER_DEPRECATED: MODEL
 
-    COKE = MODEL(
-        id=3,
-        name='Coke',
-        deprecated=True,
-        price=Decimal('3.20'),
-        category=None
-    )
+    @classmethod
+    def init(cls):
+        cls.COAT_CHECK_ITEM = cls.MODEL(
+            id=12010,
+            name='Coat check item',
+            deprecated=False,
+            price=Decimal('1.00'),
+            category=TestCategories.COAT_CHECK
+        )
 
-    ALL = [COAT_CHECK_ITEM, WATER, COKE]
+        cls.WATER = cls.MODEL(
+            id=12020,
+            name='Water',
+            deprecated=False,
+            price=Decimal('2.40'),
+            category=TestCategories.SOFT_DRINKS
+        )
 
-    # Models below are not stored in the DB, but rather used for POST deserialization testing.
+        cls.COKE = cls.MODEL(
+            id=12030,
+            name='Coke',
+            deprecated=True,
+            price=Decimal('3.20'),
+            category=None
+        )
 
-    BEER_MIN = MODEL(
-        id=4,
-        name='Beer',
-        deprecated=False,
-        price=Decimal('3.60'),
-        category=None
-    )
+        cls.SAVED = [cls.COAT_CHECK_ITEM, cls.WATER, cls.COKE]
 
-    BEER_MAX = MODEL(
-        id=4,
-        name='Beer',
-        deprecated=True,
-        price=Decimal('3.60'),
-        category=TestCategories.HARD_DRINKS
-    )
+        cls.BEER_MIN = cls.MODEL(
+            id=12040,
+            name='Beer',
+            deprecated=False,
+            price=Decimal('3.60'),
+            category=None
+        )
 
-    WATER_PATCHED = MODEL(
-        id=2,
-        name='Aqua',
-        deprecated=True,
-        price=Decimal('2.40'),
-        category=TestCategories.SOFT_DRINKS
-    )
+        cls.BEER_MAX = cls.MODEL(
+            id=12041,
+            name='Beer',
+            deprecated=True,
+            price=Decimal('3.60'),
+            category=TestCategories.HARD_DRINKS
+        )
 
-    WATER_DEPRECATED = MODEL(
-        id=2,
-        name='Water',
-        deprecated=True,
-        price=Decimal('2.40'),
-        category=TestCategories.SOFT_DRINKS
-    )
+        cls.WATER_PATCHED = cls.MODEL(
+            id=12021,
+            name='Aqua',
+            deprecated=True,
+            price=Decimal('2.40'),
+            category=TestCategories.SOFT_DRINKS
+        )
+
+        cls.WATER_DEPRECATED = cls.MODEL(
+            id=12022,
+            name='Water',
+            deprecated=True,
+            price=Decimal('2.40'),
+            category=TestCategories.SOFT_DRINKS
+        )
+
+        cls.UNSAVED = [cls.BEER_MIN, cls.BEER_MAX, cls.WATER_PATCHED, cls.WATER_DEPRECATED]
+
+
+

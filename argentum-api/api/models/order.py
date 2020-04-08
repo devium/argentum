@@ -1,29 +1,29 @@
 from decimal import Decimal
 from typing import Dict, Any
 
-from django.db import models
+from django.db import models, transaction
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, viewsets, serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.filters import OrderingFilter
 
+from api.models.commitable import Committable
 from api.models.config import Config
 from api.models.discount import Discount
 from api.models.guest import Guest
 from api.models.order_item import OrderItemCreateSerializer, OrderItem, OrderItemListByCardSerializer
 from api.models.transaction import TransactionUpdateSerializer
-from api.models.utils import resolve_card, ListByCardModelMixin
+from api.models.utils import resolve_card, ListByCardModelMixin, UpdateLockedModelMixin
 from argentum.permissions import StrictModelPermissions
 from argentum.settings import CURRENCY_CONFIG
 
 
-class Order(models.Model):
+class Order(Committable):
     time = models.DateTimeField(default=timezone.now)
     guest = models.ForeignKey(Guest, on_delete=models.CASCADE)
     custom_initial = models.DecimalField(**CURRENCY_CONFIG)
     custom_current = models.DecimalField(**CURRENCY_CONFIG)
-    pending = models.BooleanField(default=True)
 
     # Many-to-one fields specified in the other models:
     # transactions
@@ -142,33 +142,37 @@ class OrderUpdateSerializer(serializers.ModelSerializer):
         commit = not committed and not validated_data.get('pending', True)
 
         if commit:
-            self.instance.time = timezone.now()
+            # Time is read-only but may be set via code, e.g., by a TagRegistration object.
+            self.instance.time = validated_data.get('time', timezone.now())
             # Order can only be committed once. This is where it is credited.
-            TransactionUpdateSerializer.create_internal(
-                guest=self.instance.guest,
-                value=-self.instance.total,
-                description='order',
-                order=self.instance,
-                time=self.instance.time
-            )
-
-        if committed:
-            custom_current = validated_data.get('custom_current', None)
-            # Validation has already been performed. Just execute the transaction.
-            if custom_current is not None:
+            with transaction.atomic():
                 TransactionUpdateSerializer.create_internal(
                     guest=self.instance.guest,
-                    value=self.instance.custom_current - custom_current,
-                    description='cancel',
-                    order=self.instance
+                    value=-self.instance.total,
+                    description='order',
+                    order=self.instance,
+                    time=self.instance.time
                 )
-
-        return super().update(instance, validated_data)
+                return super().update(instance, validated_data)
+        elif committed:
+            custom_current = validated_data.get('custom_current', None)
+            # Validation has already been performed. Just execute the transaction.
+            with transaction.atomic():
+                if custom_current is not None:
+                    TransactionUpdateSerializer.create_internal(
+                        guest=self.instance.guest,
+                        value=self.instance.custom_current - custom_current,
+                        description='cancel',
+                        order=self.instance
+                    )
+                return super().update(instance, validated_data)
+        else:
+            return super().update(instance, validated_data)
 
 
 class OrderViewSet(
     mixins.CreateModelMixin,
-    mixins.UpdateModelMixin,
+    UpdateLockedModelMixin,
     ListByCardModelMixin,
     viewsets.GenericViewSet
 ):

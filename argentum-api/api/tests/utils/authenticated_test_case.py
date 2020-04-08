@@ -13,13 +13,13 @@ class AuthenticatedTestCase(TestCase):
     def setUpTestData(cls):
         super().setUpTestData()
 
-    def login(self, user: TestUsers.PlainUser):
+    def login(self, user: TestUsers.UserExt):
         self.logout()
         response = self.client.post('/token', {
-            'username': user.username,
-            'password': user.password
+            'username': user.obj.username,
+            'password': user.plain_password
         })
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200, response.data)
         self.assertTrue(response.data['token'])
         self.token = response.data['token']
         self.client.defaults['HTTP_AUTHORIZATION'] = 'Token ' + self.token
@@ -31,7 +31,7 @@ class AuthenticatedTestCase(TestCase):
     def assertPermissions(
             self,
             request: Callable[[], Response],
-            allowed_users: Iterable[TestUsers.PlainUser],
+            allowed_users: Iterable[TestUsers.UserExt],
             expected_errors=None
     ):
         """
@@ -53,7 +53,7 @@ class AuthenticatedTestCase(TestCase):
                 f'Permission check failed for {user}: {getattr(response, "data", None)}'
             )
 
-        forbidden_users = [user for user in TestUsers.ALL if user not in allowed_users]
+        forbidden_users = [user for user in TestUsers.SAVED_EXT if user not in allowed_users]
         for user in forbidden_users:
             self._fixture_teardown()
             self._fixture_setup()
@@ -62,7 +62,7 @@ class AuthenticatedTestCase(TestCase):
             self.assertIn(
                 response.status_code,
                 expected_errors,
-                f'Prohibition check failed for {user}: {getattr(response, "data", None)}'
+                f'Prohibition check failed for {user.obj}: {getattr(response, "data", None)}'
             )
 
         self._fixture_teardown()

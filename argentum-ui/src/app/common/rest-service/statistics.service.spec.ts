@@ -11,7 +11,7 @@ import {Statistics} from '../model/statistics';
 import {TestStatistics} from './test-data/statistics';
 import {testEndpoint} from './test-utils';
 
-fdescribe('StatisticsService', () => {
+describe('StatisticsService', () => {
   let service: StatisticsService;
   let productService: any;
   let http: HttpClient;
@@ -25,8 +25,8 @@ fdescribe('StatisticsService', () => {
       imports: [HttpClientTestingModule],
       providers: [{provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true}],
     });
-    http = TestBed.get(HttpClient);
-    httpTestingController = TestBed.get(HttpTestingController);
+    http = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
     productService = createSpyObj('ProductService', ['list']);
     productService.list.and.returnValue(of(Products.ALL));
     service = new StatisticsService(http, productService);

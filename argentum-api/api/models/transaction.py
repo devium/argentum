@@ -1,20 +1,19 @@
 from typing import Dict, Any
 
-from django.db import models
+from django.db import models, transaction
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, serializers, mixins, status
+from rest_framework import viewsets, serializers, mixins
 from rest_framework.filters import OrderingFilter
-from rest_framework.request import Request
-from rest_framework.response import Response
 
+from api.models.commitable import Committable
 from api.models.guest import Guest
-from api.models.utils import resolve_card, ListByCardModelMixin
+from api.models.utils import resolve_card, ListByCardModelMixin, UpdateLockedModelMixin
 from argentum.permissions import StrictModelPermissions
 from argentum.settings import CURRENCY_CONFIG
 
 
-class Transaction(models.Model):
+class Transaction(Committable):
     time = models.DateTimeField(default=timezone.now)
     guest = models.ForeignKey(Guest, on_delete=models.CASCADE)
     value = models.DecimalField(**CURRENCY_CONFIG)
@@ -27,7 +26,6 @@ class Transaction(models.Model):
         default=None,
         on_delete=models.SET_NULL
     )
-    pending = models.BooleanField(default=True)
 
     def __str__(self):
         return f'Transaction(' \
@@ -89,9 +87,10 @@ class TransactionUpdateSerializer(serializers.ModelSerializer):
         # Time may not be set externally but internal calls to the serializer may set the time manually, e.g. calls by
         # the order serializer to end up with the same timestamps on both the order and the transaction.
         self.instance.time = validated_data.pop('time', timezone.now())
-        super().update(instance, validated_data)
+        committed = not self.instance.pending
+        commit = not committed and not validated_data.get('pending', True)
 
-        if not instance.pending:
+        if commit:
             # Transaction can only be committed once. This is where it is credited.
             if instance.ignore_bonus or instance.value > 0:
                 instance.guest.balance += instance.value
@@ -106,14 +105,17 @@ class TransactionUpdateSerializer(serializers.ModelSerializer):
                     remaining_value = 0
                 instance.guest.balance -= remaining_value
 
-            instance.guest.save()
+            with transaction.atomic():
+                instance.guest.save()
+                return super().update(instance, validated_data)
 
-        return instance
+        # No reason to do this but go ahead.
+        return super().update(instance, validated_data)
 
 
 class TransactionViewSet(
     mixins.CreateModelMixin,
-    mixins.UpdateModelMixin,
+    UpdateLockedModelMixin,
     ListByCardModelMixin,
     viewsets.GenericViewSet
 ):

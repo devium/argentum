@@ -11,113 +11,155 @@ from api.tests.utils.test_objects import TestObjects
 class TestTransactions(TestObjects):
     MODEL = Transaction
 
-    TX1 = MODEL(
-        id=1,
-        time=parse_datetime('2019-12-31T22:05:00Z'),
-        guest=TestGuests.ROBY,
-        value=Decimal('9.00'),
-        ignore_bonus=False,
-        description='default',
-        order=None,
-        pending=False
-    )
+    TX1: MODEL
+    TX_COAT_CHECK_1: MODEL
+    TX2: MODEL
+    TX_COAT_CHECK_2: MODEL
+    TX_ORDER_1: MODEL
+    TX3: MODEL
 
-    TX_COAT_CHECK_1 = MODEL(
-        id=2,
-        time=parse_datetime('2019-12-31T22:07:00Z'),
-        guest=TestGuests.ROBY,
-        value=Decimal('-1.00'),
-        ignore_bonus=False,
-        description='order',
-        order=TestOrders.TAG_REGISTRATION_TWO,
-        pending=False
-    )
+    TX3_COMMITTED: MODEL
+    TX4: MODEL
+    TX_ORDER_2: MODEL
+    TX_CANCEL_1: MODEL
+    TX_CANCEL_2: MODEL
+    TX_COAT_CHECK_3: MODEL
 
-    TX2 = MODEL(
-        id=3,
-        time=parse_datetime('2019-12-31T22:07:30Z'),
-        guest=TestGuests.SHEELAH,
-        value=Decimal('5.00'),
-        ignore_bonus=True,
-        description='default',
-        order=None,
-        pending=False
-    )
+    @classmethod
+    def init(cls):
+        cls.TX1 = cls.MODEL(
+            id=20010,
+            time=parse_datetime('2019-12-31T22:05:00Z'),
+            guest=TestGuests.ROBY,
+            value=Decimal('9.00'),
+            ignore_bonus=False,
+            description='default',
+            order=None,
+            pending=False
+        )
 
-    TX_COAT_CHECK_2 = MODEL(
-        id=4,
-        time=parse_datetime('2019-12-31T22:09:00Z'),
-        guest=TestGuests.SHEELAH,
-        value=Decimal('-1.00'),
-        ignore_bonus=False,
-        description='order',
-        order=TestOrders.TAG_REGISTRATION_THREE,
-        pending=False
-    )
+        cls.TX_COAT_CHECK_1 = cls.MODEL(
+            id=20020,
+            time=parse_datetime('2019-12-31T22:07:00Z'),
+            guest=TestGuests.ROBY,
+            value=Decimal('-1.00'),
+            ignore_bonus=False,
+            description='order',
+            order=TestOrders.TAG_REGISTRATION_TWO,
+            pending=False
+        )
 
-    TX_ORDER_1 = MODEL(
-        id=5,
-        time=parse_datetime('2019-12-31T22:10:00Z'),
-        guest=TestGuests.ROBY,
-        value=Decimal('-3.00'),
-        ignore_bonus=False,
-        description='order',
-        order=TestOrders.ONE_WATER_PLUS_TIP,
-        pending=False
-    )
+        cls.TX2 = cls.MODEL(
+            id=20030,
+            time=parse_datetime('2019-12-31T22:07:30Z'),
+            guest=TestGuests.SHEELAH,
+            value=Decimal('5.00'),
+            ignore_bonus=True,
+            description='default',
+            order=None,
+            pending=False
+        )
 
-    TX3 = MODEL(
-        id=6,
-        time=parse_datetime('2019-12-31T22:30:00Z'),
-        guest=TestGuests.SHEELAH,
-        value=Decimal('-5.00'),
-        ignore_bonus=False,
-        description='default',
-        order=None,
-        pending=True
-    )
+        cls.TX_COAT_CHECK_2 = cls.MODEL(
+            id=20040,
+            time=parse_datetime('2019-12-31T22:09:00Z'),
+            guest=TestGuests.SHEELAH,
+            value=Decimal('-1.00'),
+            ignore_bonus=False,
+            description='order',
+            order=TestOrders.TAG_REGISTRATION_THREE,
+            pending=False
+        )
 
-    ALL = [TX1, TX_COAT_CHECK_1, TX2, TX_COAT_CHECK_2, TX_ORDER_1, TX3]
+        cls.TX_ORDER_1 = cls.MODEL(
+            id=20050,
+            time=parse_datetime('2019-12-31T22:10:00Z'),
+            guest=TestGuests.ROBY,
+            value=Decimal('-3.00'),
+            ignore_bonus=False,
+            description='order',
+            order=TestOrders.ONE_WATER_PLUS_TIP,
+            pending=False
+        )
 
-    # Models below are not stored in the DB, but rather used for POST deserialization testing.
+        cls.TX3 = cls.MODEL(
+            id=20060,
+            time=parse_datetime('2019-12-31T22:30:00Z'),
+            guest=TestGuests.SHEELAH,
+            value=Decimal('-5.00'),
+            ignore_bonus=False,
+            description='default',
+            order=None,
+            pending=True
+        )
 
-    # Time is set by the server.
-    TX4 = MODEL(
-        id=7,
-        guest=TestGuests.ROBY,
-        value=Decimal('5.00'),
-        ignore_bonus=False,
-        description='default',
-        order=None,
-        pending=True
-    )
+        cls.SAVED = [cls.TX1, cls.TX_COAT_CHECK_1, cls.TX2, cls.TX_COAT_CHECK_2, cls.TX_ORDER_1, cls.TX3]
 
-    TX_ORDER_2 = MODEL(
-        id=7,
-        guest=TestGuests.SHEELAH,
-        value=Decimal('-7.00'),
-        ignore_bonus=False,
-        description='order',
-        order=TestOrders.TWO_COKES_PLUS_TIP,
-        pending=False
-    )
+        cls.TX3_COMMITTED = cls.MODEL(
+            id=20061,
+            guest=TestGuests.SHEELAH,
+            value=Decimal('-5.00'),
+            ignore_bonus=False,
+            description='default',
+            order=None,
+            pending=False
+        )
 
-    TX_CANCEL_1 = MODEL(
-        id=7,
-        guest=TestGuests.ROBY,
-        value=Decimal('0.15'),
-        ignore_bonus=False,
-        description='cancel',
-        order=TestOrders.ONE_WATER_PLUS_TIP,
-        pending=False
-    )
+        cls.TX4 = cls.MODEL(
+            id=20070,
+            guest=TestGuests.ROBY,
+            value=Decimal('5.00'),
+            ignore_bonus=False,
+            description='default',
+            order=None,
+            pending=True
+        )
 
-    TX_CANCEL_2 = MODEL(
-        id=7,
-        guest=TestGuests.ROBY,
-        value=Decimal('2.40'),
-        ignore_bonus=False,
-        description='cancel',
-        order=TestOrders.ONE_WATER_PLUS_TIP,
-        pending=False
-    )
+        cls.TX_ORDER_2 = cls.MODEL(
+            id=20080,
+            guest=TestGuests.SHEELAH,
+            value=Decimal('-7.00'),
+            ignore_bonus=False,
+            description='order',
+            order=TestOrders.TWO_COKES_PLUS_TIP,
+            pending=False
+        )
+
+        cls.TX_CANCEL_1 = cls.MODEL(
+            id=20090,
+            guest=TestGuests.ROBY,
+            value=Decimal('0.15'),
+            ignore_bonus=False,
+            description='cancel',
+            order=TestOrders.ONE_WATER_PLUS_TIP,
+            pending=False
+        )
+
+        cls.TX_CANCEL_2 = cls.MODEL(
+            id=20100,
+            guest=TestGuests.ROBY,
+            value=Decimal('2.40'),
+            ignore_bonus=False,
+            description='cancel',
+            order=TestOrders.ONE_WATER_PLUS_TIP,
+            pending=False
+        )
+
+        cls.TX_COAT_CHECK_3 = cls.MODEL(
+            id=20110,
+            guest=TestGuests.ROBY,
+            value=Decimal('-1.00'),
+            ignore_bonus=False,
+            description='order',
+            order=TestOrders.TAG_REGISTRATION_FOUR,
+            pending=False
+        )
+
+        cls.UNSAVED = [
+            cls.TX3_COMMITTED,
+            cls.TX4,
+            cls.TX_ORDER_2,
+            cls.TX_CANCEL_1,
+            cls.TX_CANCEL_2,
+            cls.TX_COAT_CHECK_3
+        ]

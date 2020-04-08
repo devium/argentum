@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from django.db import models
-from django.db.models import Sum, Avg, F, FloatField
+from django.db.models import Sum, Avg, F, FloatField, Q
 from rest_framework import viewsets
 from rest_framework import fields
 from rest_framework.request import Request
@@ -71,7 +71,32 @@ class StatisticsViewSet(viewsets.ViewSet):
                     )['total']
                 }
                 for product in Product.objects.all()
-            ]
+            ],
+            'check_ins': list(
+                Guest.objects.filter(checked_in__isnull=False).values_list(
+                    'checked_in', flat=True
+                ).order_by('checked_in')
+            ),
+            'deposits': list(
+                Transaction.objects.filter(
+                    value__gt=0,
+                    description='default',
+                    pending=False
+                ).values('time', 'value').order_by('time')
+            ),
+            'withdrawals': list(
+                Transaction.objects.filter(
+                    value__lt=0,
+                    description='default',
+                    pending=False
+                ).values('time', 'value').order_by('time')
+            ),
+            'orders': list(
+                Transaction.objects.filter(
+                    Q(description='order') | Q(description='cancel'),
+                    pending=False
+                ).values('time', 'value').order_by('time')
+            )
         }
         decimal = fields.DecimalField(**CURRENCY_CONFIG)
 
@@ -88,23 +113,28 @@ class StatisticsViewSet(viewsets.ViewSet):
                 sales['value'] = 0
             sales['value'] = decimal.to_representation(sales['value'])
 
+        # Stringify transaction values
+        for tx_set in (body['deposits'], body['withdrawals'], body['orders']):
+            for tx in tx_set:
+                tx['value'] = decimal.to_representation(tx['value'])
+
         # Flip sign on negative transaction sums.
         for key in (
-            'total_negative_balance',
-            'total_spent',
-            'total_withdrawn'
+                'total_negative_balance',
+                'total_spent',
+                'total_withdrawn'
         ):
             body[key] = -body[key]
 
         # Convert decimal fields to string representation.
         for key in (
-            'total_positive_balance',
-            'total_negative_balance',
-            'total_bonus',
-            'total_spent',
-            'total_refund',
-            'total_deposited',
-            'total_withdrawn'
+                'total_positive_balance',
+                'total_negative_balance',
+                'total_bonus',
+                'total_spent',
+                'total_refund',
+                'total_deposited',
+                'total_withdrawn'
         ):
             body[key] = decimal.to_representation(body[key])
 

@@ -12,7 +12,7 @@ import createSpyObj = jasmine.createSpyObj;
 import {Statuses} from './test-data/statuses';
 import {of} from 'rxjs';
 
-fdescribe('GuestService', () => {
+describe('GuestService', () => {
   let service: GuestService;
   let statusService: any;
   let http: HttpClient;
@@ -26,8 +26,8 @@ fdescribe('GuestService', () => {
       imports: [HttpClientTestingModule],
       providers: [{provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true}],
     });
-    http = TestBed.get(HttpClient);
-    httpTestingController = TestBed.get(HttpTestingController);
+    http = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
     statusService = createSpyObj('StatusService', ['list']);
     statusService.list.and.returnValue(of(Statuses.ALL));
     service = new GuestService(http, statusService);
@@ -68,32 +68,32 @@ fdescribe('GuestService', () => {
   }));
 
   it('should create a guest with minimal information', fakeAsync(() => {
-    service.create(Guests.JOHANNA_MIN).subscribe((guest: Guest) => {
-      expect(guest.equals(Guests.JOHANNA_MIN_REFERENCE)).toBeTruthy();
+    service.create(Guests.JOHANNA_MIN_REQUEST).subscribe((guest: Guest) => {
+      expect(guest.equals(Guests.JOHANNA_MIN_RESPONSE)).toBeTruthy();
       resolved = true;
     });
     testEndpoint(httpTestingController, requests, responses, 'POST', '/guests', '#min', '#min');
   }));
 
   it('should create a guest with maximum information', fakeAsync(() => {
-    service.create(Guests.JOHANNA_MAX).subscribe((guest: Guest) => {
-      expect(guest.equals(Guests.JOHANNA_MAX_REFERENCE)).toBeTruthy();
+    service.create(Guests.JOHANNA_MAX_REQUEST).subscribe((guest: Guest) => {
+      expect(guest.equals(Guests.JOHANNA_MAX_RESPONSE)).toBeTruthy();
       resolved = true;
     });
     testEndpoint(httpTestingController, requests, responses, 'POST', '/guests', '#max', '#max');
   }));
 
   it('should update a guest', fakeAsync(() => {
-    service.update(Guests.ROBY_PATCHED).subscribe((guest: Guest) => {
-      expect(guest.equals(Guests.ROBY_PATCHED_REFERENCE)).toBeTruthy();
+    service.update(Guests.ROBY_PATCHED_REQUEST).subscribe((guest: Guest) => {
+      expect(guest.equals(Guests.ROBY_PATCHED_RESPONSE)).toBeTruthy();
       resolved = true;
     });
-    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/guests/${Guests.ROBY.id}`);
+    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/guests/${Guests.ROBY_PATCHED_REQUEST.id}`);
   }));
 
   it('should perform a bulk update', fakeAsync(() => {
-    service.listUpdate([Guests.ROBY_LIST_PATCHED, Guests.JOHANNA_LIST_CREATED]).subscribe((guests: Guest[]) => {
-      expectArraysEqual(guests, [Guests.JOHANNA_LIST_CREATED_REFERENCE, Guests.ROBY_LIST_PATCHED_REFERENCE]);
+    service.listUpdate([Guests.ROBY_LIST_PATCHED_REQUEST, Guests.JOHANNA_LIST_CREATED_REQUEST]).subscribe((guests: Guest[]) => {
+      expectArraysEqual(guests, [Guests.JOHANNA_LIST_CREATED_RESPONSE, Guests.ROBY_LIST_PATCHED_RESPONSE]);
       resolved = true;
     });
     testEndpoint(httpTestingController, requests, responses, 'PATCH', '/guests/list_update');

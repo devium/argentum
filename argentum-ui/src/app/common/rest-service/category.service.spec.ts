@@ -8,7 +8,7 @@ import {Category} from '../model/category';
 import {expectArraysEqual, testEndpoint} from './test-utils';
 import {Categories} from './test-data/categories';
 
-fdescribe('CategoryService', () => {
+describe('CategoryService', () => {
   let service: CategoryService;
   let http: HttpClient;
   let httpTestingController: HttpTestingController;
@@ -21,8 +21,8 @@ fdescribe('CategoryService', () => {
       imports: [HttpClientTestingModule],
       providers: [{provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true}],
     });
-    http = TestBed.get(HttpClient);
-    httpTestingController = TestBed.get(HttpTestingController);
+    http = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
     service = new CategoryService(http);
     resolved = false;
   });
@@ -53,11 +53,11 @@ fdescribe('CategoryService', () => {
   }));
 
   it('should update a category', fakeAsync(() => {
-    service.update(Categories.SOFT_DRINKS_PATCHED).subscribe((category: Category) => {
-      expect(category.equals(Categories.SOFT_DRINKS_PATCHED_REFERENCE)).toBeTruthy();
+    service.update(Categories.SOFT_DRINKS_PATCHED_REQUEST).subscribe((category: Category) => {
+      expect(category.equals(Categories.SOFT_DRINKS_PATCHED_RESPONSE)).toBeTruthy();
       resolved = true;
     });
-    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/categories/${Categories.SOFT_DRINKS.id}`);
+    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/categories/${Categories.SOFT_DRINKS_PATCHED_REQUEST.id}`);
   }));
 
   it('should delete a category', fakeAsync(() => {

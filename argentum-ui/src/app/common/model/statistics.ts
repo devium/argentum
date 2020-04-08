@@ -9,6 +9,13 @@ export namespace QuantitySales {
   }
 }
 
+export namespace StatTransaction {
+  export interface Dto {
+    time: string;
+    value: string;
+  }
+}
+
 export namespace Statistics {
   export interface Dto {
     guests_total: number;
@@ -26,6 +33,10 @@ export namespace Statistics {
     num_product_ranges: number;
     num_categories: number;
     quantity_sales: QuantitySales.Dto[];
+    check_ins: string[];
+    deposits: StatTransaction.Dto[];
+    withdrawals: StatTransaction.Dto[];
+    orders: StatTransaction.Dto[];
   }
 }
 
@@ -47,6 +58,19 @@ export class QuantitySales extends AbstractModel {
   }
 }
 
+export class StatTransaction extends AbstractModel {
+  constructor(
+    public time: Date,
+    public value: number
+  ) {
+    super(undefined);
+  }
+
+  static fromDto(dto: StatTransaction.Dto): StatTransaction {
+    return new StatTransaction(new Date(dto.time), parseFloat(dto.value));
+  }
+}
+
 export class Statistics extends AbstractModel {
   constructor(
     public guestsTotal: number,
@@ -63,7 +87,11 @@ export class Statistics extends AbstractModel {
     public numLegacyProducts: number,
     public numProductRanges: number,
     public numCategories: number,
-    public quantitySales: QuantitySales[]
+    public quantitySales: QuantitySales[],
+    public checkIns: Date[],
+    public deposits: StatTransaction[],
+    public withdrawals: StatTransaction[],
+    public orders: StatTransaction[]
   ) {
     super(undefined);
   }
@@ -84,7 +112,11 @@ export class Statistics extends AbstractModel {
       dto.num_legacy_products,
       dto.num_product_ranges,
       dto.num_categories,
-      dto.quantity_sales.map((qsDto: QuantitySales.Dto) => QuantitySales.fromDto(qsDto, products))
+      dto.quantity_sales.map((qsDto: QuantitySales.Dto) => QuantitySales.fromDto(qsDto, products)),
+      dto.check_ins.map((time: string) => new Date(time)),
+      dto.deposits.map((dDto: StatTransaction.Dto) => StatTransaction.fromDto(dDto)),
+      dto.withdrawals.map((wDto: StatTransaction.Dto) => StatTransaction.fromDto(wDto)),
+      dto.orders.map((oDto: StatTransaction.Dto) => StatTransaction.fromDto(oDto))
     );
   }
 }

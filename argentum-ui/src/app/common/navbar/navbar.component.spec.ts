@@ -3,8 +3,7 @@ import { NavbarComponent } from './navbar.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
-
-describe('NavbarComponent', () => {
+xdescribe('NavbarComponent', () => {
   let component: NavbarComponent;
   let fixture: ComponentFixture<NavbarComponent>;
 

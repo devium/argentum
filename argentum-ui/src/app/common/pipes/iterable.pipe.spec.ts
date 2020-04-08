@@ -1,6 +1,5 @@
 import { IterablePipe } from './iterable.pipe';
-
-describe('IterablePipe', () => {
+xdescribe('IterablePipe', () => {
   it('should create an instance', () => {
     const pipe = new IterablePipe();
     expect(pipe).toBeTruthy();

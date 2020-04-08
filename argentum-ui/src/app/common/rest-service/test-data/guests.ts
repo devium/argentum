@@ -3,7 +3,7 @@ import {Statuses} from './statuses';
 
 export namespace Guests {
   export const ROBY = new Guest(
-    1,
+    17010,
     'DEMO-00001',
     'Roby Brushfield',
     'rbrushfield0@sohu.com',
@@ -15,7 +15,7 @@ export namespace Guests {
   );
 
   export const SHEELAH = new Guest(
-    2,
+    17020,
     'DEMO-00002',
     'Sheelah Arnault',
     'sarnault1@tuttocitta.it',
@@ -28,7 +28,7 @@ export namespace Guests {
 
   export const ALL = [ROBY, SHEELAH];
 
-  export const JOHANNA_MIN = new Guest(
+  export const JOHANNA_MIN_REQUEST = new Guest(
     undefined,
     'DEMO-00003',
     'Johanna Doe',
@@ -40,8 +40,8 @@ export namespace Guests {
     undefined
   );
 
-  export const JOHANNA_MIN_REFERENCE = new Guest(
-    3,
+  export const JOHANNA_MIN_RESPONSE = new Guest(
+    17030,
     'DEMO-00003',
     'Johanna Doe',
     'jdoe2@tinypic.com',
@@ -52,7 +52,7 @@ export namespace Guests {
     0.00
   );
 
-  export const JOHANNA_MAX = new Guest(
+  export const JOHANNA_MAX_REQUEST = new Guest(
     undefined,
     'DEMO-00003',
     'Johanna Doe',
@@ -64,8 +64,8 @@ export namespace Guests {
     undefined
   );
 
-  export const JOHANNA_MAX_REFERENCE = new Guest(
-    3,
+  export const JOHANNA_MAX_RESPONSE = new Guest(
+    17031,
     'DEMO-00003',
     'Johanna Doe',
     'jdoe2@tinypic.com',
@@ -76,8 +76,8 @@ export namespace Guests {
     0.00
   );
 
-  export const ROBY_PATCHED = new Guest(
-    1,
+  export const ROBY_PATCHED_REQUEST = new Guest(
+    17011,
     undefined,
     undefined,
     undefined,
@@ -88,8 +88,8 @@ export namespace Guests {
     undefined
   );
 
-  export const ROBY_PATCHED_REFERENCE = new Guest(
-    1,
+  export const ROBY_PATCHED_RESPONSE = new Guest(
+    17011,
     'DEMO-00001',
     'Roby Brushfield',
     'rbrushfield0@sohu.com',
@@ -100,7 +100,7 @@ export namespace Guests {
     0.00
   );
 
-  export const JOHANNA_LIST_CREATED = new Guest(
+  export const JOHANNA_LIST_CREATED_REQUEST = new Guest(
     undefined,
     'DEMO-00003',
     'Johanna Doe',
@@ -112,8 +112,8 @@ export namespace Guests {
     undefined
   );
 
-  export const JOHANNA_LIST_CREATED_REFERENCE = new Guest(
-    3,
+  export const JOHANNA_LIST_CREATED_RESPONSE = new Guest(
+    17030,
     'DEMO-00003',
     'Johanna Doe',
     'jdoe2@tinypic.com',
@@ -124,24 +124,24 @@ export namespace Guests {
     0.00
   );
 
-  export const ROBY_LIST_PATCHED = new Guest(
+  export const ROBY_LIST_PATCHED_REQUEST = new Guest(
     undefined,
     'DEMO-00001',
     'Toby Brushfield',
     'tbrushfield0@sohu.com',
-    Statuses.PAID,
+    Statuses.PENDING,
     undefined,
     undefined,
     undefined,
     undefined
   );
 
-  export const ROBY_LIST_PATCHED_REFERENCE = new Guest(
-    1,
+  export const ROBY_LIST_PATCHED_RESPONSE = new Guest(
+    17012,
     'DEMO-00001',
     'Toby Brushfield',
     'tbrushfield0@sohu.com',
-    Statuses.PAID,
+    Statuses.PENDING,
     new Date('2019-12-31T22:55:44Z'),
     '567a',
     7.50,

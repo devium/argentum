@@ -65,8 +65,7 @@ const TEST_CARDS_B: string[] = [
   '22522174',
   '22544307'
 ];
-
-describe('utils', () => {
+xdescribe('utils', () => {
   it('convertCard should convert some numbers correctly', () => {
     expect(convertCard('1234')).toBe('1234');
     expect(convertCard('' + 0x12345678)).toBe('' + 0x00345678);

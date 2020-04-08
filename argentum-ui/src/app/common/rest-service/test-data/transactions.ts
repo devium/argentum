@@ -4,7 +4,7 @@ import {Orders} from './orders';
 
 export namespace Transactions {
   export const TX1 = new Transaction(
-    1,
+    20010,
     new Date('2019-12-31T22:05:00Z'),
     Guests.ROBY,
     undefined,
@@ -16,7 +16,7 @@ export namespace Transactions {
   );
 
   export const TX_COAT_CHECK_1 = new Transaction(
-    2,
+    20020,
     new Date('2019-12-31T22:07:00Z'),
     Guests.ROBY,
     undefined,
@@ -28,7 +28,7 @@ export namespace Transactions {
   );
 
   export const TX2 = new Transaction(
-    3,
+    20030,
     new Date('2019-12-31T22:07:30Z'),
     Guests.SHEELAH,
     undefined,
@@ -40,7 +40,7 @@ export namespace Transactions {
   );
 
   export const TX_COAT_CHECK_2 = new Transaction(
-    4,
+    20040,
     new Date('2019-12-31T22:09:00Z'),
     Guests.SHEELAH,
     undefined,
@@ -52,7 +52,7 @@ export namespace Transactions {
   );
 
   export const TX_ORDER_1 = new Transaction(
-    5,
+    20050,
     new Date('2019-12-31T22:10:00Z'),
     Guests.ROBY,
     undefined,
@@ -64,7 +64,7 @@ export namespace Transactions {
   );
 
   export const TX3 = new Transaction(
-    6,
+    20060,
     new Date('2019-12-31T22:30:00Z'),
     Guests.SHEELAH,
     undefined,
@@ -78,7 +78,7 @@ export namespace Transactions {
   export const ALL = [TX1, TX_COAT_CHECK_1, TX2, TX_COAT_CHECK_2, TX_ORDER_1, TX3];
 
   export const TX1_BY_CARD = new Transaction(
-    1,
+    20010,
     new Date('2019-12-31T22:05:00Z'),
     undefined,
     undefined,
@@ -90,7 +90,7 @@ export namespace Transactions {
   );
 
   export const TX_COAT_CHECK_1_BY_CARD = new Transaction(
-    2,
+    20020,
     new Date('2019-12-31T22:07:00Z'),
     undefined,
     undefined,
@@ -102,7 +102,7 @@ export namespace Transactions {
   );
 
   export const TX_ORDER_1_BY_CARD = new Transaction(
-    5,
+    20050,
     new Date('2019-12-31T22:10:00Z'),
     undefined,
     undefined,
@@ -114,7 +114,7 @@ export namespace Transactions {
   );
 
   export const TX4_REFERENCE = new Transaction(
-    7,
+    20070,
     new Date('2019-12-31T22:35:30Z'),
     undefined,
     undefined,
@@ -126,7 +126,7 @@ export namespace Transactions {
   );
 
   export const TX3_PATCHED_REFERENCE = new Transaction(
-    6,
+    20061,
     new Date('2019-12-31T22:30:05Z'),
     undefined,
     undefined,

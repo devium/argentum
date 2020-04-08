@@ -3,109 +3,96 @@ import logging
 from django.contrib.auth.models import Group, Permission
 
 from api.models.product_range import ProductRange
+from api.tests.data.categories import TestCategories
 from api.tests.data.product_ranges import TestProductRanges
 from api.tests.data.products import TestProducts
 from api.tests.data.users import TestUsers
-from api.tests.utils.authenticated_test_case import AuthenticatedTestCase
-from api.tests.utils.populated_test_case import PopulatedTestCase
-from api.tests.utils.serialization_test_case import SerializationTestCase
+from api.tests.utils.combined_test_case import CombinedTestCase
 
 LOG = logging.getLogger(__name__)
 
 
-class ProductRangeViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedTestCase):
-    def test_get(self):
-        self.login(TestUsers.ADMIN)
+class ProductRangeViewTestCase(CombinedTestCase):
+    def test_list(self):
+        self.login(TestUsers.ADMIN_EXT)
+        self.perform_list_test('/product_ranges', TestProductRanges.SAVED)
 
-        response = self.client.get('/product_ranges')
-        self.assertEqual(response.status_code, 200)
-        self.assertPksEqual(response.data, TestProductRanges.ALL)
-        self.assertJSONEqual(response.content, self.RESPONSES['GET/product_ranges'])
-
-    def test_get_detail(self):
-        self.login(TestUsers.BAR)
-
+    def test_retrieve(self):
+        self.login(TestUsers.BAR_EXT)
         response = self.client.get(f'/product_ranges/{TestProductRanges.JUST_WATER.id}')
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, self.RESPONSES[f'GET/product_ranges/{TestProductRanges.JUST_WATER.id}'])
+        expected_response = self.RESPONSES[f'GET/product_ranges/']
+        self.patch_json_ids(expected_response)
+        self.assertJSONEqual(response.content, expected_response)
 
-    def test_post(self):
-        self.login(TestUsers.ADMIN)
-        identifier = 'POST/product_ranges'
+    def test_create(self):
+        self.login(TestUsers.ADMIN_EXT)
+        self.perform_create_test('/product_ranges', TestProductRanges)
 
-        response = self.client.post('/product_ranges', self.REQUESTS[identifier])
-        self.assertEqual(response.status_code, 201)
-        self.assertValueEqual(ProductRange.objects.all(), TestProductRanges.ALL + [TestProductRanges.JUST_COKE])
-        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
-
-    def test_patch(self):
-        self.login(TestUsers.ADMIN)
-        identifier = f'PATCH/product_ranges/{TestProductRanges.JUST_WATER.id}'
-
-        response = self.client.patch(f'/product_ranges/{TestProductRanges.JUST_WATER.id}', self.REQUESTS[identifier])
-        self.assertEqual(response.status_code, 200)
-        self.assertValueEqual(
-            ProductRange.objects.all(),
-            [TestProductRanges.JUST_WATER_PATCHED, TestProductRanges.EVERYTHING]
-        )
-        self.assertValueEqual(TestProductRanges.JUST_WATER.products.all(), [TestProducts.WATER])
-        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
+    def test_update(self):
+        self.login(TestUsers.ADMIN_EXT)
+        self.perform_update_test('/product_ranges', TestProductRanges)
 
     def test_create_permissions(self):
-        self.login(TestUsers.ADMIN)
+        self.login(TestUsers.ADMIN_EXT)
 
         response = self.client.post('/product_ranges', self.REQUESTS['POST/product_ranges'])
         self.assertEqual(response.status_code, 201)
-        self.assertTrue(Group.objects.filter(name='product_range_3').exists())
-        self.assertTrue(Permission.objects.filter(codename=f'view_productrange_3').exists())
+        TestProductRanges.JUST_COKE.id = ProductRange.objects.get(name=TestProductRanges.JUST_COKE.name).id
+        group = f'product_range_{TestProductRanges.JUST_COKE.id}'
+        permission = f'view_productrange_{TestProductRanges.JUST_COKE.id}'
+        self.assertTrue(Group.objects.filter(name=group).exists())
+        self.assertTrue(Permission.objects.filter(codename=permission).exists())
 
     def test_destroy_permissions(self):
-        self.login(TestUsers.ADMIN)
+        self.login(TestUsers.ADMIN_EXT)
 
-        self.assertTrue(Group.objects.filter(name='product_range_2').exists())
-        self.assertTrue(Permission.objects.filter(codename=f'view_productrange_2').exists())
+        group = f'product_range_{TestProductRanges.EVERYTHING.id}'
+        permission = f'view_productrange_{TestProductRanges.EVERYTHING.id}'
+        self.assertTrue(Group.objects.filter(name=group).exists())
+        self.assertTrue(Permission.objects.filter(codename=permission).exists())
 
-        response = self.client.delete('/product_ranges/2')
+        response = self.client.delete(f'/product_ranges/{TestProductRanges.EVERYTHING.id}')
         self.assertEqual(response.status_code, 204)
-        self.assertFalse(Group.objects.filter(name='product_range_2').exists())
-        self.assertFalse(Permission.objects.filter(codename=f'view_productrange_2').exists())
+        self.assertFalse(Group.objects.filter(name=group).exists())
+        self.assertFalse(Permission.objects.filter(codename=permission).exists())
 
     def test_permissions(self):
+        self.perform_permission_test(
+            '/product_ranges',
+            list_users=[TestUsers.ADMIN_EXT, TestUsers.BAR_EXT, TestUsers.WARDROBE_EXT],
+            retrieve_users=[TestUsers.ADMIN_EXT, TestUsers.BAR_EXT],
+            create_users=[TestUsers.ADMIN_EXT],
+            update_users=[TestUsers.ADMIN_EXT],
+            delete_users=[TestUsers.ADMIN_EXT],
+            detail_id=TestProductRanges.JUST_WATER.id
+        )
         # General access to list action.
         self.assertPermissions(
             lambda: self.client.get('/product_ranges'),
-            [TestUsers.ADMIN, TestUsers.BAR, TestUsers.WARDROBE]
+            [TestUsers.ADMIN_EXT, TestUsers.BAR_EXT, TestUsers.WARDROBE_EXT]
         )
         # Results should be filtered according to permissions.
-        self.login(TestUsers.ADMIN)
+        self.login(TestUsers.ADMIN_EXT)
         response = self.client.get('/product_ranges')
-        self.assertPksEqual(response.data, TestProductRanges.ALL)
-        self.login(TestUsers.BAR)
+        self.assertPksEqual(response.data, TestProductRanges.SAVED)
+        self.login(TestUsers.BAR_EXT)
         response = self.client.get('/product_ranges')
         self.assertPksEqual(response.data, [TestProductRanges.JUST_WATER])
 
         # Individual access should be subject to individual permissions.
         self.assertPermissions(
             lambda: self.client.get(f'/product_ranges/{TestProductRanges.JUST_WATER.id}'),
-            [TestUsers.ADMIN, TestUsers.BAR]
+            [TestUsers.ADMIN_EXT, TestUsers.BAR_EXT]
         )
         self.assertPermissions(
             lambda: self.client.get(f'/product_ranges/{TestProductRanges.EVERYTHING.id}'),
-            [TestUsers.ADMIN]
-        )
-
-        # Only admin can edit.
-        self.assertPermissions(
-            lambda: self.client.post('/product_ranges', self.REQUESTS['POST/product_ranges']),
-            [TestUsers.ADMIN]
-        )
-
-        # Only admin can delete.
-        self.assertPermissions(
-            lambda: self.client.delete('/product_ranges/1'),
-            [TestUsers.ADMIN]
+            [TestUsers.ADMIN_EXT]
         )
 
     def test_str(self):
         LOG.debug(TestProductRanges.JUST_WATER)
-        self.assertEqual(str(TestProductRanges.JUST_WATER), 'ProductRange(id=1,name="Just water",num_products=1)')
+        self.assertEqual(
+            str(TestProductRanges.JUST_WATER),
+            f'ProductRange(id={TestProductRanges.JUST_WATER.id},name="Just water",num_products=1)'
+        )

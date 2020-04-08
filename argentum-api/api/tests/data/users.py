@@ -1,38 +1,138 @@
-from collections import namedtuple
+from typing import List
 
 from django.contrib.auth.models import User, Group
 
-from api.tests.utils.test_objects import TestObjects
+from api.tests.data.groups import TestGroups
+from api.tests.utils.many_to_many_model import ManyToManyModel
+from api.tests.utils.many_to_many_test_objects import ManyToManyTestObjects
 
 
-class TestUsers(TestObjects):
-    PlainUser = namedtuple('PlainUser', ['id', 'username', 'password', 'groups'])
-    MODEL = PlainUser
+class TestUsers(ManyToManyTestObjects):
+    class UserExt(ManyToManyModel):
+        model = User
 
-    ADMIN = PlainUser(id=1, username='admin', password='argentum', groups=[
-        'admin', 'order', 'coat_check', 'check_in', 'transfer', 'scan', 'product_range_all',
-    ])
-    BAR = PlainUser(id=2, username='bar', password='bar1', groups=['order', 'product_range_1'])
-    WARDROBE = PlainUser(id=3, username='wardrobe', password='wardrobe1', groups=['coat_check'])
-    RECEPTION = PlainUser(id=4, username='reception', password='reception1', groups=['check_in'])
-    TOPUP = PlainUser(id=5, username='topup', password='topup1', groups=['transfer'])
-    TERMINAL = PlainUser(id=6, username='terminal', password='terminal1', groups=['scan'])
+        def __init__(self, plain_password: str, groups: List[Group], *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.plain_password = plain_password
+            self.many_to_many = {'groups': groups}
 
-    ALL = [ADMIN, BAR, WARDROBE, RECEPTION, TOPUP, TERMINAL]
+    MODEL = User
+    MODEL_EXT = UserExt
 
-    # Models below are not stored in the DB, but rather used for POST deserialization testing.
-    BUFFET = MODEL(id=7, username='buffet', password='buffet1', groups=['order'])
-    WARDROBE_PATCHED = MODEL(id=3, username='giftshop', password='giftshop1', groups=['order', 'check_in'])
+    ADMIN_EXT: MODEL_EXT
+    ADMIN: MODEL
+    BAR_EXT: MODEL_EXT
+    BAR: MODEL
+    WARDROBE_EXT: MODEL_EXT
+    WARDROBE: MODEL
+    RECEPTION_EXT: MODEL_EXT
+    RECEPTION: MODEL
+    TOPUP_EXT: MODEL_EXT
+    TOPUP: MODEL
+    TERMINAL_EXT: MODEL_EXT
+    TERMINAL: MODEL
+
+    BUFFET_EXT: MODEL_EXT
+    BUFFET: MODEL
+    WARDROBE_PATCHED_EXT: MODEL_EXT
+    WARDROBE_PATCHED: MODEL
 
     @classmethod
     def init(cls):
-        for user in cls.ALL:
-            if user.username is 'admin':
-                continue
-            User.objects.create_user(user.username, '', user.password)
+        cls.ADMIN_EXT = cls.MODEL_EXT(
+            id=15010,
+            username='admin',
+            plain_password='argentum',
+            groups=[
+                TestGroups.ADMIN,
+                TestGroups.ORDER,
+                TestGroups.COAT_CHECK,
+                TestGroups.CHECK_IN,
+                TestGroups.TRANSFER,
+                TestGroups.SCAN,
+                TestGroups.PRODUCT_RANGE_ALL
+            ]
+        )
+        cls.ADMIN = cls.ADMIN_EXT.obj
+
+        cls.BAR_EXT = cls.MODEL_EXT(
+            id=15020,
+            username='bar',
+            plain_password='bar1',
+            groups=[TestGroups.ORDER, TestGroups.PRODUCT_RANGE_1]
+        )
+        cls.BAR = cls.BAR_EXT.obj
+
+        cls.WARDROBE_EXT = cls.MODEL_EXT(
+            id=15030,
+            username='wardrobe',
+            plain_password='wardrobe1',
+            groups=[TestGroups.COAT_CHECK]
+        )
+        cls.WARDROBE = cls.WARDROBE_EXT.obj
+
+        cls.RECEPTION_EXT = cls.MODEL_EXT(
+            id=15040,
+            username='reception',
+            plain_password='reception1',
+            groups=[TestGroups.CHECK_IN]
+        )
+        cls.RECEPTION = cls.RECEPTION_EXT.obj
+
+        cls.TOPUP_EXT = cls.MODEL_EXT(
+            id=15050,
+            username='topup',
+            plain_password='topup1',
+            groups=[TestGroups.TRANSFER]
+        )
+        cls.TOPUP = cls.TOPUP_EXT.obj
+
+        cls.TERMINAL_EXT = cls.MODEL_EXT(
+            id=15060,
+            username='terminal',
+            plain_password='terminal1',
+            groups=[TestGroups.SCAN]
+        )
+        cls.TERMINAL = cls.TERMINAL_EXT.obj
+
+        cls.SAVED_EXT = [
+            cls.ADMIN_EXT,
+            cls.BAR_EXT,
+            cls.WARDROBE_EXT,
+            cls.RECEPTION_EXT,
+            cls.TOPUP_EXT,
+            cls.TERMINAL_EXT
+        ]
+        cls.SAVED = [obj_ext.obj for obj_ext in cls.SAVED_EXT]
+
+        cls.BUFFET_EXT = cls.MODEL_EXT(
+            id=15070,
+            username='buffet',
+            plain_password='buffet1',
+            groups=[TestGroups.ORDER]
+        )
+        cls.BUFFET = cls.BUFFET_EXT.obj
+
+        cls.WARDROBE_PATCHED_EXT = cls.MODEL_EXT(
+            id=15031,
+            username='giftshop',
+            plain_password='giftshop1',
+            groups=[TestGroups.ORDER, TestGroups.CHECK_IN]
+        )
+        cls.WARDROBE_PATCHED = cls.WARDROBE_PATCHED_EXT.obj
+
+        cls.UNSAVED_EXT = [cls.BUFFET_EXT, cls.WARDROBE_PATCHED_EXT]
+        cls.UNSAVED = [obj_ext.obj for obj_ext in cls.UNSAVED_EXT]
 
     @classmethod
-    def post_init(cls):
-        for user in cls.ALL:
-            groups = [Group.objects.get(name=group_name).id for group_name in user.groups]
-            User.objects.get(id=user.id).groups.add(*groups)
+    def create(cls):
+        for user_ext in cls.SAVED_EXT:
+            user_ext: cls.UserExt = user_ext
+            if user_ext.obj.username == 'admin':
+                user_ext.obj.id = User.objects.get(username=user_ext.obj.username).id
+            else:
+                user_ext.obj.id = User.objects.create_user(user_ext.obj.username, '', user_ext.plain_password).id
+            user_ext.obj.refresh_from_db()
+
+        for obj in cls.SAVED_EXT:
+            obj.set_many_to_many()

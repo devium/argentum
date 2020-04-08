@@ -3,7 +3,7 @@ import {BonusTransaction} from '../../model/bonus-transaction';
 
 export namespace BonusTransactions {
   export const BTX1 = new BonusTransaction(
-    1,
+    21010,
     new Date('2019-12-31T22:01:00Z'),
     Guests.ROBY,
     undefined,
@@ -13,7 +13,7 @@ export namespace BonusTransactions {
   );
 
   export const BTX2 = new BonusTransaction(
-    2,
+    21020,
     new Date('2019-12-31T22:02:30Z'),
     Guests.SHEELAH,
     undefined,
@@ -23,7 +23,7 @@ export namespace BonusTransactions {
   );
 
   export const BTX3 = new BonusTransaction(
-    3,
+    21030,
     new Date('2019-12-31T22:03:00Z'),
     Guests.ROBY,
     undefined,
@@ -35,7 +35,7 @@ export namespace BonusTransactions {
   export const ALL = [BTX1, BTX2, BTX3];
 
   export const BTX1_BY_CARD_REFERENCE = new BonusTransaction(
-    1,
+    21010,
     new Date('2019-12-31T22:01:00Z'),
     undefined,
     undefined,
@@ -45,7 +45,7 @@ export namespace BonusTransactions {
   );
 
   export const BTX3_BY_CARD_REFERENCE = new BonusTransaction(
-    3,
+    21030,
     new Date('2019-12-31T22:03:00Z'),
     undefined,
     undefined,
@@ -55,7 +55,7 @@ export namespace BonusTransactions {
   );
 
   export const BTX4_REFERENCE = new BonusTransaction(
-    4,
+    21040,
     new Date('2019-12-31T22:04:20Z'),
     undefined,
     undefined,
@@ -64,8 +64,8 @@ export namespace BonusTransactions {
     true
   );
 
-  export const BTX3_PATCHED_REFERENCE = new BonusTransaction(
-    3,
+  export const BTX3_PATCHED_RESPONSE = new BonusTransaction(
+    21031,
     new Date('2019-12-31T22:03:05Z'),
     undefined,
     undefined,

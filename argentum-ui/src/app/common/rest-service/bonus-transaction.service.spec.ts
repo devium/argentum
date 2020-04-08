@@ -11,7 +11,7 @@ import {BonusTransaction} from '../model/bonus-transaction';
 import {expectArraysEqual, testEndpoint} from './test-utils';
 import {BonusTransactions} from './test-data/bonus-transactions';
 
-fdescribe('BonusTransactionService', () => {
+describe('BonusTransactionService', () => {
   let service: BonusTransactionService;
   let guestService: any;
   let http: HttpClient;
@@ -25,8 +25,8 @@ fdescribe('BonusTransactionService', () => {
       imports: [HttpClientTestingModule],
       providers: [{provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true}],
     });
-    http = TestBed.get(HttpClient);
-    httpTestingController = TestBed.get(HttpTestingController);
+    http = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
     guestService = createSpyObj('GuestService', ['list']);
     guestService.list.and.returnValue(of(Guests.ALL));
     service = new BonusTransactionService(http, guestService);
@@ -76,9 +76,11 @@ fdescribe('BonusTransactionService', () => {
 
   it('should commit a bonus transaction', fakeAsync(() => {
     service.commit(BonusTransactions.BTX3).subscribe((bonusTransaction: BonusTransaction) => {
-      expect(bonusTransaction.equals(BonusTransactions.BTX3_PATCHED_REFERENCE)).toBeTruthy();
+      expect(bonusTransaction.equals(BonusTransactions.BTX3_PATCHED_RESPONSE)).toBeTruthy();
       resolved = true;
     });
-    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/bonus_transactions/${BonusTransactions.BTX3.id}`);
+    testEndpoint(
+      httpTestingController, requests, responses, 'PATCH', `/bonus_transactions/${BonusTransactions.BTX3.id}`, '#commit', '#commit'
+    );
   }));
 });

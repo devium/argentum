@@ -4,7 +4,7 @@ import {OrderItems} from './order-items';
 
 export namespace Orders {
   export const TAG_REGISTRATION_TWO = new Order(
-    1,
+    18010,
     new Date('2019-12-31T22:07:00Z'),
     Guests.ROBY,
     undefined,
@@ -15,7 +15,7 @@ export namespace Orders {
   );
 
   export const TAG_REGISTRATION_THREE = new Order(
-    2,
+    18020,
     new Date('2019-12-31T22:09:00Z'),
     Guests.SHEELAH,
     undefined,
@@ -26,7 +26,7 @@ export namespace Orders {
   );
 
   export const ONE_WATER_PLUS_TIP = new Order(
-    3,
+    18030,
     new Date('2019-12-31T22:10:00Z'),
     Guests.ROBY,
     undefined,
@@ -37,7 +37,7 @@ export namespace Orders {
   );
 
   export const TWO_COKES_PLUS_TIP = new Order(
-    4,
+    18040,
     new Date('2019-12-31T22:14:00Z'),
     Guests.SHEELAH,
     undefined,
@@ -48,7 +48,7 @@ export namespace Orders {
   );
 
   export const TAG_REGISTRATION_FOUR = new Order(
-    5,
+    18050,
     new Date('2019-12-31T22:15:00Z'),
     Guests.ROBY,
     undefined,
@@ -59,7 +59,7 @@ export namespace Orders {
   );
 
   export const TAG_REGISTRATION_FIVE = new Order(
-    6,
+    18060,
     new Date('2019-12-31T22:19:00Z'),
     Guests.ROBY,
     undefined,
@@ -79,7 +79,7 @@ export namespace Orders {
   ];
 
   export const TAG_REGISTRATION_TWO_BY_CARD = new Order(
-    1,
+    18010,
     new Date('2019-12-31T22:07:00Z'),
     undefined,
     undefined,
@@ -90,7 +90,7 @@ export namespace Orders {
   );
 
   export const ONE_WATER_PLUS_TIP_BY_CARD = new Order(
-    3,
+    18030,
     new Date('2019-12-31T22:10:00Z'),
     undefined,
     undefined,
@@ -101,7 +101,7 @@ export namespace Orders {
   );
 
   export const TAG_REGISTRATION_FOUR_BY_CARD = new Order(
-    5,
+    18050,
     new Date('2019-12-31T22:15:00Z'),
     undefined,
     undefined,
@@ -112,7 +112,7 @@ export namespace Orders {
   );
 
   export const TAG_REGISTRATION_FIVE_BY_CARD = new Order(
-    6,
+    18060,
     new Date('2019-12-31T22:19:00Z'),
     undefined,
     undefined,
@@ -134,7 +134,7 @@ export namespace Orders {
   );
 
   export const ONE_WATER_ONE_COKE_PLUS_TIP_REFERENCE = new Order(
-    7,
+    18070,
     new Date('2019-12-31T22:17:00Z'),
     undefined,
     undefined,
@@ -144,8 +144,8 @@ export namespace Orders {
     [OrderItems.ONE_WATER2, OrderItems.ONE_COKE]
   );
 
-  export const TWO_COKES_PLUS_TIP_PATCHED_REFERENCE = new Order(
-    4,
+  export const TWO_COKES_PLUS_TIP_PATCHED_RESPONSE = new Order(
+    18041,
     new Date('2019-12-31T22:14:30Z'),
     undefined,
     undefined,
@@ -156,7 +156,7 @@ export namespace Orders {
   );
 
   export const ONE_WATER_PLUS_TIP_PATCHED = new Order(
-    3,
+    18031,
     new Date('2019-12-31T22:10:00Z'),
     undefined,
     undefined,

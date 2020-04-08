@@ -15,7 +15,7 @@ import {expectArraysEqual, testEndpoint} from './test-utils';
 import {Discounts} from './test-data/discounts';
 import {Guests} from './test-data/guests';
 
-fdescribe('DiscountService', () => {
+describe('DiscountService', () => {
   let service: DiscountService;
   let statusService: any;
   let categoryService: any;
@@ -30,8 +30,8 @@ fdescribe('DiscountService', () => {
       imports: [HttpClientTestingModule],
       providers: [{provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true}],
     });
-    http = TestBed.get(HttpClient);
-    httpTestingController = TestBed.get(HttpTestingController);
+    http = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
     statusService = createSpyObj('StatusService', ['list']);
     statusService.list.and.returnValue(of(Statuses.ALL));
     categoryService = createSpyObj('CategoryService', ['list']);
@@ -76,8 +76,8 @@ fdescribe('DiscountService', () => {
   }));
 
   it('should update a discount', fakeAsync(() => {
-    service.update(Discounts.PAID_SOFT_DRINKS_PATCHED).subscribe((discount: Discount) => {
-      expect(discount.equals(Discounts.PAID_SOFT_DRINKS_PATCHED_REFERENCE)).toBeTruthy();
+    service.update(Discounts.PAID_SOFT_DRINKS_PATCHED_REQUEST).subscribe((discount: Discount) => {
+      expect(discount.equals(Discounts.PAID_SOFT_DRINKS_PATCHED_RESPONSE)).toBeTruthy();
       resolved = true;
     });
     testEndpoint(httpTestingController, requests, responses, 'PATCH', `/discounts/${Discounts.PAID_SOFT_DRINKS.id}`);

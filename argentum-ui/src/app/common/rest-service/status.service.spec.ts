@@ -8,7 +8,7 @@ import {Status} from '../model/status';
 import {expectArraysEqual, testEndpoint} from './test-utils';
 import {Statuses} from './test-data/statuses';
 
-fdescribe('StatusService', () => {
+describe('StatusService', () => {
   let service: StatusService;
   let http: HttpClient;
   let httpTestingController: HttpTestingController;
@@ -21,8 +21,8 @@ fdescribe('StatusService', () => {
       imports: [HttpClientTestingModule],
       providers: [{provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true}],
     });
-    http = TestBed.get(HttpClient);
-    httpTestingController = TestBed.get(HttpTestingController);
+    http = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
     service = new StatusService(http);
     resolved = false;
   });
@@ -54,11 +54,11 @@ fdescribe('StatusService', () => {
   }));
 
   it('should update a status', fakeAsync(() => {
-    service.update(Statuses.PENDING_PATCHED).subscribe((status: Status) => {
-      expect(status.equals(Statuses.PENDING_PATCHED_REFERENCE)).toBeTruthy();
+    service.update(Statuses.PENDING_PATCHED_REQUEST).subscribe((status: Status) => {
+      expect(status.equals(Statuses.PENDING_PATCHED_RESPONSE)).toBeTruthy();
       resolved = true;
     });
-    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/statuses/${Statuses.PENDING.id}`);
+    testEndpoint(httpTestingController, requests, responses, 'PATCH', `/statuses/${Statuses.PENDING_PATCHED_REQUEST.id}`);
   }));
 
   it('should delete a status', fakeAsync(() => {

@@ -7,99 +7,64 @@ from api.tests.data.guests import TestGuests
 from api.tests.data.orders import TestOrders
 from api.tests.data.transactions import TestTransactions
 from api.tests.data.users import TestUsers
-from api.tests.utils.authenticated_test_case import AuthenticatedTestCase
-from api.tests.utils.populated_test_case import PopulatedTestCase
-from api.tests.utils.serialization_test_case import SerializationTestCase
-from api.tests.utils.utils import to_iso_format
+from api.tests.utils.combined_test_case import CombinedTestCase
 
 LOG = logging.getLogger(__name__)
 
 
-class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, AuthenticatedTestCase):
-    def test_get(self):
-        self.login(TestUsers.ADMIN)
+class TransactionViewTestCase(CombinedTestCase):
+    REFRESH_OBJECTS = [TestTransactions]
 
-        response = self.client.get('/transactions')
-        self.assertEqual(response.status_code, 200)
-        self.assertPksEqual(response.data, TestTransactions.ALL)
-        self.assertJSONEqual(response.content, self.RESPONSES['GET/transactions'])
+    def test_list(self):
+        self.login(TestUsers.ADMIN_EXT)
+        self.perform_list_test('/transactions', TestTransactions.SAVED)
 
-    def test_get_by_card(self):
-        self.login(TestUsers.BAR)
-
-        response = self.client.get(f'/transactions?guest__card={TestGuests.ROBY.card}')
-        self.assertEqual(response.status_code, 200)
-        self.assertPksEqual(
-            response.data,
+    def test_list_by_card(self):
+        self.login(TestUsers.BAR_EXT)
+        self.perform_list_test(
+            f'/transactions?guest__card={TestGuests.ROBY.card}',
             [
                 TestTransactions.TX1,
                 TestTransactions.TX_COAT_CHECK_1,
                 TestTransactions.TX_ORDER_1
             ]
         )
-        self.assertJSONEqual(response.content, self.RESPONSES[f'GET/transactions?guest__card={TestGuests.ROBY.card}'])
 
     def test_get_by_card_not_found(self):
-        self.login(TestUsers.BAR)
+        self.login(TestUsers.BAR_EXT)
 
-        response = self.client.get('/transactions?guest__card=NOTFOUND')
+        response = self.client.get('/transactions?guest__card=404')
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.data['guest__card'][0], 'Card not registered.')
 
     def test_get_by_nocard(self):
-        self.login(TestUsers.BAR)
+        self.login(TestUsers.BAR_EXT)
 
         response = self.client.get(f'/transactions?guest__card=')
         self.assertEqual(response.status_code, 403)
 
-    def test_post(self):
-        self.login(TestUsers.TOPUP)
-        identifier = 'POST/transactions'
+    def test_create(self):
+        self.login(TestUsers.TOPUP_EXT)
+        self.perform_create_test('/transactions', TestTransactions, timed=True)
 
-        response, server_time = self.time_constrained(
-            lambda: self.client.post('/transactions', self.REQUESTS[identifier])
-        )
-        self.assertEqual(response.status_code, 201)
-
-        TestTransactions.TX4.time = server_time
-        self.assertValueEqual(Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX4])
-        self.RESPONSES[identifier]['time'] = to_iso_format(server_time)
-        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
-
-    def test_patch(self):
-        self.login(TestUsers.TOPUP)
-        identifier = f'PATCH/transactions/{TestTransactions.TX3.id}'
-
-        response, server_time = self.time_constrained(
-            lambda: self.client.patch(f'/transactions/{TestTransactions.TX3.id}', self.REQUESTS[identifier])
-        )
-        self.assertEqual(response.status_code, 200)
-
-        self.assertFalse(Transaction.objects.get(id=TestTransactions.TX3.id).pending)
-        self.RESPONSES[identifier]['time'] = to_iso_format(server_time)
-        self.assertJSONEqual(response.content, self.RESPONSES[identifier])
-
-    def test_post_by_card(self):
-        self.login(TestUsers.TOPUP)
-
-        response = self.client.post('/transactions', self.REQUESTS['POST/transactions#card'])
-        self.assertEqual(response.status_code, 201)
-
-        self.assertValueEqual(
-            Transaction.objects.all(), TestTransactions.ALL + [TestTransactions.TX4],
-            ignore_fields=['time']
-        )
+    def test_create_by_card(self):
+        self.login(TestUsers.TOPUP_EXT)
+        self.perform_create_test('/transactions', TestTransactions, '#card', timed=True)
 
     def test_post_by_card_fail(self):
-        self.login(TestUsers.TOPUP)
+        self.login(TestUsers.TOPUP_EXT)
 
         body = {**self.REQUESTS['POST/transactions#card'], **{'card': '567b'}}
         response = self.client.post('/transactions', body)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['card'][0], 'Card not registered.')
 
+    def test_commit(self):
+        self.login(TestUsers.TOPUP_EXT)
+        self.perform_update_test('/transactions', TestTransactions, '#commit', timed=True)
+
     def test_positive_crediting(self):
-        self.login(TestUsers.TOPUP)
+        self.login(TestUsers.TOPUP_EXT)
 
         roby = Guest.objects.get(pk=TestGuests.ROBY.id)
         roby.balance = '3.00'
@@ -127,7 +92,7 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         self.assertEqual(roby.bonus, Decimal('5.00'))
 
     def test_negative_crediting(self):
-        self.login(TestUsers.TOPUP)
+        self.login(TestUsers.TOPUP_EXT)
 
         roby = Guest.objects.get(pk=TestGuests.ROBY.id)
         roby.balance = '3.00'
@@ -175,7 +140,7 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         self.assertEqual(roby.bonus, Decimal('0.00'))
 
     def test_patch_readonly(self):
-        self.login(TestUsers.TOPUP)
+        self.login(TestUsers.TOPUP_EXT)
 
         mutable_fields = {
         }
@@ -207,19 +172,18 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         self.assertPatchReadonly(f'/transactions/{TestTransactions.TX3.id}', mutable_fields, immutable_fields)
 
     def test_permissions(self):
-        self.assertPermissions(lambda: self.client.get('/transactions'), [TestUsers.ADMIN])
-        self.assertPermissions(
-            lambda: self.client.get(f'/transactions?guest__card={TestGuests.ROBY.card}'),
-            [TestUsers.ADMIN, TestUsers.BAR, TestUsers.WARDROBE, TestUsers.TERMINAL]
-        )
-        self.assertPermissions(lambda: self.client.get(f'/bonus_transactions/{TestTransactions.TX1.id}'), [])
-        self.assertPermissions(
-            lambda: self.client.post('/transactions', self.REQUESTS['POST/transactions']),
-            [TestUsers.ADMIN, TestUsers.TOPUP]
-        )
-        self.assertPermissions(
-            lambda: self.client.delete('/transactions/1'),
-            []
+        self.perform_permission_test(
+            '/transactions',
+            list_users=[TestUsers.ADMIN_EXT],
+            list_by_card_users=[TestUsers.ADMIN_EXT, TestUsers.BAR_EXT, TestUsers.WARDROBE_EXT, TestUsers.TERMINAL_EXT],
+            retrieve_users=[],
+            create_users=[TestUsers.ADMIN_EXT, TestUsers.TOPUP_EXT],
+            update_users=[TestUsers.ADMIN_EXT, TestUsers.TOPUP_EXT],
+            delete_users=[],
+            detail_id=TestTransactions.TX1.id,
+            card=TestGuests.ROBY.card,
+            card_parameter='guest__card',
+            update_suffix='#commit'
         )
 
     def test_str(self):
@@ -227,7 +191,7 @@ class TransactionViewTestCase(PopulatedTestCase, SerializationTestCase, Authenti
         self.assertEqual(
             str(TestTransactions.TX_ORDER_1),
             f'Transaction('
-            f'id=5,'
+            f'id={TestTransactions.TX_ORDER_1.id},'
             f'time="2019-12-31 22:10:00+00:00",'
             f'value=-3.00,'
             f'description="order",'

@@ -141,13 +141,9 @@ export class CoatCheckComponent implements OnInit {
   onOrderCreation(card: string, order: Order): void {
     // Already registered labels are still negative when staged.
     const stagedLabelsAbs = this.stagedLabels.map((label: number) => Math.abs(label));
-    const tagRegistrations$ = this.tagRegistrationService.create(card, stagedLabelsAbs, order);
-    combineLatest(tagRegistrations$).pipe(
-      flatMap((tagRegistrations: TagRegistration[]) => {
-        return combineLatest(this.tagRegistrationService.commit(tagRegistrations, order));
-      })
-    ).subscribe((tagRegistrations: TagRegistration[]) => {
-        const labels = tagRegistrations.map((tagRegistration: TagRegistration) => tagRegistration.label);
+    this.tagRegistrationService.create(card, stagedLabelsAbs, order).subscribe(
+      (tagRegistration: TagRegistration) => {
+        const labels = tagRegistration.labels;
         this.message.success(`Tag${labels.length > 1 ? 's' : ''} <b>${labels.join(',')}</b> registered for <b>card #${card}</b>`);
         this.refresh();
       },

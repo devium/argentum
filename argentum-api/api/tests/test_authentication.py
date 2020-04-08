@@ -1,11 +1,11 @@
 from django.contrib.auth.models import User
 
-from api.tests.utils.serialization_test_case import SerializationTestCase
+from api.tests.utils.combined_test_case import CombinedTestCase
 
 
-class AuthenticationTestCase(SerializationTestCase):
+class AuthenticationTestCase(CombinedTestCase):
     def test_default_users(self):
-        self.assertEqual(User.objects.count(), 1)
+        self.assertEqual(User.objects.count(), 6)
         admin = User.objects.all()[0]
         self.assertEqual(admin.username, 'admin')
 

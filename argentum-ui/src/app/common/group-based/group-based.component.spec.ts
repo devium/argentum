@@ -1,8 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { GroupBasedComponent } from './group-based.component';
-
-describe('GroupBasedComponent', () => {
+xdescribe('GroupBasedComponent', () => {
   let component: GroupBasedComponent;
   let fixture: ComponentFixture<GroupBasedComponent>;
 

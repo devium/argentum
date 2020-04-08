@@ -5,34 +5,42 @@ from api.tests.utils.test_objects import TestObjects
 class TestStatuses(TestObjects):
     MODEL = Status
 
-    PAID = MODEL(
-        id=1,
-        internal_name='paid',
-        display_name='Paid',
-        color='#00ff00'
-    )
+    PAID: MODEL
+    PENDING: MODEL
 
-    PENDING = MODEL(
-        id=2,
-        internal_name='pending',
-        display_name='Pending',
-        color='#ff0000'
-    )
+    STAFF: MODEL
+    PENDING_PATCHED: MODEL
 
-    ALL = [PAID, PENDING]
+    @classmethod
+    def init(cls):
+        cls.PAID = cls.MODEL(
+            id=16010,
+            internal_name='paid',
+            display_name='Paid',
+            color='#00ff00'
+        )
 
-    # Models below are not stored in the DB, but rather used for POST deserialization testing.
+        cls.PENDING = cls.MODEL(
+            id=16020,
+            internal_name='pending',
+            display_name='Pending',
+            color='#ff0000'
+        )
 
-    STAFF = MODEL(
-        id=3,
-        internal_name='staff',
-        display_name='Staff',
-        color='#0000ff',
-    )
+        cls.SAVED = [cls.PAID, cls.PENDING]
 
-    PENDING_PATCHED = MODEL(
-        id=2,
-        internal_name='pen',
-        display_name='Pending',
-        color='#ff0000'
-    )
+        cls.STAFF = cls.MODEL(
+            id=16030,
+            internal_name='staff',
+            display_name='Staff',
+            color='#0000ff',
+        )
+
+        cls.PENDING_PATCHED = cls.MODEL(
+            id=16021,
+            internal_name='pen',
+            display_name='Pending',
+            color='#ff0000'
+        )
+
+        cls.UNSAVED = [cls.STAFF, cls.PENDING_PATCHED]

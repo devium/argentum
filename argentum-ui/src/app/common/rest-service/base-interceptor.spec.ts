@@ -4,7 +4,7 @@ import {fakeAsync, TestBed} from '@angular/core/testing';
 import {BaseInterceptor} from './base-interceptor';
 import {environment} from '../../../environments/environment';
 
-fdescribe('BaseInterceptor', () => {
+describe('BaseInterceptor', () => {
   let http: HttpClient;
   let httpTestingController: HttpTestingController;
   let resolved = false;
@@ -14,8 +14,8 @@ fdescribe('BaseInterceptor', () => {
       imports: [ HttpClientTestingModule ],
       providers: [{ provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true }],
     });
-    http = TestBed.get(HttpClient);
-    httpTestingController = TestBed.get(HttpTestingController);
+    http = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
     resolved = false;
   });
 

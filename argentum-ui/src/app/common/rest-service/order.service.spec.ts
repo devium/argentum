@@ -15,7 +15,7 @@ import {Orders} from './test-data/orders';
 import {OrderItems} from './test-data/order-items';
 import {OrderItem} from '../model/order-item';
 
-fdescribe('OrderService', () => {
+describe('OrderService', () => {
   let service: OrderService;
   let guestService: any;
   let productService: any;
@@ -31,8 +31,8 @@ fdescribe('OrderService', () => {
       imports: [HttpClientTestingModule],
       providers: [{provide: HTTP_INTERCEPTORS, useClass: BaseInterceptor, multi: true}],
     });
-    http = TestBed.get(HttpClient);
-    httpTestingController = TestBed.get(HttpTestingController);
+    http = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
     guestService = createSpyObj('GuestService', ['list']);
     guestService.list.and.returnValue(of(Guests.ALL));
     productService = createSpyObj('ProductService', ['list']);
@@ -84,7 +84,7 @@ fdescribe('OrderService', () => {
     testEndpoint(httpTestingController, requests, responses, 'GET', `/orders?guest__card=${Guests.ROBY.card}`);
   }));
 
-  it('should create a new order-panels', fakeAsync(() => {
+  it('should create a new order', fakeAsync(() => {
     service.create(Orders.ONE_WATER_ONE_COKE_PLUS_TIP).subscribe((order: Order) => {
       expect(order.equals(Orders.ONE_WATER_ONE_COKE_PLUS_TIP_REFERENCE)).toBeTruthy();
       resolved = true;
@@ -97,9 +97,9 @@ fdescribe('OrderService', () => {
     testEndpoint(httpTestingController, requests, responses, 'POST', '/orders', '#card');
   }));
 
-  it('should commit an order-panels', fakeAsync(() => {
+  it('should commit an order', fakeAsync(() => {
     service.commit(Orders.TWO_COKES_PLUS_TIP).subscribe((order: Order) => {
-      expect(order.equals(Orders.TWO_COKES_PLUS_TIP_PATCHED_REFERENCE)).toBeTruthy();
+      expect(order.equals(Orders.TWO_COKES_PLUS_TIP_PATCHED_RESPONSE)).toBeTruthy();
       resolved = true;
     });
     // Guest information is hidden from non-admin users. Products, while realistically known, are not serialized fully in this view.
